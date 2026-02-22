@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/ccda845a-d9f3-4c25-b110-99647e3f934a.png" type="image/png">
+    <title>SADWAP - Login</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================
+           CSS Variables (unchanged)
+           ============================================ */
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-card: #1c2333;
+            --accent: #00ff88;
+            --accent-dim: #00cc6a;
+            --accent-purple: #7c3aed;
+            --accent-purple-dim: #6d28d9;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --border-color: #30363d;
+            --border-glow: rgba(0, 255, 136, 0.3);
+            --danger: #f85149;
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --glow-green: 0 0 20px rgba(0, 255, 136, 0.3), 0 0 40px rgba(0, 255, 136, 0.1);
+            --glow-purple: 0 0 20px rgba(124, 58, 237, 0.3), 0 0 40px rgba(124, 58, 237, 0.1);
+            --font-heading: 'Orbitron', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Reset & Base (unchanged) */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Overlay */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/c4b92c1a-6407-44af-8a12-abe877bd321c.png') center/cover no-repeat;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Floating Particles */
+        .particle-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0;
+            animation: floatParticle 8s infinite ease-in-out;
+        }
+
+        @keyframes floatParticle {
+            0% { opacity: 0; transform: translateY(100vh) scale(0); }
+            20% { opacity: 0.8; }
+            80% { opacity: 0.4; }
+            100% { opacity: 0; transform: translateY(-20vh) scale(1.5); }
+        }
+
+        /* Developer Video Link - Top Right (now opens new window) */
+        .developer-video-link {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px 8px 8px;
+            background: rgba(22, 27, 34, 0.9);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            text-decoration: none; /* for anchor styling */
+        }
+
+        .developer-video-link:hover {
+            border-color: var(--accent);
+            box-shadow: var(--glow-green);
+            transform: translateY(-2px);
+        }
+
+        .dev-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+        }
+
+        .dev-label {
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            white-space: nowrap;
+        }
+
+        /* Main Container */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 440px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Logo */
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+            box-shadow: var(--glow-green);
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(0, 255, 136, 0.6), 0 0 60px rgba(0, 255, 136, 0.2); }
+        }
+
+        /* App Title */
+        .app-title {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: 6px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            margin-bottom: 4px;
+        }
+
+        .app-subtitle {
+            font-family: var(--font-body);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        /* Login Card */
+        .login-card {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .card-glow {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple), var(--accent));
+            border-radius: 22px;
+            opacity: 0.4;
+            z-index: -1;
+            animation: borderGlow 4s infinite ease-in-out;
+            background-size: 200% 200%;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { background-position: 0% 50%; opacity: 0.3; }
+            50% { background-position: 100% 50%; opacity: 0.6; }
+        }
+
+        .login-card-inner {
+            background: rgba(28, 35, 51, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px 36px;
+            border: 1px solid rgba(48, 54, 61, 0.5);
+        }
+
+        /* Login Heading */
+        .login-heading {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 2px;
+        }
+
+        .login-heading i {
+            color: var(--accent);
+        }
+
+        /* Custom Inputs (unchanged) */
+        .custom-input {
+            background: rgba(13, 17, 23, 0.8) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 12px !important;
+            color: var(--text-primary) !important;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            padding: 16px 14px !important;
+            height: 58px;
+            transition: var(--transition);
+        }
+
+        .custom-input:focus {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.15) !important;
+            background: rgba(13, 17, 23, 1) !important;
+        }
+
+        .form-floating > label {
+            color: var(--text-secondary) !important;
+            font-size: 0.9rem;
+            padding: 16px 14px;
+        }
+
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            color: var(--accent) !important;
+            opacity: 0.9;
+        }
+
+        /* Toggle Password */
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            z-index: 5;
+            padding: 4px 8px;
+            transition: var(--transition);
+        }
+
+        .toggle-password:hover {
+            color: var(--accent);
+        }
+
+        /* Custom Checkbox */
+        .custom-check {
+            background-color: var(--bg-primary) !important;
+            border-color: var(--border-color) !important;
+            cursor: pointer;
+        }
+
+        .custom-check:checked {
+            background-color: var(--accent) !important;
+            border-color: var(--accent) !important;
+        }
+
+        .custom-check:focus {
+            box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.15) !important;
+        }
+
+        .text-muted-custom {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Forgot Link */
+        .forgot-link {
+            color: var(--accent);
+            font-size: 0.85rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .forgot-link:hover {
+            color: var(--accent-purple);
+            text-decoration: underline;
+        }
+
+        /* Login Button */
+        .btn-login {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+            color: #0d1117 !important;
+            font-family: var(--font-heading);
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-login:hover::before {
+            left: 100%;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow-green);
+            background: linear-gradient(135deg, var(--accent-dim), var(--accent));
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        /* Divider */
+        .divider-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .divider-line {
+            flex: 1;
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 0;
+        }
+
+        .divider-text {
+            font-family: var(--font-heading);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 3px;
+            white-space: nowrap;
+        }
+
+        /* Favicon Links - now actual <a> tags open new window */
+        .favicon-links {
+            padding: 8px 0;
+        }
+
+        .favicon-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none; /* remove underline from anchor */
+            color: inherit; /* inherit text color */
+        }
+
+        .favicon-item:hover {
+            transform: translateY(-4px);
+        }
+
+        .favicon-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .favicon-item:nth-child(1) .favicon-icon {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.05));
+            color: var(--accent);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .favicon-item:nth-child(1):hover .favicon-icon {
+            box-shadow: var(--glow-green);
+            border-color: var(--accent);
+        }
+
+        .favicon-item:nth-child(2) .favicon-icon {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(124, 58, 237, 0.05));
+            color: var(--accent-purple);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+        }
+
+        .favicon-item:nth-child(2):hover .favicon-icon {
+            box-shadow: var(--glow-purple);
+            border-color: var(--accent-purple);
+        }
+
+        .favicon-item:nth-child(3) .favicon-icon {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(56, 189, 248, 0.05));
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .favicon-item:nth-child(3):hover .favicon-icon {
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3), 0 0 40px rgba(56, 189, 248, 0.1);
+            border-color: #38bdf8;
+        }
+
+        .favicon-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+        }
+
+        .favicon-item:hover .favicon-label {
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        .app-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 50;
+            background: linear-gradient(to top, rgba(13, 17, 23, 0.98), rgba(13, 17, 23, 0.8));
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border-color);
+            padding: 14px 0;
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .footer-logo {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            opacity: 0.8;
+        }
+
+        .footer-text {
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        /* Security Toast (unchanged) */
+        .security-toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(248, 81, 73, 0.15);
+            border: 1px solid rgba(248, 81, 73, 0.4);
+            color: var(--danger);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .security-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ============================================
+           Responsive Design (unchanged)
+           ============================================ */
+        @media (max-width: 576px) {
+            .app-title { font-size: 1.8rem; letter-spacing: 4px; }
+            .app-subtitle { font-size: 0.65rem; letter-spacing: 1px; }
+            .login-card-inner { padding: 28px 20px; }
+            .login-logo { width: 64px; height: 64px; }
+            .developer-video-link { top: 12px; right: 12px; padding: 6px 12px 6px 6px; }
+            .dev-avatar { width: 28px; height: 28px; }
+            .dev-label { font-size: 0.7rem; }
+            .favicon-icon { width: 44px; height: 44px; font-size: 1.2rem; }
+            .favicon-label { font-size: 0.6rem; }
+            .security-toast { font-size: 0.75rem; padding: 10px 16px; }
+        }
+
+        @media (max-width: 380px) {
+            .favicon-links { gap: 12px !important; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* Selection disabled for security */
+        ::selection { background: transparent; }
+        ::-moz-selection { background: transparent; }
+
+        /* Shake Animation */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Remove any leftover modal styles (not needed, but kept for no-conflict) */
+        .custom-modal { display: none; } /* Hide any old modal containers if they still exist */
+    </style>
+</head>
+
+<body>
+    <!-- Background -->
+    <div class="bg-overlay"></div>
+    <div class="particle-container" id="particles"></div>
+
+    <!-- Developer Video Link - Top Right Corner (now direct hyperlink) -->
+    <a href="C:\Users\moinr\Desktop\to launch\aboutdeveloper.html" target="_blank" class="developer-video-link" id="devVideoBtn" title="About the Developer (opens new window)">
+        <img src="https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/11d1825d-d949-422d-9acc-76af8cd17e9a.png" alt="Developer" class="dev-avatar">
+        <span class="dev-label"><i class="bi bi-play-circle-fill"></i> Developer</span>
+    </a>
+
+    <!-- Main Container -->
+    <div class="main-container d-flex align-items-center justify-content-center min-vh-100">
+        <div class="login-wrapper">
+            <!-- Logo & Title -->
+            <div class="text-center mb-4">
+                <img src="https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/ccda845a-d9f3-4c25-b110-99647e3f934a.png" alt="SADWAP Logo" class="login-logo mb-3">
+                <h1 class="app-title">SADWAP</h1>
+                <p class="app-subtitle">Stand Alone Dynamic Web Application Program</p>
+            </div>
+
+            <!-- Login Card -->
+            <div class="login-card">
+                <div class="card-glow"></div>
+                <div class="login-card-inner">
+                    <h2 class="login-heading text-center mb-4">
+                        <i class="bi bi-shield-lock-fill me-2"></i>Secure Login
+                    </h2>
+
+                    <!-- Login Form -->
+                    <form id="loginForm" autocomplete="off">
+                        <!-- Username -->
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control custom-input" id="username" placeholder="Username" required autocomplete="off">
+                            <label for="username"><i class="bi bi-person-fill me-2"></i>Username</label>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="form-floating mb-3 position-relative">
+                            <input type="password" class="form-control custom-input" id="password" placeholder="Password" required autocomplete="off">
+                            <label for="password"><i class="bi bi-key-fill me-2"></i>Password</label>
+                            <button type="button" class="btn toggle-password" id="togglePassword" tabindex="-1">
+                                <i class="bi bi-eye-fill"></i>
+                            </button>
+                        </div>
+
+                        <!-- Remember Me & Forgot -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input custom-check" type="checkbox" id="rememberMe">
+                                <label class="form-check-label text-muted-custom" for="rememberMe">Remember me</label>
+                            </div>
+                            <a href="#" class="forgot-link">Forgot Password?</a>
+                        </div>
+
+                        <!-- Login Button -->
+                        <button type="submit" class="btn btn-login w-100 mb-4" id="loginBtn">
+                            <span class="btn-text">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>LOGIN
+                            </span>
+                            <span class="btn-loader d-none">
+                                <span class="spinner-border spinner-border-sm me-2"></span>Authenticating...
+                            </span>
+                        </button>
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="divider-container mb-4">
+                        <hr class="divider-line">
+                        <span class="divider-text">EXPLORE</span>
+                        <hr class="divider-line">
+                    </div>
+
+                    <!-- Three Favicon Hyperlinks (open in new window) -->
+                    <div class="d-flex justify-content-center gap-4 mb-3 favicon-links">
+                        <!-- SADWAP Introduction Video (local file) -->
+                        <a href="C:\Users\moinr\Desktop\to launch\aboutdeveloper.html" target="_blank" class="favicon-item" title="SADWAP Introduction (opens new window)">
+                            <div class="favicon-icon">
+                                <i class="bi bi-play-btn-fill"></i>
+                            </div>
+                            <span class="favicon-label">Introduction</span>
+                        </a>
+
+                        <!-- SADWAP Chatbot (local file) -->
+                        <a href="C:\Users\moinr\Desktop\to launch\chatbot.html" target="_blank" class="favicon-item" title="SADWAP Chatbot (opens new window)">
+                            <div class="favicon-icon">
+                                <i class="bi bi-robot"></i>
+                            </div>
+                            <span class="favicon-label">SADWAP Bot</span>
+                        </a>
+
+                        <!-- External Chatbot (DeepSeek) -->
+                        <a href="https://chat.deepseek.com/" target="_blank" class="favicon-item" title="External Chatbot (opens new window)">
+                            <div class="favicon-icon">
+                                <i class="bi bi-chat-dots-fill"></i>
+                            </div>
+                            <span class="favicon-label">External Bot</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <img src="https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/cc501092-cb27-4252-b200-0c7921b6f6f9.png" alt="GhostProductions" class="footer-logo">
+            <p class="footer-text">&copy; 2026 GhostProductions. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- No modals: all links open in new window -->
+
+    <!-- Security Warning Toast -->
+    <div class="security-toast" id="securityToast">
+        <i class="bi bi-shield-exclamation me-2"></i>
+        <span>Access Denied: Security protocols active</span>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- All JavaScript (modals removed, particles/security/login intact) -->
+    <script>
+        // ============================================
+        // SADWAP Login Page - JavaScript (modals removed)
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initParticles();
+            initSecurity();
+            initLoginForm();
+            initPasswordToggle();
+            // No initModals or initDevVideoLink needed — all handled by hyperlinks.
+        });
+
+        // ============================================
+        // 1. Floating Particles (unchanged)
+        // ============================================
+        function initParticles() {
+            var container = document.getElementById('particles');
+            if (!container) return;
+            var particleCount = 30;
+
+            for (var i = 0; i < particleCount; i++) {
+                var particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (6 + Math.random() * 6) + 's';
+                var size = 2 + Math.random() * 3;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.background = Math.random() > 0.5 ? '#00ff88' : '#7c3aed';
+                container.appendChild(particle);
+            }
+        }
+
+        // ============================================
+        // 2. Security Features (unchanged)
+        // ============================================
+        function initSecurity() {
+            document.addEventListener('contextmenu', function (e) {
+                e.preventDefault();
+                showSecurityToast();
+                return false;
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'F12' || e.keyCode === 123) {
+                    e.preventDefault();
+                    showSecurityToast();
+                    return false;
+                }
+                if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.keyCode === 73)) {
+                    e.preventDefault();
+                    showSecurityToast();
+                    return false;
+                }
+                if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j' || e.keyCode === 74)) {
+                    e.preventDefault();
+                    showSecurityToast();
+                    return false;
+                }
+                if (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c' || e.keyCode === 67)) {
+                    e.preventDefault();
+                    showSecurityToast();
+                    return false;
+                }
+                if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) {
+                    e.preventDefault();
+                    showSecurityToast();
+                    return false;
+                }
+                if (e.ctrlKey && (e.key === 'S' || e.key === 's' || e.keyCode === 83)) {
+                    e.preventDefault();
+                    return false;
+                }
+                if (e.ctrlKey && e.shiftKey && (e.key === 'K' || e.key === 'k' || e.keyCode === 75)) {
+                    e.preventDefault();
+                    showSecurityToast();
+                    return false;
+                }
+            });
+
+            document.addEventListener('dragstart', function (e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('copy', function (e) {
+                e.preventDefault();
+            });
+            document.addEventListener('cut', function (e) {
+                e.preventDefault();
+            });
+
+            var devToolsOpen = false;
+            var threshold = 160;
+
+            setInterval(function () {
+                var widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                var heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                if (widthThreshold || heightThreshold) {
+                    if (!devToolsOpen) {
+                        devToolsOpen = true;
+                        showSecurityToast();
+                    }
+                } else {
+                    devToolsOpen = false;
+                }
+            }, 1000);
+
+            console.log('%c⚠️ SECURITY WARNING', 'color: #f85149; font-size: 24px; font-weight: bold;');
+            console.log('%cThis browser feature is intended for developers. If someone told you to copy-paste something here, it is a scam.', 'color: #e6edf3; font-size: 14px;');
+        }
+
+        function showSecurityToast() {
+            var toast = document.getElementById('securityToast');
+            if (!toast) return;
+            toast.classList.add('show');
+            setTimeout(function () {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // ============================================
+        // 3. Login Form (unchanged)
+        // ============================================
+        function initLoginForm() {
+            var form = document.getElementById('loginForm');
+            if (!form) return;
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                var username = document.getElementById('username').value.trim();
+                var password = document.getElementById('password').value.trim();
+                var loginBtn = document.getElementById('loginBtn');
+                var btnText = loginBtn.querySelector('.btn-text');
+                var btnLoader = loginBtn.querySelector('.btn-loader');
+
+                if (!username || !password) {
+                    shakeElement(form);
+                    return;
+                }
+
+                btnText.classList.add('d-none');
+                btnLoader.classList.remove('d-none');
+                loginBtn.disabled = true;
+
+                setTimeout(function () {
+                    btnText.classList.remove('d-none');
+                    btnLoader.classList.add('d-none');
+                    loginBtn.disabled = false;
+
+                    loginBtn.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>AUTHENTICATED';
+                    loginBtn.style.background = 'linear-gradient(135deg, #00ff88, #00cc6a)';
+
+                    setTimeout(function () {
+                        loginBtn.innerHTML = '<span class="btn-text"><i class="bi bi-box-arrow-in-right me-2"></i>LOGIN</span><span class="btn-loader d-none"><span class="spinner-border spinner-border-sm me-2"></span>Authenticating...</span>';
+                        loginBtn.style.background = '';
+                        form.reset();
+                    }, 2000);
+                }, 1800);
+            });
+        }
+
+        function shakeElement(el) {
+            el.style.animation = 'none';
+            el.offsetHeight;
+            el.style.animation = 'shake 0.5s ease';
+            setTimeout(function () {
+                el.style.animation = '';
+            }, 500);
+        }
+
+        // ============================================
+        // 4. Password Toggle (unchanged)
+        // ============================================
+        function initPasswordToggle() {
+            var toggleBtn = document.getElementById('togglePassword');
+            var passwordInput = document.getElementById('password');
+            if (!toggleBtn || !passwordInput) return;
+
+            toggleBtn.addEventListener('click', function () {
+                var icon = toggleBtn.querySelector('i');
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.remove('bi-eye-fill');
+                    icon.classList.add('bi-eye-slash-fill');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.remove('bi-eye-slash-fill');
+                    icon.classList.add('bi-eye-fill');
+                }
+            });
+        }
+
+        // All modal functions removed (initModals, openModal, closeModal, initDevVideoLink)
+        // Hyperlinks now handle everything with target="_blank"
+    </script>
+</body>
+
+</html>

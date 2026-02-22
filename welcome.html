@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SADWAP · Mobile</title>
+    <!-- Bootstrap 5 CSS (lightweight) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts (Inter + Orbitron for headings) -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #000000;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+        }
+
+        /* ---- main mobile card (looks like a phone screen) ---- */
+        .mobile-frame {
+            width: 100%;
+            max-width: 380px;
+            background: #0b0f15;
+            border-radius: 42px;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.9), 0 0 0 8px #1e2632, 0 0 0 12px #0a0c12;
+            overflow: hidden;
+            position: relative;
+            backdrop-filter: blur(2px);
+            aspect-ratio: 9 / 19;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Video background – with sound (muted removed) */
+        .bg-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* everything on top of video */
+        .screen-content {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 16px 12px 12px 12px;
+            background: rgba(0, 0, 0, 0.25); /* semi-transparent overlay to make icons pop */
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #00ff8844 #1a1f2a;
+        }
+
+        .screen-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        .screen-content::-webkit-scrollbar-track {
+            background: #1a1f2a;
+        }
+        .screen-content::-webkit-scrollbar-thumb {
+            background: #00ff88;
+            border-radius: 20px;
+        }
+
+        /* ---- top bar with logo and slide hint ---- */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 0 4px;
+        }
+        .logo-mini {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .top-logo-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 16px;
+            border: 2px solid #00ff88;
+            object-fit: cover;
+            box-shadow: 0 0 18px #00ff8844;
+        }
+        .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.0rem;
+            letter-spacing: 1.5px;
+            background: linear-gradient(130deg, #00ffcc, #aa88ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 6px #00ffaa88;
+        }
+        .slide-indicator {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid #ffffff26;
+            border-radius: 40px;
+            padding: 6px 14px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #ccddee;
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .slide-indicator i {
+            color: #00ffaa;
+            font-size: 0.9rem;
+            animation: bounceDown 1.8s infinite ease;
+        }
+        @keyframes bounceDown {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(4px); }
+        }
+
+        /* ---- grid of apps – three tiles, centered nicely ---- */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px 15px;
+            margin: 20px 0 20px;
+            padding: 4px 8px;
+            justify-items: center;
+        }
+
+        .app-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            transition: transform 0.15s ease;
+            width: 100%;
+        }
+        .app-item:active {
+            transform: scale(0.94);
+        }
+
+        .app-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 24px;
+            background: rgba(31, 41, 55, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 12px 24px -8px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.15);
+            overflow: hidden;
+            margin-bottom: 8px;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+        }
+        .app-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .app-name {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #ffffff;
+            text-shadow: 0 2px 8px black;
+            max-width: 80px;
+            text-align: center;
+            line-height: 1.3;
+            letter-spacing: 0.3px;
+            background: rgba(0, 10, 10, 0.5);
+            padding: 4px 8px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* optional subtitle */
+        .more-hint {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0 20px;
+        }
+        .more-chip {
+            background: rgba(30, 40, 60, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 60px;
+            padding: 10px 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #ccddee;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #00ff8833;
+            box-shadow: 0 0 15px #00ff8822;
+        }
+
+        /* home bar */
+        .home-bar {
+            margin-top: auto;
+            display: flex;
+            justify-content: center;
+            padding: 16px 0 8px;
+        }
+        .home-indicator {
+            width: 130px;
+            height: 5px;
+            background: #d9e2ef;
+            border-radius: 30px;
+            opacity: 0.7;
+        }
+
+        /* security toast */
+        .security-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(248, 81, 73, 0.2);
+            border: 1px solid #f85149aa;
+            color: #faa;
+            padding: 10px 22px;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 9999;
+            opacity: 0;
+            transition: 0.3s;
+            backdrop-filter: blur(12px);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        .security-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 360px) {
+            .app-icon { width: 65px; height: 65px; }
+            .app-name { font-size: 0.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- floating security toast -->
+<div class="security-toast" id="securityToast">
+    <i class="bi bi-shield-exclamation me-2"></i>
+    <span>Access Denied: Security active</span>
+</div>
+
+<!-- Main mobile screen -->
+<div class="mobile-frame">
+
+    <!-- VIDEO BACKGROUND (with sound – no muted attribute) -->
+    <video class="bg-video" autoplay loop playsinline>
+        <!-- Source file with audio -->
+        <source src="C:\Users\moinr\Desktop\to launch\bgv.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- screen content -->
+    <div class="screen-content" id="screenContent">
+
+        <!-- top section: logo + slide hint -->
+        <div class="top-bar">
+            <div class="logo-mini">
+                <img src="https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/ccda845a-d9f3-4c25-b110-99647e3f934a.png" 
+                     alt="logo" 
+                     class="top-logo-img"
+                     onerror="this.src='https://via.placeholder.com/40x40?text=SAD'; this.style.borderRadius='16px';">
+                <span class="logo-text">SADWAP</span>
+            </div>
+            <div class="slide-indicator">
+                <i class="bi bi-arrow-down-short"></i> <span>tools</span> <i class="bi bi-arrow-down-short"></i>
+            </div>
+        </div>
+
+        <!-- ===== THREE SPECIFIC APPS (no links) ===== -->
+        <div class="app-grid">
+            <!-- 1. Kudu Assistant (chatbot) -->
+            <div class="app-item" title="Kudu Assistant chatbot">
+                <div class="app-icon">
+                    <img src="https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="kudu assistant">
+                </div>
+                <span class="app-name">Kudu Assistant</span>
+            </div>
+
+            <!-- 2. Expiration Tracker -->
+            <div class="app-item" title="Expiration tracker">
+                <div class="app-icon">
+                    <img src="https://images.pexels.com/photos/298863/pexels-photo-298863.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="expiration tracker">
+                </div>
+                <span class="app-name">Expiration Tracker</span>
+            </div>
+
+            <!-- 3. Sales Tracker -->
+            <div class="app-item" title="Sales tracker">
+                <div class="app-icon">
+                    <img src="https://images.pexels.com/photos/730564/pexels-photo-730564.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="sales tracker">
+                </div>
+                <span class="app-name">Sales Tracker</span>
+            </div>
+        </div>
+
+        <!-- subtle hint -->
+        <div class="more-hint" id="moreAppsHint">
+            <div class="more-chip">
+                <i class="bi bi-grid"></i> business tools <i class="bi bi-grid"></i>
+            </div>
+        </div>
+
+        <!-- home bar -->
+        <div class="home-bar">
+            <div class="home-indicator"></div>
+        </div>
+    </div> <!-- /.screen-content -->
+</div> <!-- /.mobile-frame -->
+
+<!-- Bootstrap JS (optional) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- simple security & scroll hint + video audio unblock helper -->
+<script>
+    (function() {
+        const toast = document.getElementById('securityToast');
+        function showToast() {
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+        document.addEventListener('contextmenu', (e) => { e.preventDefault(); showToast(); });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault(); showToast();
+            }
+        });
+
+        // scroll hint fade (just for aesthetics)
+        const screen = document.getElementById('screenContent');
+        const moreHint = document.getElementById('moreAppsHint');
+        if (screen && moreHint) {
+            screen.addEventListener('scroll', function() {
+                if (screen.scrollTop > 15) {
+                    moreHint.style.opacity = '0.3';
+                    moreHint.style.transition = '0.3s';
+                } else {
+                    moreHint.style.opacity = '1';
+                }
+            });
+        }
+
+        // Attempt to ensure video plays with sound (browsers may block autoplay with audio)
+        const video = document.querySelector('.bg-video');
+        if (video) {
+            // Browsers often block autoplay with sound; we try to play and if fails,
+            // we wait for any user interaction to enable sound.
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    // Autoplay with sound was blocked.
+                    // Add a one-time event listener to play on first interaction
+                    const enableAudio = () => {
+                        video.play();
+                        document.removeEventListener('touchstart', enableAudio);
+                        document.removeEventListener('click', enableAudio);
+                    };
+                    document.addEventListener('touchstart', enableAudio);
+                    document.addEventListener('click', enableAudio);
+                    
+                    // Also show a subtle hint? not necessary but can be added.
+                });
+            }
+        }
+    })();
+</script>
+
+</body>
+</html>
