@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Sales Dashboard · Mobile (SAR)</title>
+    <!-- Bootstrap 5 (minimal) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF + AutoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        :root {
+            --primary: #4a90e2;
+            --primary-dark: #1a56db;
+            --success: #00d97e;
+            --warning: #f6c343;
+            --danger: #e63757;
+            --achieved: #9c5fff;
+            --bg-dark: #121212;
+            --card-bg: #1e1e1e;
+            --text-light: #e0e0e0;
+            --text-muted: #9e9e9e;
+            --border: #333333;
+            --chart-bg: #2d2d2d;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-light);
+            margin: 0;
+            padding: 10px 6px 30px;
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            padding: 0 4px;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #1a56db 100%);
+            border-radius: 20px;
+            padding: 16px 12px;
+            margin-bottom: 18px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+        }
+
+        .dashboard-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .month-selector {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 30px;
+            padding: 8px 12px;
+        }
+
+        .month-selector label {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        #month-select {
+            background: #2d2d2d;
+            color: white;
+            border: 1px solid #4a90e2;
+            border-radius: 40px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        /* summary cards row */
+        .row {
+            margin-left: -4px;
+            margin-right: -4px;
+        }
+
+        .col-md-3 {
+            padding-left: 4px;
+            padding-right: 4px;
+        }
+
+        .summary-card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 12px 8px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        }
+
+        .summary-card .label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .summary-card .value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 6px 0 4px;
+            color: white;
+        }
+
+        .progress {
+            height: 6px;
+            background: #2d2d2d;
+            border-radius: 10px;
+        }
+
+        .progress-bar {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        /* notification panel */
+        .notification-panel {
+            background: var(--card-bg);
+            border-radius: 22px;
+            padding: 16px 14px;
+            margin: 20px 0 16px;
+            border: 1px solid var(--border);
+        }
+
+        .notification-panel h5 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .notification-item {
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.03);
+            border-left: 4px solid var(--primary);
+            font-size: 0.85rem;
+            word-break: break-word;
+        }
+
+        /* chart */
+        #chart-container {
+            height: 250px;
+            background: var(--chart-bg);
+            border-radius: 24px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            margin: 12px 0;
+        }
+
+        canvas {
+            max-height: 100%;
+            width: 100% !important;
+        }
+
+        /* table */
+        .card {
+            background: var(--card-bg);
+            border-radius: 26px;
+            border: 1px solid var(--border);
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: rgba(74, 144, 226, 0.15);
+            padding: 14px 16px;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table {
+            color: var(--text-light);
+            border-color: var(--border);
+            min-width: 800px; /* allows horizontal scroll */
+            font-size: 0.8rem;
+        }
+
+        .table th {
+            background: #2a2a3a;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.7rem;
+            padding: 10px 6px;
+            white-space: nowrap;
+        }
+
+        .table td {
+            padding: 8px 6px;
+            vertical-align: middle;
+            border-color: var(--border);
+        }
+
+        .sales-input {
+            width: 80px;
+            background: #2d2d2d;
+            border: 1px solid #4f5b7a;
+            border-radius: 20px;
+            padding: 10px 8px;
+            color: white;
+            font-size: 0.8rem;
+            text-align: center;
+            -moz-appearance: textfield;
+        }
+
+        .sales-input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .result-cell {
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-align: center;
+        }
+
+        .total-row td {
+            background: #262b3f;
+            font-weight: 700;
+            color: #cbd5f0;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            padding: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1 1 0;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 14px 8px;
+            border: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            background: #2d2d2d;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(145deg, #4a90e2, #1a56db);
+        }
+
+        .btn-danger {
+            background: linear-gradient(145deg, #e63757, #b91c3d);
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        /* color classes */
+        .text-success { color: #00d97e !important; }
+        .text-warning { color: #f6c343 !important; }
+        .text-danger { color: #e63757 !important; }
+        .text-achieved { color: #9c5fff !important; }
+
+        .currency-symbol {
+            font-size: 0.7rem;
+            margin-right: 2px;
+            opacity: 0.8;
+        }
+
+        .saudi-flag {
+            display: inline-block;
+            width: 24px;
+            height: 18px;
+            background: linear-gradient(to right, #006233 0%, #006233 33%, white 33%, white 66%, #006233 66%, #006233 100%);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .saudi-flag::after {
+            content: "";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            color: white;
+            position: absolute;
+            top: 2px;
+            left: 6px;
+            font-size: 10px;
+        }
+
+        @media (max-width: 400px) {
+            .summary-card .value { font-size: 1rem; }
+            .summary-card .label { font-size: 0.6rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- HEADER -->
+    <h2><i class="fas fa-chart-line me-1"></i> <span class="saudi-flag"></span> SALES DASHBOARD (SAR)</h2>
+    <div class="dashboard-header">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <h3 class="mb-0"><i class="fas fa-calendar-alt me-1"></i> SAUDI TRACKER</h3>
+            <div class="month-selector">
+                <label for="month-select" class="text-white">MONTH:</label>
+                <select id="month-select" class="form-select">
+                    <option value="January">JAN</option><option value="February">FEB</option><option value="March">MAR</option>
+                    <option value="April">APR</option><option value="May">MAY</option><option value="June">JUN</option>
+                    <option value="July">JUL</option><option value="August">AUG</option><option value="September">SEP</option>
+                    <option value="October">OCT</option><option value="November">NOV</option><option value="December">DEC</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUMMARY CARDS (4 per row, mobile friendly) -->
+    <div class="row g-1">
+        <div class="col-6 col-md-3"><div class="summary-card"><div class="label">MTD SALES</div><div class="value" id="mtd-sales"><span class="currency-symbol">SAR</span>0</div><div class="progress"><div class="progress-bar" id="mtd-sales-progress" style="width:0%"></div></div></div></div>
+        <div class="col-6 col-md-3"><div class="summary-card"><div class="label">MTD TARGET</div><div class="value" id="mtd-target"><span class="currency-symbol">SAR</span>0</div><div class="progress"><div class="progress-bar" id="mtd-target-progress" style="width:0%"></div></div></div></div>
+        <div class="col-6 col-md-3"><div class="summary-card"><div class="label">ACHIEVEMENT</div><div class="value" id="achievement-rate">0%</div><div class="progress"><div class="progress-bar" id="achievement-progress" style="width:0%"></div></div></div></div>
+        <div class="col-6 col-md-3"><div class="summary-card"><div class="label">GROWTH</div><div class="value" id="growth-rate">0%</div><div class="progress"><div class="progress-bar" id="growth-progress" style="width:0%"></div></div></div></div>
+    </div>
+
+    <!-- NOTIFICATIONS + TREND ANALYSIS (TARGET PREDICTION) -->
+    <div class="notification-panel">
+        <h5><i class="fas fa-chart-simple me-2"></i> TREND & TARGET FORECAST</h5>
+        <div id="trend-analysis" style="font-size:0.9rem; margin-bottom:10px; padding:8px; background:#2a2f42; border-radius:16px;"></div>
+        <div id="notifications-container"></div>
+    </div>
+
+    <!-- CHART -->
+    <div id="chart-container">
+        <canvas id="performance-chart"></canvas>
+    </div>
+
+    <!-- DATA TABLE CARD -->
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-table me-2"></i> DAILY SALES (SAR) · scroll →
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-bordered mb-0">
+                    <thead>
+                        <tr>
+                            <th>DAY</th><th>SALES</th><th>TARGET</th><th>LAST YR</th><th>T.C%</th><th>A.C</th><th>ACH%</th><th>GROWTH%</th><th>AVG%</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-table-body"></tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td>TOTAL</td>
+                            <td id="total-sales">SAR0</td>
+                            <td id="total-target">SAR0</td>
+                            <td id="total-lastyear">SAR0</td>
+                            <td id="total-tc">0%</td>
+                            <td id="total-ac">0</td>
+                            <td id="total-achieved">0%</td>
+                            <td id="total-growth">0%</td>
+                            <td id="total-average">0%</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="btn-container">
+                <button class="btn btn-primary" id="exportPdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                <button class="btn btn-danger" id="clearAll"><i class="fas fa-trash-alt"></i> CLEAR</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    let currentMonth = "January";
+    const salesData = {}, targetData = {}, lastYearData = {}, tcData = {}, acData = {}, achievedData = {}, growthData = {}, averageData = {};
+    let chart = null;
+
+    months.forEach(m => {
+        salesData[m] = JSON.parse(localStorage.getItem(`salesData_${m}`)) || Array(30).fill('');
+        targetData[m] = JSON.parse(localStorage.getItem(`targetData_${m}`)) || Array(30).fill('');
+        lastYearData[m] = JSON.parse(localStorage.getItem(`lastYearData_${m}`)) || Array(30).fill('');
+        tcData[m] = JSON.parse(localStorage.getItem(`tcData_${m}`)) || Array(30).fill('');
+        acData[m] = JSON.parse(localStorage.getItem(`acData_${m}`)) || Array(30).fill('');
+        achievedData[m] = JSON.parse(localStorage.getItem(`achievedData_${m}`)) || Array(30).fill('');
+        growthData[m] = JSON.parse(localStorage.getItem(`growthData_${m}`)) || Array(30).fill('');
+        averageData[m] = JSON.parse(localStorage.getItem(`averageData_${m}`)) || Array(30).fill('');
+    });
+
+    function formatSAR(val) { return Math.round(val).toLocaleString('en-US'); }
+
+    function calculateAC(sales, tc) { return tc > 0 ? sales / tc : 0; }
+
+    function saveData() {
+        localStorage.setItem(`salesData_${currentMonth}`, JSON.stringify(salesData[currentMonth]));
+        localStorage.setItem(`targetData_${currentMonth}`, JSON.stringify(targetData[currentMonth]));
+        localStorage.setItem(`lastYearData_${currentMonth}`, JSON.stringify(lastYearData[currentMonth]));
+        localStorage.setItem(`tcData_${currentMonth}`, JSON.stringify(tcData[currentMonth]));
+        localStorage.setItem(`acData_${currentMonth}`, JSON.stringify(acData[currentMonth]));
+        localStorage.setItem(`achievedData_${currentMonth}`, JSON.stringify(achievedData[currentMonth]));
+        localStorage.setItem(`growthData_${currentMonth}`, JSON.stringify(growthData[currentMonth]));
+        localStorage.setItem(`averageData_${currentMonth}`, JSON.stringify(averageData[currentMonth]));
+    }
+
+    function generateTable() {
+        const tbody = $("#sales-table-body");
+        tbody.empty();
+        for (let i=1; i<=30; i++) {
+            const sales = salesData[currentMonth][i-1] || '';
+            const target = targetData[currentMonth][i-1] || '';
+            const lastYear = lastYearData[currentMonth][i-1] || '';
+            const tc = tcData[currentMonth][i-1] || '';
+            tbody.append(`
+                <tr>
+                    <td>${i}</td>
+                    <td><input type="number" class="sales-input" id="sales-${i}" value="${sales}" placeholder="0"></td>
+                    <td><input type="number" class="sales-input" id="target-${i}" value="${target}" placeholder="0"></td>
+                    <td><input type="number" class="sales-input" id="lastYear-${i}" value="${lastYear}" placeholder="0"></td>
+                    <td><input type="number" class="sales-input" id="tc-${i}" value="${tc}" placeholder="0" min="0" max="100"></td>
+                    <td class="result-cell" id="ac-${i}">0</td>
+                    <td class="result-cell" id="achieved-${i}">0%</td>
+                    <td class="result-cell" id="growth-${i}">0%</td>
+                    <td class="result-cell" id="average-${i}">0%</td>
+                </tr>
+            `);
+        }
+    }
+
+    function updateResults() {
+        let totalSales=0, totalTarget=0, totalLastYear=0, totalTC=0, totalAC=0, totalAchieved=0, totalGrowth=0, totalAverage=0, validDays=0;
+        const today = new Date().getDate();
+        growthData[currentMonth]=[]; averageData[currentMonth]=[];
+
+        for (let i=1; i<=30; i++) {
+            const sales = parseFloat($(`#sales-${i}`).val()) || 0;
+            const target = parseFloat($(`#target-${i}`).val()) || 0;
+            const lastYear = parseFloat($(`#lastYear-${i}`).val()) || 0;
+            const tc = parseFloat($(`#tc-${i}`).val()) || 0;
+            const ac = calculateAC(sales, tc);
+            const achieved = target > 0 ? (sales/target)*100 : 0;
+            const growth = lastYear > 0 ? ((sales-lastYear)/lastYear)*100 : 0;
+            const avg = (ac + growth)/2;
+
+            $(`#ac-${i}`).text(ac.toFixed(1));
+            $(`#achieved-${i}`).text(achieved.toFixed(1)+'%');
+            $(`#growth-${i}`).text(growth.toFixed(1)+'%');
+            $(`#average-${i}`).text(avg.toFixed(1)+'%');
+
+            // color classes
+            const acEl = $(`#ac-${i}`); acEl.removeClass('text-success text-warning text-danger').addClass(ac >= 20 ? 'text-success' : ac >= 10 ? 'text-warning' : 'text-danger');
+            const achEl = $(`#achieved-${i}`); achEl.removeClass('text-success text-warning text-danger').addClass(achieved >= 105 ? 'text-success' : achieved >= 100 ? 'text-warning' : 'text-danger');
+            const growthEl = $(`#growth-${i}`); growthEl.removeClass('text-success text-warning text-danger').addClass(growth > 0 ? 'text-success' : growth === 0 ? 'text-warning' : 'text-danger');
+            const avgEl = $(`#average-${i}`); avgEl.removeClass('text-success text-warning text-danger').addClass(avg >= 20 ? 'text-success' : avg >= 10 ? 'text-warning' : 'text-danger');
+
+            salesData[currentMonth][i-1] = sales;
+            targetData[currentMonth][i-1] = target;
+            lastYearData[currentMonth][i-1] = lastYear;
+            tcData[currentMonth][i-1] = tc;
+            acData[currentMonth][i-1] = ac;
+            achievedData[currentMonth][i-1] = achieved;
+            growthData[currentMonth][i-1] = growth;
+            averageData[currentMonth][i-1] = avg;
+
+            if (sales||target||lastYear||tc) {
+                totalSales += sales; totalTarget += target; totalLastYear += lastYear;
+                totalTC += tc; totalAC += ac; totalAchieved += achieved;
+                totalGrowth += growth; totalAverage += avg; validDays++;
+            }
+        }
+
+        $("#total-sales").html('SAR '+formatSAR(totalSales));
+        $("#total-target").html('SAR '+formatSAR(totalTarget));
+        $("#total-lastyear").html('SAR '+formatSAR(totalLastYear));
+        const avgTC = validDays? totalTC/validDays:0, avgAC = validDays? totalAC/validDays:0, avgAch = validDays? totalAchieved/validDays:0, avgGr = validDays? totalGrowth/validDays:0, avgAvg = validDays? totalAverage/validDays:0;
+        $("#total-tc").text(avgTC.toFixed(1)+'%'); $("#total-ac").text(avgAC.toFixed(1)); $("#total-achieved").text(avgAch.toFixed(1)+'%'); $("#total-growth").text(avgGr.toFixed(1)+'%'); $("#total-average").text(avgAvg.toFixed(1)+'%');
+        // color totals
+        $("#total-tc").removeClass().addClass(avgTC <=0 ? 'text-success' : avgTC <=20 ? 'text-warning' : 'text-danger');
+        $("#total-ac").removeClass().addClass(avgAC >=20 ? 'text-success' : avgAC >=10 ? 'text-warning' : 'text-danger');
+        $("#total-achieved").removeClass().addClass(avgAch >=105 ? 'text-success' : avgAch >=100 ? 'text-warning' : 'text-danger');
+        $("#total-growth").removeClass().addClass(avgGr >0 ? 'text-success' : avgGr===0 ? 'text-warning' : 'text-danger');
+        $("#total-average").removeClass().addClass(avgAvg >=20 ? 'text-success' : avgAvg >=10 ? 'text-warning' : 'text-danger');
+
+        // MTD up to yesterday
+        const yesterday = today>1 ? today-1 : 30;
+        let mtdSales=0, mtdTarget=0, mtdLastYear=0, mtdTC=0, mtdAC=0, mtdAchieved=0, mtdAvg=0, mtdValid=0;
+        for (let i=1; i<=yesterday && i<=30; i++) {
+            const s = parseFloat(salesData[currentMonth][i-1])||0;
+            const t = parseFloat(targetData[currentMonth][i-1])||0;
+            const ly = parseFloat(lastYearData[currentMonth][i-1])||0;
+            const tc = parseFloat(tcData[currentMonth][i-1])||0;
+            mtdSales += s; mtdTarget += t; mtdLastYear += ly; mtdTC += tc;
+            const ac = calculateAC(s,tc); mtdAC += ac;
+            const ach = t>0 ? (s/t)*100:0; mtdAchieved += ach;
+            const gr = ly>0 ? ((s-ly)/ly)*100:0; mtdAvg += (ac+gr)/2;
+            if (s||t||ly||tc) mtdValid++;
+        }
+        const mtdAchRate = mtdTarget>0 ? (mtdSales/mtdTarget)*100:0;
+        const mtdGrowth = mtdLastYear>0 ? ((mtdSales-mtdLastYear)/mtdLastYear)*100:0;
+
+        $("#mtd-sales").html('<span class="currency-symbol">SAR</span> '+formatSAR(mtdSales));
+        $("#mtd-target").html('<span class="currency-symbol">SAR</span> '+formatSAR(mtdTarget));
+        $("#achievement-rate").text(mtdAchRate.toFixed(1)+'%');
+        $("#growth-rate").text(mtdGrowth.toFixed(1)+'%');
+        $("#mtd-sales-progress").width(Math.min((mtdSales/(totalTarget||1))*100,100)+'%');
+        $("#mtd-target-progress").width(Math.min((mtdTarget/(totalTarget||1))*100,100)+'%');
+        $("#achievement-progress").width(Math.min(mtdAchRate,100)+'%');
+        $("#growth-progress").width(Math.min(Math.abs(mtdGrowth),100)+'%');
+
+        saveData();
+        updateChart();
+        // Pass extra params to trend function
+        updateTrendAndNotifications(mtdSales, mtdTarget, totalTarget, mtdAchRate, mtdGrowth, today, mtdAC, mtdTC, mtdAvg, mtdValid, validDays, totalTarget);
+    }
+
+    function updateChart() {
+        const ctx = document.getElementById("performance-chart").getContext("2d");
+        if (chart) chart.destroy();
+        chart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: Array.from({length:30}, (_,i)=>`D${i+1}`),
+                datasets: [
+                    { label: "A.C", data: acData[currentMonth], borderColor: "#2c7be5", backgroundColor: "rgba(44,123,229,0.1)", borderWidth:2, tension:0.3, pointBackgroundColor:"#2c7be5", yAxisID:'y' },
+                    { label: "Growth %", data: growthData[currentMonth], borderColor: "#00d97e", backgroundColor: "rgba(0,217,126,0.1)", borderWidth:2, tension:0.3, pointBackgroundColor:"#00d97e", yAxisID:'y1' },
+                    { label: "TC %", data: tcData[currentMonth], borderColor: "#f6c343", backgroundColor: "rgba(246,195,67,0.1)", borderWidth:2, tension:0.3, pointBackgroundColor:"#f6c343", yAxisID:'y' },
+                    { label: "ACH %", data: achievedData[currentMonth], borderColor: "#9c5fff", backgroundColor: "rgba(156,95,255,0.1)", borderWidth:2, tension:0.3, pointBackgroundColor:"#9c5fff", yAxisID:'y' }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { labels: { color:'#e0e0e0', font:{size:9} } } },
+                scales: {
+                    x: { ticks: { color:'#9e9e9e', font:{size:8} } },
+                    y: { position:'left', ticks: { color:'#9e9e9e', callback: (v) => v.toFixed(0) } },
+                    y1: { position:'right', ticks: { color:'#9e9e9e', callback: (v) => v+'%' } }
+                }
+            }
+        });
+    }
+
+    // New function: trend analysis based on previous days' achievement and target forecast
+    function updateTrendAndNotifications(mtdSales, mtdTarget, totalMonthlyTarget, mtdAch, mtdGrowth, today, mtdAC, mtdTC, mtdAvg, mtdValid, validDays, totalTargetSum) {
+        const notif = $("#notifications-container");
+        notif.empty();
+
+        // ----- TARGET PREDICTION LOGIC -----
+        let predictionText = "";
+        let predictionClass = "";
+
+        // calculate average daily achievement % for days with target >0
+        let totalAchievementPercent = 0;
+        let countValidTargetDays = 0;
+        for (let i=1; i<=today-1; i++) { // up to yesterday
+            const t = parseFloat(targetData[currentMonth][i-1]) || 0;
+            const s = parseFloat(salesData[currentMonth][i-1]) || 0;
+            if (t > 0) {
+                totalAchievementPercent += (s / t) * 100;
+                countValidTargetDays++;
+            }
+        }
+        const avgAchievementPercent = countValidTargetDays > 0 ? totalAchievementPercent / countValidTargetDays : 100;
+
+        // Calculate remaining target (total monthly target - mtdTarget)
+        const remainingTarget = totalMonthlyTarget - mtdTarget;
+        // Average remaining days (from tomorrow to 30)
+        const remainingDays = 30 - today + 1; // inclusive of today? we use tomorrow onward
+        let requiredDailySales = 0;
+        if (remainingDays > 0 && remainingTarget > 0) {
+            requiredDailySales = remainingTarget / remainingDays;
+        }
+
+        // project expected sales based on avg achievement applied to future targets (if available)
+        let projectedTotal = mtdSales;
+        let futureTargetSum = 0;
+        for (let i=today; i<=30; i++) {
+            const t = parseFloat(targetData[currentMonth][i-1]) || 0;
+            futureTargetSum += t;
+        }
+        // use avg achievement percent to forecast future sales
+        const projectedFutureSales = (avgAchievementPercent / 100) * futureTargetSum;
+        projectedTotal += projectedFutureSales;
+
+        const finalProjectedAchievement = totalMonthlyTarget > 0 ? (projectedTotal / totalMonthlyTarget) * 100 : 0;
+
+        // Determine prediction message
+        if (finalProjectedAchievement >= 105) {
+            predictionText = `✅ TARGET FORECAST: Will EXCEED (${finalProjectedAchievement.toFixed(1)}%) – likely above target.`;
+            predictionClass = 'text-success';
+        } else if (finalProjectedAchievement >= 100) {
+            predictionText = `⚠️ TARGET FORECAST: On track to ACHIEVE (${finalProjectedAchievement.toFixed(1)}%) – close to target.`;
+            predictionClass = 'text-warning';
+        } else {
+            predictionText = `❌ TARGET FORECAST: Likely to MISS (${finalProjectedAchievement.toFixed(1)}%) – below target.`;
+            predictionClass = 'text-danger';
+        }
+
+        // Also include required daily sales
+        const requiredText = remainingTarget > 0 ? ` | Need SAR ${formatSAR(requiredDailySales)}/day remaining.` : ' | No remaining target.';
+
+        $("#trend-analysis").html(`
+            <div class="${predictionClass}" style="font-weight:600;">${predictionText}</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);">Avg past achievement: ${avgAchievementPercent.toFixed(1)}% ${requiredText}</div>
+        `);
+
+        // ----- REGULAR NOTIFICATIONS (keep some) -----
+        const avgDaily = mtdValid>0 ? mtdSales/mtdValid : 0;
+        const mtdACavg = mtdValid>0 ? mtdAC/mtdValid : 0;
+        const mtdTCavg = mtdValid>0 ? mtdTC/mtdValid : 0;
+        const mtdAvgVal = mtdValid>0 ? mtdAvg/mtdValid : 0;
+        const notifList = [
+            { text: `MTD achievement: ${mtdAch.toFixed(1)}%`, type: mtdAch>=100?'success': mtdAch>=80?'warning':'danger' },
+            { text: `Avg daily sales: SAR ${formatSAR(avgDaily)}`, type: avgDaily>= (mtdTarget/mtdValid) ? 'success':'warning' },
+            { text: `Avg AC: ${mtdACavg.toFixed(1)}`, type: mtdACavg>=20?'success': mtdACavg>=10?'warning':'danger' },
+        ];
+        notifList.forEach(n => {
+            notif.append(`<div class="notification-item ${n.type}"><i class="fas fa-${n.type==='success'?'check-circle': n.type==='warning'?'exclamation-triangle':'exclamation-circle'} me-2"></i>${n.text}</div>`);
+        });
+    }
+
+    async function exportToPDF() {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('landscape');
+        pdf.setFont('helvetica','bold'); pdf.setTextColor(44,123,229); pdf.setFontSize(16);
+        pdf.text(`SALES REPORT - ${currentMonth} (SAR)`,14,15);
+        pdf.setFontSize(10); pdf.setTextColor(110,132,163);
+        pdf.text(`Generated: ${new Date().toLocaleString()}`,14,22);
+        pdf.autoTable({ html:'#sales-table-body', startY:30, head:[['DAY','SALES','TARGET','LAST YR','TC%','AC','ACH%','GROWTH%','AVG%']] });
+        pdf.save(`${currentMonth}_SAR.pdf`);
+    }
+
+    function clearAllData() {
+        if (confirm("Delete all data for this month?")) {
+            salesData[currentMonth] = Array(30).fill('');
+            targetData[currentMonth] = Array(30).fill('');
+            lastYearData[currentMonth] = Array(30).fill('');
+            tcData[currentMonth] = Array(30).fill('');
+            acData[currentMonth] = Array(30).fill('');
+            achievedData[currentMonth] = Array(30).fill('');
+            growthData[currentMonth] = Array(30).fill('');
+            averageData[currentMonth] = Array(30).fill('');
+            saveData();
+            generateTable();
+            updateResults();
+        }
+    }
+
+    $("#month-select").on("change", function() { currentMonth = $(this).val(); generateTable(); updateResults(); });
+    $(document).on("input", ".sales-input", updateResults);
+    $("#clearAll").on("click", clearAllData);
+    $("#exportPdf").on("click", exportToPDF);
+
+    $(document).ready(() => { generateTable(); updateResults(); });
+</script>
+</body>
+</html>
