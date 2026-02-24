@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Mueen ul Islam · Developer Profile</title>
+    <title>Mueen ul Islam · video bg with sound</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -39,21 +39,23 @@
             flex-direction: column;
         }
 
-        /* Background image – much more visible, fits perfectly */
-        .profile-bg {
+        /* VIDEO BACKGROUND — covers entire frame, visible, with sound (muted initially, but user can unmute via controls or we trigger on interaction) */
+        .profile-bg-video {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;        /* Ensures image covers entire screen without distortion */
+            object-fit: cover;        /* covers entire screen without distortion */
             object-position: center;
             z-index: 0;
-            opacity: 0.85;             /* Increased opacity - image is clearly visible */
-            filter: brightness(0.95) contrast(1.1); /* Slight enhancement */
+            opacity: 0.9;              /* strong visibility */
+            filter: brightness(0.95) contrast(1.1);
+            pointer-events: none;       /* clicks pass through to overlay controls? we'll add separate play button later if needed */
         }
 
-        /* Lighter overlay so text remains readable but image pops */
+        /* Video sound: by default muted (most browsers require user gesture). We'll add an unmute button inside the frame. */
+        /* Lighter overlay so text remains readable but video pops */
         .bg-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -73,7 +75,7 @@
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: #3498db #1e293b;
-            backdrop-filter: blur(0px); /* No blur to keep image crisp */
+            backdrop-filter: blur(0px); /* No blur to keep video crisp */
         }
 
         .phone-screen::-webkit-scrollbar {
@@ -115,7 +117,30 @@
             border: 1px solid rgba(255,255,255,0.2);
         }
 
-        /* header with profile image & title - more transparent to show bg */
+        /* unmute / sound toggle — small but visible inside frame */
+        .sound-toggle {
+            position: absolute;
+            top: 70px;
+            right: 24px;
+            z-index: 25;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            width: 44px;
+            height: 44px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid rgba(255,255,255,0.3);
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px black;
+            transition: 0.2s;
+        }
+        .sound-toggle:active { transform: scale(0.94); background: #3498db; }
+
+        /* header with profile image & title */
         .profile-header {
             display: flex;
             align-items: center;
@@ -155,7 +180,7 @@
             text-shadow: 0 1px 4px black;
         }
 
-        /* glass cards - more subtle to let image shine */
+        /* glass cards */
         .glass-card {
             background: rgba(15, 25, 35, 0.45);
             backdrop-filter: blur(12px);
@@ -315,26 +340,33 @@
             opacity: 0.7;
         }
 
-        /* ensure all text is readable with stronger shadow */
         p, li, span, .pill, .tool-item span, .contact-chip {
             text-shadow: 0 1px 8px rgba(0,0,0,0.9);
         }
     </style>
 </head>
 <body>
-    <!-- iPhone frame -->
     <div class="iphone-frame">
-        <!-- Background image – now much more visible and fits perfectly -->
-        <img src="https://ghostkmr.github.io/2026/sadwapbg.jpeg" 
-             alt="profile background" 
-             class="profile-bg">
+        <!-- VIDEO BACKGROUND (with sound, but muted by default — we'll add unmute control) -->
+        <video class="profile-bg-video" autoplay loop muted playsinline id="bgVideo" poster="https://ghostkmr.github.io/2026/sadwapbg.jpeg">
+            <!-- since we need a video with sound, using a sample video that includes ambient sound.
+                 We use a public domain video (ocean waves) that has sound. Replace with any preferred video -->
+            <source src="https://videos.pexels.com/video-files/3048542/3048542-uhd_2560_1440_30fps.mp4" type="video/mp4">
+            <!-- fallback: silent fallback image if video unsupported -->
+            Your browser does not support the video tag.
+        </video>
         <div class="bg-overlay"></div>
+
+        <!-- Sound toggle button (unmute / mute) -->
+        <div class="sound-toggle" id="soundToggle" onclick="toggleSound()">
+            <i class="fas fa-volume-mute" id="soundIcon"></i>
+        </div>
 
         <!-- Scrollable screen content -->
         <div class="phone-screen">
             <!-- status bar (simple) -->
             <div class="status-bar">
-                <div class="time">9:41</div>
+                <div class="time" id="currentTime">9:41</div>
                 <div class="status-icons">
                     <i class="fas fa-signal"></i>
                     <i class="fas fa-wifi"></i>
@@ -351,10 +383,10 @@
                 </div>
             </div>
 
-            <!-- Contact chips (compact) -->
+            <!-- Contact chips -->
             <div class="contact-grid">
                 <div class="contact-chip"><i class="fas fa-phone-alt"></i> +966567341924</div>
-                <div class="contact-chip"><i class="fas fa-envelope"></i> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6708070b03064803010a0f1e171d271f1d060b08044904080a">[email&#160;protected]</a></div>
+                <div class="contact-chip"><i class="fas fa-envelope"></i> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="650a050901044f04060d08191238251d1f04090a064b060a08">[email&#160;protected]</a></div>
                 <div class="contact-chip"><i class="fab fa-linkedin"></i> linkedin.com/in/mueenulislam</div>
                 <div class="contact-chip"><i class="fab fa-github"></i> ghostkmr</div>
                 <div class="contact-chip"><i class="fas fa-map-marker-alt"></i> Baramulla, Kashmir</div>
@@ -389,7 +421,7 @@
                 </div>
             </div>
 
-            <!-- AI tools grid (visual) -->
+            <!-- AI tools grid -->
             <div class="glass-card">
                 <div class="section-title">🤖 AI TOOLKIT</div>
                 <div class="tools-grid">
@@ -443,19 +475,18 @@
                 <p style="font-size:0.75rem; margin-top:6px; color:#f0f0f0;">Certifications: HACCP Level 3, Food Safety, QSR Tech, AI Prompt Engineering.</p>
             </div>
 
-            <!-- home bar (fake) -->
+            <!-- home bar -->
             <div class="home-bar">
                 <div class="home-indicator"></div>
             </div>
         </div> <!-- .phone-screen -->
     </div> <!-- .iphone-frame -->
 
-    <!-- small script for dynamic time (optional) -->
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script>
-        (function() {
-            // update time to current
-            const timeEl = document.querySelector('.time');
+        // dynamic time
+        function updateTime() {
+            const timeEl = document.getElementById('currentTime');
             if (timeEl) {
                 const now = new Date();
                 let hours = now.getHours();
@@ -464,9 +495,45 @@
                 hours = hours % 12 || 12;
                 timeEl.textContent = `${hours}:${minutes} ${ampm}`;
             }
-        })();
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Video sound toggle (unmute / mute) with sound icon
+        const video = document.getElementById('bgVideo');
+        const soundIcon = document.getElementById('soundIcon');
+
+        // Ensure video is playing (autoplay may be restricted but we have muted+playsinline, should work)
+        // We'll also attempt to play on load if possible, but focus on toggle.
+        window.toggleSound = function() {
+            if (video.muted) {
+                video.muted = false;
+                soundIcon.className = 'fas fa-volume-up';
+                // attempt to ensure video plays if paused (should be playing already)
+                if (video.paused) {
+                    video.play().catch(e => console.log('play failed', e));
+                }
+            } else {
+                video.muted = true;
+                soundIcon.className = 'fas fa-volume-mute';
+            }
+        };
+
+        // Optional: if video ever ends, loop is there but keep loop attribute
+        // Also handle case where browser blocks autoplay — try to play manually
+        document.addEventListener('DOMContentLoaded', function() {
+            // Attempt to play video (muted) as fallback
+            let playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log('Auto-play was prevented, but toggle works');
+                    // video muted by default anyway, user can unmute
+                });
+            }
+        });
+
+        // slight improvement: if user taps sound toggle before video plays, force play
+        // but toggle already calls play if muted false and paused
     </script>
 </body>
-
 </html>
-
