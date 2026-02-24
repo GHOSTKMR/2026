@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="icon" href="https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/ccda845a-d9f3-4c25-b110-99647e3f934a.png" type="image/png">
-    <title>SADWAP · ghost access</title>
+    <title>SADWAP · compact popup</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -140,47 +139,87 @@
             gap: 4px;
         }
 
+        /* ===== SMALL NOTIFICATION ICON ===== */
+        .notif-icon-badge {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            margin-right: 6px;
+            flex-shrink: 0;
+        }
+        .notif-bell-small {
+            background: #ffaa33;
+            width: 38px;
+            height: 38px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-size: 1.3rem;
+            box-shadow: 0 0 15px #ffaa33aa;
+            transition: 0.2s;
+        }
+        .notif-bell-small:active {
+            transform: scale(0.95);
+        }
+        .notif-count {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            background: #ff3b5c;
+            color: white;
+            border-radius: 40px;
+            padding: 2px 6px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            border: 2px solid black;
+            min-width: 20px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
         /* logo area */
         .logo-area {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
         .logo-wrap {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
         }
         .login-logo {
-            width: 52px;
-            height: 52px;
-            border-radius: 18px;
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
             border: 2px solid var(--accent);
             object-fit: cover;
             box-shadow: 0 0 20px #00ff8844;
         }
         .app-title {
             font-family: var(--font-heading);
-            font-size: 1.7rem;
+            font-size: 1.3rem;
             font-weight: 800;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             background: linear-gradient(130deg, #00ffaa, #a27cff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
-        /* Developer avatar now acts as a hyperlink */
         .dev-avatar-small {
-            width: 46px;
-            height: 46px;
-            border-radius: 23px;
+            width: 38px;
+            height: 38px;
+            border-radius: 19px;
             border: 2px solid var(--accent);
             overflow: hidden;
             cursor: pointer;
             box-shadow: 0 0 15px #00ff8866;
             display: block;
             text-decoration: none;
+            flex-shrink: 0;
         }
         .dev-avatar-small img {
             width: 100%;
@@ -194,37 +233,38 @@
             border-radius: 32px;
             background: rgba(22, 27, 34, 0.6);
             backdrop-filter: blur(20px);
-            padding: 28px 20px 24px 20px;
+            padding: 18px 16px 16px 16px;
             border: 1px solid rgba(255,255,255,0.08);
-            margin-bottom: 22px;
+            margin-bottom: 14px;
         }
         .login-heading {
             font-family: var(--font-heading);
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 600;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             color: var(--accent);
-            margin-bottom: 28px;
+            margin-bottom: 14px;
         }
         .custom-input {
             background: rgba(13, 17, 23, 0.8) !important;
             border: 1px solid var(--border-color) !important;
             border-radius: 30px !important;
             color: white !important;
-            padding: 18px 20px !important;
-            height: 64px;
-            font-size: 1rem;
+            padding: 12px 18px !important;
+            height: 52px;
+            font-size: 0.9rem;
             text-align: center;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
         }
         .form-floating > label {
             color: #aaa !important;
-            left: 20px;
+            left: 16px;
+            font-size: 0.85rem;
         }
         .toggle-password {
             position: absolute;
-            right: 20px;
-            top: 20px;
+            right: 14px;
+            top: 14px;
             background: transparent;
             border: none;
             color: #aaa;
@@ -234,44 +274,45 @@
             background: linear-gradient(135deg, var(--accent), #00b8a9);
             border: none;
             border-radius: 40px;
-            padding: 16px;
+            padding: 12px;
             font-weight: 700;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             font-family: var(--font-heading);
-            margin-top: 16px;
+            margin-top: 6px;
+            font-size: 0.9rem;
         }
 
-        /* ===== CAMPAIGN VIDEO (autoplay with sound, full frame) ===== */
+        /* campaign video */
         .campaign-section {
             background: rgba(0, 0, 0, 0.4);
-            border-radius: 36px;
-            padding: 16px 12px;
+            border-radius: 30px;
+            padding: 10px 10px 5px 10px;
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255,255,255,0.05);
-            margin-bottom: 10px;
+            margin-bottom: 4px;
         }
         .campaign-header {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 6px;
         }
-        .campaign-header i { color: #ff5e7c; }
+        .campaign-header i { color: #ff5e7c; font-size: 0.95rem; }
         .campaign-header span {
             font-weight: 600;
+            font-size: 0.8rem;
             background: linear-gradient(145deg,#ff8a5c,#ff3b5c);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
         .campaign-video {
-            border-radius: 24px;
+            border-radius: 18px;
             overflow: hidden;
             aspect-ratio: 16/9;
             border: 1px solid #ffffff26;
             background: #000;
         }
-        /* video fills the container completely */
         .campaign-video video {
             width: 100%;
             height: 100%;
@@ -279,20 +320,201 @@
             display: block;
         }
 
+        /* footer note - copyright */
+        .footer-note {
+            text-align: center;
+            color: #8b949e;
+            font-size: 0.65rem;
+            padding: 8px 0 2px;
+            letter-spacing: 0.3px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 2px;
+        }
+        .footer-note i {
+            color: #ffaa33;
+            font-size: 0.6rem;
+            margin: 0 2px;
+        }
+
         .home-bar {
             display: flex;
             justify-content: center;
-            padding: 12px 0 4px;
+            padding: 4px 0 2px;
         }
         .home-indicator {
-            width: 130px;
+            width: 100px;
             height: 5px;
             background: #e0e7ff;
             border-radius: 30px;
             opacity: 0.5;
         }
 
-        /* access denied toast */
+        /* MODAL (scheduler for editing) */
+        .iframe-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+        }
+        .iframe-card {
+            width: 100%;
+            max-width: 340px;
+            background: #121926;
+            border-radius: 36px;
+            padding: 14px 12px 12px;
+            border: 1px solid #3e5569;
+            box-shadow: 0 30px 50px #00000080;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .iframe-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            padding: 0 4px;
+            flex-shrink: 0;
+        }
+        .iframe-header h4 {
+            font-family: var(--font-heading);
+            color: var(--accent);
+            font-size: 1rem;
+            margin: 0;
+        }
+        .close-iframe {
+            background: #2a3a4e;
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .iframe-content {
+            background: #0d1824;
+            border-radius: 24px;
+            padding: 10px;
+            overflow-y: auto;
+            border: 1px solid #2d445b;
+            flex: 1;
+        }
+
+        /* Schedule table inside modal */
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1b2532;
+            border-radius: 18px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .schedule-table th {
+            background: #232f40;
+            color: #aaccff;
+            font-weight: 600;
+            font-size: 0.65rem;
+            padding: 6px 2px;
+            text-align: center;
+            border-bottom: 2px solid #3e526b;
+        }
+        .schedule-table td {
+            padding: 4px 2px;
+            text-align: center;
+            border-bottom: 1px solid #2f4055;
+            color: #e0eaff;
+        }
+        .category-row {
+            background: #1f2d40;
+        }
+        .category-name {
+            font-weight: 700;
+            color: #ffcc88;
+            background: #1f2d40;
+            padding: 6px 6px;
+            text-align: left;
+            font-size: 0.75rem;
+        }
+        .day-select {
+            background: #0d1a26;
+            border: 1px solid #3f5e7c;
+            color: white;
+            border-radius: 30px;
+            padding: 4px 2px;
+            font-size: 0.6rem;
+            width: 68px;
+        }
+        .remove-btn {
+            color: #ff8a8a;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+        .add-row {
+            background: #25344a;
+            border: 1px dashed #6d8bb0;
+            border-radius: 40px;
+            padding: 5px;
+            text-align: center;
+            margin: 4px 0;
+            color: #aac9ff;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+        .save-all {
+            background: linear-gradient(135deg, #00ffaa, #00b8a9);
+            border: none;
+            border-radius: 50px;
+            padding: 8px;
+            font-weight: 700;
+            width: 100%;
+            margin-top: 8px;
+            font-size: 0.8rem;
+        }
+
+        /* COMPACT POPUP - perfectly fits iPhone */
+        .today-popup {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e3a5f;
+            border-left: 4px solid #ffaa33;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 40px;
+            backdrop-filter: blur(16px);
+            z-index: 12000;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 8px 20px black;
+            font-size: 0.8rem;
+            line-height: 1.3;
+            border: 1px solid #ffaa3366;
+            width: auto;
+            max-width: 280px;
+            white-space: normal;
+            word-wrap: break-word;
+            text-align: left;
+        }
+        .today-popup i {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            color: #ffaa33;
+        }
+        .today-popup span {
+            flex: 1;
+        }
+
         .security-toast {
             position: fixed;
             bottom: 30px;
@@ -301,22 +523,22 @@
             background: rgba(248,81,73,0.2);
             border: 1px solid #f85149aa;
             color: #faa;
-            padding: 10px 24px;
+            padding: 6px 16px;
             border-radius: 60px;
             backdrop-filter: blur(16px);
             z-index: 9999;
             opacity: 0;
             transition: 0.4s;
             white-space: nowrap;
+            font-size: 0.8rem;
         }
         .security-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        
-        /* all modals removed */
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+        .particle { position:absolute; width:3px; height:3px; border-radius:50%; opacity:0; animation:floatParticle 8s infinite; }
+        @keyframes floatParticle { 0%{opacity:0; transform:translateY(100vh) scale(0);} 20%{opacity:0.8;} 100%{opacity:0; transform:translateY(-20vh) scale(1.5);} }
     </style>
 </head>
-
 <body>
-    <!-- wallpaper layers -->
     <div class="bg-overlay" style="background: url('https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/c4b92c1a-6407-44af-8a12-abe877bd321c.png') center/cover no-repeat; opacity: 0.15;"></div>
     <div class="particle-container" id="particles"></div>
 
@@ -324,53 +546,53 @@
         <img src="https://ghostkmr.github.io/2026/sadwapbg.jpeg" class="phone-wallpaper" alt="wall">
 
         <div class="phone-screen">
-            <!-- status bar with real time -->
+            <!-- status bar -->
             <div class="status-bar">
-                <div class="time-status" id="liveTime">9:41 AM</div>
+                <div class="time-status" id="liveTime">9:41</div>
                 <div class="right-status">
-                    <div class="signal-bars" id="signalBars">
-                        <div class="bar bar1 active"></div>
-                        <div class="bar bar2 active"></div>
-                        <div class="bar bar3 active"></div>
-                        <div class="bar bar4 active"></div>
-                    </div>
-                    <i class="bi bi-wifi" style="font-size:1rem;"></i>
-                    <div class="battery-indicator" id="batteryInfo">
-                        <span class="battery-level" id="batteryPercent">86%</span>
-                        <i class="bi bi-battery-full" id="batteryIcon"></i>
-                    </div>
+                    <div class="signal-bars" id="signalBars"><div class="bar bar1 active"></div><div class="bar bar2 active"></div><div class="bar bar3 active"></div><div class="bar bar4 active"></div></div>
+                    <i class="bi bi-wifi" style="font-size:0.85rem;"></i>
+                    <div class="battery-indicator" id="batteryInfo"><span class="battery-level" id="batteryPercent">86%</span><i class="bi bi-battery-full" id="batteryIcon"></i></div>
                 </div>
             </div>
 
-            <!-- logo + developer avatar as direct link (new window) -->
+            <!-- logo area with SMALL NOTIFICATION ICON -->
             <div class="logo-area">
-                <div class="logo-wrap">
-                    <img src="https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/ccda845a-d9f3-4c25-b110-99647e3f934a.png" class="login-logo">
-                    <span class="app-title">SADWAP</span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <!-- Notification icon: single tap = today's tasks, double tap = edit -->
+                    <div class="notif-icon-badge" id="notifIcon">
+                        <div class="notif-bell-small">
+                            <i class="bi bi-bell-fill"></i>
+                        </div>
+                        <span class="notif-count" id="notifCount">3</span>
+                    </div>
+                    <!-- Logo and title -->
+                    <div class="logo-wrap">
+                        <img src="https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/ccda845a-d9f3-4c25-b110-99647e3f934a.png" class="login-logo">
+                        <span class="app-title">SADWAP</span>
+                    </div>
                 </div>
-                <!-- Developer avatar opens aboutdeveloper.html in a new window -->
-                <a href="https://ghostkmr.github.io/2026/aboutdeveloper.html" target="_blank" class="dev-avatar-small" id="devVideoLink" title="About Developer (opens new window)">
+                <!-- Developer avatar -->
+                <a href="https://ghostkmr.github.io/2026/aboutdeveloper.html" target="_blank" class="dev-avatar-small">
                     <img src="https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/11d1825d-d949-422d-9acc-76af8cd17e9a.png" alt="Developer">
                 </a>
             </div>
 
-            <!-- LOGIN CARD - only password field -->
+            <!-- LOGIN CARD -->
             <div class="login-card">
                 <h2 class="login-heading text-center"><i class="bi bi-shield-lock-fill me-2"></i>ENTER PIN</h2>
                 <form id="loginForm">
-                    <div class="form-floating mb-3 position-relative">
+                    <div class="form-floating mb-2 position-relative">
                         <input type="password" class="form-control custom-input" id="password" placeholder="PIN" required autocomplete="off" inputmode="numeric">
                         <label><i class="bi bi-key-fill me-2"></i>PIN / Password</label>
-                        <button type="button" class="btn toggle-password" id="togglePassword" tabindex="-1">
-                            <i class="bi bi-eye-fill"></i>
-                        </button>
+                        <button type="button" class="btn toggle-password" id="togglePassword" tabindex="-1"><i class="bi bi-eye-fill"></i></button>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="rememberMe" style="background-color:#333; border-color:#555;">
-                            <label class="form-check-label" style="color:#aaa; font-size:0.75rem;">Remember this device</label>
+                            <label class="form-check-label" style="color:#aaa; font-size:0.65rem;">Remember</label>
                         </div>
-                        <a href="#" class="forgot-link" style="color:#00ffaa; font-size:0.7rem;">Forgot PIN?</a>
+                        <a href="#" class="forgot-link" style="color:#00ffaa; font-size:0.6rem;">Forgot?</a>
                     </div>
                     <button type="submit" class="btn btn-login w-100" id="loginBtn">
                         <span class="btn-text"><i class="bi bi-box-arrow-in-right me-2"></i>UNLOCK</span>
@@ -379,193 +601,274 @@
                 </form>
             </div>
 
-            <!-- ===== ONGOING PROMO VIDEO (autoplay with sound, fills frame) ===== -->
+            <!-- CAMPAIGN VIDEO -->
             <div class="campaign-section">
                 <div class="campaign-header">
                     <i class="bi bi-camera-reels-fill"></i>
                     <span>🔥 ONGOING CAMPAIGN</span>
                 </div>
                 <div class="campaign-video">
-                    <!-- Video element: autoplay, with sound enabled -->
                     <video id="promoVideo" autoplay loop playsinline>
-                        <!-- REPLACE THIS SOURCE WITH YOUR ACTUAL VIDEO FILE -->
                         <source src="https://ghostkmr.github.io/2026/ramadaanoffer.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
                     </video>
                 </div>
+                <!-- FOOTER NOTE ADDED HERE -->
+                <div class="footer-note">
+                    <i class="bi bi-c-circle"></i> All rights reserved copyright Mueen Ul Islam
+                </div>
             </div>
+            <div class="home-bar"><div class="home-indicator"></div></div>
+        </div>
+    </div>
 
-            <!-- home bar -->
-            <div class="home-bar">
-                <div class="home-indicator"></div>
+    <!-- MODAL: Full Schedule Editor (opens on double-tap) -->
+    <div class="iframe-modal" id="schedulerModal">
+        <div class="iframe-card">
+            <div class="iframe-header">
+                <h4><i class="bi bi-calendar-week me-2"></i>edit schedule</h4>
+                <button class="close-iframe" id="closeIframeBtn"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="iframe-content" id="iframeContent">
+                <!-- injected via js -->
             </div>
         </div>
     </div>
 
-    <!-- NO MODALS - all removed -->
+    <!-- COMPACT POPUP - perfect for iPhone -->
+    <div class="today-popup" id="todayPopup">
+        <i class="bi bi-calendar-day"></i>
+        <span id="popupMessage"></span>
+    </div>
 
     <div class="security-toast" id="securityToast"><i class="bi bi-shield-exclamation me-2"></i>Access Denied</div>
 
     <script>
         (function() {
-            // ========== REAL TIME CLOCK & BATTERY ==========
+            // ---------- real time clock & battery ----------
             function updateTime() {
-                const now = new Date();
-                let hours = now.getHours();
-                const minutes = now.getMinutes().toString().padStart(2, '0');
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12 || 12;
+                const now = new Date(); let hours = now.getHours(); const minutes = now.getMinutes().toString().padStart(2,'0'); const ampm = hours>=12?'PM':'AM'; hours = hours%12||12;
                 document.getElementById('liveTime').textContent = `${hours}:${minutes} ${ampm}`;
             }
-            updateTime();
-            setInterval(updateTime, 1000);
-
-            // Battery simulation
-            function updateBatteryUI(battery) {
-                const percent = Math.round(battery.level * 100);
-                document.getElementById('batteryPercent').textContent = percent + '%';
-                const icon = document.getElementById('batteryIcon');
-                if (battery.charging) icon.className = 'bi bi-battery-charging';
-                else if (percent >= 90) icon.className = 'bi bi-battery-full';
-                else if (percent >= 60) icon.className = 'bi bi-battery-three-quarters';
-                else if (percent >= 40) icon.className = 'bi bi-battery-half';
-                else if (percent >= 15) icon.className = 'bi bi-battery-low';
-                else icon.className = 'bi bi-battery';
-            }
+            updateTime(); setInterval(updateTime,1000);
             if ('getBattery' in navigator) {
-                navigator.getBattery().then(battery => {
-                    updateBatteryUI(battery);
-                    battery.addEventListener('levelchange', () => updateBatteryUI(battery));
-                    battery.addEventListener('chargingchange', () => updateBatteryUI(battery));
-                });
-            } else {
-                setInterval(() => {
-                    let r = Math.floor(Math.random()*25)+65;
-                    document.getElementById('batteryPercent').textContent = r+'%';
-                }, 30000);
-            }
+                navigator.getBattery().then(b=>{ function u(){ const p=Math.round(b.level*100); document.getElementById('batteryPercent').textContent=p+'%'; document.getElementById('batteryIcon').className = b.charging ? 'bi bi-battery-charging' : (p>=90?'bi bi-battery-full':p>=60?'bi bi-battery-three-quarters':p>=40?'bi bi-battery-half':p>=15?'bi bi-battery-low':'bi bi-battery'); } u(); b.addEventListener('levelchange',u); b.addEventListener('chargingchange',u); });
+            } else { setInterval(()=>{ let r=Math.floor(Math.random()*25)+65; document.getElementById('batteryPercent').textContent=r+'%';},30000); }
+            setInterval(()=>{let b=document.querySelectorAll('.bar');let a=Math.random()>0.2?4:3;b.forEach((e,i)=>i<a?e.classList.add('active'):e.classList.remove('active'));},8000);
 
-            // signal fluctuation
-            setInterval(() => {
-                let bars = document.querySelectorAll('.bar');
-                let active = Math.random() > 0.2 ? 4 : 3;
-                bars.forEach((b,i) => i<active ? b.classList.add('active') : b.classList.remove('active'));
-            }, 8000);
+            // video sound
+            const video = document.getElementById('promoVideo'); if(video){ video.muted=false; video.play().catch(e=>{ const enable=()=>{video.muted=false; video.play(); document.removeEventListener('touchstart',enable); document.removeEventListener('click',enable);}; document.addEventListener('touchstart',enable); document.addEventListener('click',enable); }); }
 
-            // ========== PROMO VIDEO: AUTO PLAY WITH SOUND ==========
-            const video = document.getElementById('promoVideo');
-            if (video) {
-                // Try to play with sound
-                video.muted = false;
-                video.play().catch(e => {
-                    console.log('Autoplay with sound blocked, will try on interaction');
-                    // If blocked, try again on first user interaction
-                    const enableAudio = () => {
-                        video.muted = false;
-                        video.play();
-                        document.removeEventListener('touchstart', enableAudio);
-                        document.removeEventListener('click', enableAudio);
-                    };
-                    document.addEventListener('touchstart', enableAudio);
-                    document.addEventListener('click', enableAudio);
-                });
-            }
+            // particles
+            function initParticles(){ let c=document.getElementById('particles'); if(!c) return; for(let i=0;i<20;i++){ let p=document.createElement('div'); p.className='particle'; p.style.left=Math.random()*100+'%'; p.style.animationDelay=Math.random()*8+'s'; p.style.animationDuration=(6+Math.random()*6)+'s'; p.style.background=Math.random()>0.5?'#00ff88':'#7c3aed'; c.appendChild(p); } } initParticles();
 
-            // ========== SECURITY & PARTICLES ==========
-            function initParticles() {
-                let c = document.getElementById('particles');
-                if (!c) return;
-                for (let i=0; i<20; i++) {
-                    let p = document.createElement('div');
-                    p.className = 'particle';
-                    p.style.left = Math.random()*100+'%';
-                    p.style.animationDelay = Math.random()*8+'s';
-                    p.style.animationDuration = (6+Math.random()*6)+'s';
-                    p.style.background = Math.random()>0.5?'#00ff88':'#7c3aed';
-                    c.appendChild(p);
-                }
-            }
-            initParticles();
+            // security toast
+            function showSecurityToast(msg) { let t = document.getElementById('securityToast'); t.innerHTML = '<i class="bi bi-shield-exclamation me-2"></i>'+msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
+            document.addEventListener('contextmenu', e => { e.preventDefault(); showSecurityToast('Context menu disabled'); });
+            document.addEventListener('keydown', e => { if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key==='I') || (e.ctrlKey && e.key==='U')) { e.preventDefault(); showSecurityToast('Dev tools blocked'); } });
 
-            function showSecurityToast(msg = 'Access Denied') {
-                let t = document.getElementById('securityToast');
-                t.innerHTML = '<i class="bi bi-shield-exclamation me-2"></i>' + msg;
-                t.classList.add('show');
-                setTimeout(()=>t.classList.remove('show'),2000);
-            }
-            document.addEventListener('contextmenu', e => { e.preventDefault(); showSecurityToast(); });
-            document.addEventListener('keydown', e => {
-                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key==='I') || (e.ctrlKey && e.key==='U')) {
-                    e.preventDefault(); showSecurityToast();
-                }
-            });
-
-            // ========== LOGIN FORM with PASSWORD = "ghost123" ==========
-            const CORRECT_PASSWORD = "12345";  // <-- YOUR CUSTOM PASSWORD
-
+            // LOGIN (password = "12345")
+            const CORRECT_PASSWORD = "12345";
             document.getElementById('loginForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 let pwd = document.getElementById('password').value.trim();
-                
-                if (!pwd) {
-                    this.style.animation = 'shake 0.5s';
-                    setTimeout(()=>this.style.animation='',500);
-                    return;
-                }
-                
+                if (!pwd) { this.style.animation='shake 0.5s'; setTimeout(()=>this.style.animation='',500); return; }
                 if (pwd !== CORRECT_PASSWORD) {
-                    showSecurityToast('Access Denied: Invalid PIN');
-                    this.style.animation = 'shake 0.5s';
-                    setTimeout(()=>this.style.animation='',500);
+                    showSecurityToast('Invalid PIN');
+                    this.style.animation='shake 0.5s'; setTimeout(()=>this.style.animation='',500);
                     document.getElementById('password').style.borderColor = '#f85149';
                     setTimeout(() => document.getElementById('password').style.borderColor = '', 500);
                     return;
                 }
-                
-                // Correct password
                 let btn = document.getElementById('loginBtn');
                 btn.querySelector('.btn-text').classList.add('d-none');
-                btn.querySelector('.btn-loader').classList.remove('d-none');
-                btn.disabled = true;
-                
+                btn.querySelector('.btn-loader').classList.remove('d-none'); btn.disabled = true;
                 setTimeout(() => {
                     btn.querySelector('.btn-text').classList.remove('d-none');
-                    btn.querySelector('.btn-loader').classList.add('d-none');
-                    btn.disabled = false;
+                    btn.querySelector('.btn-loader').classList.add('d-none'); btn.disabled = false;
                     btn.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>ACCESS GRANTED';
                     btn.style.background = 'linear-gradient(135deg, #00ff88, #00cc6a)';
-                    
-                    setTimeout(() => { 
-                        window.location.href = 'welcome.html'; 
-                    }, 1200);
+                    setTimeout(() => { window.location.href = 'welcome.html'; }, 1200);
                 }, 1500);
             });
-
-            // toggle password visibility
             document.getElementById('togglePassword').addEventListener('click', function() {
-                let pwd = document.getElementById('password');
-                let icon = this.querySelector('i');
-                if (pwd.type === 'password') {
-                    pwd.type = 'text';
-                    icon.classList.replace('bi-eye-fill','bi-eye-slash-fill');
-                } else {
-                    pwd.type = 'password';
-                    icon.classList.replace('bi-eye-slash-fill','bi-eye-fill');
-                }
+                let pwd = document.getElementById('password'); let icon = this.querySelector('i');
+                if (pwd.type === 'password') { pwd.type = 'text'; icon.classList.replace('bi-eye-fill','bi-eye-slash-fill'); } else { pwd.type = 'password'; icon.classList.replace('bi-eye-slash-fill','bi-eye-fill'); }
             });
 
-            // No modal code needed - developer link is a direct hyperlink
+            // ---------- SCHEDULER WITH DUAL FUNCTION ----------
+            const modal = document.getElementById('schedulerModal');
+            const notifIcon = document.getElementById('notifIcon');
+            const closeBtn = document.getElementById('closeIframeBtn');
+            const iframeContent = document.getElementById('iframeContent');
+            const notifCount = document.getElementById('notifCount');
+            const todayPopup = document.getElementById('todayPopup');
+            const popupMessage = document.getElementById('popupMessage');
+
+            // Default schedule
+            const defaultData = {
+                "BREAD": [
+                    { order: "SATURDAY", receive: "TUESDAY" },
+                    { order: "MONDAY", receive: "THURSDAY" },
+                    { order: "WEDNESDAY", receive: "SUNDAY" }
+                ],
+                "VEGETABLES": [
+                    { order: "SATURDAY", receive: "TUESDAY" },
+                    { order: "MONDAY", receive: "THURSDAY" },
+                    { order: "WEDNESDAY", receive: "SUNDAY" }
+                ],
+                "FROZEN": [
+                    { order: "MONDAY", receive: "WEDNESDAY" },
+                    { order: "WEDNESDAY", receive: "SATURDAY" }
+                ],
+                "ACC": [
+                    { order: "SATURDAY", receive: "MONDAY" },
+                    { order: "TUESDAY", receive: "THURSDAY" }
+                ]
+            };
+
+            let scheduleData = JSON.parse(localStorage.getItem('ordering_schedule_ghost')) || defaultData;
+            const daysOfWeek = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+
+            function saveToLocal() {
+                localStorage.setItem('ordering_schedule_ghost', JSON.stringify(scheduleData));
+                updateNotifBadge();
+            }
+
+            // Update the small badge with total rows
+            function updateNotifBadge() {
+                let total = 0;
+                for (let cat in scheduleData) total += scheduleData[cat].length;
+                notifCount.innerText = total;
+                if (total === 0) notifCount.style.display = 'none';
+                else notifCount.style.display = 'inline-block';
+            }
+
+            // Render full scheduler inside modal (for editing)
+            function renderScheduler() {
+                let html = '';
+                for (let category in scheduleData) {
+                    html += `<div class="category-row" style="padding:5px; margin-top:6px;"><i class="bi bi-tag-fill me-2"></i>${category}</div>`;
+                    scheduleData[category].forEach((item, idx) => {
+                        html += `<div style="display:flex; gap:4px; align-items:center; margin-bottom:5px; background:#1a2a3a; padding:5px; border-radius:40px;">`;
+                        // ordering select (abbreviated days)
+                        html += `<select class="day-select" data-cat="${category}" data-index="${idx}" data-field="order">`;
+                        daysOfWeek.forEach(d => html += `<option value="${d}" ${item.order===d?'selected':''}>${d.substring(0,3)}</option>`);
+                        html += `</select>`;
+                        // receiving select
+                        html += `<select class="day-select" data-cat="${category}" data-index="${idx}" data-field="receive">`;
+                        daysOfWeek.forEach(d => html += `<option value="${d}" ${item.receive===d?'selected':''}>${d.substring(0,3)}</option>`);
+                        html += `</select>`;
+                        // remove btn
+                        html += `<span class="remove-btn" data-cat="${category}" data-index="${idx}"><i class="bi bi-x-circle-fill"></i></span>`;
+                        html += `</div>`;
+                    });
+                    // add row for this category
+                    html += `<div class="add-row" data-cat="${category}"><i class="bi bi-plus-circle me-2"></i>Add row</div>`;
+                }
+                // add new category button
+                html += `<div class="add-row" id="addNewCategory" style="margin-top:10px;"><i class="bi bi-folder-plus me-2"></i>Add category</div>`;
+                html += `<button class="save-all" id="modalSaveBtn"><i class="bi bi-check2-circle me-2"></i>SAVE</button>`;
+
+                iframeContent.innerHTML = html;
+
+                // attach events
+                document.querySelectorAll('.day-select').forEach(sel => {
+                    sel.addEventListener('change', function() {
+                        const cat = this.dataset.cat;
+                        const idx = this.dataset.index;
+                        const field = this.dataset.field;
+                        scheduleData[cat][idx][field] = this.value;
+                        saveToLocal();
+                    });
+                });
+
+                document.querySelectorAll('.remove-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const cat = this.dataset.cat;
+                        const idx = this.dataset.index;
+                        scheduleData[cat].splice(idx, 1);
+                        if (scheduleData[cat].length === 0) delete scheduleData[cat];
+                        saveToLocal();
+                        renderScheduler();
+                    });
+                });
+
+                document.querySelectorAll('.add-row[data-cat]').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const cat = this.dataset.cat;
+                        if (!scheduleData[cat]) scheduleData[cat] = [];
+                        scheduleData[cat].push({ order: "MONDAY", receive: "WEDNESDAY" });
+                        saveToLocal();
+                        renderScheduler();
+                    });
+                });
+
+                document.getElementById('addNewCategory').addEventListener('click', function() {
+                    const newCat = prompt("Category name:", "DAIRY");
+                    if (newCat && newCat.trim()) {
+                        const key = newCat.trim().toUpperCase();
+                        if (!scheduleData[key]) {
+                            scheduleData[key] = [{ order: "MONDAY", receive: "WEDNESDAY" }];
+                            saveToLocal();
+                            renderScheduler();
+                        } else alert("Exists");
+                    }
+                });
+
+                document.getElementById('modalSaveBtn').addEventListener('click', function() {
+                    saveToLocal();
+                    this.innerHTML = '<i class="bi bi-check2-circle me-2"></i>SAVED';
+                    setTimeout(() => this.innerHTML = '<i class="bi bi-check2-circle me-2"></i>SAVE', 1000);
+                });
+            }
+
+            // Get today's day and tasks (compact message)
+            function getTodayMessage() {
+                const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
+                let orderItems = [];
+                let receiveItems = [];
+
+                for (let cat in scheduleData) {
+                    scheduleData[cat].forEach(item => {
+                        if (item.order === today) orderItems.push(cat);
+                        if (item.receive === today) receiveItems.push(cat);
+                    });
+                }
+
+                orderItems = [...new Set(orderItems)];
+                receiveItems = [...new Set(receiveItems)];
+
+                let msg = `${today}. `;
+                if (orderItems.length > 0) msg += `🛒:${orderItems.join(',')} `;
+                if (receiveItems.length > 0) msg += `📦:${receiveItems.join(',')}`;
+                if (orderItems.length === 0 && receiveItems.length === 0) msg += '✨ No tasks';
+                return msg;
+            }
+
+            // Single tap: show compact popup
+            notifIcon.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const msg = getTodayMessage();
+                popupMessage.innerText = msg;
+                todayPopup.style.display = 'flex';
+                setTimeout(() => {
+                    todayPopup.style.display = 'none';
+                }, 3500);
+            });
+
+            // Double tap: open full scheduler for editing
+            notifIcon.addEventListener('dblclick', function() {
+                renderScheduler();
+                modal.style.display = 'flex';
+            });
+
+            closeBtn.addEventListener('click', () => modal.style.display = 'none');
+            modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+
+            // initial updates
+            updateNotifBadge();
         })();
     </script>
-    <style>
-        @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
-        .particle { position:absolute; width:3px; height:3px; border-radius:50%; opacity:0; animation:floatParticle 8s infinite; }
-        @keyframes floatParticle { 0%{opacity:0; transform:translateY(100vh) scale(0);} 20%{opacity:0.8;} 100%{opacity:0; transform:translateY(-20vh) scale(1.5);} }
-    </style>
+    <style>.particle-container { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1; }</style>
 </body>
-
 </html>
-
-
-
-
