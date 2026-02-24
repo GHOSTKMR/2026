@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Kudu AI Assistant - Complete Knowledge Base</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            position: relative;
+            background: #000;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 390px;
+            height: 844px;
+            border-radius: 40px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5), 0 0 0 8px rgba(40, 40, 45, 0.8);
+        }
+
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(12px) brightness(0.35);
+        }
+
+        .content-overlay {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(2px);
+        }
+
+        .video-controls {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            z-index: 3;
+            display: flex;
+            gap: 8px;
+        }
+
+        .video-btn {
+            background: rgba(20, 20, 25, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-btn:hover {
+            background: rgba(10, 132, 255, 0.8);
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .chat-header {
+            background: rgba(10, 10, 15, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 20px 20px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .time {
+            font-weight: 600;
+            font-size: 15px;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .status-icons span {
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0.9;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .header-title h1 {
+            font-size: 24px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #fff, #aaccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 15px rgba(0, 122, 255, 0.5);
+        }
+
+        .ai-badge {
+            background: linear-gradient(135deg, #0a84ff, #0066cc);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 500;
+            box-shadow: 0 2px 12px rgba(10, 132, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            font-size: 14px;
+            color: #fff;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            backdrop-filter: blur(10px);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.15);
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 14px 18px;
+            border-radius: 22px;
+            font-size: 15px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            font-weight: 450;
+            white-space: pre-wrap;
+        }
+
+        .user .message-content {
+            background: rgba(10, 132, 255, 0.85);
+            color: white;
+            border-bottom-right-radius: 4px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+
+        .bot .message-content {
+            background: rgba(25, 25, 30, 0.85);
+            color: #fff;
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .feedback-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            padding-left: 8px;
+        }
+
+        .feedback-btn {
+            background: rgba(35, 35, 40, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            opacity: 0.8;
+            backdrop-filter: blur(10px);
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .feedback-btn:hover {
+            transform: scale(1.1);
+            opacity: 1;
+            background: rgba(60, 60, 70, 0.9);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .feedback-btn.active {
+            opacity: 1;
+            transform: scale(1.1);
+            background: rgba(10, 132, 255, 0.7);
+            border-color: #0a84ff;
+            box-shadow: 0 0 20px rgba(10, 132, 255, 0.5);
+        }
+
+        .suggestions-box {
+            padding: 12px 16px;
+            background: rgba(15, 15, 20, 0.7);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .suggestions-box::-webkit-scrollbar {
+            display: none;
+        }
+
+        .suggestion-chip {
+            display: inline-block;
+            background: rgba(40, 40, 45, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 8px 18px;
+            border-radius: 30px;
+            margin-right: 8px;
+            font-size: 14px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            font-weight: 450;
+        }
+
+        .suggestion-chip:hover {
+            background: rgba(60, 60, 70, 0.95);
+            border-color: #0a84ff;
+            transform: translateY(-1px);
+        }
+
+        .match-suggestions {
+            padding: 8px 16px;
+            background: rgba(10, 132, 255, 0.2);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(10, 132, 255, 0.4);
+            border-bottom: 1px solid rgba(10, 132, 255, 0.4);
+            font-size: 13px;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .match-tag {
+            display: inline-block;
+            background: rgba(40, 40, 45, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin: 4px 4px 0 0;
+            font-size: 12px;
+            border: 1px solid rgba(10, 132, 255, 0.5);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            font-weight: 450;
+        }
+
+        .match-tag:hover {
+            background: rgba(10, 132, 255, 0.5);
+            border-color: #0a84ff;
+        }
+
+        .chat-input-area {
+            padding: 16px 20px 24px;
+            background: rgba(10, 10, 15, 0.7);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            background: rgba(30, 30, 35, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 8px 18px;
+            display: flex;
+            align-items: flex-end;
+            min-height: 44px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .message-input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            font-size: 16px;
+            max-height: 120px;
+            resize: none;
+            font-family: inherit;
+            padding: 4px 0;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            font-weight: 450;
+        }
+
+        .message-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #0a84ff, #0066cc);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 4px 15px rgba(10, 132, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .send-btn:hover {
+            background: linear-gradient(135deg, #0a84ff, #0055b3);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(10, 132, 255, 0.5);
+        }
+
+        .history-panel {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 10, 0.97);
+            backdrop-filter: blur(25px);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .history-panel.show {
+            left: 0;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .history-header h2 {
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            font-size: 22px;
+        }
+
+        .history-item {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: background 0.2s;
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 14px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .history-item-date {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .history-item-preview {
+            font-weight: 500;
+            margin-top: 4px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            font-size: 24px;
+            cursor: pointer;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 12px 18px;
+            background: rgba(30, 30, 35, 0.85);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            width: fit-content;
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out;
+            opacity: 0.8;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .sound-wave {
+            position: absolute;
+            top: 100px;
+            right: 20px;
+            z-index: 3;
+            display: flex;
+            gap: 3px;
+            align-items: flex-end;
+            height: 20px;
+            opacity: 0.7;
+        }
+
+        .sound-wave span {
+            width: 3px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 3px;
+            animation: wave 0.8s infinite ease-in-out;
+        }
+
+        .sound-wave span:nth-child(1) { animation-delay: 0.1s; }
+        .sound-wave span:nth-child(2) { animation-delay: 0.2s; }
+        .sound-wave span:nth-child(3) { animation-delay: 0.3s; }
+        .sound-wave span:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes wave {
+            0%, 100% { height: 5px; }
+            50% { height: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="video-background">
+            <video class="bg-video" id="backgroundVideo" loop playsinline>
+                <source src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-abstract-particles-1280-large.mp4" type="video/mp4">
+                <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-digital-network-1201-large.mp4" type="video/mp4">
+            </video>
+        </div>
+
+        <div class="video-controls">
+            <button class="video-btn" id="muteToggle" onclick="toggleMute()">🔊</button>
+            <button class="video-btn" id="playPauseBtn" onclick="togglePlayPause()">⏸️</button>
+        </div>
+
+        <div class="sound-wave" id="soundWave" style="display: none;">
+            <span></span><span></span><span></span><span></span>
+        </div>
+
+        <div class="content-overlay">
+            <div class="chat-header">
+                <div class="header-top">
+                    <span class="time">9:41</span>
+                    <div class="status-icons">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <div class="header-title">
+                    <h1>Kudu AI</h1>
+                    <span class="ai-badge">Complete Knowledge Base</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="newChat()">
+                        <span>+</span> New Chat
+                    </button>
+                    <button class="action-btn" onclick="clearChat()">
+                        <span>🗑️</span> Clear
+                    </button>
+                    <button class="action-btn" onclick="exportChat()">
+                        <span>📤</span> Export
+                    </button>
+                    <button class="action-btn" onclick="showHistory()">
+                        <span>📋</span> History
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="message-content">
+                        👋 Welcome to Kudu AI - Complete Knowledge Base!
+
+📋 **MAIN CATEGORIES:**
+
+🔬 **Food Safety** - 10 Criticals, Chemical Handling, Food Allergens
+🥚 **Food Preparation SOPs** - Eggs, Vegetables, Cheese, Meats
+👥 **Job Profiles** - Service Crew to Area Manager
+📋 **Service Steps** - 6 Steps Guest Service
+⚖️ **Code of Conduct** - Policies & Values
+💳 **Loyalty Program** - Points & Rewards
+⏲️ **Cooking Times** - All Products
+📚 **Training Programs** - Fast Track & Development
+❄️ **Thawing Guide** - Complete Table
+🍽️ **Menu Items** - Beef, Chicken, Burgers, Sides
+
+How can I help you today?
+                    </div>
+                </div>
+                <div class="feedback-buttons" data-message-id="welcome">
+                    <button class="feedback-btn" onclick="giveFeedback('welcome', 'like')">👍</button>
+                    <button class="feedback-btn" onclick="giveFeedback('welcome', 'dislike')">👎</button>
+                    <button class="feedback-btn" onclick="giveFeedback('welcome', 'ok')">👌</button>
+                    <button class="feedback-btn" onclick="giveFeedback('welcome', 'smile')">😊</button>
+                </div>
+            </div>
+
+            <div class="match-suggestions" id="matchSuggestions" style="display: none;">
+                <span id="matchText"></span>
+                <div id="matchTags"></div>
+            </div>
+
+            <div class="suggestions-box" id="suggestionsBox">
+                <span class="suggestion-chip" onclick="useSuggestion('food safety criticals')">🔬 Food Safety</span>
+                <span class="suggestion-chip" onclick="useSuggestion('chemical handling')">🧪 Chemicals</span>
+                <span class="suggestion-chip" onclick="useSuggestion('eggs sanitization')">🥚 Eggs</span>
+                <span class="suggestion-chip" onclick="useSuggestion('green pepper')">🫑 Green Pepper</span>
+                <span class="suggestion-chip" onclick="useSuggestion('onion')">🧅 Onion</span>
+                <span class="suggestion-chip" onclick="useSuggestion('tomato')">🍅 Tomato</span>
+                <span class="suggestion-chip" onclick="useSuggestion('mushroom')">🍄 Mushroom</span>
+                <span class="suggestion-chip" onclick="useSuggestion('cheese')">🧀 Cheese</span>
+                <span class="suggestion-chip" onclick="useSuggestion('thawing guide')">❄️ Thawing</span>
+                <span class="suggestion-chip" onclick="useSuggestion('job profiles')">👥 Job Profiles</span>
+                <span class="suggestion-chip" onclick="useSuggestion('service steps')">📋 6 Steps</span>
+                <span class="suggestion-chip" onclick="useSuggestion('code of conduct')">⚖️ Code</span>
+                <span class="suggestion-chip" onclick="useSuggestion('loyalty program')">💳 Loyalty</span>
+                <span class="suggestion-chip" onclick="useSuggestion('cooking times')">⏲️ Cooking</span>
+                <span class="suggestion-chip" onclick="useSuggestion('training')">📚 Training</span>
+                <span class="suggestion-chip" onclick="useSuggestion('allergens')">⚠️ Allergens</span>
+            </div>
+
+            <div class="chat-input-area">
+                <div class="input-wrapper">
+                    <textarea class="message-input" id="userInput" placeholder="Ask anything about Kudu..." rows="1" oninput="autoResize(this)"></textarea>
+                </div>
+                <button class="send-btn" onclick="sendMessage()">➤</button>
+            </div>
+
+            <div class="history-panel" id="historyPanel">
+                <div class="history-header">
+                    <h2>Chat History</h2>
+                    <button class="close-btn" onclick="hideHistory()">✕</button>
+                </div>
+                <div id="historyList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Video Control Variables
+        const video = document.getElementById('backgroundVideo');
+        let isMuted = true;
+        let isPlaying = true;
+
+        video.muted = true;
+        video.play().catch(e => console.log('Auto-play prevented:', e));
+
+        function toggleMute() {
+            video.muted = !video.muted;
+            isMuted = video.muted;
+            
+            const muteBtn = document.getElementById('muteToggle');
+            const soundWave = document.getElementById('soundWave');
+            
+            if (video.muted) {
+                muteBtn.innerHTML = '🔇';
+                soundWave.style.display = 'none';
+            } else {
+                muteBtn.innerHTML = '🔊';
+                soundWave.style.display = 'flex';
+                video.play();
+            }
+        }
+
+        function togglePlayPause() {
+            const playBtn = document.getElementById('playPauseBtn');
+            if (video.paused) {
+                video.play();
+                playBtn.innerHTML = '⏸️';
+                isPlaying = true;
+            } else {
+                video.pause();
+                playBtn.innerHTML = '▶️';
+                isPlaying = false;
+            }
+        }
+
+        // COMPLETE KNOWLEDGE BASE - ALL KUDU DOCUMENTATION
+        const knowledgeBase = {
+            text: {
+                // ==================== 1. FOOD SAFETY CRITICALS ====================
+                'food safety criticals': {
+                    'list': '🔬 **THE 10 FOOD SAFETY CRITICALS** 🔬\n\n**1️⃣ CROSS-CONTAMINATION**\nTransfer of contaminants from surfaces/substances to food\n• All utensils available and used correctly\n• Ice cream machine brushes present, clean\n• No cracks/scratches on boards/containers\n• No rusted equipment\n• Cooked/raw products kept separate\n\n**2️⃣ HOT WATER**\n• Hand sinks >100°F\n• Non-hand sinks >120°F\n• 3-compartment sink ready\n\n**3️⃣ TIME CONTROL**\n• Condiments marked with holding times\n• PHU products correct indicators\n• Follow cooking times\n\n**4️⃣ TEMPERATURE CONTROL**\n• PHF checks in freezers/chillers\n• Walk-in, upright within ranges\n• No products in danger zone\n• No thawing and re-freezing\n• Approved thermometers only\n\n**5️⃣ HAND WASHING**\n• Sink unobstructed\n• Antibacterial soap\n• Sanitizer solution\n• Paper towels\n• Hot water\n• 20-second scrub, sanitize\n• Minimum once per hour\n\n**6️⃣ SANITIZING & CHEMICALS**\n• Sanitizer 50-100 ppm\n• Spray bottles labelled\n• Test strips available\n• Veggie wash 25 ppm\n• Chemicals >30cm from food\n• Not stored above food\n\n**7️⃣ MANAGER FOOD SAFETY**\n• Manager executing procedures\n• Quality temperature checklists\n• Manager certification\n• Team certification\n\n**8️⃣ PEST CONTROL**\n• No infestation evidence\n• No droppings or nesting\n• Monthly pest control visits\n\n**9️⃣ COOKOUT**\n• Follow cook-out procedures\n• Maintain record logs\n\n**🔟 OTHER CRITICALS**\n• Health department cards\n• Facility safety compliance\n• No damaged cans\n• Grease trap maintained\n• Floor drains closed, not backed-up'
+                },
+
+                // ==================== 2. CHEMICAL HANDLING ====================
+                'chemical handling': {
+                    'sink detergent': '🧼 **MULTI-PURPOSE SINK DETERGENT**\n\n• Use as needed - no need to make 40 liters\n• Water at room temperature\n• Don\'t leave while refilling - prevents waste\n• Change only gallons when finished\n• Keep dispensing caps attached',
+                    
+                    'quart sanitizer': '🧪 **QUART SANITIZER**\n\n• Ammonia-based - kills germs effectively\n• Refill sink as needed only\n• Sink shelf life: Minimum 8 hours\n• Bottle shelf life: 7 days\n• Acceptable PPM: 150-400\n• If PPM issues, call maintenance - don\'t touch\n• Refill bottle directly from dispenser',
+                    
+                    'degreaser': '💧 **DEGREASER**\n\n• Refill bottle directly from dispenser\n• Use only as needed\n• For buildup areas, spray and remove\n• Don\'t use huge amounts',
+                    
+                    'tile cleaner': '🧹 **QUARRY TILE FLOOR CLEANER**\n\n• Use only as needed (small area = small amount)\n• Use once per day at closing time only\n• Helps save chemicals, no wastage',
+                    
+                    'general notes': '📌 **CHEMICAL HANDLING NOTES**\n\n• Change only chemical gallons when finished\n• DO NOT throw dispensing caps\n• Never leave chemicals while refilling\n• Refill only as needed - no extra amounts\n• Prevent chemical waste at all times'
+                },
+
+                // ==================== 3. FOOD PREPARATION SOPS ====================
+                // Eggs Sanitization
+                'eggs sanitization': {
+                    'overview': '🥚 **EGGS SANITIZATION PROCEDURE**\n\n**Category:** Preparation | **Station:** Preparation\n**Launch Date:** April 1988\n**Last Modified:** 18th Jan 2024\n**Avg Egg Weight:** 60-65g\n\n**Note:** Ensure proper sanitizing of eggs before use. Keep some eggs at room temperature for max 2 hours.',
+                    
+                    'receiving': '📦 **RECEIVING & STORAGE:**\n\n**Packaging:** 1 Case (360 pcs) = 12 trays (30 pcs per tray)\n**Storage Temperature:** Chilled 34°F - 40°F\n\n**Critical:** Never stock eggs at room temperature!',
+                    
+                    'procedure': '📋 **SANITIZATION PROCEDURE:**\n\n1️⃣ On receiving, either keep in original tray in chiller OR sanitize immediately\n2️⃣ Discard any cracked or heavily soiled eggs\n3️⃣ Fill 12qt container with 10L water + 1 packet Vegi Wash (100-50 PPM)\n   *(If no Vegi Wash, use 2 Sanichlor tablets)*\n4️⃣ Soak eggs in sanitizing solution for MAXIMUM 3 MINUTES (use timer)\n5️⃣ Drain sanitizing solution after 3 minutes\n6️⃣ Remove eggs and allow to air dry\n7️⃣ Transfer to clean sanitized container and label "Sanitized Egg"\n8️⃣ Store in chiller at 34°F - 40°F\n9️⃣ Can keep some eggs at room temperature for 2 HOURS MAX\n🔟 NEVER return to chiller after 2 hours - remaining eggs must be wasted'
+                },
+
+                // Green Pepper
+                'green pepper': {
+                    'overview': '🫑 **GREEN PEPPER PREPARATION**\nSOP #214 | Launch Date: 20th Feb 2019\n**Note:** Prepare vegetables prior to shift',
+                    
+                    'storage': '📦 **RECEIVING & STORAGE:**\n\n**Storage:** Chilled 34°F - 40°F\n**Primary Shelf Life:** 5 Days\n**Secondary Shelf Life:** 18 hours\n\n**Preparation Types:**\n• Diced Green Pepper (¾" x ¼") - 4 hours holding\n• Mixed Onion & Green Pepper (Finely Chopped) - 18 hours\n• Green Pepper Julienne (⅜") - 18 hours',
+                    
+                    'procedure': '📋 **PREPARATION STEPS:**\n\n1️⃣ Clean and sanitize area, boards, containers, knife\n2️⃣ Prepare quantity for ONE SHIFT only\n3️⃣ Wash and sanitize peppers with Sanichlor tablet\n4️⃣ Wear gloves, remove core, cut into halves\n5️⃣ Remove white pulp, tap out seeds\n\n**DICED GREEN PEPPER:**\n• Place skin-side up in cutting machine\n• Push handle to cut (¼" or ⅛" dice)\n• Transfer to container, PD label, refrigerate\n\n**FINE CHOPPED:**\n• Sanitize board, cut into ⅛" strips\n• Cut strips into fine cubes\n• Transfer to container, PD label (6 hours shelf life for breakfast)\n\n**JULIENNE:**\n• Cut into ⅛" strips\n• Length: Max 6cm (large peppers), Min 4cm (small peppers)\n• Store in chiller 34°-40°F for 18 hours'
+                },
+
+                // Onion
+                'onion': {
+                    'overview': '🧅 **ONION PREPARATION**\nSOP #213 | Launch Date: 20th Feb 2019\n**Note:** Prepare vegetables prior to shift',
+                    
+                    'storage': '📦 **RECEIVING & STORAGE:**\n\n**Storage:** Chilled 34°F - 40°F\n**Primary Shelf Life:** 5 Days\n**In Operation:** 4 hours @ 34°F-40°F',
+                    
+                    'sliced onion': '🔪 **SLICED ONION PROCEDURE:**\n\n1️⃣ Wear gloves, choose medium onions\n2️⃣ Cut in half, remove inner pulp\n3️⃣ Place cut side down, cut into ¼" strips\n4️⃣ Separate strips\n5️⃣ Place in container, PD label, refrigerate\n\n**Shelf Life:**\n• Inside chiller: 34°-40°F\n• Primary: 5 days\n• Secondary: 18 hours',
+                    
+                    'diced onion': '🔪 **DICED ONION PROCEDURE:**\n\n1️⃣ Wear gloves, cut onion in half\n2️⃣ Place ½ piece cut side down on slicer platform\n3️⃣ Push handle to cut (¼" x ¼" dice)\n4️⃣ Prepare for ONE SHIFT only\n5️⃣ Mix well, transfer to container, PD label\n\n**Shelf Life:**\n• Inside chiller: 34°-40°F\n• Primary: 5 days\n• Secondary: 18 hours\n• On ice: 4 hours'
+                },
+
+                // Tomato
+                'tomato': {
+                    'overview': '🍅 **TOMATO PREPARATION**\n\n**Note:** Prepare vegetables prior to shift',
+                    
+                    'round tomato': '🔪 **ROUND TOMATO (WHEELS):**\n\n1️⃣ Clean and sanitize area, slicer, boards\n2️⃣ Prepare quantity for ONE SHIFT\n3️⃣ Wash and sanitize with Sanichlor tablet\n4️⃣ Wear gloves, use corer to remove core\n5️⃣ Place on slicer platform against pusher head\n6️⃣ Quick push through blades, catch slices\n7️⃣ Place in container with PD label',
+                    
+                    'half moon': '🌗 **HALF MOON TOMATO:**\n\n1️⃣ Follow same procedure as tomato wheels\n2️⃣ Stack wheels on chopping board\n3️⃣ Cut in half\n4️⃣ Place in pan with PD label',
+                    
+                    'diced': '🧊 **DICED TOMATO:**\n\n1️⃣ Wear gloves, remove core with corer\n2️⃣ Cut in half\n3️⃣ Cut each half into 3 wedges\n4️⃣ Remove seeds\n5️⃣ Cut into ¼" strips\n6️⃣ Cut strips into ¼" dice\n7️⃣ Place in container with PD label'
+                },
+
+                // Mushroom
+                'mushroom': {
+                    'overview': '🍄 **MUSHROOM & ONION MIX PREPARATION**\n\n**Category:** Preparation | **Station:** Preparation\n**Launch Date:** April 1988\n**Last Modified:** August 11th, 2021\n\n**Note:** Prepare mushroom and onion mix prior to shift',
+                    
+                    'storage': '📦 **RECEIVING & STORAGE:**\n\n**Packaging (Mushroom):** 1 Case = 6 cans\n\n**Shelf Life:**\n• Primary (Mushroom): 2 Years, Ambient\n• Secondary (Mushroom): 5 Days\n• Prepared mix with onion: 24 Hours\n\n**INGREDIENTS:**\n• Sliced Mushroom (Drained): 1 cup/250ml\n• Sliced Onion (⅛"): 1 cup/250ml\n• KUDU Seasoning: 2 dashes (7g)\n• Melted Butter: ½ tablespoon',
+                    
+                    'procedure': '📋 **PREPARATION PROCEDURE:**\n\n1️⃣ Ensure flat grill temperature at Steak station is 350°F\n2️⃣ Pour 7g (½ tbsp) melted butter on flat grill\n3️⃣ Place onion on butter, cook until limp\n4️⃣ Heat mushroom on other side of grill\n5️⃣ When onion limp and mushroom hot/dry, toss and mix, stir continuously\n6️⃣ Add seasoning, stir into mix\n7️⃣ Remove from grill when ready, place in clean pan\n8️⃣ Use shallow pans for faster cooling\n9️⃣ Label and date container (24 hours shelf life)\n🔟 Leave at room temperature 15 minutes to cool, then refrigerate'
+                },
+
+                // Onion Chives
+                'onion chives': {
+                    'overview': '🌱 **ONION CHIVES PREPARATION**\n\n**Category:** Preparation | **Station:** Preparation\n**Launch Date:** April 1988\n**Note:** Use as topping, prepare prior to shift',
+                    
+                    'storage': '📦 **RECEIVING & STORAGE:**\n\n**Storage:** Chilled 34°F - 40°F\n**Primary Shelf Life:** 5 Days\n**Secondary Shelf Life:** 18 Hours',
+                    
+                    'procedure': '📋 **PREPARATION:**\n\n1️⃣ Clean and sanitize area, boards, container, knife\n2️⃣ Prepare quantity for ONE SHIFT only\n3️⃣ Wash and sanitize onion chives with Sanichlor tablet\n4️⃣ Wear gloves, place on board, cut heads (white bulb) off\n5️⃣ Discard bad parts, cut into ⅛" thickness slices\n6️⃣ Transfer to food-grade container, cover, PD label, refrigerate'
+                },
+
+                // Cucumber
+                'cucumber': {
+                    'overview': '🥒 **CUCUMBER PREPARATION**\n\n**Category:** Preparation | **Station:** Preparation\n**Launch Date:** April 1988\n**Note:** Prepare vegetables prior to shift',
+                    
+                    'storage': '📦 **RECEIVING & STORAGE:**\n\n**Storage:** Chilled 34°F - 40°F\n**Primary Shelf Life:** 5 Days\n**Secondary Shelf Life:** 18 Hours',
+                    
+                    'procedure': '📋 **PREPARATION:**\n\n1️⃣ Clean and sanitize area, boards, container, knife\n2️⃣ Prepare quantity for ONE SHIFT only\n3️⃣ Wash and sanitize cucumber with Sanichlor tablet\n4️⃣ Wear gloves, place on board, cut head and tail\n5️⃣ Cut into ¼" thickness round slices\n6️⃣ Put in food-grade container, PD label, refrigerate'
+                },
+
+                // Cheese
+                'cheese': {
+                    'overview': '🧀 **CHEESE PREPARATION**\n\n**Category:** Preparation | **Station:** Preparation\n**Launch Date:** April 1988\n**Note:** Prepare cheese prior to shift',
+                    
+                    'storage': '📦 **RECEIVING & STORAGE:**\n\n**Storage:** Chilled 34°F - 40°F\n\n**Shelf Life:**\n• Primary: 1 Year\n• Secondary (after opening): 7 Days\n• In operation (shredded): End of business day',
+                    
+                    'procedure': '📋 **PREPARATION PROCEDURE:**\n\n1️⃣ Clean and sanitize area, container, cheese shredder\n2️⃣ Prepare quantity for ONE SHIFT only\n3️⃣ Remove one bulk of yellow cheese (around 45 slices)\n4️⃣ Place cheese shredder inside food container\n5️⃣ Use designated size (thick), start shredding\n6️⃣ Wash cheese shredder IMMEDIATELY after every use\n7️⃣ Remove shredder, cover container, PD label, refrigerate'
+                },
+
+                // Club Meat
+                'club meat': {
+                    'overview': '🥩 **CLUB BEEF/CHICKEN/TURKEY PREPARATION**\n\n**Category:** Preparation | **Station:** Burger Station\n**Launch Date:** April 1988',
+                    
+                    'storage': '📦 **RECEIVING & STORAGE:**\n\n**Packaging:** 1 Case (9 kgs) = 30 Inners (1 Inner @ 10 Pcs)\n\n**Storage:** Frozen 0°F / Thawed in Chiller 34°F - 40°F\n\n**Shelf Life:**\n• Frozen: 6 Months\n• Chiller: 96 Hours Total\n  - Thaw: 12 Hours\n  - Use: 84 Hours',
+                    
+                    'procedure': '📋 **PREPARATION PROCEDURE:**\n\n1️⃣ Club meat delivered in individual casing with thermofomed packaging\n2️⃣ Based on sales forecast, pull desired quantity of frozen inners for thawing\n3️⃣ Use thawing tray to store inners in chiller (34°F-40°F)\n4️⃣ Thaw for 12 hours\n5️⃣ Post PTD label with 4 days (96 hrs) shelf life\n\n**When opening meat inner:**\n• Drain excess juice, discard in rain sink\n• Remove meat from thermofomed package\n• Transfer to clean sanitized food-safe container\n• Label with existing PTD, store at 34°F-40°F\n• Store meats in SEPARATE covered containers'
+                },
+
+                // ==================== 4. THAWING GUIDE ====================
+                'thawing guide': {
+                    'overview': '❄️ **THAWING GUIDE - COMPLETE TABLE** ❄️\n\n```\n| Item Description                    | Packaging               | Thaw Time | Secondary Shelf Life | Method       | Max Qty |\n|-------------------------------------|------------------------|-----------|---------------------|--------------|--------|\n| Frozen Pressed Beef 30g             | 1 Box/30 Inner/10 Pcs  | 12 Hrs    | 96 Hrs              | Thawing tray | 30 pcs |\n| Frozen Pressed Chicken 30g          | 1 Box/30 Inner/10 Pcs  | 12 Hrs    | 96 Hrs              | Thawing tray | 30 pcs |\n| Frozen Pressed Turkey 30g           | 1 Box/30 Inner/10 Pcs  | 12 Hrs    | 96 Hrs              | Thawing tray | 30 pcs |\n| Frozen Beef Steak                   | 1 Box/50 pcs           | 24 Hrs    | 72 Hrs              | Thawing tray | 40 pcs |\n| Frozen Philly Steak                 | 1 Box/40 pcs           | 24 Hrs    | 72 Hrs              | Thawing tray | 20 pcs |\n| Frozen KUDU Chicken Steak           | 1 Box/100 orders       | 24 Hrs    | 72 Hrs              | Thawing tray | 18 ord |\n| Frozen KUDU Spicy Chicken Steak     | 1 Box/50 orders        | 24 Hrs    | 72 Hrs              | Thawing tray | 40 pcs |\n| Frozen Marinated Chicken 110g       | 1 Box/3 Inner/23 Pcs   | 12 Hrs    | 72 Hrs              | Thawing tray | 9 pcs  |\n| Frozen Marinated Chicken 140g       | 1 Box/3 Inner/18 Pcs   | 12 Hrs    | 72 Hrs              | Thawing tray | 12 pcs |\n| Frozen Hot Dog Meat                 | 1 Box/12 Inner/10 Pcs  | 24 Hrs    | 96 Hrs              | Thawing tray | 2 pck |\n| Frozen Juice                        | 1 Box/2 Inner/4.5 Ltr  | 48 Hrs    | 14 Days             | Thawing tray | 1 inner|\n```'
+                },
+
+                // ==================== 5. SERVICE STEPS ====================
+                'service steps': {
+                    '6 steps': '📋 **THE 6 SERVICE STEPS** 📋\n\n**1️⃣ PROMPTLY WELCOME THE GUEST**\n• Smile & Eye contact\n• Greet: "Welcome to KUDU" / "Ahlan fi KUDU" / "Marhaba fi KUDU"\n\n**2️⃣ ASK ABOUT LOYALTY PROGRAM**\n• "Do you have a KUDU application?" / "Fe Tabki KUDU?"\n• If yes, scan QR code\n• If no, explain program and help download app\n\n**3️⃣ CLEARLY TAKE THE ORDER**\n• Be attentive and listen carefully\n• Clarify order and mention extra costs\n• Suggestive selling: Upsize (Wasat/Kabeer), Cheese (Maa jubin?)\n• Side orders: "Would you like any side orders like nachos or chicken bites?"\n• Repeat order and total\n\n**4️⃣ COLLECT PAYMENT ACCURATELY**\n• Inform total amount\n• Ask payment method: "Cash ao Shabakah?"\n• Count back change and handover receipt\n• "Thank you sir" / "Shukran"\n\n**5️⃣ ASSEMBLE THE ORDER CORRECTLY**\n• Fill quickly and accurately\n• Inform guests about production delays\n\n**6️⃣ DELIVER THE ORDER POLITELY**\n• Check order completeness\n• "Enjoy your meal" / "Bli aa fiya"\n• Offer condiments, napkins, straws\n• "Thank you, sir, come back again" / "Shukran, bel aa\'fiyah Nashafuk Marra Thaan!"'
+                },
+
+                // ==================== 6. CODE OF CONDUCT ====================
+                'code of conduct': {
+                    'purpose': '📋 **KUDU CODE OF CONDUCT - PURPOSE**\n\n• Represents rules, ethics and behavioral traits all must follow\n• KUDU strives to make operations environmentally and socially responsible\n• Sets guidance for expected standards',
+                    
+                    'ceo message': '👔 **MESSAGE FROM CEO - MURAT UNGUN**\n\n"We are in food and service sector involving direct human touch. Our goal is to be a leading restaurant chain serving food customers love and great service they love to experience.\n\nIt starts with people. That comes with responsibility, accountability, care and respect. We should always aspire for good, learn from differences, respect each other, hold standards high."',
+                    
+                    'core values': '💎 **KUDU CORE VALUES**\n\n• **Customer First**: Strive for exceptional customer experience\n• **Teamwork**: Work together to achieve common goals\n• **Transparency**: Work with honesty and moral\n• **Excellence**: Work with best quality & standard of performance',
+                    
+                    'human rights': '👥 **HUMAN RIGHTS**\n\n• KUDU condemns all forms of bullying, harassment, intimidation\n• Every employee deserves fairness, respect and dignity\n• Zero tolerance against human trafficking and slavery\n• No employment below legal working age',
+                    
+                    'safe workplace': '🛡️ **SAFE WORKPLACE**\n\n• Abide by health and safety instructions\n• Report accidents or contagious infections\n• KUDU committed to providing safe environment',
+                    
+                    'smoking': '🚭 **SMOKING POLICY**\n\n• Non-smoking policy within offices, restaurants, facilities\n• Smoke only in designated areas\n• Dispose cigarette stubs properly',
+                    
+                    'alcohol drugs': '🚫 **ALCOHOL & DRUGS**\n\n• Cannot work under effect of alcohol or drugs\n• Alcohol and drugs illegal in Saudi Arabia\n• Company may perform drug tests at any time',
+                    
+                    'dress code': '👔 **DRESS, CLOTHING & HYGIENE**\n\n• Present clean and professional appearance\n• Daily showers, proper shaving, haircut, nail care\n• No excessive makeup\n• Restaurant employees have specific dress requirements',
+                    
+                    'confidentiality': '🔒 **CONFIDENTIALITY & INFORMATION SECURITY**\n\n• No moving documents, research, code from offices\n• Protect confidential company information\n• Breaches grounds for immediate dismissal\n• Respect customer and employee privacy',
+                    
+                    'gifts': '🎁 **GIFTS, ENTERTAINMENT & BRIBERY**\n\n• Prohibited from offering/soliciting/accepting gifts\n• No cash gifts or equivalents\n• Occasional gifts under 150 SAR allowed with HR notification\n• Donations require CEO and board approval',
+                    
+                    'conflict interest': '⚖️ **CONFLICT OF INTERESTS**\n\n• Report any conflict immediately\n• Prohibited from acts causing conflict\n• Declare personal relationships to avoid favoritism',
+                    
+                    'company assets': '🏢 **COMPANY ASSETS & PROPERTY**\n\n• Use only for legitimate business purposes\n• Protect tangible and intangible assets\n• Theft and waste impact profitability',
+                    
+                    'communication': '📱 **COMMUNICATION PROTOCOL**\n\n• Maintain positive attitude on social media\n• Email official during work hours\n• WhatsApp/SMS after hours - no phone calls\n• Professionalism at all times'
+                },
+
+                // ==================== 7. JOB PROFILES ====================
+                'service crew': {
+                    'overview': '👤 **SERVICE CREW - ROLE PROFILE**\n\n**Position Purpose:** Prepare food, serve guests, maintain cleanliness standards.\n\n**9 Workstations:**\n1️⃣ Receiving & Storage\n2️⃣ Preparation\n3️⃣ Breakfast\n4️⃣ Burger Station\n5️⃣ Steak Station\n6️⃣ Side Items\n7️⃣ Dessert\n8️⃣ Equipment\n9️⃣ Guest Service',
+                    
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n• Follow appearance and hygiene standards\n• Follow QSC procedures\n• Arrive on time for shifts\n• Receive and store supplies properly\n• Follow manager instructions\n• Learn all workstation procedures\n• Greet guests and ask for feedback\n• Maintain speed of service\n• Recommend LTOs and deals\n• Respond to guest complaints\n• Rotate food items for freshness\n• Assemble orders correctly\n• Assist colleagues when not busy\n• Follow safety procedures'
+                },
+
+                'crew leader': {
+                    'overview': '👥 **CREW LEADER - ROLE PROFILE**\n\n**Position Purpose:** Assist management with training, support MOD, potential Shift Manager pipeline.',
+                    
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**Training Support:**\n• Assist with training plans\n• Complete Academy modules\n• Conduct in-store induction\n• Ensure training materials available\n• Lead by example (hygiene, uniform)\n• Train on equipment and chemicals\n• Reinforce hand washing\n\n**Service Delivery:**\n• Work with crew to prepare orders\n• Respond to guest complaints\n• Communicate Mystery Shopper results\n• Brief staff on promotions\n• Ensure workstations stocked\n\n**Assist MOD:**\n• Receive deliveries\n• Figure 8 walk\n• Product temp checks\n• Monitor holding times\n• Assign cleaning tasks\n• Report hazards'
+                },
+
+                'shift manager': {
+                    'overview': '👨‍💼 **SHIFT MANAGER - ROLE PROFILE**\n\n**Position Purpose:** Lead assigned shifts with smooth operations and great guest experience.',
+                    
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**People:**\n• Welcome new employees\n• Provide training & coaching\n• Create motivational climate\n• Assign cleaning tasks\n• Conduct staff briefings\n• Ensure HR policy compliance\n\n**Guest Focus:**\n• Put Guest first\n• Interact with guests\n• Take corrective actions\n• Ensure staff positioning\n• Complete KUDU Routine tasks\n• Monitor SOS\n• Resolve complaints\n\n**Business Results:**\n• Control cash, stocks, assets\n• Train on promotions\n• Control P&L items\n• Report hazards\n• Maintain hygiene standards\n• Equipment maintenance\n• Take inventory'
+                },
+
+                'assistant manager': {
+                    'overview': '👔 **ASSISTANT RESTAURANT MANAGER**\n\n**Position Purpose:** Assist RM with daily operations, replace RM in absence.',
+                    
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**People:**\n• Provide training & development\n• Create motivational climate\n• Supervise cleaning\n• Assist with appraisals\n• Conduct briefings\n• Delegate tasks\n• Ensure employee files updated\n\n**Guest Focus:**\n• Interact with guests\n• Ensure team delivers experience\n• Follow KUDU Routine\n• Monitor SOS\n• Resolve complaints\n• Monitor sales targets\n• Execute promotions\n\n**Business Results:**\n• Control P&L items\n• Make operational decisions\n• Maintain hygiene, safety\n• Equipment maintenance\n• Take inventory\n• Handle audits (mystery shopper, CERs)'
+                },
+
+                'restaurant manager': {
+                    'overview': '👔 **RESTAURANT MANAGER**\n\n**Position Purpose:** Lead restaurant to deliver great guest experience and maximize sales and profits.',
+                    
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**People:**\n• Lead subordinates with clear expectations\n• Ensure team trained to standards\n• Provide development plans\n• Create motivational climate\n• Conduct appraisals and IDPs\n• Conduct staff meetings\n• Delegate tasks\n\n**Guest Focus:**\n• Put Guest first\n• Represent KUDU brand\n• Execute KUDU Routine\n• Monitor SOS\n• Ensure promotions executed\n• Solve complaints quickly\n\n**Business Results:**\n• Make sales projections\n• Set team targets\n• Enhance sales through KRPB\n• Ensure security measures\n• Monitor P&L reports\n• Maintain hygiene, safety\n• Complete all audits'
+                },
+
+                'area manager': {
+                    'overview': '👔 **AREA MANAGER**\n\n**Position Purpose:** Lead restaurant cluster through people development and improved operations.',
+                    
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**People:**\n• Champion People Promise\n• Ensure respect and recognition\n• Provide resources\n• Support learning and development\n• Ensure adequate staffing\n• Set performance targets\n• Conduct reviews\n\n**Guest Focus:**\n• Put Guest first\n• Collaborate on improvements\n• Protect brand through QSC\n• Observe operations\n\n**Sales Building:**\n• Coach managers on QSC\n• Partner on assessments\n• Develop action plans\n• Ensure execution\n\n**Business Results:**\n• Collaborate on business plan\n• Identify opportunities\n• Adjust tactics\n• Complete audits'
+                },
+
+                'area supervisor': {
+                    'overview': '👔 **AREA SUPERVISOR**\n\n**Position Purpose:** Lead batch of 3 restaurants through people development and operations.',
+                    
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**People:**\n• Champion People Promise\n• Ensure respect and recognition\n• Provide resources\n• Support learning and development\n• Ensure adequate staffing\n• Partner with Training\n\n**Guest Focus:**\n• Put Guest first\n• Help teams take corrective actions\n• Protect brand through QSC\n\n**Sales Building:**\n• Teach and coach managers\n• Partner on assessments\n• Develop action plans\n• Ensure LSM execution\n\n**Business Results:**\n• Collaborate on business plan\n• Identify opportunities\n• Create positive environment\n• Complete audits'
+                },
+
+                // ==================== 8. LOYALTY PROGRAM ====================
+                'loyalty program': {
+                    'overview': '💳 **KUDU REWARDS PROGRAM**\n\n**Membership:**\n• Free download from app\n• 18+ years\n• Register through app or website\n\n**Earning Points:**\n• In-store: 20 points per 1 SAR\n• App Pick Up: 20 points per 1 SAR\n• App Delivery: 10 points per 1 SAR\n• Website same as app\n• Points credited 1 hour after transaction\n\n**Redemption:**\n• Minimum 3,000 points = 10 SAR voucher\n• Maximum 15,000 points = 50 SAR voucher\n• Redeem through app or in-store\n• Food items only (not services/delivery)\n\n**Expiry:**\n• Points expire 6 months from receipt\n• Vouchers expire 6 months from conversion\n• Account deactivated after 1 year inactivity'
+                },
+
+                // ==================== 9. COOKING TIMES ====================
+                'cooking times': {
+                    'burger station': '⏲️ **COOKING TIMES - BURGER STATION**\n\n• Spicy Quattro Chicken: 5:00\n• Veggie: 5:00\n• Grilled Chicken 140g: 6:00\n• Chicken Burger: 3:30\n• Hash Brown: 3:30\n• Grilled Chicken 110g: 4:00\n• Junior Burger: 3:00\n• French Fries: 3:00\n• Regular Bites: 4:15\n• Chicken Nuggets: 3:30\n• Criss Cut Potato: 3:30\n• Regular Quattro Chicken: 7:00\n• Cheese Nacho: 2:30\n• Spicy Chicken Bites: 2:30\n• Chicken Strips: 5:00'
+                },
+
+                // ==================== 10. FOOD ALLERGENS ====================
+                'food allergens': {
+                    'notice': '⚠️ **FOOD ALLERGY NOTICE** ⚠️\n\nFood prepared here may contain:\n\n• Sesame (بذور السمسم)\n• Mustard (الخردل)\n• Egg (البيض)\n• Wheat (الحبوب التي تحتوي على مادة الجلوتين)\n• Shellfish (القشريات)\n• Sulphates (الكبريتيت)\n• Fish (الأسماك)\n• Celery (الكرفس)\n• Lupinus (لوبين/الترمس)\n• Molluscs (الرخويات)\n• Nuts (المكسرات)\n• Peanuts (الفول السوداني)\n• Dairy (الحليب)\n• Soybeans (فول الصويا)'
+                },
+
+                // ==================== 11. TRAINING PROGRAMS ====================
+                'training': {
+                    'overview': '📚 **TRAINING PROGRAMS**\n\n**Fast Track Phase 1 (Months 1-6):**\n• Month 1: Induction, Operations, Service Crew\n• Month 2: SOC Certification, Crew Leader training\n• Month 3: Post-CL activities, TE review\n• Month 4: Equipment workshop\n• Month 5: Shift Management\n• Month 6: Shift Certification\n\n**Fast Track Phase 2 (Months 1-4):**\n• Month 1: Job Description, Coaching\n• Month 2: SOC follow-up, P&L activities\n• Month 3: Post-P&L, Time Management\n• Month 4: RM practice, Performance Management\n\n**Fast Track Phase 3:**\n• Phase 1: Handle 1 store with AM\n• Phase 2: Handle 2 stores with AM\n• Phase 3: Handle 2-3 stores independently\n\n**9-Month Program:**\nComplete path from Service Crew to Restaurant Manager'
+                },
+
+                // ==================== 12. MENU ITEMS ====================
+                'menu': {
+                    'kudu': '✨ **KUDU BRAND**\n\n• **History**: Started 2010\n• **Vision**: Leading provider of authentic food experiences\n• **Core Values**: Quality, Authenticity, Innovation',
+                    
+                    'beef': '🥩 **BEEF PRODUCTS**\n\n• **Kudu Beef**: Premium grass-fed, aged 21 days\n• **Philly Beef**: Steak sandwich with onions, peppers, cheese\n• **Lalino Beef**: Mediterranean spices\n• **Beef Steak**: Grilled with mushroom sauce',
+                    
+                    'burgers': '🍔 **BURGERS**\n\n• **Classic Burger**: Beef patty, lettuce, tomato, special sauce\n• **Cheese Burger**: Classic with cheddar\n• **Bacon Burger**: Beef patty, bacon, smoked gouda',
+                    
+                    'chicken': '🍗 **CHICKEN**\n\n• **Grilled Chicken**: 110g or 140g\n• **Chicken Burger**\n• **Spicy/Regular Quattro Chicken**\n• **Chicken Strips, Nuggets, Bites**',
+                    
+                    'sides': '🍟 **SIDES**\n\n• French Fries, Hash Brown, Criss Cut\n• Regular Bites, Cheese Nacho'
+                },
+
+                // ==================== 13. CONFORMANCE CHECK ====================
+                'conformance check': {
+                    'kudu chicken sandwich': '✅ **KUDU CHICKEN SANDWICH CONFORMANCE CHECK**\n\n**Weight:** 340g with box (±5g)\n\n**Temperature:** ≥140°F (insert probe horizontally without penetrating bread)\n\n**Quality Check - Appearance:**\n• Bread: Golden brown, evenly seeded, shouldn\'t crumble, cut into 2 even halves\n• Chicken: Golden brown, distributed evenly between heel & tomatoes\n• Onion & Green pepper: Mixed properly with protein\n\n**Quality Check - Condiments:**\n• Lettuce: Fresh & green\n• Tomato: Red & firm\n• Mayonnaise: Edge to edge'
+                },
+
+                // ==================== 14. MISSION & VISION ====================
+                'mission vision': {
+                    'mission': '🎯 **KUDU MISSION**\n\nTo be a leading Saudi brand in fast-food restaurants, offering delicious, fresh high-quality foods with unique experience and distinctive preparation.',
+                    
+                    'vision': '👁️ **KUDU VISION**\n\nTo be a leading Saudi company in restaurants, with strong international network of multi-formats franchised partnerships.'
+                }
+            }
+        };
+
+        // Chat history storage
+        let chatHistory = JSON.parse(localStorage.getItem('kuduChatHistory')) || [];
+        let currentChatId = Date.now();
+
+        function init() {
+            displayWelcomeMessage();
+            updateHistoryList();
+        }
+
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            addMessage(message, 'user');
+            input.value = '';
+            input.style.height = 'auto';
+
+            showTypingIndicator();
+
+            setTimeout(() => {
+                removeTypingIndicator();
+                const response = processMessage(message);
+                addMessage(response, 'bot');
+                showMatchSuggestions(message);
+                saveToHistory(message, response);
+            }, 1000);
+        }
+
+        function processMessage(query) {
+            query = query.toLowerCase();
+            let response = [];
+
+            // ===== FOOD SAFETY CRITICALS =====
+            if (query.includes('food safety') || (query.includes('critical') && !query.includes('chemical'))) {
+                response.push(knowledgeBase.text['food safety criticals']['list']);
+            }
+            
+            // ===== CHEMICAL HANDLING =====
+            else if (query.includes('chemical') || query.includes('detergent') || query.includes('sanitizer') || query.includes('degreaser')) {
+                if (query.includes('detergent')) response.push(knowledgeBase.text['chemical handling']['sink detergent']);
+                if (query.includes('sanitizer')) response.push(knowledgeBase.text['chemical handling']['quart sanitizer']);
+                if (query.includes('degreaser')) response.push(knowledgeBase.text['chemical handling']['degreaser']);
+                if (query.includes('tile') || query.includes('floor')) response.push(knowledgeBase.text['chemical handling']['tile cleaner']);
+                if (!query.includes('detergent') && !query.includes('sanitizer') && !query.includes('degreaser') && !query.includes('tile')) {
+                    response.push(knowledgeBase.text['chemical handling']['sink detergent']);
+                    response.push(knowledgeBase.text['chemical handling']['quart sanitizer']);
+                    response.push(knowledgeBase.text['chemical handling']['degreaser']);
+                    response.push(knowledgeBase.text['chemical handling']['tile cleaner']);
+                    response.push(knowledgeBase.text['chemical handling']['general notes']);
+                }
+            }
+            
+            // ===== FOOD PREPARATION SOPS =====
+            else if (query.includes('egg')) {
+                response.push(knowledgeBase.text['eggs sanitization']['overview']);
+                response.push(knowledgeBase.text['eggs sanitization']['receiving']);
+                response.push(knowledgeBase.text['eggs sanitization']['procedure']);
+            }
+            else if (query.includes('green pepper') || (query.includes('pepper') && !query.includes('black'))) {
+                response.push(knowledgeBase.text['green pepper']['overview']);
+                response.push(knowledgeBase.text['green pepper']['storage']);
+                response.push(knowledgeBase.text['green pepper']['procedure']);
+            }
+            else if (query.includes('onion') && !query.includes('chives')) {
+                response.push(knowledgeBase.text['onion']['overview']);
+                response.push(knowledgeBase.text['onion']['storage']);
+                response.push(knowledgeBase.text['onion']['sliced onion']);
+                response.push(knowledgeBase.text['onion']['diced onion']);
+            }
+            else if (query.includes('tomato')) {
+                response.push(knowledgeBase.text['tomato']['overview']);
+                response.push(knowledgeBase.text['tomato']['round tomato']);
+                response.push(knowledgeBase.text['tomato']['half moon']);
+                response.push(knowledgeBase.text['tomato']['diced']);
+            }
+            else if (query.includes('mushroom')) {
+                response.push(knowledgeBase.text['mushroom']['overview']);
+                response.push(knowledgeBase.text['mushroom']['storage']);
+                response.push(knowledgeBase.text['mushroom']['procedure']);
+            }
+            else if (query.includes('onion chives') || query.includes('chives')) {
+                response.push(knowledgeBase.text['onion chives']['overview']);
+                response.push(knowledgeBase.text['onion chives']['storage']);
+                response.push(knowledgeBase.text['onion chives']['procedure']);
+            }
+            else if (query.includes('cucumber')) {
+                response.push(knowledgeBase.text['cucumber']['overview']);
+                response.push(knowledgeBase.text['cucumber']['storage']);
+                response.push(knowledgeBase.text['cucumber']['procedure']);
+            }
+            else if (query.includes('cheese')) {
+                response.push(knowledgeBase.text['cheese']['overview']);
+                response.push(knowledgeBase.text['cheese']['storage']);
+                response.push(knowledgeBase.text['cheese']['procedure']);
+            }
+            else if ((query.includes('club') || query.includes('club meat')) && (query.includes('beef') || query.includes('chicken') || query.includes('turkey'))) {
+                response.push(knowledgeBase.text['club meat']['overview']);
+                response.push(knowledgeBase.text['club meat']['storage']);
+                response.push(knowledgeBase.text['club meat']['procedure']);
+            }
+            
+            // ===== THAWING GUIDE =====
+            else if (query.includes('thaw') || query.includes('thawing')) {
+                response.push(knowledgeBase.text['thawing guide']['overview']);
+            }
+            
+            // ===== SERVICE STEPS =====
+            else if (query.includes('service step') || query.includes('6 step') || query.includes('guest service')) {
+                response.push(knowledgeBase.text['service steps']['6 steps']);
+            }
+            
+            // ===== CODE OF CONDUCT =====
+            else if (query.includes('code of conduct') || query.includes('conduct')) {
+                response.push(knowledgeBase.text['code of conduct']['purpose']);
+                response.push(knowledgeBase.text['code of conduct']['core values']);
+            }
+            else if (query.includes('ceo') || query.includes('murat')) {
+                response.push(knowledgeBase.text['code of conduct']['ceo message']);
+            }
+            else if (query.includes('human right')) {
+                response.push(knowledgeBase.text['code of conduct']['human rights']);
+            }
+            else if (query.includes('safe workplace')) {
+                response.push(knowledgeBase.text['code of conduct']['safe workplace']);
+            }
+            else if (query.includes('smoking')) {
+                response.push(knowledgeBase.text['code of conduct']['smoking']);
+            }
+            else if (query.includes('alcohol') || query.includes('drug')) {
+                response.push(knowledgeBase.text['code of conduct']['alcohol drugs']);
+            }
+            else if (query.includes('dress') || query.includes('hygiene')) {
+                response.push(knowledgeBase.text['code of conduct']['dress code']);
+            }
+            else if (query.includes('confidential')) {
+                response.push(knowledgeBase.text['code of conduct']['confidentiality']);
+            }
+            else if (query.includes('gift') || query.includes('bribery')) {
+                response.push(knowledgeBase.text['code of conduct']['gifts']);
+            }
+            else if (query.includes('conflict')) {
+                response.push(knowledgeBase.text['code of conduct']['conflict interest']);
+            }
+            else if (query.includes('asset')) {
+                response.push(knowledgeBase.text['code of conduct']['company assets']);
+            }
+            else if (query.includes('communication')) {
+                response.push(knowledgeBase.text['code of conduct']['communication']);
+            }
+            
+            // ===== JOB PROFILES =====
+            else if (query.includes('service crew') || (query.includes('crew') && !query.includes('leader'))) {
+                response.push(knowledgeBase.text['service crew']['overview']);
+                response.push(knowledgeBase.text['service crew']['accountabilities']);
+            }
+            else if (query.includes('crew leader')) {
+                response.push(knowledgeBase.text['crew leader']['overview']);
+                response.push(knowledgeBase.text['crew leader']['accountabilities']);
+            }
+            else if (query.includes('shift manager')) {
+                response.push(knowledgeBase.text['shift manager']['overview']);
+                response.push(knowledgeBase.text['shift manager']['accountabilities']);
+            }
+            else if (query.includes('assistant manager') || query.includes('arm')) {
+                response.push(knowledgeBase.text['assistant manager']['overview']);
+                response.push(knowledgeBase.text['assistant manager']['accountabilities']);
+            }
+            else if (query.includes('restaurant manager') || query.includes('rm')) {
+                response.push(knowledgeBase.text['restaurant manager']['overview']);
+                response.push(knowledgeBase.text['restaurant manager']['accountabilities']);
+            }
+            else if (query.includes('area manager')) {
+                response.push(knowledgeBase.text['area manager']['overview']);
+                response.push(knowledgeBase.text['area manager']['accountabilities']);
+            }
+            else if (query.includes('area supervisor')) {
+                response.push(knowledgeBase.text['area supervisor']['overview']);
+                response.push(knowledgeBase.text['area supervisor']['accountabilities']);
+            }
+            else if (query.includes('job profile') || query.includes('job description') || query.includes('roles')) {
+                response.push('📋 **KUDU JOB PROFILES**\n\n• 👤 Service Crew\n• 👥 Crew Leader\n• 👨‍💼 Shift Manager\n• 👔 Assistant Restaurant Manager\n• 👔 Restaurant Manager\n• 👔 Area Manager\n• 👔 Area Supervisor\n\nWhich role would you like to know more about?');
+            }
+            
+            // ===== LOYALTY PROGRAM =====
+            else if (query.includes('loyalty') || query.includes('reward') || query.includes('points') || query.includes('kudu app')) {
+                response.push(knowledgeBase.text['loyalty program']['overview']);
+            }
+            
+            // ===== COOKING TIMES =====
+            else if (query.includes('cooking time') || query.includes('how long') || query.includes('minutes') || query.includes('cook')) {
+                response.push(knowledgeBase.text['cooking times']['burger station']);
+            }
+            
+            // ===== FOOD ALLERGENS =====
+            else if (query.includes('allergen') || query.includes('allergy') || query.includes('contain')) {
+                response.push(knowledgeBase.text['food allergens']['notice']);
+            }
+            
+            // ===== TRAINING =====
+            else if (query.includes('training') || query.includes('fast track') || query.includes('development')) {
+                response.push(knowledgeBase.text['training']['overview']);
+            }
+            
+            // ===== MENU =====
+            else if (query.includes('menu') || query.includes('food')) {
+                response.push('🍽️ **KUDU MENU CATEGORIES**\n\nWhat would you like to know about?\n• 🥩 Beef\n• 🍔 Burgers\n• 🍗 Chicken\n• 🍟 Sides');
+            }
+            else if (query.includes('beef')) {
+                response.push(knowledgeBase.text['menu']['beef']);
+            }
+            else if (query.includes('burger')) {
+                response.push(knowledgeBase.text['menu']['burgers']);
+            }
+            else if (query.includes('chicken')) {
+                response.push(knowledgeBase.text['menu']['chicken']);
+            }
+            else if (query.includes('side') || query.includes('fries') || query.includes('nacho')) {
+                response.push(knowledgeBase.text['menu']['sides']);
+            }
+            else if (query.includes('kudu brand') || query.includes('about kudu')) {
+                response.push(knowledgeBase.text['menu']['kudu']);
+            }
+            
+            // ===== CONFORMANCE CHECK =====
+            else if (query.includes('conformance') || query.includes('quality check') || query.includes('sandwich check')) {
+                response.push(knowledgeBase.text['conformance check']['kudu chicken sandwich']);
+            }
+            
+            // ===== MISSION & VISION =====
+            else if (query.includes('mission')) {
+                response.push(knowledgeBase.text['mission vision']['mission']);
+            }
+            else if (query.includes('vision')) {
+                response.push(knowledgeBase.text['mission vision']['vision']);
+            }
+
+            if (response.length === 0) {
+                response.push('🔎 I have information about:\n\n🔬 Food Safety Criticals\n🧪 Chemical Handling\n🥚 Eggs Sanitization\n🫑 Green Pepper\n🧅 Onion\n🍅 Tomato\n🍄 Mushroom\n🥒 Cucumber\n🧀 Cheese\n🥩 Club Meat\n❄️ Thawing Guide\n👥 All Job Profiles\n📋 6 Service Steps\n⚖️ Code of Conduct\n💳 Loyalty Program\n⏲️ Cooking Times\n⚠️ Food Allergens\n📚 Training Programs\n🍽️ Menu Items\n\nWhat would you like to know?');
+            }
+
+            return response.join('\n\n');
+        }
+
+        function getRelatedQueries(query) {
+            let related = [];
+            query = query.toLowerCase();
+            
+            if (query.includes('safety') || query.includes('critical')) {
+                related.push('food safety criticals', 'chemical handling');
+            } else if (query.includes('egg')) {
+                related.push('eggs sanitization');
+            } else if (query.includes('pepper')) {
+                related.push('green pepper');
+            } else if (query.includes('onion') && !query.includes('chives')) {
+                related.push('onion preparation');
+            } else if (query.includes('tomato')) {
+                related.push('tomato preparation');
+            } else if (query.includes('mushroom')) {
+                related.push('mushroom preparation');
+            } else if (query.includes('chives')) {
+                related.push('onion chives');
+            } else if (query.includes('cucumber')) {
+                related.push('cucumber');
+            } else if (query.includes('cheese')) {
+                related.push('cheese preparation');
+            } else if (query.includes('club') || query.includes('meat')) {
+                related.push('club meat');
+            } else if (query.includes('thaw')) {
+                related.push('thawing guide');
+            } else if (query.includes('crew') || query.includes('manager')) {
+                related.push('service crew', 'crew leader', 'shift manager', 'assistant manager', 'restaurant manager');
+            } else if (query.includes('service')) {
+                related.push('service steps');
+            } else if (query.includes('loyalty')) {
+                related.push('loyalty program');
+            } else if (query.includes('cook')) {
+                related.push('cooking times');
+            } else if (query.includes('allergy')) {
+                related.push('food allergens');
+            } else if (query.includes('train')) {
+                related.push('training programs');
+            }
+            
+            return related;
+        }
+
+        function showMatchSuggestions(query) {
+            const matchDiv = document.getElementById('matchSuggestions');
+            const matchTags = document.getElementById('matchTags');
+            const matchText = document.getElementById('matchText');
+            
+            const related = getRelatedQueries(query);
+            
+            if (related.length > 0) {
+                matchText.innerHTML = '💡 Related topics:';
+                matchTags.innerHTML = related.map(q => 
+                    `<span class="match-tag" onclick="useSuggestion('${q}')">${q}</span>`
+                ).join('');
+                matchDiv.style.display = 'block';
+            } else {
+                matchDiv.style.display = 'none';
+            }
+        }
+
+        function useSuggestion(suggestion) {
+            document.getElementById('userInput').value = suggestion;
+            sendMessage();
+        }
+
+        function addMessage(text, sender) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = text;
+            
+            messageDiv.appendChild(contentDiv);
+            messagesDiv.appendChild(messageDiv);
+            
+            if (sender === 'bot') {
+                const messageId = 'msg-' + Date.now();
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.className = 'feedback-buttons';
+                feedbackDiv.setAttribute('data-message-id', messageId);
+                feedbackDiv.innerHTML = `
+                    <button class="feedback-btn" onclick="giveFeedback('${messageId}', 'like')">👍</button>
+                    <button class="feedback-btn" onclick="giveFeedback('${messageId}', 'dislike')">👎</button>
+                    <button class="feedback-btn" onclick="giveFeedback('${messageId}', 'ok')">👌</button>
+                    <button class="feedback-btn" onclick="giveFeedback('${messageId}', 'smile')">😊</button>
+                `;
+                messagesDiv.appendChild(feedbackDiv);
+            }
+            
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const messagesDiv = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            messagesDiv.appendChild(typingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function giveFeedback(messageId, type) {
+            const buttons = document.querySelectorAll(`[data-message-id="${messageId}"] .feedback-btn`);
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes(type === 'like' ? '👍' : 
+                                                type === 'dislike' ? '👎' :
+                                                type === 'ok' ? '👌' : '😊')) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            const message = document.querySelector(`[data-message-id="${messageId}"]`).previousElementSibling;
+            if (message) {
+                message.style.transition = 'all 0.3s';
+                message.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    message.style.transform = 'scale(1)';
+                }, 200);
+            }
+        }
+
+        function newChat() {
+            document.getElementById('chatMessages').innerHTML = '';
+            displayWelcomeMessage();
+            currentChatId = Date.now();
+        }
+
+        function clearChat() {
+            if (confirm('Clear current chat?')) {
+                document.getElementById('chatMessages').innerHTML = '';
+                displayWelcomeMessage();
+            }
+        }
+
+        function exportChat() {
+            const messages = [];
+            document.querySelectorAll('.message .message-content').forEach(msg => {
+                messages.push(msg.textContent);
+            });
+            
+            const blob = new Blob([messages.join('\n---\n')], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `kudu-chat-${new Date().toISOString()}.txt`;
+            a.click();
+        }
+
+        function showHistory() {
+            updateHistoryList();
+            document.getElementById('historyPanel').classList.add('show');
+        }
+
+        function hideHistory() {
+            document.getElementById('historyPanel').classList.remove('show');
+        }
+
+        function updateHistoryList() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = chatHistory.map((chat, index) => `
+                <div class="history-item" onclick="loadChat(${index})">
+                    <div class="history-item-date">${new Date(chat.id).toLocaleString()}</div>
+                    <div class="history-item-preview">💬 ${chat.preview || 'Chat session'}</div>
+                </div>
+            `).join('');
+        }
+
+        function saveToHistory(userMsg, botMsg) {
+            const chat = {
+                id: currentChatId,
+                timestamp: Date.now(),
+                preview: userMsg.substring(0, 50) + '...',
+                messages: [{ sender: 'user', text: userMsg }, { sender: 'bot', text: botMsg }]
+            };
+            
+            chatHistory.unshift(chat);
+            if (chatHistory.length > 50) chatHistory.pop();
+            
+            localStorage.setItem('kuduChatHistory', JSON.stringify(chatHistory));
+            updateHistoryList();
+        }
+
+        function loadChat(index) {
+            const chat = chatHistory[index];
+            if (chat) {
+                document.getElementById('chatMessages').innerHTML = '';
+                chat.messages.forEach(msg => {
+                    addMessage(msg.text, msg.sender);
+                });
+                currentChatId = chat.id;
+                hideHistory();
+            }
+        }
+
+        function displayWelcomeMessage() {
+            addMessage('👋 Welcome to Kudu AI - Complete Knowledge Base!\n\n📋 **MAIN CATEGORIES:**\n\n🔬 **Food Safety** - 10 Criticals, Chemical Handling, Food Allergens\n🥚 **Food Preparation SOPs** - Eggs, Vegetables, Cheese, Meats\n👥 **Job Profiles** - Service Crew to Area Manager\n📋 **Service Steps** - 6 Steps Guest Service\n⚖️ **Code of Conduct** - Policies & Values\n💳 **Loyalty Program** - Points & Rewards\n⏲️ **Cooking Times** - All Products\n📚 **Training Programs** - Fast Track & Development\n❄️ **Thawing Guide** - Complete Table\n🍽️ **Menu Items** - Beef, Chicken, Burgers, Sides\n\nHow can I help you today?', 'bot');
+        }
+
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        window.onload = init;
+
+        video.addEventListener('error', function() {
+            console.log('Video failed to load, using fallback');
+            document.querySelector('.video-background').style.background = 'linear-gradient(135deg, #1a1a2e, #16213e)';
+        });
+    </script>
+</body>
+</html>
