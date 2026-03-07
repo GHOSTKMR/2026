@@ -1,0 +1,2337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <link rel="icon" href="https://public-frontend-cos.metadl.com/mgx/img/favicon.png" type="image/png">
+    <title>Restaurant Cleaning • Mobile</title>
+    
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    
+    <!-- PDF Export Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        /* Modern Mobile-First Design System */
+        :root {
+            --primary: #0a84ff;
+            --primary-dark: #0066cc;
+            --secondary: #5856d6;
+            --success: #34c759;
+            --danger: #ff3b30;
+            --warning: #ff9500;
+            --info: #5ac8fa;
+            --restaurant: #ff453a;
+            --restaurant-dark: #d70015;
+            --dark: #1c1c1e;
+            --light: #f2f2f7;
+            --gray: #8e8e93;
+            --gray-light: #e5e5ea;
+            --card-bg: #ffffff;
+            --body-bg: #f2f2f7;
+            --text: #000000;
+            --text-light: #3a3a3c;
+            --border: #c6c6c8;
+            
+            --iphone-bottom: env(safe-area-inset-bottom, 0px);
+            --iphone-top: env(safe-area-inset-top, 0px);
+            --header-height: 60px;
+            --tab-height: 50px;
+            --spacing: 16px;
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 22px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        [data-bs-theme="dark"] {
+            --primary: #0a84ff;
+            --primary-dark: #0066cc;
+            --secondary: #5e5ce6;
+            --success: #30d158;
+            --danger: #ff453a;
+            --warning: #ff9f0a;
+            --info: #64d2ff;
+            --restaurant: #ff453a;
+            --restaurant-dark: #d70015;
+            --dark: #ffffff;
+            --light: #000000;
+            --gray: #98989e;
+            --gray-light: #3a3a3c;
+            --card-bg: #1c1c1e;
+            --body-bg: #000000;
+            --text: #ffffff;
+            --text-light: #98989e;
+            --border: #38383a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text);
+            line-height: 1.4;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding-bottom: calc(80px + var(--iphone-bottom));
+            transition: background-color 0.3s ease;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Mobile Container */
+        .mobile-container {
+            max-width: 430px;
+            margin: 0 auto;
+            padding: 0 var(--spacing);
+        }
+
+        /* App Header */
+        .app-header {
+            background: var(--restaurant);
+            color: white;
+            padding: calc(var(--iphone-top) + 8px) var(--spacing) 8px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: linear-gradient(135deg, var(--restaurant), var(--restaurant-dark));
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .menu-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            transition: all 0.2s ease;
+        }
+
+        .menu-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0.95);
+        }
+
+        .header-logo {
+            height: 32px;
+            filter: brightness(0) invert(1);
+        }
+
+        .theme-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            transition: all 0.2s ease;
+        }
+
+        .theme-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0.95);
+        }
+
+        /* Store Info Bar */
+        .store-info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 12px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .store-info input {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 15px;
+            color: #000;
+            width: 100%;
+        }
+
+        .store-info input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            padding: 12px 4px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:active {
+            transform: scale(0.95);
+        }
+
+        .stat-icon {
+            font-size: 22px;
+            margin-bottom: 6px;
+        }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            opacity: 0.7;
+            font-weight: 500;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 24px 0 12px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .section-toggle {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .section-toggle:active {
+            background: var(--primary);
+            color: white;
+            transform: scale(0.95);
+        }
+
+        /* Team Members */
+        .team-members {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 16px;
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .team-tag {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(10, 132, 255, 0.3);
+        }
+
+        .team-tag .remove {
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .team-tag .remove:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0.9);
+        }
+
+        /* Add Team Member */
+        .add-team {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .add-team input {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            padding: 12px 18px;
+            font-size: 15px;
+            color: var(--text);
+        }
+
+        .add-team button {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background: var(--primary);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(10, 132, 255, 0.4);
+        }
+
+        .add-team button:active {
+            transform: scale(0.95);
+        }
+
+        /* Camera Card */
+        .camera-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .camera-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .camera-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .photo-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .photo-count {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .photo-min {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .progress-bar-custom {
+            height: 6px;
+            background: var(--gray-light);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        }
+
+        .camera-preview {
+            aspect-ratio: 4/3;
+            background: var(--dark);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #videoElement {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .camera-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            background: linear-gradient(135deg, #2c2c2e, #1c1c1e);
+        }
+
+        .camera-placeholder i {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .camera-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 16px;
+        }
+
+        .camera-btn {
+            padding: 12px;
+            border-radius: 25px;
+            border: none;
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .camera-btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-start {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-capture {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-stop {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Photo Gallery */
+        .photo-gallery {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .gallery-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 16px;
+        }
+
+        .clear-btn:active {
+            background: var(--danger);
+            color: white;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .photo-item {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid var(--border);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-badge {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            background: var(--primary);
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+
+        .photo-delete {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: var(--danger);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 14px;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .photo-delete:active {
+            transform: scale(0.9);
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Crew Input */
+        .crew-input-container {
+            position: relative;
+        }
+
+        .crew-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .suggestion-item {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .selected-crew {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+            min-height: 50px;
+        }
+
+        .crew-tag {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .crew-tag .remove {
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .crew-tag .remove:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Row Layout */
+        .row-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        /* Validation Alert */
+        .validation-alert {
+            background: var(--warning);
+            color: #000;
+            padding: 14px 16px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, var(--restaurant), var(--restaurant-dark));
+            color: white;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(255, 69, 58, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.96);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Task List */
+        .task-list-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .task-header {
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-filters {
+            padding: 12px;
+            background: var(--gray-light);
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-select {
+            flex: 1;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        .task-content {
+            padding: 16px;
+        }
+
+        .task-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left-width: 4px;
+            border-left-style: solid;
+            transition: all 0.2s ease;
+        }
+
+        .task-item.high {
+            border-left-color: var(--danger);
+        }
+
+        .task-item.medium {
+            border-left-color: var(--warning);
+        }
+
+        .task-item.low {
+            border-left-color: var(--success);
+        }
+
+        .task-item:active {
+            transform: translateX(4px);
+        }
+
+        .task-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .task-description {
+            font-weight: 600;
+            font-size: 15px;
+            margin-right: 12px;
+        }
+
+        .task-menu-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 20px;
+            padding: 4px;
+        }
+
+        .task-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .badge-warning {
+            background: var(--warning);
+            color: #000;
+        }
+
+        .badge-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .badge-info {
+            background: var(--info);
+            color: #000;
+        }
+
+        .badge-secondary {
+            background: var(--gray);
+            color: white;
+        }
+
+        .task-images {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin: 12px 0;
+        }
+
+        .task-thumb {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            cursor: pointer;
+        }
+
+        .task-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .task-meta {
+            font-size: 12px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .assigned-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .assigned-badge {
+            background: var(--primary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 14px;
+            font-size: 11px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: calc(20px + var(--iphone-bottom));
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, var(--restaurant), var(--restaurant-dark));
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 20px rgba(255, 69, 58, 0.4);
+            z-index: 1000;
+            transition: all 0.2s ease;
+        }
+
+        .fab:active {
+            transform: scale(0.9);
+        }
+
+        /* Data Status */
+        .data-status {
+            position: fixed;
+            bottom: calc(20px + var(--iphone-bottom));
+            left: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 30px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Toast */
+        .toast-custom {
+            position: fixed;
+            bottom: calc(80px + var(--iphone-bottom));
+            left: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border-radius: 30px;
+            padding: 14px 20px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            z-index: 1000;
+        }
+
+        .toast-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast-message {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Offcanvas Menu */
+        .offcanvas {
+            background: var(--card-bg);
+            border-right: 1px solid var(--border);
+        }
+
+        .offcanvas-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .offcanvas-body {
+            padding: 20px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 14px;
+            color: var(--text);
+            text-decoration: none;
+            margin-bottom: 4px;
+        }
+
+        .menu-item:active {
+            background: var(--gray-light);
+        }
+
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Modal */
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 28px;
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Responsive */
+        @media (max-width: 375px) {
+            .stats-grid {
+                gap: 4px;
+            }
+            
+            .stat-number {
+                font-size: 18px;
+            }
+            
+            .stat-label {
+                font-size: 10px;
+            }
+            
+            .photo-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+            }
+        }
+
+        @media (max-height: 700px) {
+            .camera-preview {
+                aspect-ratio: 16/9;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease;
+        }
+    </style>
+</head>
+<body data-bs-theme="light">
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="mobile-container">
+            <div class="header-content">
+                <button class="menu-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+                    <i class="bi bi-list"></i>
+                </button>
+                
+                <img src="https://najjarprofessionalsolutions.com/wp-content/uploads/2024/09/1-32-1536x838.png" alt="Logo" class="header-logo">
+                
+                <button class="theme-btn" id="themeToggleBtn">
+                    <i class="bi bi-moon"></i>
+                </button>
+            </div>
+            
+            <!-- Store Info -->
+            <div class="store-info">
+                <div class="row-grid" style="margin-bottom: 0;">
+                    <input type="text" id="storeName" placeholder="Store name" value="Fine Dining">
+                    <input type="text" id="storeLocation" placeholder="Location" value="Downtown">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
+        <div class="offcanvas-header">
+            <h5>Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <a class="menu-item" href="#" data-section="dashboard">
+                <div class="menu-icon"><i class="bi bi-speedometer2"></i></div>
+                Dashboard
+            </a>
+            <a class="menu-item" href="#" data-section="tasks">
+                <div class="menu-icon"><i class="bi bi-list-check"></i></div>
+                Tasks
+            </a>
+            <a class="menu-item" href="#" data-section="team">
+                <div class="menu-icon"><i class="bi bi-people"></i></div>
+                Team
+            </a>
+            <a class="menu-item" href="#" data-section="add-task">
+                <div class="menu-icon"><i class="bi bi-plus-circle"></i></div>
+                Add Task
+            </a>
+        </div>
+    </div>
+
+    <main class="mobile-container">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon text-primary"><i class="bi bi-clipboard-check"></i></div>
+                <div class="stat-number text-primary" id="totalTasks">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon text-warning"><i class="bi bi-clock"></i></div>
+                <div class="stat-number text-warning" id="pendingTasks">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon text-info"><i class="bi bi-arrow-clockwise"></i></div>
+                <div class="stat-number text-info" id="inProgressTasks">0</div>
+                <div class="stat-label">Progress</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon text-success"><i class="bi bi-check-circle"></i></div>
+                <div class="stat-number text-success" id="completedTasks">0</div>
+                <div class="stat-label">Done</div>
+            </div>
+        </div>
+
+        <!-- Team Section -->
+        <div class="section-header">
+            <h2 class="section-title">Team Members</h2>
+            <button class="section-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#teamCollapse">
+                <i class="bi bi-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="collapse show" id="teamCollapse">
+            <div class="form-card" style="padding: 16px;">
+                <div class="add-team">
+                    <input type="text" id="teamMemberInput" placeholder="Enter name">
+                    <button id="addTeamMember"><i class="bi bi-plus"></i></button>
+                </div>
+                <div class="team-members" id="teamMemberList">
+                    <div class="text-muted" id="noTeamMembers">No team members</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Task Form -->
+        <div class="section-header">
+            <h2 class="section-title">Add New Task</h2>
+        </div>
+
+        <div class="form-card">
+            <form id="taskForm">
+                <!-- Before Photos -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-camera me-1"></i>Before Photos <span class="text-danger">*</span>
+                    </label>
+                    
+                    <!-- Progress -->
+                    <div class="camera-card" style="margin-bottom: 0;">
+                        <div class="camera-header">
+                            <div class="photo-progress">
+                                <span class="photo-count" id="photoProgressText">0/3 photos</span>
+                                <span class="photo-min">Min 3</span>
+                            </div>
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill" id="photoProgress" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Camera Preview -->
+                        <div class="camera-preview">
+                            <video id="videoElement" autoplay playsinline></video>
+                            <canvas id="canvasElement" style="display: none;"></canvas>
+                            <div id="cameraPlaceholder" class="camera-placeholder">
+                                <i class="bi bi-camera"></i>
+                                <span>Camera not started</span>
+                            </div>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="camera-controls">
+                            <button type="button" class="camera-btn btn-start" id="startCamera">
+                                <i class="bi bi-camera-video"></i> Start
+                            </button>
+                            <button type="button" class="camera-btn btn-capture" id="captureButton" disabled>
+                                <i class="bi bi-camera"></i> Capture
+                            </button>
+                            <button type="button" class="camera-btn btn-stop" id="stopCamera" disabled>
+                                <i class="bi bi-stop-circle"></i> Stop
+                            </button>
+                        </div>
+
+                        <!-- Gallery -->
+                        <div class="photo-gallery" id="photoGallery" style="display: none;">
+                            <div class="gallery-header">
+                                <span class="gallery-title">Captured Photos</span>
+                                <button type="button" class="clear-btn" id="clearAllPhotos">Clear All</button>
+                            </div>
+                            <div class="photo-grid" id="photoThumbnails"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task Description -->
+                <div class="form-group">
+                    <label for="taskDescription" class="form-label">Task Description <span class="text-danger">*</span></label>
+                    <textarea class="form-textarea" id="taskDescription" placeholder="Describe the cleaning task..."></textarea>
+                </div>
+
+                <!-- Crew Assignment -->
+                <div class="form-group">
+                    <label class="form-label">Assign to Team <span class="text-danger">*</span></label>
+                    <div class="crew-input-container">
+                        <input type="text" class="form-input" id="crewInput" placeholder="Type team member name">
+                        <div class="crew-suggestions" id="crewSuggestions"></div>
+                    </div>
+                    <div class="selected-crew" id="selectedCrew"></div>
+                    <small class="text-muted">Type name and press Enter or click suggestion</small>
+                </div>
+
+                <!-- Priority & Area -->
+                <div class="row-grid">
+                    <div>
+                        <label for="priority" class="form-label">Priority <span class="text-danger">*</span></label>
+                        <select class="form-select" id="priority">
+                            <option value="">Select</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="area" class="form-label">Area <span class="text-danger">*</span></label>
+                        <select class="form-select" id="area">
+                            <option value="">Select</option>
+                            <option value="Kitchen">Kitchen</option>
+                            <option value="Dining">Dining</option>
+                            <option value="Restrooms">Restrooms</option>
+                            <option value="Storage">Storage</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Due Date & Status -->
+                <div class="row-grid">
+                    <div>
+                        <label for="dueDate" class="form-label">Due Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-input" id="dueDate">
+                    </div>
+                    <div>
+                        <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                        <select class="form-select" id="status">
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Finish Date -->
+                <div class="form-group">
+                    <label for="finishDate" class="form-label">Finish Date</label>
+                    <input type="date" class="form-input" id="finishDate">
+                </div>
+
+                <!-- Validation Alert -->
+                <div class="validation-alert d-none" id="validationAlert">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <span id="validationMessage"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn" id="submitTaskBtn" disabled>
+                    <i class="bi bi-plus-circle me-2"></i>Add Task
+                </button>
+            </form>
+        </div>
+
+        <!-- Task List -->
+        <div class="section-header">
+            <h2 class="section-title">Tasks</h2>
+            <div style="display: flex; gap: 8px;">
+                <span class="badge bg-secondary" id="taskCount">0</span>
+                <button class="section-toggle" id="showListBtn">
+                    <i class="bi bi-list"></i>
+                </button>
+                <button class="section-toggle" id="hideListBtn">
+                    <i class="bi bi-eye-slash"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="task-list-card" id="taskListContainer">
+            <div class="task-filters">
+                <select class="filter-select" id="statusFilter">
+                    <option value="">All Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+                <select class="filter-select" id="priorityFilter">
+                    <option value="">All Priority</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+            
+            <div class="task-content" id="taskList">
+                <div class="empty-state" id="emptyTaskMessage">
+                    <i class="bi bi-clipboard-x"></i>
+                    <h5>No tasks yet</h5>
+                    <p>Add your first cleaning task</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FAB -->
+    <button class="fab" id="exportPdf">
+        <i class="bi bi-file-pdf"></i>
+    </button>
+
+    <!-- Data Status -->
+    <div class="data-status" id="dataStatus">
+        <i class="bi bi-check-circle"></i>
+        <span>Data saved!</span>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-custom" id="liveToast">
+        <div class="toast-icon"><i class="bi bi-info-circle"></i></div>
+        <div class="toast-message" id="toastMessage">Notification</div>
+    </div>
+
+    <!-- Photo Modal -->
+    <div class="modal fade" id="photoModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Before Photos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="photoCarousel"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Restaurant Cleaning Task Manager - Mobile Optimized
+        class TaskManager {
+            constructor() {
+                this.tasks = [];
+                this.teamMembers = [];
+                this.assignedCrew = [];
+                this.capturedPhotos = [];
+                this.minPhotos = 3;
+                this.stream = null;
+                
+                this.initializeElements();
+                this.initializeEventListeners();
+                this.loadData();
+                this.updateUI();
+                this.setupMobileFeatures();
+            }
+            
+            initializeElements() {
+                this.elements = {
+                    themeToggleBtn: document.getElementById('themeToggleBtn'),
+                    loadingOverlay: document.getElementById('loadingOverlay'),
+                    
+                    teamMemberInput: document.getElementById('teamMemberInput'),
+                    addTeamMemberBtn: document.getElementById('addTeamMember'),
+                    
+                    taskForm: document.getElementById('taskForm'),
+                    taskDescription: document.getElementById('taskDescription'),
+                    crewInput: document.getElementById('crewInput'),
+                    crewSuggestions: document.getElementById('crewSuggestions'),
+                    selectedCrew: document.getElementById('selectedCrew'),
+                    priority: document.getElementById('priority'),
+                    area: document.getElementById('area'),
+                    dueDate: document.getElementById('dueDate'),
+                    finishDate: document.getElementById('finishDate'),
+                    status: document.getElementById('status'),
+                    
+                    videoElement: document.getElementById('videoElement'),
+                    canvasElement: document.getElementById('canvasElement'),
+                    cameraPlaceholder: document.getElementById('cameraPlaceholder'),
+                    startCameraBtn: document.getElementById('startCamera'),
+                    captureButton: document.getElementById('captureButton'),
+                    stopCameraBtn: document.getElementById('stopCamera'),
+                    
+                    photoProgress: document.getElementById('photoProgress'),
+                    photoProgressText: document.getElementById('photoProgressText'),
+                    photoGallery: document.getElementById('photoGallery'),
+                    photoThumbnails: document.getElementById('photoThumbnails'),
+                    clearAllPhotos: document.getElementById('clearAllPhotos'),
+                    
+                    taskList: document.getElementById('taskList'),
+                    taskCount: document.getElementById('taskCount'),
+                    emptyTaskMessage: document.getElementById('emptyTaskMessage'),
+                    teamMemberList: document.getElementById('teamMemberList'),
+                    noTeamMembers: document.getElementById('noTeamMembers'),
+                    
+                    totalTasks: document.getElementById('totalTasks'),
+                    pendingTasks: document.getElementById('pendingTasks'),
+                    inProgressTasks: document.getElementById('inProgressTasks'),
+                    completedTasks: document.getElementById('completedTasks'),
+                    
+                    showListBtn: document.getElementById('showListBtn'),
+                    hideListBtn: document.getElementById('hideListBtn'),
+                    taskListContainer: document.getElementById('taskListContainer'),
+                    statusFilter: document.getElementById('statusFilter'),
+                    priorityFilter: document.getElementById('priorityFilter'),
+                    exportPdf: document.getElementById('exportPdf'),
+                    
+                    storeNameInput: document.getElementById('storeName'),
+                    storeLocationInput: document.getElementById('storeLocation'),
+                    
+                    validationAlert: document.getElementById('validationAlert'),
+                    validationMessage: document.getElementById('validationMessage'),
+                    submitTaskBtn: document.getElementById('submitTaskBtn'),
+                    
+                    dataStatus: document.getElementById('dataStatus'),
+                    liveToast: document.getElementById('liveToast'),
+                    toastMessage: document.getElementById('toastMessage'),
+                    
+                    photoModal: document.getElementById('photoModal'),
+                    photoCarousel: document.getElementById('photoCarousel')
+                };
+            }
+            
+            initializeEventListeners() {
+                // Theme toggle
+                this.elements.themeToggleBtn.addEventListener('click', () => this.toggleTheme());
+                
+                // Team member management
+                this.elements.addTeamMemberBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.addTeamMember();
+                });
+                
+                this.elements.teamMemberInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.addTeamMember();
+                    }
+                });
+                
+                // Crew assignment - Fix for selecting team members
+                this.elements.crewInput.addEventListener('input', (e) => this.handleCrewInput(e));
+                
+                this.elements.crewInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const name = e.target.value.trim();
+                        if (name) {
+                            this.addCrewMember(name);
+                            e.target.value = '';
+                            this.hideSuggestions();
+                        }
+                    }
+                });
+                
+                // Close suggestions when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.crew-input-container')) {
+                        this.hideSuggestions();
+                    }
+                });
+                
+                // Camera controls
+                this.elements.startCameraBtn.addEventListener('click', () => this.startCamera());
+                this.elements.captureButton.addEventListener('click', () => this.capturePhoto());
+                this.elements.stopCameraBtn.addEventListener('click', () => this.stopCamera());
+                this.elements.clearAllPhotos.addEventListener('click', () => this.clearAllPhotos());
+                
+                // List controls
+                this.elements.showListBtn.addEventListener('click', () => this.showTaskList());
+                this.elements.hideListBtn.addEventListener('click', () => this.hideTaskList());
+                
+                // Filters
+                this.elements.statusFilter.addEventListener('change', () => this.filterTasks());
+                this.elements.priorityFilter.addEventListener('change', () => this.filterTasks());
+                
+                // Store info
+                this.elements.storeNameInput.addEventListener('change', () => this.saveStoreInfo());
+                this.elements.storeLocationInput.addEventListener('change', () => this.saveStoreInfo());
+                
+                // PDF export
+                this.elements.exportPdf.addEventListener('click', () => this.exportToPDF());
+                
+                // Task form submission
+                this.elements.taskForm.addEventListener('submit', (e) => this.handleTaskSubmit(e));
+                
+                // Form validation on input
+                this.elements.taskDescription.addEventListener('input', () => this.validateForm());
+                this.elements.priority.addEventListener('change', () => this.validateForm());
+                this.elements.area.addEventListener('change', () => this.validateForm());
+                this.elements.dueDate.addEventListener('change', () => this.validateForm());
+                this.elements.status.addEventListener('change', () => this.validateForm());
+                
+                // Mobile navigation
+                document.querySelectorAll('[data-section]').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const section = e.target.closest('a').getAttribute('data-section');
+                        this.navigateToSection(section);
+                    });
+                });
+
+                // Set minimum dates
+                const today = new Date().toISOString().split('T')[0];
+                this.elements.dueDate.min = today;
+                this.elements.finishDate.min = today;
+            }
+            
+            setupMobileFeatures() {
+                // Handle safe areas
+                document.body.style.paddingBottom = 'env(safe-area-inset-bottom)';
+                
+                // Prevent zoom on focus
+                document.querySelectorAll('input, select, textarea').forEach(el => {
+                    el.addEventListener('focus', () => {
+                        document.body.style.transform = 'none';
+                    });
+                });
+                
+                // Orientation change
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(() => this.updateUI(), 100);
+                });
+            }
+            
+            loadData() {
+                // Load team members
+                const savedTeam = localStorage.getItem('restaurantTeamMembers');
+                this.teamMembers = savedTeam ? JSON.parse(savedTeam) : ['John Smith', 'Maria Garcia', 'David Johnson'];
+                
+                // Load tasks
+                const savedTasks = localStorage.getItem('restaurantCleaningTasks');
+                if (savedTasks) {
+                    this.tasks = JSON.parse(savedTasks);
+                } else {
+                    this.createSampleTasks();
+                }
+                
+                // Load store info
+                const savedStoreName = localStorage.getItem('restaurantStoreName');
+                const savedStoreLocation = localStorage.getItem('restaurantStoreLocation');
+                
+                if (savedStoreName) this.elements.storeNameInput.value = savedStoreName;
+                if (savedStoreLocation) this.elements.storeLocationInput.value = savedStoreLocation;
+                
+                // Load theme
+                const savedTheme = localStorage.getItem('restaurantTheme') || 'light';
+                document.body.setAttribute('data-bs-theme', savedTheme);
+                this.updateThemeIcon(savedTheme);
+            }
+            
+            saveTeamMembers() {
+                localStorage.setItem('restaurantTeamMembers', JSON.stringify(this.teamMembers));
+            }
+            
+            saveTasks() {
+                localStorage.setItem('restaurantCleaningTasks', JSON.stringify(this.tasks));
+                this.showDataStatus('Tasks saved!');
+            }
+            
+            saveStoreInfo() {
+                localStorage.setItem('restaurantStoreName', this.elements.storeNameInput.value);
+                localStorage.setItem('restaurantStoreLocation', this.elements.storeLocationInput.value);
+                this.showDataStatus('Store info saved!');
+            }
+            
+            createSampleTasks() {
+                const today = new Date().toISOString().split('T')[0];
+                const samplePhotos = ['data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkJlZm9yZTwvdGV4dD48L3N2Zz4='];
+                
+                this.tasks = [
+                    {
+                        id: Date.now(),
+                        description: "Deep clean kitchen floors",
+                        assignedTo: ["John Smith", "Maria Garcia"],
+                        priority: "High",
+                        area: "Kitchen",
+                        dueDate: today,
+                        status: "Pending",
+                        beforePhotos: samplePhotos,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: Date.now() + 1,
+                        description: "Clean restrooms and restock supplies",
+                        assignedTo: ["David Johnson"],
+                        priority: "Medium",
+                        area: "Restrooms",
+                        dueDate: today,
+                        status: "In Progress",
+                        beforePhotos: samplePhotos,
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                this.saveTasks();
+            }
+            
+            toggleTheme() {
+                const current = document.body.getAttribute('data-bs-theme');
+                const newTheme = current === 'light' ? 'dark' : 'light';
+                document.body.setAttribute('data-bs-theme', newTheme);
+                this.updateThemeIcon(newTheme);
+                localStorage.setItem('restaurantTheme', newTheme);
+            }
+            
+            updateThemeIcon(theme) {
+                const icon = this.elements.themeToggleBtn.querySelector('i');
+                icon.className = theme === 'light' ? 'bi bi-moon' : 'bi bi-sun';
+            }
+            
+            addTeamMember() {
+                const name = this.elements.teamMemberInput.value.trim();
+                if (name) {
+                    if (!this.teamMembers.includes(name)) {
+                        this.teamMembers.push(name);
+                        this.saveTeamMembers();
+                        this.renderTeamMembers();
+                        this.elements.teamMemberInput.value = '';
+                        this.showToast(`Added ${name} to team`);
+                    } else {
+                        this.showToast(`${name} is already in team`);
+                    }
+                }
+            }
+            
+            removeTeamMember(name) {
+                this.teamMembers = this.teamMembers.filter(m => m !== name);
+                // Also remove from assigned crew if present
+                this.assignedCrew = this.assignedCrew.filter(m => m !== name);
+                this.renderTeamMembers();
+                this.renderCrewMembers();
+                this.saveTeamMembers();
+                this.validateForm();
+                this.showToast(`Removed ${name}`);
+            }
+            
+            renderTeamMembers() {
+                this.elements.teamMemberList.innerHTML = '';
+                if (this.teamMembers.length === 0) {
+                    this.elements.teamMemberList.innerHTML = '<div class="text-muted">No team members</div>';
+                    return;
+                }
+                
+                this.teamMembers.forEach(member => {
+                    const span = document.createElement('span');
+                    span.className = 'team-tag';
+                    span.innerHTML = `
+                        ${member}
+                        <button class="remove" onclick="taskManager.removeTeamMember('${member}')">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    `;
+                    this.elements.teamMemberList.appendChild(span);
+                });
+            }
+            
+            handleCrewInput(e) {
+                const value = e.target.value.toLowerCase().trim();
+                if (value.length > 0) {
+                    const filtered = this.teamMembers.filter(m => 
+                        m.toLowerCase().includes(value) && !this.assignedCrew.includes(m)
+                    );
+                    this.showSuggestions(filtered);
+                } else {
+                    this.hideSuggestions();
+                }
+            }
+            
+            showSuggestions(suggestions) {
+                const suggestionsDiv = this.elements.crewSuggestions;
+                if (suggestions.length === 0) {
+                    suggestionsDiv.style.display = 'none';
+                    return;
+                }
+                
+                suggestionsDiv.innerHTML = '';
+                suggestionsDiv.style.display = 'block';
+                
+                suggestions.forEach(member => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.textContent = member;
+                    div.onclick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.addCrewMember(member);
+                        this.elements.crewInput.value = '';
+                        this.hideSuggestions();
+                    };
+                    suggestionsDiv.appendChild(div);
+                });
+            }
+            
+            hideSuggestions() {
+                this.elements.crewSuggestions.style.display = 'none';
+            }
+            
+            addCrewMember(name) {
+                if (name && !this.assignedCrew.includes(name)) {
+                    if (this.teamMembers.includes(name)) {
+                        this.assignedCrew.push(name);
+                        this.renderCrewMembers();
+                        this.validateForm();
+                        this.showToast(`${name} assigned to task`);
+                    } else {
+                        this.showToast(`${name} is not in your team. Add them first.`);
+                    }
+                }
+            }
+            
+            removeCrewMember(name) {
+                this.assignedCrew = this.assignedCrew.filter(m => m !== name);
+                this.renderCrewMembers();
+                this.validateForm();
+                this.showToast(`Removed ${name} from task`);
+            }
+            
+            renderCrewMembers() {
+                const container = this.elements.selectedCrew;
+                container.innerHTML = '';
+                
+                if (this.assignedCrew.length === 0) {
+                    container.innerHTML = '<div class="text-muted small">No team members assigned yet</div>';
+                    return;
+                }
+                
+                this.assignedCrew.forEach(member => {
+                    const span = document.createElement('span');
+                    span.className = 'crew-tag';
+                    span.innerHTML = `
+                        ${member}
+                        <button class="remove" onclick="taskManager.removeCrewMember('${member}')">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    `;
+                    container.appendChild(span);
+                });
+            }
+            
+            async startCamera() {
+                try {
+                    this.showLoading();
+                    
+                    if (this.stream) {
+                        this.stream.getTracks().forEach(t => t.stop());
+                    }
+                    
+                    this.stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { 
+                            facingMode: 'environment',
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        } 
+                    });
+                    
+                    this.elements.videoElement.srcObject = this.stream;
+                    this.elements.videoElement.style.display = 'block';
+                    this.elements.cameraPlaceholder.style.display = 'none';
+                    
+                    this.elements.startCameraBtn.disabled = true;
+                    this.elements.captureButton.disabled = false;
+                    this.elements.stopCameraBtn.disabled = false;
+                    
+                    this.hideLoading();
+                    this.showToast('Camera started');
+                } catch (err) {
+                    this.hideLoading();
+                    this.showToast('Camera access denied');
+                }
+            }
+            
+            capturePhoto() {
+                const context = this.elements.canvasElement.getContext('2d');
+                this.elements.canvasElement.width = this.elements.videoElement.videoWidth;
+                this.elements.canvasElement.height = this.elements.videoElement.videoHeight;
+                
+                context.drawImage(this.elements.videoElement, 0, 0, 
+                    this.elements.canvasElement.width, this.elements.canvasElement.height);
+                
+                const photoData = this.elements.canvasElement.toDataURL('image/jpeg', 0.8);
+                this.capturedPhotos.push(photoData);
+                
+                this.updatePhotoProgress();
+                this.updatePhotoGallery();
+                this.validateForm();
+                
+                this.showToast(`Photo ${this.capturedPhotos.length} captured`);
+            }
+            
+            stopCamera() {
+                if (this.stream) {
+                    this.stream.getTracks().forEach(t => t.stop());
+                    this.stream = null;
+                }
+                
+                this.elements.videoElement.style.display = 'none';
+                this.elements.cameraPlaceholder.style.display = 'flex';
+                
+                this.elements.startCameraBtn.disabled = false;
+                this.elements.captureButton.disabled = true;
+                this.elements.stopCameraBtn.disabled = true;
+            }
+            
+            updatePhotoProgress() {
+                const progress = Math.min((this.capturedPhotos.length / this.minPhotos) * 100, 100);
+                this.elements.photoProgress.style.width = `${progress}%`;
+                this.elements.photoProgressText.textContent = `${this.capturedPhotos.length}/${this.minPhotos} photos`;
+            }
+            
+            updatePhotoGallery() {
+                if (this.capturedPhotos.length === 0) {
+                    this.elements.photoGallery.style.display = 'none';
+                    return;
+                }
+                
+                this.elements.photoGallery.style.display = 'block';
+                this.elements.photoThumbnails.innerHTML = '';
+                
+                this.capturedPhotos.forEach((photo, index) => {
+                    const thumb = document.createElement('div');
+                    thumb.className = 'photo-item';
+                    thumb.innerHTML = `
+                        <img src="${photo}" alt="Photo ${index + 1}">
+                        <div class="photo-badge">${index + 1}</div>
+                        <button class="photo-delete" onclick="event.stopPropagation(); taskManager.deletePhoto(${index})">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    `;
+                    thumb.addEventListener('click', (e) => {
+                        if (!e.target.closest('.photo-delete')) {
+                            this.showPhotoModal(index);
+                        }
+                    });
+                    this.elements.photoThumbnails.appendChild(thumb);
+                });
+            }
+            
+            deletePhoto(index) {
+                this.capturedPhotos.splice(index, 1);
+                this.updatePhotoProgress();
+                this.updatePhotoGallery();
+                this.validateForm();
+            }
+            
+            clearAllPhotos() {
+                if (this.capturedPhotos.length === 0) return;
+                this.capturedPhotos = [];
+                this.updatePhotoProgress();
+                this.updatePhotoGallery();
+                this.validateForm();
+                this.showToast('All photos cleared');
+            }
+            
+            showPhotoModal(index) {
+                this.elements.photoCarousel.innerHTML = '';
+                this.capturedPhotos.forEach((photo, i) => {
+                    const div = document.createElement('div');
+                    div.className = 'mb-3';
+                    div.innerHTML = `
+                        <h6>Photo ${i + 1} of ${this.capturedPhotos.length}</h6>
+                        <img src="${photo}" class="img-fluid rounded" alt="Photo ${i + 1}">
+                    `;
+                    this.elements.photoCarousel.appendChild(div);
+                });
+                
+                const modal = new bootstrap.Modal(this.elements.photoModal);
+                modal.show();
+            }
+            
+            validateForm() {
+                const errors = [];
+                
+                if (this.capturedPhotos.length < this.minPhotos) {
+                    errors.push(`Need ${this.minPhotos} photos (${this.capturedPhotos.length} taken)`);
+                }
+                if (this.assignedCrew.length === 0) {
+                    errors.push('Assign at least 1 team member');
+                }
+                if (!this.elements.taskDescription.value.trim()) {
+                    errors.push('Task description required');
+                }
+                if (!this.elements.priority.value) {
+                    errors.push('Priority required');
+                }
+                if (!this.elements.area.value) {
+                    errors.push('Area required');
+                }
+                if (!this.elements.dueDate.value) {
+                    errors.push('Due date required');
+                }
+                
+                if (errors.length > 0) {
+                    this.elements.validationAlert.classList.remove('d-none');
+                    this.elements.validationMessage.innerHTML = errors.map(e => `• ${e}`).join('<br>');
+                    this.elements.submitTaskBtn.disabled = true;
+                    return false;
+                } else {
+                    this.elements.validationAlert.classList.add('d-none');
+                    this.elements.submitTaskBtn.disabled = false;
+                    return true;
+                }
+            }
+            
+            handleTaskSubmit(e) {
+                e.preventDefault();
+                
+                if (!this.validateForm()) {
+                    this.showToast('Please fix validation errors');
+                    return;
+                }
+                
+                const task = {
+                    id: Date.now(),
+                    description: this.elements.taskDescription.value,
+                    assignedTo: [...this.assignedCrew],
+                    priority: this.elements.priority.value,
+                    area: this.elements.area.value,
+                    dueDate: this.elements.dueDate.value,
+                    finishDate: this.elements.finishDate.value,
+                    status: this.elements.status.value,
+                    beforePhotos: [...this.capturedPhotos],
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.tasks.push(task);
+                this.saveTasks();
+                this.updateUI();
+                this.resetForm();
+                
+                this.showToast('Task added successfully!');
+            }
+            
+            resetForm() {
+                this.elements.taskDescription.value = '';
+                this.elements.priority.value = '';
+                this.elements.area.value = '';
+                this.elements.dueDate.value = '';
+                this.elements.finishDate.value = '';
+                this.elements.status.value = 'Pending';
+                
+                this.capturedPhotos = [];
+                this.assignedCrew = [];
+                this.renderCrewMembers();
+                this.updatePhotoProgress();
+                this.updatePhotoGallery();
+                this.validateForm();
+                this.stopCamera();
+            }
+            
+            deleteTask(id) {
+                if (confirm('Are you sure you want to delete this task?')) {
+                    this.tasks = this.tasks.filter(t => t.id !== id);
+                    this.saveTasks();
+                    this.updateUI();
+                    this.showToast('Task deleted');
+                }
+            }
+            
+            editTask(id) {
+                const task = this.tasks.find(t => t.id === id);
+                if (task) {
+                    this.elements.taskDescription.value = task.description;
+                    this.elements.priority.value = task.priority;
+                    this.elements.area.value = task.area;
+                    this.elements.dueDate.value = task.dueDate;
+                    this.elements.finishDate.value = task.finishDate || '';
+                    this.elements.status.value = task.status;
+                    
+                    this.assignedCrew = [...task.assignedTo];
+                    this.renderCrewMembers();
+                    
+                    if (task.beforePhotos) {
+                        this.capturedPhotos = [...task.beforePhotos];
+                        this.updatePhotoProgress();
+                        this.updatePhotoGallery();
+                    }
+                    
+                    this.validateForm();
+                    this.tasks = this.tasks.filter(t => t.id !== id);
+                    this.saveTasks();
+                    this.updateUI();
+                    
+                    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
+                    this.showToast('Task loaded for editing');
+                }
+            }
+            
+            updateUI() {
+                this.updateTaskList();
+                this.updateTaskCount();
+                this.updateStats();
+                this.renderTeamMembers();
+            }
+            
+            updateTaskList() {
+                if (this.tasks.length === 0) {
+                    this.elements.emptyTaskMessage.style.display = 'block';
+                    this.elements.taskList.innerHTML = '';
+                    this.elements.taskList.appendChild(this.elements.emptyTaskMessage);
+                    return;
+                }
+                
+                this.elements.emptyTaskMessage.style.display = 'none';
+                this.elements.taskList.innerHTML = '';
+                
+                const sorted = [...this.tasks].sort((a, b) => {
+                    const pOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
+                    if (pOrder[a.priority] !== pOrder[b.priority]) {
+                        return pOrder[b.priority] - pOrder[a.priority];
+                    }
+                    return new Date(a.dueDate) - new Date(b.dueDate);
+                });
+                
+                sorted.forEach(task => {
+                    const taskEl = document.createElement('div');
+                    taskEl.className = `task-item ${task.priority.toLowerCase()}`;
+                    taskEl.setAttribute('data-status', task.status);
+                    taskEl.setAttribute('data-priority', task.priority);
+                    
+                    const priorityClass = task.priority === 'High' ? 'badge-danger' : 
+                                         task.priority === 'Medium' ? 'badge-warning' : 'badge-success';
+                    
+                    const photosHTML = task.beforePhotos && task.beforePhotos.length > 0 ? `
+                        <div class="task-images">
+                            ${task.beforePhotos.slice(0, 3).map((photo, i) => 
+                                `<div class="task-thumb" onclick="taskManager.showTaskPhotoModal(${task.id}, ${i})">
+                                    <img src="${photo}" alt="Photo ${i+1}">
+                                </div>`
+                            ).join('')}
+                        </div>
+                    ` : '';
+                    
+                    taskEl.innerHTML = `
+                        <div class="task-item-header">
+                            <span class="task-description">${this.escapeHtml(task.description)}</span>
+                            <div class="dropdown">
+                                <button class="task-menu-btn" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" onclick="taskManager.editTask(${task.id})">
+                                        <i class="bi bi-pencil me-2"></i>Edit</a>
+                                    </li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="taskManager.deleteTask(${task.id})">
+                                        <i class="bi bi-trash me-2"></i>Delete</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        ${photosHTML}
+                        
+                        <div class="task-badges">
+                            <span class="badge ${priorityClass}">${task.priority}</span>
+                            <span class="badge badge-info">${task.area}</span>
+                            <span class="badge badge-secondary">${task.status}</span>
+                        </div>
+                        
+                        <div class="assigned-badges">
+                            ${task.assignedTo.map(m => 
+                                `<span class="assigned-badge">${this.escapeHtml(m)}</span>`
+                            ).join('')}
+                        </div>
+                        
+                        <div class="task-meta">
+                            <i class="bi bi-calendar"></i> Due: ${new Date(task.dueDate).toLocaleDateString()}
+                        </div>
+                    `;
+                    
+                    this.elements.taskList.appendChild(taskEl);
+                });
+                
+                this.filterTasks();
+            }
+            
+            showTaskPhotoModal(taskId, index) {
+                const task = this.tasks.find(t => t.id === taskId);
+                if (task && task.beforePhotos) {
+                    this.elements.photoCarousel.innerHTML = '';
+                    task.beforePhotos.forEach((photo, i) => {
+                        const div = document.createElement('div');
+                        div.className = 'mb-3';
+                        div.innerHTML = `
+                            <h6>Photo ${i + 1} of ${task.beforePhotos.length}</h6>
+                            <img src="${photo}" class="img-fluid rounded" alt="Photo ${i + 1}">
+                        `;
+                        this.elements.photoCarousel.appendChild(div);
+                    });
+                    
+                    const modal = new bootstrap.Modal(this.elements.photoModal);
+                    modal.show();
+                }
+            }
+            
+            updateTaskCount() {
+                this.elements.taskCount.textContent = this.tasks.length;
+            }
+            
+            updateStats() {
+                this.elements.totalTasks.textContent = this.tasks.length;
+                this.elements.pendingTasks.textContent = this.tasks.filter(t => t.status === 'Pending').length;
+                this.elements.inProgressTasks.textContent = this.tasks.filter(t => t.status === 'In Progress').length;
+                this.elements.completedTasks.textContent = this.tasks.filter(t => t.status === 'Completed').length;
+            }
+            
+            showTaskList() {
+                this.elements.taskListContainer.style.display = 'block';
+                this.elements.showListBtn.classList.add('active');
+                this.elements.hideListBtn.classList.remove('active');
+            }
+            
+            hideTaskList() {
+                this.elements.taskListContainer.style.display = 'none';
+                this.elements.hideListBtn.classList.add('active');
+                this.elements.showListBtn.classList.remove('active');
+            }
+            
+            filterTasks() {
+                const statusFilter = this.elements.statusFilter.value;
+                const priorityFilter = this.elements.priorityFilter.value;
+                
+                document.querySelectorAll('.task-item').forEach(item => {
+                    const status = item.getAttribute('data-status');
+                    const priority = item.getAttribute('data-priority');
+                    
+                    const statusMatch = !statusFilter || status === statusFilter;
+                    const priorityMatch = !priorityFilter || priority === priorityFilter;
+                    
+                    item.style.display = statusMatch && priorityMatch ? 'block' : 'none';
+                });
+            }
+            
+            navigateToSection(section) {
+                const sections = {
+                    'dashboard': () => window.scrollTo({ top: 0, behavior: 'smooth' }),
+                    'tasks': () => document.querySelector('.task-list-card').scrollIntoView({ behavior: 'smooth' }),
+                    'team': () => document.querySelector('.team-section').scrollIntoView({ behavior: 'smooth' }),
+                    'add-task': () => document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' })
+                };
+                
+                if (sections[section]) {
+                    sections[section]();
+                    const offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('mobileMenu'));
+                    if (offcanvas) offcanvas.hide();
+                }
+            }
+            
+            async exportToPDF() {
+                if (this.tasks.length === 0) {
+                    this.showToast('No tasks to export');
+                    return;
+                }
+                
+                try {
+                    this.showLoading();
+                    
+                    const element = document.createElement('div');
+                    element.innerHTML = `
+                        <div style="padding: 20px; font-family: Arial;">
+                            <h1 style="color: #ff453a;">${this.escapeHtml(this.elements.storeNameInput.value)}</h1>
+                            <h2>Cleaning Tasks Report</h2>
+                            <p>Generated: ${new Date().toLocaleString()}</p>
+                            <p>Total Tasks: ${this.tasks.length}</p>
+                            <hr>
+                            ${this.tasks.map(t => `
+                                <div style="margin-bottom: 20px; padding: 15px; border-left: 4px solid #ff453a; background: #f5f5f5;">
+                                    <h3>${this.escapeHtml(t.description)}</h3>
+                                    <p>Priority: ${t.priority} | Area: ${t.area}</p>
+                                    <p>Status: ${t.status} | Due: ${new Date(t.dueDate).toLocaleDateString()}</p>
+                                    <p>Assigned: ${t.assignedTo.join(', ')}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    
+                    const opt = {
+                        margin: [15, 15, 15, 15],
+                        filename: `cleaning-tasks-${new Date().toISOString().split('T')[0]}.pdf`,
+                        html2canvas: { scale: 2 },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    };
+                    
+                    await html2pdf().set(opt).from(element).save();
+                    this.showToast('PDF exported!');
+                } catch (error) {
+                    this.showToast('Error generating PDF');
+                } finally {
+                    this.hideLoading();
+                }
+            }
+            
+            showLoading() {
+                this.elements.loadingOverlay.style.display = 'flex';
+            }
+            
+            hideLoading() {
+                this.elements.loadingOverlay.style.display = 'none';
+            }
+            
+            showToast(message) {
+                this.elements.toastMessage.textContent = message;
+                this.elements.liveToast.style.display = 'flex';
+                setTimeout(() => {
+                    this.elements.liveToast.style.display = 'none';
+                }, 2000);
+            }
+            
+            showDataStatus(message) {
+                this.elements.dataStatus.querySelector('span').textContent = message;
+                this.elements.dataStatus.style.display = 'flex';
+                setTimeout(() => {
+                    this.elements.dataStatus.style.display = 'none';
+                }, 1500);
+            }
+            
+            escapeHtml(text) {
+                const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+                return String(text).replace(/[&<>"']/g, m => map[m]);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            window.taskManager = new TaskManager();
+        });
+
+        // Handle visibility
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && window.taskManager?.stream) {
+                window.taskManager.stopCamera();
+            }
+        });
+    </script>
+</body>
+</html>
