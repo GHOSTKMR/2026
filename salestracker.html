@@ -368,9 +368,9 @@
         <div class="col-6 col-md-3"><div class="summary-card"><div class="label">GROWTH</div><div class="value" id="growth-rate">0%</div><div class="progress"><div class="progress-bar" id="growth-progress" style="width:0%"></div></div></div></div>
     </div>
 
-    <!-- NOTIFICATIONS + TREND ANALYSIS (TARGET PREDICTION) -->
+    <!-- NOTIFICATIONS + TREND ANALYSIS (TARGET FORECAST based on daily ACH%) -->
     <div class="notification-panel">
-        <h5><i class="fas fa-chart-simple me-2"></i> TREND & TARGET FORECAST</h5>
+        <h5><i class="fas fa-chart-simple me-2"></i> TARGET FORECAST (based on daily ACH%)</h5>
         <div id="trend-analysis" style="font-size:0.9rem; margin-bottom:10px; padding:8px; background:#2a2f42; border-radius:16px;"></div>
         <div id="notifications-container"></div>
     </div>
@@ -556,8 +556,83 @@
 
         saveData();
         updateChart();
-        // Pass extra params to trend function
-        updateTrendAndNotifications(mtdSales, mtdTarget, totalTarget, mtdAchRate, mtdGrowth, today, mtdAC, mtdTC, mtdAvg, mtdValid, validDays, totalTarget);
+
+        // Call target forecast based on daily ACH%
+        updateTargetForecast(today, totalTarget, mtdSales, mtdTarget);
+    }
+
+    // New TARGET FORECAST logic based on daily ACHIEVEMENT % (actual % of target achieved each day)
+    function updateTargetForecast(today, totalMonthlyTarget, mtdSales, mtdTarget) {
+        // Gather daily achievement percentages from days that have target > 0 (past days up to yesterday)
+        let dailyAchPct = [];
+        for (let i = 1; i < today; i++) { // days 1 .. today-1
+            const t = parseFloat(targetData[currentMonth][i-1]) || 0;
+            const s = parseFloat(salesData[currentMonth][i-1]) || 0;
+            if (t > 0) {
+                dailyAchPct.push((s / t) * 100); // achievement %
+            }
+        }
+
+        // Calculate average achievement % from past days (if any), else default 100%
+        const avgAch = dailyAchPct.length > 0 ? dailyAchPct.reduce((a,b) => a + b, 0) / dailyAchPct.length : 100;
+
+        // Sum of remaining targets (from today onward)
+        let remainingTargetSum = 0;
+        for (let i = today; i <= 30; i++) {
+            const t = parseFloat(targetData[currentMonth][i-1]) || 0;
+            remainingTargetSum += t;
+        }
+
+        // Projected future sales = remaining targets * (avgAch/100)
+        const projectedFutureSales = (avgAch / 100) * remainingTargetSum;
+
+        // Total projected sales = MTD sales (up to yesterday) + projectedFutureSales
+        const projectedTotal = mtdSales + projectedFutureSales;
+
+        // Projected achievement % against total monthly target
+        const projectedAch = totalMonthlyTarget > 0 ? (projectedTotal / totalMonthlyTarget) * 100 : 0;
+
+        // Calculate required daily achievement to hit exactly 100% (optional)
+        let requiredMsg = '';
+        if (remainingTargetSum > 0 && today <= 30) {
+            const neededSales = totalMonthlyTarget - mtdSales;
+            const requiredAch = (neededSales / remainingTargetSum) * 100;
+            requiredMsg = ` | Need ${requiredAch > 0 ? requiredAch.toFixed(1) : 0}% of future targets to hit 100% total.`;
+        }
+
+        // Determine forecast message based on projectedAch
+        let forecastMsg = '';
+        let cssClass = '';
+        if (projectedAch >= 105) {
+            forecastMsg = `✅ FORECAST: EXCEED (${projectedAch.toFixed(1)}%) – likely above target.`;
+            cssClass = 'text-success';
+        } else if (projectedAch >= 100) {
+            forecastMsg = `⚠️ FORECAST: On track to ACHIEVE (${projectedAch.toFixed(1)}%) – close to target.`;
+            cssClass = 'text-warning';
+        } else {
+            forecastMsg = `❌ FORECAST: Likely to MISS (${projectedAch.toFixed(1)}%) – below target.`;
+            cssClass = 'text-danger';
+        }
+
+        // Additional info: avg daily ach from past days
+        const avgInfo = dailyAchPct.length > 0 ? `Avg daily ACH%: ${avgAch.toFixed(1)}% (based on ${dailyAchPct.length} days)` : 'No past target days to compute avg ACH%';
+
+        $("#trend-analysis").html(`
+            <div class="${cssClass}" style="font-weight:600;">${forecastMsg}</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);">${avgInfo}${requiredMsg}</div>
+        `);
+
+        // Also add a quick notif about projection
+        const notif = $("#notifications-container");
+        notif.empty();
+        const projItem = document.createElement('div');
+        projItem.className = `notification-item ${projectedAch >= 100 ? 'success' : 'danger'}`;
+        projItem.innerHTML = `<i class="fas fa-${projectedAch >= 100 ? 'check-circle' : 'exclamation-circle'} me-2"></i>Projected total: SAR ${formatSAR(projectedTotal)} (${projectedAch.toFixed(1)}%)`;
+        notif.append(projItem);
+
+        // Additional quick notifications (keeping some)
+        const avgDailySales = mtdTarget > 0 && today > 1 ? (mtdSales / (today-1)) : 0;
+        notif.append(`<div class="notification-item warning"><i class="fas fa-chart-line me-2"></i>MTD Sales: SAR ${formatSAR(mtdSales)} | Avg daily: SAR ${formatSAR(avgDailySales)}</div>`);
     }
 
     function updateChart() {
@@ -583,85 +658,6 @@
                     y1: { position:'right', ticks: { color:'#9e9e9e', callback: (v) => v+'%' } }
                 }
             }
-        });
-    }
-
-    // New function: trend analysis based on previous days' achievement and target forecast
-    function updateTrendAndNotifications(mtdSales, mtdTarget, totalMonthlyTarget, mtdAch, mtdGrowth, today, mtdAC, mtdTC, mtdAvg, mtdValid, validDays, totalTargetSum) {
-        const notif = $("#notifications-container");
-        notif.empty();
-
-        // ----- TARGET PREDICTION LOGIC -----
-        let predictionText = "";
-        let predictionClass = "";
-
-        // calculate average daily achievement % for days with target >0
-        let totalAchievementPercent = 0;
-        let countValidTargetDays = 0;
-        for (let i=1; i<=today-1; i++) { // up to yesterday
-            const t = parseFloat(targetData[currentMonth][i-1]) || 0;
-            const s = parseFloat(salesData[currentMonth][i-1]) || 0;
-            if (t > 0) {
-                totalAchievementPercent += (s / t) * 100;
-                countValidTargetDays++;
-            }
-        }
-        const avgAchievementPercent = countValidTargetDays > 0 ? totalAchievementPercent / countValidTargetDays : 100;
-
-        // Calculate remaining target (total monthly target - mtdTarget)
-        const remainingTarget = totalMonthlyTarget - mtdTarget;
-        // Average remaining days (from tomorrow to 30)
-        const remainingDays = 30 - today + 1; // inclusive of today? we use tomorrow onward
-        let requiredDailySales = 0;
-        if (remainingDays > 0 && remainingTarget > 0) {
-            requiredDailySales = remainingTarget / remainingDays;
-        }
-
-        // project expected sales based on avg achievement applied to future targets (if available)
-        let projectedTotal = mtdSales;
-        let futureTargetSum = 0;
-        for (let i=today; i<=30; i++) {
-            const t = parseFloat(targetData[currentMonth][i-1]) || 0;
-            futureTargetSum += t;
-        }
-        // use avg achievement percent to forecast future sales
-        const projectedFutureSales = (avgAchievementPercent / 100) * futureTargetSum;
-        projectedTotal += projectedFutureSales;
-
-        const finalProjectedAchievement = totalMonthlyTarget > 0 ? (projectedTotal / totalMonthlyTarget) * 100 : 0;
-
-        // Determine prediction message
-        if (finalProjectedAchievement >= 105) {
-            predictionText = `✅ TARGET FORECAST: Will EXCEED (${finalProjectedAchievement.toFixed(1)}%) – likely above target.`;
-            predictionClass = 'text-success';
-        } else if (finalProjectedAchievement >= 100) {
-            predictionText = `⚠️ TARGET FORECAST: On track to ACHIEVE (${finalProjectedAchievement.toFixed(1)}%) – close to target.`;
-            predictionClass = 'text-warning';
-        } else {
-            predictionText = `❌ TARGET FORECAST: Likely to MISS (${finalProjectedAchievement.toFixed(1)}%) – below target.`;
-            predictionClass = 'text-danger';
-        }
-
-        // Also include required daily sales
-        const requiredText = remainingTarget > 0 ? ` | Need SAR ${formatSAR(requiredDailySales)}/day remaining.` : ' | No remaining target.';
-
-        $("#trend-analysis").html(`
-            <div class="${predictionClass}" style="font-weight:600;">${predictionText}</div>
-            <div style="font-size:0.75rem; color:var(--text-muted);">Avg past achievement: ${avgAchievementPercent.toFixed(1)}% ${requiredText}</div>
-        `);
-
-        // ----- REGULAR NOTIFICATIONS (keep some) -----
-        const avgDaily = mtdValid>0 ? mtdSales/mtdValid : 0;
-        const mtdACavg = mtdValid>0 ? mtdAC/mtdValid : 0;
-        const mtdTCavg = mtdValid>0 ? mtdTC/mtdValid : 0;
-        const mtdAvgVal = mtdValid>0 ? mtdAvg/mtdValid : 0;
-        const notifList = [
-            { text: `MTD achievement: ${mtdAch.toFixed(1)}%`, type: mtdAch>=100?'success': mtdAch>=80?'warning':'danger' },
-            { text: `Avg daily sales: SAR ${formatSAR(avgDaily)}`, type: avgDaily>= (mtdTarget/mtdValid) ? 'success':'warning' },
-            { text: `Avg AC: ${mtdACavg.toFixed(1)}`, type: mtdACavg>=20?'success': mtdACavg>=10?'warning':'danger' },
-        ];
-        notifList.forEach(n => {
-            notif.append(`<div class="notification-item ${n.type}"><i class="fas fa-${n.type==='success'?'check-circle': n.type==='warning'?'exclamation-triangle':'exclamation-circle'} me-2"></i>${n.text}</div>`);
         });
     }
 
@@ -700,4 +696,5 @@
     $(document).ready(() => { generateTable(); updateResults(); });
 </script>
 </body>
+
 </html>
