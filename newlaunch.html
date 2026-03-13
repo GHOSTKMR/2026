@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Shabab · SOP knowledge · CHAT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            background: #000;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 390px;
+            height: 844px;
+            border-radius: 40px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 30px 50px rgba(0,0,0,0.5), 0 0 0 8px rgba(40,40,45,0.8);
+        }
+        .video-background {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .bg-video {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%,-50%);
+            width: 100%; height: 100%;
+            object-fit: cover;
+            filter: blur(12px) brightness(0.35);
+        }
+        .content-overlay {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(2px);
+        }
+        .video-controls {
+            position: absolute;
+            top: 60px; right: 20px;
+            z-index: 3;
+            display: flex;
+            gap: 8px;
+        }
+        .video-btn {
+            background: rgba(20,20,25,0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+        .video-btn:hover { background: rgba(10,132,255,0.8); transform: scale(1.1); }
+        .sound-wave {
+            position: absolute; top: 100px; right: 20px; z-index:3;
+            display: flex; gap: 3px; align-items: flex-end; height:20px; opacity:0.7;
+        }
+        .sound-wave span {
+            width:3px; height:5px; background:rgba(255,255,255,0.6); border-radius:3px;
+            animation: wave 0.8s infinite ease-in-out;
+        }
+        .sound-wave span:nth-child(1){ animation-delay:0.1s; }
+        .sound-wave span:nth-child(2){ animation-delay:0.2s; }
+        .sound-wave span:nth-child(3){ animation-delay:0.3s; }
+        .sound-wave span:nth-child(4){ animation-delay:0.4s; }
+        @keyframes wave {
+            0%,100%{ height:5px; } 50%{ height:15px; }
+        }
+        .chat-header {
+            background: rgba(10,10,15,0.65);
+            backdrop-filter: blur(20px);
+            padding: 20px 20px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .header-top {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom:8px;
+        }
+        .time { font-weight:600; font-size:15px; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,0.5); }
+        .status-icons span {
+            width:16px; height:16px; background:#fff; border-radius:50%; opacity:0.9; display:inline-block;
+        }
+        .header-title {
+            display: flex; align-items: center; gap:8px; margin-top:8px;
+        }
+        .header-title h1 {
+            font-size:24px; font-weight:600; background:linear-gradient(135deg,#fff,#ffb347);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+        }
+        .ai-badge {
+            background: linear-gradient(135deg,#d46b1e,#b34d0a);
+            color: white; padding:4px 10px; border-radius:30px; font-size:12px; font-weight:500;
+            border:1px solid rgba(255,255,255,0.2);
+        }
+        .action-buttons {
+            display: flex; gap:12px; margin-top:12px; padding-top:8px;
+            border-top:1px solid rgba(255,255,255,0.1);
+        }
+        .action-btn {
+            background: rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.15);
+            font-size:14px; color:#fff; font-weight:500; padding:6px 12px; border-radius:30px;
+            cursor: pointer; transition:0.2s; backdrop-filter:blur(10px);
+        }
+        .action-btn:hover { background: rgba(255,255,255,0.25); border-color:rgba(255,255,255,0.3); }
+        .chat-messages {
+            flex:1; overflow-y:auto; padding:16px; background:rgba(0,0,0,0.15); scroll-behavior:smooth;
+        }
+        .message { display:flex; margin-bottom:16px; animation:fadeIn 0.3s; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+        .message.user { justify-content:flex-end; }
+        .message.bot { justify-content:flex-start; }
+        .message-content {
+            max-width:80%; padding:14px 18px; border-radius:22px; font-size:15px; line-height:1.4;
+            word-wrap:break-word; box-shadow:0 4px 15px rgba(0,0,0,0.4); backdrop-filter:blur(15px);
+            border:1px solid rgba(255,255,255,0.18); font-weight:450; white-space:pre-wrap;
+        }
+        .user .message-content {
+            background: rgba(10,132,255,0.85); color:white; border-bottom-right-radius:4px;
+        }
+        .bot .message-content {
+            background: rgba(25,25,30,0.85); color:#fff; border-bottom-left-radius:4px;
+            border:1px solid rgba(255,255,255,0.2);
+        }
+        .feedback-buttons {
+            display: flex; gap:10px; margin-top:8px; padding-left:8px;
+        }
+        .feedback-btn {
+            background: rgba(35,35,40,0.7); border:1px solid rgba(255,255,255,0.15);
+            font-size:18px; cursor:pointer; padding:6px 12px; border-radius:25px; transition:0.2s;
+            opacity:0.8; backdrop-filter:blur(10px); color:white;
+        }
+        .feedback-btn:hover { transform:scale(1.1); opacity:1; background:rgba(60,60,70,0.9); }
+        .feedback-btn.active { opacity:1; transform:scale(1.1); background:rgba(10,132,255,0.7); }
+        .suggestions-box {
+            padding:12px 16px; background:rgba(15,15,20,0.7); backdrop-filter:blur(15px);
+            border-top:1px solid rgba(255,255,255,0.1); border-bottom:1px solid rgba(255,255,255,0.1);
+            overflow-x:auto; white-space:nowrap; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+        }
+        .suggestions-box::-webkit-scrollbar { display:none; }
+        .suggestion-chip {
+            display:inline-block; background:rgba(40,40,45,0.8); backdrop-filter:blur(8px);
+            padding:8px 18px; border-radius:30px; margin-right:8px; font-size:14px; color:#fff;
+            cursor:pointer; transition:0.2s; border:1px solid rgba(255,255,255,0.18);
+        }
+        .suggestion-chip:hover { background:rgba(60,60,70,0.95); border-color:#ffa500; }
+        .match-suggestions {
+            padding:8px 16px; background:rgba(255,140,0,0.25); backdrop-filter:blur(15px);
+            border-top:1px solid rgba(255,160,0,0.6); border-bottom:1px solid rgba(255,160,0,0.6);
+            font-size:13px; color:#fff;
+        }
+        .match-tag {
+            display:inline-block; background:rgba(40,40,45,0.85); backdrop-filter:blur(8px);
+            padding:4px 14px; border-radius:20px; margin:4px 4px 0 0; font-size:12px;
+            border:1px solid rgba(255,160,0,0.8); color:#fff; cursor:pointer;
+        }
+        .match-tag:hover { background:rgba(255,140,0,0.6); }
+        .chat-input-area {
+            padding:16px 20px 24px; background:rgba(10,10,15,0.7); backdrop-filter:blur(20px);
+            border-top:1px solid rgba(255,255,255,0.1); display:flex; gap:10px; align-items:flex-end;
+        }
+        .input-wrapper {
+            flex:1; background:rgba(30,30,35,0.7); backdrop-filter:blur(10px); border-radius:30px;
+            padding:8px 18px; display:flex; align-items:flex-end; min-height:44px;
+            border:1px solid rgba(255,255,255,0.15);
+        }
+        .message-input {
+            border:none; background:transparent; width:100%; outline:none; font-size:16px;
+            max-height:120px; resize:none; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.5);
+        }
+        .message-input::placeholder { color:rgba(255,255,255,0.6); }
+        .send-btn {
+            background:linear-gradient(135deg,#ff9f0a,#d46b1e); border:none; width:44px; height:44px;
+            border-radius:50%; display:flex; align-items:center; justify-content:center;
+            cursor:pointer; color:white; font-size:20px; box-shadow:0 4px 15px rgba(255,140,0,0.4);
+            border:1px solid rgba(255,255,255,0.2);
+        }
+        .send-btn:hover { transform:scale(1.05); }
+        .history-panel {
+            position:absolute; top:0; left:-100%; width:100%; height:100%;
+            background:rgba(5,5,10,0.97); backdrop-filter:blur(25px); transition:left 0.3s;
+            z-index:1000; padding:20px; overflow-y:auto; border:1px solid rgba(255,255,255,0.1);
+        }
+        .history-panel.show { left:0; }
+        .history-header { display:flex; justify-content:space-between; margin-bottom:20px; }
+        .history-header h2 { color:#fff; }
+        .history-item {
+            padding:15px; border-bottom:1px solid rgba(255,255,255,0.1); cursor:pointer;
+            background:rgba(255,255,255,0.07); border-radius:14px; margin-bottom:8px;
+        }
+        .history-item:hover { background:rgba(255,255,255,0.15); }
+        .history-item-date { font-size:12px; color:rgba(255,255,255,0.7); }
+        .history-item-preview { font-weight:500; color:#fff; }
+        .close-btn {
+            background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.15);
+            font-size:24px; cursor:pointer; color:#fff; width:40px; height:40px; border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+        }
+        .typing-indicator {
+            display:flex; gap:5px; padding:12px 18px; background:rgba(30,30,35,0.85);
+            backdrop-filter:blur(15px); border-radius:25px; width:fit-content;
+            border-bottom-left-radius:4px; border:1px solid rgba(255,255,255,0.2);
+        }
+        .typing-dot { width:8px; height:8px; background:#fff; border-radius:50%; animation:typingBounce 1.4s infinite; }
+        .typing-dot:nth-child(1){ animation-delay:-0.32s; }
+        .typing-dot:nth-child(2){ animation-delay:-0.16s; }
+        @keyframes typingBounce{ 0%,80%,100%{transform:scale(0);opacity:0.3;} 40%{transform:scale(1);opacity:1;} }
+    </style>
+</head>
+<body>
+<div class="chat-container">
+    <div class="video-background">
+        <video class="bg-video" id="backgroundVideo" loop playsinline>
+            <source src="https://ghostkmr.github.io/2026/portalbgv.mp4" type="video/mp4">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-digital-network-1201-large.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="video-controls">
+        <button class="video-btn" id="muteToggle">🔊</button>
+        <button class="video-btn" id="playPauseBtn">⏸️</button>
+    </div>
+    <div class="sound-wave" id="soundWave" style="display:none;"><span></span><span></span><span></span><span></span></div>
+
+    <div class="content-overlay">
+        <div class="chat-header">
+            <div class="header-top"><span class="time">9:41</span><div class="status-icons"><span></span><span></span><span></span></div></div>
+            <div class="header-title"><h1>SAB · KNOWLEDGE</h1><span class="ai-badge">🍗 Shabab SOP</span></div>
+            <div class="action-buttons">
+                <button class="action-btn" onclick="newChat()"><span>+</span> New</button>
+                <button class="action-btn" onclick="clearChat()"><span>🗑️</span> Clear</button>
+                <button class="action-btn" onclick="exportChat()"><span>📤</span> Export</button>
+                <button class="action-btn" onclick="showHistory()"><span>📋</span> History</button>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <div class="match-suggestions" id="matchSuggestions" style="display:none;"><span id="matchText"></span><div id="matchTags"></div></div>
+
+        <div class="suggestions-box" id="suggestionsBox">
+            <span class="suggestion-chip" onclick="useSuggestion('SAB box components')">📦 box components</span>
+            <span class="suggestion-chip" onclick="useSuggestion('wrap build up')">🌯 build up</span>
+            <span class="suggestion-chip" onclick="useSuggestion('special sauce shelf life')">🧪 sauce shelf life</span>
+            <span class="suggestion-chip" onclick="useSuggestion('scratch card placement')">🎟️ scratch card</span>
+            <span class="suggestion-chip" onclick="useSuggestion('chicken strip holding')">🍗 chicken holding</span>
+            <span class="suggestion-chip" onclick="useSuggestion('golden vs regular box')">✨ golden box</span>
+        </div>
+
+        <div class="chat-input-area">
+            <div class="input-wrapper">
+                <textarea class="message-input" id="userInput" placeholder="ask about Shabab Al Bomb..." rows="1" oninput="autoResize(this)"></textarea>
+            </div>
+            <button class="send-btn" onclick="sendMessage()">➤</button>
+        </div>
+
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header"><h2>History</h2><button class="close-btn" onclick="hideHistory()">✕</button></div>
+            <div id="historyList"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== VIDEO CONTROL ====================
+    const video = document.getElementById('backgroundVideo');
+    video.muted = true; video.play().catch(e=>{});
+    function toggleMute() { video.muted = !video.muted; document.getElementById('muteToggle').innerHTML = video.muted?'🔇':'🔊'; document.getElementById('soundWave').style.display = video.muted?'none':'flex'; }
+    function togglePlayPause() { if(video.paused){ video.play(); document.getElementById('playPauseBtn').innerHTML='⏸️'; } else { video.pause(); document.getElementById('playPauseBtn').innerHTML='▶️'; } }
+
+    // ==================== SHABAB KNOWLEDGE BASE ====================
+    // Extracted from shabab.txt – complete SOP, SKUs, build-up, holding, packaging
+    const shababKnowledge = {
+        skus: [
+            "Shabab Al Bomb Box (Regular): Item #130948, 1 box/300pcs",
+            "Shabab Al Bomb Box (Golden): Item #130949, 1 box/200pcs",
+            "Scratch Card: #150152, 1 box/150pcs",
+            "Promo Sticker: #130466, 1 pack/500pcs",
+            "Sparkys Cards: #150107, 1 pack/200pcs",
+            "Chicken Sticker: #131251, 1 roll/1000pcs",
+            "Sound Device: #140062, by piece",
+            "Tortilla Orange Wrap 12\": #110933, room temp, 1 box/12 packs/12pcs, primary CB, secondary 48h",
+            "Special Sauce: #120652, chilled 34-40°F, 1 box/12 packs/1kg, primary 6 months chilled, secondary 7d, squeeze bottle 4h chilled",
+            "Potato Sticks (Seasalt): #120738, room temp, 1 box/24 pieces/80g, primary 6mo, secondary 24h covered room temp",
+            "KUDU Foil Wrap: #130645, 1 rim/1000pcs",
+            "SAB Medium Fries Cup: #130457, 1 box/1000pcs"
+        ],
+        mealComponents: "Chicken Wrap / Medium Fries / Medium Drink",
+        wrapIngredients: [
+            "Orange Tortilla Wrap 12” (1)",
+            "Potato Sticks 15g",
+            "Chopped Chicken Strips 100g (3 strips)",
+            "Cheese Sauce 40g (20g + 20g)",
+            "Special Sauce 20g",
+            "French Fries 30g (cooked)"
+        ],
+        boxContents: [
+            "Foil wrap 1",
+            "SAB box 1 (Regular: brown inside / Golden: gold inside)",
+            "Promo sticker 1",
+            "Scratch card 1",
+            "Chicken sticker 2",
+            "Sparkys discount card 1",
+            "Ketchup sachet 2",
+            "KUDU napkin 2",
+            "Straw 1",
+            "1000 Island dip pot 1"
+        ],
+        holding: {
+            choppedChicken: "Cook strips, cut ½ inch, PHU max 1kg/pan, 45min hold. Last three right pans (STR1,STR2,STR3) no covers, FIFO.",
+            fries: "Cooked fries max 600g in PHU, 15min hold, pan 90% no cover, label FFRS (bottom pan before STR3). Only for SAB sandwich.",
+            potatoSticks: "Clean container with cover at garnish, room temp, 24h label. Max 3 packs per container, no refill, always new container."
+        },
+        buildUpSteps: [
+            "1. Foil on board diamond, foil down.",
+            "2. Orange tortilla dark side down.",
+            "3. 15g potato sticks (⅓ cup) spread middle.",
+            "4. 100g chopped chicken (size 1 cup) over sticks.",
+            "5. 20g Special Sauce in 5 zig-zag lines.",
+            "6. 20g Cheese Sauce opposite direction.",
+            "7. 30g French fries (black tong) over sauces.",
+            "8. Another 20g Cheese Sauce (5 lines).",
+            "9. Fold sides 3 inches, fold bottom edge, roll tightly.",
+            "10. Wrap with foil: fold bottom, then sides, roll gently.",
+            "11. Seal wrap with SAB Chicken Sticker.",
+            "12. Box assembly: 2 napkins + 2 ketchup upper left; 1000 island lower left; wrapped sandwich upper right; cards & promo sticker on upper side; medium fries cup lower right.",
+            "13. Close box, seal with SAB Chicken Sticker on right side of cover."
+        ],
+        boxPreparation: [
+            "Speaker device: unpack, turn on, place in box pocket, light sensor top, speaker holes aligned.",
+            "Scratch card + Sparkys card in cover pocket.",
+            "Promo sticker inside upper portion.",
+            "2 folded napkins + 2 ketchup packets left upper corner, close box.",
+            "Regular box: white X mark; Golden box: golden X mark."
+        ],
+        serving: [
+            "Dine-in: meal box + medium drink + straw on tray.",
+            "Take-out/HD: paper bag #25.",
+            "Upsize (dine-in/take-out): large drink + large fries (blue cup).",
+            "HD default: canned drink + medium fries (SAB cup).",
+            "HD upsize / aggregators: 400ml bottled drink + large fries (blue cup)."
+        ],
+        quality: "Team must know procedures, explain to guests. Questions to Ops Leader or Ops Excellence."
+    };
+
+    // ==================== INTELLIGENT REPLY ====================
+    function answerShabab(query) {
+        const q = query.toLowerCase();
+        // SKU / item codes
+        if (q.includes('sku') || q.includes('item code') || q.includes('code for')) {
+            if (q.includes('regular box')) return `📦 Regular Box item #130948 · 1 box/300 pieces`;
+            if (q.includes('golden box')) return `✨ Golden Box item #130949 · 1 box/200 pieces`;
+            if (q.includes('scratch')) return `🎟️ Scratch Card #150152 · 1 box/150 pcs`;
+            if (q.includes('promo sticker')) return `🏷️ Promo Sticker #130466 · 1 pack/500 pcs`;
+            if (q.includes('sparkys')) return `💳 Sparkys Cards #150107 · 1 pack/200 pcs`;
+            if (q.includes('chicken sticker')) return `🐔 Chicken Sticker #131251 · 1 roll/1000 pcs`;
+            if (q.includes('sound')) return `🔊 Sound Device #140062 · by piece`;
+            if (q.includes('tortilla')) return `🌮 Orange Tortilla 12\" #110933 · room temp, 1 box/12 packs/12pcs, primary CB, secondary 48h`;
+            if (q.includes('special sauce')) return `🧪 Special Sauce #120652 · chilled 34-40°F, 1 box/12 packs/1kg, primary 6mo chilled, secondary 7d, squeeze bottle 4h chilled`;
+            if (q.includes('potato sticks')) return `🥔 Potato Sticks Seasalt #120738 · room temp, 1 box/24x80g, primary 6mo, secondary 24h covered`;
+            if (q.includes('foil')) return `🛑 KUDU Foil Wrap #130645 · 1 rim/1000 pcs`;
+            if (q.includes('fries cup')) return `🍟 SAB Medium Fries Cup #130457 · 1 box/1000 pcs`;
+            return `SKU list:\n• ${shababKnowledge.skus.join('\n• ')}`;
+        }
+
+        // components / ingredients
+        if (q.includes('component') || q.includes('ingredient') || q.includes('wrap ingredient')) {
+            return `🌯 Wrap ingredients:\n• ${shababKnowledge.wrapIngredients.join('\n• ')}\n\n📦 Box also contains: ${shababKnowledge.boxContents.join(', ')}.`;
+        }
+
+        // build up / procedure
+        if (q.includes('build') || q.includes('prepare') || q.includes('how to make') || q.includes('assembly')) {
+            return `🔨 BUILD UP (wrap & box):\n${shababKnowledge.buildUpSteps.map(s=>'• '+s).join('\n')}`;
+        }
+
+        // holding times / storage
+        if (q.includes('hold') || q.includes('phu') || q.includes('time') || q.includes('shelf life')) {
+            let answer = '';
+            if (q.includes('chicken') || q.includes('strip')) answer += `🍗 Chicken: ${shababKnowledge.holding.choppedChicken}\n`;
+            if (q.includes('fries') || q.includes('ffrs')) answer += `🍟 Fries: ${shababKnowledge.holding.fries}\n`;
+            if (q.includes('potato sticks')) answer += `🥔 Potato sticks: ${shababKnowledge.holding.potatoSticks}\n`;
+            if (q.includes('special sauce')) answer += `🧪 Special sauce: primary 6mo chilled, secondary 7d, squeeze bottle 4h chilled.\n`;
+            if (q.includes('tortilla')) answer += `🌮 Tortilla: primary Consume Before (CB), secondary 48h after opening.\n`;
+            if (answer === '') answer = `Holding / shelf life details:\n• Chopped chicken: 45min PHU\n• Fries: 15min PHU\n• Potato sticks: 24h container room temp\n• Special sauce secondary 7d\n• Tortilla secondary 48h`;
+            return answer;
+        }
+
+        // box prep / stickers / scratch / sparkys
+        if (q.includes('box prep') || q.includes('prepare box') || q.includes('scratch') || q.includes('sparkys') || q.includes('sticker placement')) {
+            return `📦 BOX PREPARATION:\n• Speaker device in pocket (light sensor top, holes aligned)\n• Scratch card + Sparkys card in cover pocket\n• Promo sticker inside upper portion\n• 2 napkins + 2 ketchup left upper corner\n• Close box. Regular box: white X, Golden box: golden X.`;
+        }
+
+        // serving
+        if (q.includes('serve') || q.includes('dine in') || q.includes('take out') || q.includes('hd') || q.includes('upsize')) {
+            return `🍽️ SERVING:\n• Dine-in: tray + medium drink + straw\n• Take-out/HD: paper bag #25\n• Upsize (dine-in/t/o): large drink + large fries (blue cup)\n• HD default: canned drink + medium fries (SAB cup)\n• HD upsize/aggregator: 400ml bottle + large fries (blue cup).`;
+        }
+
+        // golden vs regular
+        if (q.includes('golden') && q.includes('regular')) {
+            return `✨ Golden box: gold inside, golden X mark on closed box.\n🤎 Regular box: brown inside, white X mark. Both contain same components, but box color differs.`;
+        }
+
+        // chicken sticker quantity, etc.
+        if (q.includes('chicken sticker') && q.includes('how many')) return `🐔 2 Chicken stickers per box: one to seal the wrap, one to seal the box cover (right side).`;
+
+        // fries cup special
+        if (q.includes('fries cup') && q.includes('medium')) return `🍟 SAB Medium Fries Cup item #130457, 1 box/1000 pieces. Used for medium fries in the box.`;
+
+        // default fallback – provide general summary
+        return (
+            `🍗 **Shabab Al Bomb Chicken Box — SOP summary**\n` +
+            `• Meal: Chicken Wrap + Medium Fries + Medium Drink\n` +
+            `• Wrap ingredients: Orange tortilla, potato sticks 15g, chopped chicken 100g, cheese sauce 40g, special sauce 20g, fries 30g.\n` +
+            `• Box contains: foil, box, promo sticker, scratch card, 2 chicken stickers, Sparkys card, 2 ketchup, 2 napkins, straw, 1000 island dip.\n` +
+            `• Holding: chopped chicken 45min (PHU STR1-3), fries 15min (FFRS pan), potato sticks 24h room temp.\n` +
+            `• Build steps: see "build up" or ask detail.\n` +
+            `• SKU codes: ask "item code for regular box" etc.`
+        );
+    }
+
+    // ==================== CHAT FUNCTION ====================
+    let chatHistory = JSON.parse(localStorage.getItem('shababChatHistory')) || [];
+    let currentChatId = Date.now();
+
+    function autoResize(t){ t.style.height='auto'; t.style.height=t.scrollHeight+'px'; }
+
+    function sendMessage(){
+        const inp = document.getElementById('userInput');
+        const msg = inp.value.trim(); if(!msg) return;
+        addMessage(msg, 'user'); inp.value=''; inp.style.height='auto';
+        showTypingIndicator();
+        setTimeout(()=>{
+            removeTypingIndicator();
+            const reply = answerShabab(msg);
+            addMessage(reply, 'bot');
+            showMatchSuggestions(msg);
+            saveToHistory(msg, reply);
+        }, 500);
+    }
+
+    function showMatchSuggestions(q){
+        const rel = [];
+        if(q.match(/code|sku|item/i)) rel.push('item codes');
+        if(q.match(/wrap|ingredient|component/i)) rel.push('wrap ingredients');
+        if(q.match(/build|prepare|make|assembly/i)) rel.push('build up steps');
+        if(q.match(/hold|phu|time|shelf/i)) rel.push('holding times');
+        if(q.match(/box prep|sticker|scratch|sparkys/i)) rel.push('box prep');
+        if(q.match(/serve|dine|takeout|upsize/i)) rel.push('serving');
+        if(rel.length===0) rel.push('box components','chicken holding','golden vs regular');
+        const d=document.getElementById('matchSuggestions');
+        const tags=document.getElementById('matchTags');
+        const txt=document.getElementById('matchText');
+        txt.innerHTML='🔎 quick ask:';
+        tags.innerHTML=rel.map(r=>`<span class="match-tag" onclick="useSuggestion('${r}')">${r}</span>`).join('');
+        d.style.display='block';
+    }
+
+    function useSuggestion(s){ document.getElementById('userInput').value=s; sendMessage(); }
+
+    function addMessage(txt, sender){
+        const m=document.getElementById('chatMessages');
+        const d=document.createElement('div'); d.className=`message ${sender}`;
+        const c=document.createElement('div'); c.className='message-content'; c.textContent=txt;
+        d.appendChild(c); m.appendChild(d);
+        if(sender==='bot'){
+            const fb=document.createElement('div'); fb.className='feedback-buttons';
+            fb.innerHTML='<button class="feedback-btn" onclick="giveFeedback(this,\'like\')">👍</button><button class="feedback-btn" onclick="giveFeedback(this,\'dislike\')">👎</button><button class="feedback-btn" onclick="giveFeedback(this,\'ok\')">👌</button><button class="feedback-btn" onclick="giveFeedback(this,\'smile\')">😊</button>';
+            m.appendChild(fb);
+        }
+        m.scrollTop=m.scrollHeight;
+    }
+
+    function giveFeedback(btn,t){ 
+        btn.parentElement.querySelectorAll('.feedback-btn').forEach(b=>b.classList.remove('active')); 
+        btn.classList.add('active'); 
+    }
+
+    function showTypingIndicator(){
+        const m=document.getElementById('chatMessages');
+        const t=document.createElement('div'); t.className='message bot'; t.id='typingIndicator';
+        t.innerHTML='<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+        m.appendChild(t); m.scrollTop=m.scrollHeight;
+    }
+    function removeTypingIndicator(){ document.getElementById('typingIndicator')?.remove(); }
+
+    function saveToHistory(u,b){
+        chatHistory.unshift({id:currentChatId, ts:Date.now(), preview:u.substring(0,40), messages:[{sender:'user',text:u},{sender:'bot',text:b}]});
+        if(chatHistory.length>30) chatHistory.pop();
+        localStorage.setItem('shababChatHistory',JSON.stringify(chatHistory));
+        updateHistory();
+    }
+    function updateHistory(){
+        const div=document.getElementById('historyList');
+        div.innerHTML=chatHistory.map((c,i)=>`<div class="history-item" onclick="loadChat(${i})"><div class="history-item-date">${new Date(c.ts).toLocaleString()}</div><div class="history-item-preview">💬 ${c.preview}</div></div>`).join('');
+    }
+    function loadChat(i){
+        const c=chatHistory[i]; if(!c) return;
+        document.getElementById('chatMessages').innerHTML='';
+        c.messages.forEach(m=>addMessage(m.text,m.sender));
+        currentChatId=c.id; hideHistory();
+    }
+    function newChat(){ document.getElementById('chatMessages').innerHTML=''; displayWelcome(); currentChatId=Date.now(); }
+    function clearChat(){ if(confirm('Clear chat?')){ document.getElementById('chatMessages').innerHTML=''; displayWelcome(); } }
+    function exportChat(){
+        let t=''; document.querySelectorAll('.message .message-content').forEach(m=>t+=m.textContent+'\n---\n');
+        const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([t])); a.download='sab-chat-export.txt'; a.click();
+    }
+    function showHistory(){ updateHistory(); document.getElementById('historyPanel').classList.add('show'); }
+    function hideHistory(){ document.getElementById('historyPanel').classList.remove('show'); }
+    function displayWelcome(){
+        addMessage('🔥 **Shabab Al Bomb SOP loaded**\n\nAsk me about:\n• SKU / item codes\n• wrap ingredients & build up\n• holding times (chicken, fries, potato sticks)\n• box preparation, stickers, scratch card\n• serving (dine-in, takeout, HD)\n• regular vs golden box\n\nType your question or tap a chip below.', 'bot');
+    }
+
+    document.getElementById('userInput').addEventListener('keypress', e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMessage(); } });
+    window.onload=()=>{ displayWelcome(); updateHistory(); video.muted=true; document.getElementById('muteToggle').innerHTML='🔇'; };
+
+    window.toggleMute = toggleMute;
+    window.togglePlayPause = togglePlayPause;
+    window.useSuggestion = useSuggestion;
+    window.sendMessage = sendMessage;
+    window.autoResize = autoResize;
+    window.giveFeedback = giveFeedback;
+    window.newChat = newChat;
+    window.clearChat = clearChat;
+    window.exportChat = exportChat;
+    window.showHistory = showHistory;
+    window.hideHistory = hideHistory;
+    window.loadChat = loadChat;
+</script>
+</body>
+</html>
