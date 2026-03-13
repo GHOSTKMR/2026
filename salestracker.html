@@ -178,6 +178,16 @@
             font-size: 0.85rem;
             word-break: break-word;
         }
+        
+        .forecast-item {
+            background: rgba(74, 144, 226, 0.15);
+            border-left: 4px solid var(--warning);
+        }
+        
+        .forecast-value {
+            font-weight: 700;
+            color: var(--warning);
+        }
 
         /* chart */
         #chart-container {
@@ -368,11 +378,12 @@
         <div class="col-6 col-md-3"><div class="summary-card"><div class="label">GROWTH</div><div class="value" id="growth-rate">0%</div><div class="progress"><div class="progress-bar" id="growth-progress" style="width:0%"></div></div></div></div>
     </div>
 
-    <!-- NOTIFICATIONS + TREND ANALYSIS (TARGET FORECAST based on daily ACH%) -->
+    <!-- NOTIFICATIONS + ENHANCED TARGET FORECAST (based on yesterday & day-before) -->
     <div class="notification-panel">
-        <h5><i class="fas fa-chart-simple me-2"></i> TARGET FORECAST (based on daily ACH%)</h5>
+        <h5><i class="fas fa-chart-simple me-2"></i> TODAY'S TARGET FORECAST</h5>
         <div id="trend-analysis" style="font-size:0.9rem; margin-bottom:10px; padding:8px; background:#2a2f42; border-radius:16px;"></div>
         <div id="notifications-container"></div>
+        <div id="today-forecast-container" class="mt-2"></div>
     </div>
 
     <!-- CHART -->
@@ -474,6 +485,107 @@
         }
     }
 
+    // NEW FUNCTION: Calculate today's forecast based on yesterday and day-before
+    function calculateTodayForecast() {
+        const today = new Date().getDate();
+        
+        // Get yesterday's data (day-1)
+        let yesterday = today > 1 ? today - 1 : 30; // If 1st, use last day of month
+        let dayBefore = today > 2 ? today - 2 : (today > 1 ? 29 : 28); // Handle month boundaries
+        
+        // Get targets and achievements
+        const yesterdayTarget = parseFloat(targetData[currentMonth][yesterday-1]) || 0;
+        const yesterdaySales = parseFloat(salesData[currentMonth][yesterday-1]) || 0;
+        const yesterdayAchieved = yesterdayTarget > 0 ? (yesterdaySales / yesterdayTarget) * 100 : 0;
+        
+        const dayBeforeTarget = parseFloat(targetData[currentMonth][dayBefore-1]) || 0;
+        const dayBeforeSales = parseFloat(salesData[currentMonth][dayBefore-1]) || 0;
+        const dayBeforeAchieved = dayBeforeTarget > 0 ? (dayBeforeSales / dayBeforeTarget) * 100 : 0;
+        
+        // Get today's target
+        const todayTarget = parseFloat(targetData[currentMonth][today-1]) || 0;
+        
+        // Calculate average achievement from yesterday and day-before
+        let validDays = 0;
+        let totalAchieved = 0;
+        
+        if (yesterdayTarget > 0) {
+            totalAchieved += yesterdayAchieved;
+            validDays++;
+        }
+        if (dayBeforeTarget > 0) {
+            totalAchieved += dayBeforeAchieved;
+            validDays++;
+        }
+        
+        const avgAchieved = validDays > 0 ? totalAchieved / validDays : 100; // Default to 100% if no data
+        
+        // Calculate forecast for today
+        const todayForecast = todayTarget > 0 ? (avgAchieved / 100) * todayTarget : 0;
+        
+        // Determine trend
+        let trend = '';
+        let trendClass = '';
+        let recommendation = '';
+        
+        if (validDays >= 2) {
+            const yesterdayValid = yesterdayTarget > 0;
+            const dayBeforeValid = dayBeforeTarget > 0;
+            
+            if (yesterdayValid && dayBeforeValid) {
+                if (yesterdayAchieved > dayBeforeAchieved) {
+                    trend = '⬆️ Improving trend';
+                    trendClass = 'text-success';
+                    recommendation = 'Consider increasing today\'s target slightly';
+                } else if (yesterdayAchieved < dayBeforeAchieved) {
+                    trend = '⬇️ Declining trend';
+                    trendClass = 'text-danger';
+                    recommendation = 'Focus on improving today\'s performance';
+                } else {
+                    trend = '➡️ Stable trend';
+                    trendClass = 'text-warning';
+                    recommendation = 'Maintain current performance levels';
+                }
+            }
+        }
+        
+        // Build forecast message
+        let forecastHtml = `
+            <div class="notification-item forecast-item">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span><i class="fas fa-bullseye me-2"></i><strong>TODAY'S FORECAST</strong></span>
+                    <span class="forecast-value">SAR ${formatSAR(todayForecast)}</span>
+                </div>
+                <div class="mt-2" style="font-size:0.8rem;">
+        `;
+        
+        if (validDays > 0) {
+            forecastHtml += `
+                <div>Based on last ${validDays} day(s) performance:</div>
+                <div class="d-flex justify-content-between mt-1">
+                    <span>Yesterday ACH%: ${yesterdayTarget > 0 ? yesterdayAchieved.toFixed(1) + '%' : 'No target'}</span>
+                    <span>Day-before ACH%: ${dayBeforeTarget > 0 ? dayBeforeAchieved.toFixed(1) + '%' : 'No target'}</span>
+                </div>
+                <div class="mt-1">Avg ACH%: <strong>${avgAchieved.toFixed(1)}%</strong></div>
+                <div class="mt-1 ${trendClass}">${trend}</div>
+                <div class="mt-1 text-info"><i class="fas fa-lightbulb me-1"></i>${recommendation || 'Enter targets for better predictions'}</div>
+        `;
+        } else {
+            forecastHtml += `<div class="text-warning">Not enough data from previous days. Enter yesterday's target and sales.</div>`;
+        }
+        
+        // Add today's target info
+        forecastHtml += `
+                <div class="mt-2" style="border-top:1px solid var(--border); padding-top:6px;">
+                    <span>Today's Target: <strong>SAR ${formatSAR(todayTarget)}</strong></span>
+                </div>
+            </div>
+        </div>
+        `;
+        
+        return forecastHtml;
+    }
+
     function updateResults() {
         let totalSales=0, totalTarget=0, totalLastYear=0, totalTC=0, totalAC=0, totalAchieved=0, totalGrowth=0, totalAverage=0, validDays=0;
         const today = new Date().getDate();
@@ -556,12 +668,13 @@
 
         saveData();
         updateChart();
-
-        // Call target forecast based on daily ACH%
         updateTargetForecast(today, totalTarget, mtdSales, mtdTarget);
+        
+        // Add today's forecast to the panel
+        $("#today-forecast-container").html(calculateTodayForecast());
     }
 
-    // New TARGET FORECAST logic based on daily ACHIEVEMENT % (actual % of target achieved each day)
+    // Update the original target forecast function
     function updateTargetForecast(today, totalMonthlyTarget, mtdSales, mtdTarget) {
         // Gather daily achievement percentages from days that have target > 0 (past days up to yesterday)
         let dailyAchPct = [];
@@ -696,5 +809,4 @@
     $(document).ready(() => { generateTable(); updateResults(); });
 </script>
 </body>
-
 </html>
