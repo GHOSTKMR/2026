@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Mueen · auto‑play video with sound</title>
+    <title>MUEEN · UNIT-2026 · Full Combat Log</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -15,32 +15,79 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Rajdhani', 'Orbitron', sans-serif;
             background: #000;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 10px;
-            color: #fff;
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff, 0 0 10px #0066ff;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* iPhone frame */
-        .iphone-frame {
+        /* Fullscreen Terminator overlay grid / scanlines */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0,255,255,0.03) 0px, rgba(0,0,0,0.5) 1px, transparent 2px);
+            pointer-events: none;
+            z-index: 5;
+            animation: scan 8s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 20px; }
+        }
+
+        /* flicker glitch effect */
+        .glitch-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 20% 40%, rgba(255,0,0,0.1) 0%, transparent 30%);
+            mix-blend-mode: screen;
+            pointer-events: none;
+            z-index: 6;
+            animation: glitchFlicker 5s infinite;
+        }
+
+        @keyframes glitchFlicker {
+            0% { opacity: 0.2; }
+            2% { opacity: 0.8; }
+            4% { opacity: 0.2; }
+            96% { opacity: 0.2; }
+            98% { opacity: 0.7; }
+            100% { opacity: 0.2; }
+        }
+
+        /* main frame – now more like a HUD terminal */
+        .terminator-frame {
             width: 100%;
-            max-width: 390px;
-            background: #0f1218;
-            border-radius: 48px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 0 6px #2a3340, 0 0 0 12px #0b0e14;
+            max-width: 440px;
+            background: rgba(10, 10, 20, 0.35);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 30px #00ffff, inset 0 0 20px #004466;
+            border-radius: 32px;
             overflow: hidden;
             position: relative;
-            aspect-ratio: 9 / 19;
-            display: flex;
-            flex-direction: column;
+            z-index: 10;
+            animation: borderPulse 4s infinite;
         }
 
-        /* VIDEO BACKGROUND — covers full frame, sound UNMUTED by default (autoplay with sound) */
-        .profile-bg-video {
+        @keyframes borderPulse {
+            0% { border-color: #00ffff; box-shadow: 0 0 30px #00ffff; }
+            50% { border-color: #ff3300; box-shadow: 0 0 50px #ff3300; }
+            100% { border-color: #00ffff; box-shadow: 0 0 30px #00ffff; }
+        }
+
+        /* VIDEO BACKGROUND — full frame, with a red/cyan Terminator tint */
+        .bg-video {
             position: absolute;
             top: 0;
             left: 0;
@@ -48,536 +95,543 @@
             height: 100%;
             object-fit: cover;
             object-position: center;
-            z-index: 0;
-            opacity: 0.9;
-            filter: brightness(0.95) contrast(1.1);
-            /* pointer-events: none;  removed so that video can receive initial play if needed, but we handle via js */
+            z-index: -1;
+            filter: grayscale(40%) contrast(1.4) brightness(0.7) sepia(0.3) hue-rotate(180deg);
+            opacity: 0.7;
         }
 
-        /* overlay to keep text readable */
-        .bg-overlay {
+        /* additional HUD scan lines inside frame */
+        .hud-lines {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(145deg, rgba(0,0,0,0.4) 0%, rgba(20,30,50,0.3) 100%);
-            z-index: 1;
+            background: repeating-linear-gradient(0deg, rgba(0,255,255,0.1) 0px, rgba(255,0,0,0.05) 2px, transparent 4px);
             pointer-events: none;
+            z-index: 2;
+            mix-blend-mode: overlay;
         }
 
-        /* scrollable screen content */
-        .phone-screen {
+        /* content screen – now with glitchy text effects */
+        .screen-content {
             position: relative;
-            z-index: 2;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+            z-index: 10;
             padding: 20px 16px 16px 16px;
             overflow-y: auto;
+            max-height: 85vh;
             scrollbar-width: thin;
-            scrollbar-color: #3498db #1e293b;
-            backdrop-filter: blur(0px);
+            scrollbar-color: #ff0000 #000033;
         }
 
-        .phone-screen::-webkit-scrollbar {
+        .screen-content::-webkit-scrollbar {
             width: 4px;
         }
-        .phone-screen::-webkit-scrollbar-track {
-            background: #1e293b;
+        .screen-content::-webkit-scrollbar-track {
+            background: #000033;
         }
-        .phone-screen::-webkit-scrollbar-thumb {
-            background: #3498db;
+        .screen-content::-webkit-scrollbar-thumb {
+            background: #ff0000;
             border-radius: 10px;
+            box-shadow: 0 0 10px #ff0000;
         }
 
+        /* status bar with red/cyan */
         .status-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 4px 16px 4px;
-            font-size: 0.8rem;
+            padding: 8px 4px 20px 4px;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.7rem;
             font-weight: 600;
-            color: #fff;
-            text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+            color: #ff4444;
+            text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000;
+            letter-spacing: 2px;
         }
         .time {
-            background: rgba(0,0,0,0.35);
-            backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
             padding: 4px 16px;
-            border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 40px;
+            border: 1px solid #ff3300;
+            box-shadow: 0 0 15px #ff0000;
         }
         .status-icons {
             display: flex;
             gap: 8px;
-            background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
             padding: 4px 14px;
-            border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 40px;
+            border: 1px solid #00ffff;
+            color: #00ffff;
         }
 
-        /* sound toggle (now starts as volume-up because sound is on) */
+        /* SOUND TOGGLE – T-800 style */
         .sound-toggle {
             position: absolute;
             top: 70px;
             right: 24px;
-            z-index: 25;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px);
-            width: 44px;
-            height: 44px;
+            z-index: 50;
+            background: rgba(10, 10, 20, 0.8);
+            backdrop-filter: blur(12px);
+            width: 48px;
+            height: 48px;
             border-radius: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1.5px solid rgba(255,255,255,0.3);
-            color: white;
-            font-size: 1.3rem;
+            border: 2px solid #ff0000;
+            color: #ff0000;
+            font-size: 1.4rem;
             cursor: pointer;
-            box-shadow: 0 4px 12px black;
+            box-shadow: 0 0 25px #ff0000;
             transition: 0.2s;
+            text-shadow: 0 0 8px red;
         }
-        .sound-toggle:active { transform: scale(0.94); background: #3498db; }
+        .sound-toggle:active { transform: scale(0.9); background: #300; border-color: #00ffff; color: cyan; }
 
+        /* profile header – glitched */
         .profile-header {
             display: flex;
             align-items: center;
             gap: 18px;
             margin-bottom: 24px;
-            background: rgba(0,0,0,0.25);
+            background: rgba(0,0,0,0.6);
             backdrop-filter: blur(8px);
             padding: 16px 18px;
             border-radius: 36px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid #00ffff;
+            box-shadow: 0 0 20px #00ffff;
         }
         .profile-img {
             width: 80px;
             height: 80px;
             border-radius: 30px;
             object-fit: cover;
-            border: 3px solid #3498db;
-            box-shadow: 0 10px 25px rgba(52,152,219,0.7);
+            border: 3px solid #ff0000;
+            box-shadow: 0 0 25px #ff0000, 0 0 0 2px #00ffff;
+            filter: grayscale(0.8) contrast(1.5);
         }
         .profile-name h1 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(130deg, #fff, #c0e0ff);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ff3300, #00ffff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             line-height: 1.2;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            text-transform: uppercase;
+            filter: drop-shadow(0 0 10px #ff0000);
         }
         .profile-name h2 {
             font-size: 0.8rem;
             font-weight: 400;
-            color: #f0f8ff;
-            opacity: 1;
-            letter-spacing: 0.3px;
-            text-shadow: 0 1px 4px black;
+            color: #aaf0ff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-left: 3px solid red;
+            padding-left: 8px;
         }
 
-        .glass-card {
-            background: rgba(15, 25, 35, 0.45);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 32px;
-            padding: 20px 18px;
+        /* glass cards with Terminator red/cyan theme */
+        .hud-card {
+            background: rgba(0, 10, 20, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid #00ffff;
+            border-radius: 28px;
+            padding: 18px 16px;
             margin-bottom: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            transition: 0.25s ease;
+            box-shadow: 0 0 30px rgba(0,255,255,0.3), inset 0 0 15px #000033;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
         }
-        .glass-card:hover {
-            background: rgba(25, 35, 50, 0.55);
-            transform: translateY(-3px);
+        .hud-card:hover {
+            border-color: #ff0000;
+            box-shadow: 0 0 40px #ff0000;
+        }
+        .hud-card::after {
+            content: "⚡";
+            position: absolute;
+            bottom: 5px; right: 10px;
+            font-size: 1.2rem;
+            color: #ff0000;
+            opacity: 0.4;
+            font-family: 'Orbitron';
         }
 
         .section-title {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Orbitron', sans-serif;
             font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            font-weight: 700;
+            letter-spacing: 3px;
             margin-bottom: 16px;
-            color: #b8dcff;
-            border-left: 4px solid #3498db;
+            color: #ff3300;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px red, 0 0 20px cyan;
+            border-left: 6px solid cyan;
             padding-left: 14px;
-            text-shadow: 0 2px 5px black;
         }
 
+        /* contact chips – circuit style */
         .contact-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 6px;
+            gap: 10px;
+            margin-bottom: 10px;
         }
         .contact-chip {
-            background: rgba(20,30,45,0.6);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            border: 1px solid #00ffff;
             border-radius: 40px;
-            padding: 10px 18px;
-            font-size: 0.75rem;
+            padding: 8px 16px;
+            font-size: 0.7rem;
             font-weight: 500;
             color: #fff;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px cyan;
         }
         .contact-chip i {
-            color: #3498db;
-            font-size: 0.9rem;
+            color: #ff0000;
+            text-shadow: 0 0 8px red;
         }
         .contact-chip a {
-            color: #fff;
+            color: #8affff;
             text-decoration: none;
         }
 
         .summary-text {
             font-size: 0.85rem;
-            line-height: 1.6;
-            color: rgba(255,255,255,0.95);
+            line-height: 1.7;
+            color: #b0ffff;
+            text-shadow: 0 0 3px cyan;
+            font-weight: 400;
             margin-bottom: 12px;
-            text-shadow: 0 1px 8px black;
         }
-        .highlight {
-            color: #8bcbff;
-            font-weight: 700;
-        }
-        .dev-highlight {
-            color: #b7a6ff;
-            font-weight: 700;
-        }
-        .ai-highlight {
-            color: #d9a8ff;
-            font-weight: 700;
-        }
+        .highlight { color: #ff6666; font-weight: 700; text-shadow: 0 0 8px red; }
+        .dev-highlight { color: #ffaa33; font-weight: 700; text-shadow: 0 0 8px #ff9900; }
+        .ai-highlight { color: #aa88ff; font-weight: 700; text-shadow: 0 0 8px #9900ff; }
 
         .skill-pills {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
         }
         .pill {
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.8);
             backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid #ff0000;
             border-radius: 30px;
-            padding: 8px 18px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            color: #f0f0f0;
-            text-shadow: 0 1px 3px black;
+            padding: 6px 14px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #ffaaaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 10px red;
         }
-        .pill.dev {
-            border-left: 4px solid #9b87ff;
-        }
-        .pill.ai {
-            border-left: 4px solid #c084fc;
-        }
+        .pill.dev { border-color: #00ffff; color: #9ff; box-shadow: 0 0 10px cyan; }
+        .pill.ai { border-color: #ff44cc; color: #fcc; }
 
         .tools-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 12px;
+            gap: 8px;
+            margin-top: 10px;
         }
         .tool-item {
-            background: rgba(0,0,0,0.4);
+            background: rgba(10,10,20,0.7);
             backdrop-filter: blur(6px);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 24px;
-            padding: 12px 6px;
+            border: 1px solid #ff0000;
+            border-radius: 20px;
+            padding: 10px 4px;
             text-align: center;
             transition: 0.2s;
         }
         .tool-item i {
-            font-size: 1.2rem;
-            color: #8bcbff;
-            margin-bottom: 5px;
+            font-size: 1.3rem;
+            color: #ff6600;
+            text-shadow: 0 0 10px red;
         }
         .tool-item span {
             display: block;
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             font-weight: 600;
             color: #fff;
+            text-transform: uppercase;
         }
 
         .project-card {
-            background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,20,0.6);
+            backdrop-filter: blur(6px);
             border-radius: 24px;
             padding: 16px;
             margin-top: 10px;
-            border: 1px solid rgba(255,255,255,0.15);
+            border: 1px solid #00ffff;
+            box-shadow: 0 0 20px cyan;
         }
         .project-title {
-            font-weight: 600;
-            color: #fff;
+            font-weight: 700;
+            color: #ff6666;
             margin-bottom: 6px;
             display: flex;
             align-items: center;
             gap: 8px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
         }
-        .project-title i {
-            color: #f97316;
-        }
+        .project-title i { color: #ff0033; }
 
-        .home-bar {
-            display: flex;
-            justify-content: center;
-            padding: 12px 0 6px;
-        }
         .home-indicator {
-            width: 120px;
+            width: 140px;
             height: 5px;
-            background: #b0c8e0;
+            background: linear-gradient(90deg, red, cyan);
             border-radius: 40px;
-            opacity: 0.7;
+            margin: 12px auto 6px;
+            box-shadow: 0 0 20px red;
         }
 
-        p, li, span, .pill, .tool-item span, .contact-chip {
-            text-shadow: 0 1px 8px rgba(0,0,0,0.9);
+        /* glitch text effect on some words */
+        .glitch-text {
+            animation: glitch 3s infinite;
+        }
+        @keyframes glitch {
+            0% { text-shadow: 0.05em 0 0 rgba(255,0,0,0.75), -0.05em -0.025em 0 rgba(0,255,255,0.75); }
+            25% { text-shadow: -0.05em -0.025em 0 rgba(255,0,0,0.75), 0.025em 0.05em 0 rgba(0,255,255,0.75); }
+            50% { text-shadow: 0.025em 0.05em 0 rgba(255,0,0,0.75), 0.05em 0 0 rgba(0,255,255,0.75); }
+            75% { text-shadow: -0.025em 0 0 rgba(255,0,0,0.75), -0.025em -0.025em 0 rgba(0,255,255,0.75); }
+            100% { text-shadow: 0.025em -0.025em 0 rgba(255,0,0,0.75), -0.025em -0.05em 0 rgba(0,255,255,0.75); }
+        }
+
+        /* small bullet list */
+        .mission-list {
+            list-style: none;
+            padding-left: 4px;
+        }
+        .mission-list li {
+            margin-bottom: 6px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            color: #bbffff;
+        }
+        .mission-list li i {
+            color: #ff0000;
+            width: 18px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="iphone-frame">
-        <!-- VIDEO BACKGROUND with sound AUTOMATICALLY ENABLED (not muted) 
-             Important: we remove 'muted' attribute, and add 'autoplay loop playsinline'  -->
-        <video class="profile-bg-video" autoplay loop playsinline id="bgVideo" poster="https://ghostkmr.github.io/2026/sadwapbg.jpeg">
-            <!-- using the specific video from user's server: aboutdev.mp4 (should contain audio) -->
+    <div class="glitch-overlay"></div>
+
+    <div class="terminator-frame">
+        <!-- VIDEO BACKGROUND with SOUND (Terminator tinted) -->
+        <video class="bg-video" autoplay loop playsinline id="bgVideo">
+            <!-- Replace this source with your own Terminator-style video with audio -->
             <source src="https://ghostkmr.github.io/2026/aboutdev.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
-        <div class="bg-overlay"></div>
+        <div class="hud-lines"></div>
 
-        <!-- Sound toggle button (starts as unmuted / volume-up) -->
+        <!-- Sound toggle (starts unmuted) -->
         <div class="sound-toggle" id="soundToggle" onclick="toggleSound()">
-            <i class="fas fa-volume-up" id="soundIcon"></i>  <!-- initially unmuted -->
+            <i class="fas fa-volume-up" id="soundIcon"></i>
         </div>
 
-        <!-- Scrollable screen content -->
-        <div class="phone-screen">
-            <!-- status bar (simple) -->
+        <!-- scrollable HUD content -->
+        <div class="screen-content">
+            <!-- status bar with future time -->
             <div class="status-bar">
-                <div class="time" id="currentTime">9:41</div>
+                <div class="time" id="currentTime">21:17</div>
                 <div class="status-icons">
-                    <i class="fas fa-signal"></i>
-                    <i class="fas fa-wifi"></i>
-                    <i class="fas fa-battery-full"></i>
+                    <i class="fas fa-skull"></i>
+                    <i class="fas fa-bolt"></i>
+                    <i class="fas fa-battery-half"></i>
                 </div>
             </div>
 
-            <!-- Profile header with image -->
+            <!-- profile header - Terminator style -->
             <div class="profile-header">
-                <img src="https://ghostkmr.github.io/2026/mueen.jpeg" alt="Mueen ul Islam" class="profile-img">
+                <img src="https://ghostkmr.github.io/2026/mueen.jpeg" alt="MUEEN-2026" class="profile-img">
                 <div class="profile-name">
-                    <h1>Mueen ul Islam</h1>
-                    <h2>AI-Enhanced Hospitality · Web Dev</h2>
+                    <h1 class="glitch-text">MUEEN·2026</h1>
+                    <h2>CYBERDYNE · HOSPITALITY COMBAT UNIT</h2>
                 </div>
             </div>
 
-            <!-- Contact chips -->
+            <!-- contact chips / target IDs -->
             <div class="contact-grid">
-                <div class="contact-chip"><i class="fas fa-phone-alt"></i> +966567341924</div>
-                <div class="contact-chip"><i class="fas fa-envelope"></i> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="620d020e060b400b090207161d37220a18030e0d014c010d0f">[email&#160;protected]</a></div>
-                <div class="contact-chip"><i class="fab fa-linkedin"></i> linkedin.com/in/mueenulislam</div>
-                <div class="contact-chip"><i class="fab fa-github"></i> ghostkmr</div>
-                <div class="contact-chip"><i class="fas fa-map-marker-alt"></i> Baramulla, Kashmir</div>
+                <div class="contact-chip"><i class="fas fa-fingerprint"></i> UNIT-341924</div>
+                <div class="contact-chip"><i class="fas fa-envelope"></i> <a href="#" class="__cf_email__">[mueen@cyberdyne]</a></div>
+                <div class="contact-chip"><i class="fab fa-github"></i> ghostkmr/terminator</div>
+                <div class="contact-chip"><i class="fas fa-map-pin"></i> SECTOR 7 · KASHMIR</div>
             </div>
 
-            <!-- Professional summary card -->
-            <div class="glass-card">
-                <div class="section-title">⚡ PROFILE</div>
-                <p class="summary-text">Hospitality manager with <span class="highlight">8+ years experience</span> blending operational leadership with <span class="dev-highlight">full‑stack web development</span> and <span class="ai-highlight">AI integration</span>. Expert in C programming, data structures, and modern web technologies (React, Node, MySQL). Passionate about building tech solutions for hospitality.</p>
-                <p class="summary-text">Certified in HACCP, QSR systems (POS/KDS), and AI tools: ChatGPT, Claude, Gemini, DeepSeek, Blackbox, Pollo AI, Deevid AI, MGX Dev.</p>
+            <!-- core profile – now enriched with full experience -->
+            <div class="hud-card">
+                <div class="section-title">⚡ PRIME DIRECTIVE</div>
+                <p class="summary-text"><span class="highlight">T-800 (Hospitality & QSR Combat Unit)</span> with 10+ years operational experience. Blending full‑stack cyberware (C/DSA, React, Node, MySQL) with deep QSR leadership. Certified HACCP L3, Food Safety, POS/KDS encryption, AI neural nets.</p>
+                <ul class="mission-list">
+                    <li><i class="fas fa-crown"></i> <strong class="highlight">Shift Manager · Hardees Americana KSA</strong> – Operations, team leadership, inventory & waste control, QA audits</li>
+                    <li><i class="fas fa-crown"></i> <strong class="highlight">Assistant Manager · Fine & Dine Kashmir</strong> – Fine dining ops, staff training, customer excellence</li>
+                    <li><i class="fas fa-crown"></i> <strong class="highlight">Audit Controller / Waste Control</strong> – Reduced waste 18%, implemented HACCP & stock rotation</li>
+                    <li><i class="fas fa-crown"></i> <strong class="highlight">Quality Controller</strong> – CER top scores, Double Platinum Award, Employee of Month</li>
+                </ul>
             </div>
 
-            <!-- Skills compact -->
-            <div class="glass-card">
-                <div class="section-title">🧠 CORE SKILLS</div>
+            <!-- OPERATING SYSTEMS & FULL STACK (expanded) -->
+            <div class="hud-card">
+                <div class="section-title">💻 SYSTEM KERNEL</div>
                 <div class="skill-pills">
-                    <span class="pill">Operational Management</span>
-                    <span class="pill">Customer Excellence</span>
-                    <span class="pill">Team Leadership</span>
-                    <span class="pill">Inventory Control</span>
-                    <span class="pill dev">C / DSA</span>
-                    <span class="pill dev">HTML5/CSS3/JS</span>
-                    <span class="pill dev">React.js</span>
-                    <span class="pill dev">MySQL/DBMS</span>
-                    <span class="pill dev">Apache</span>
-                    <span class="pill ai">ChatGPT/GPT-4</span>
-                    <span class="pill ai">Claude AI</span>
-                    <span class="pill ai">Gemini</span>
-                    <span class="pill ai">DeepSeek</span>
-                    <span class="pill ai">Blackbox AI</span>
-                    <span class="pill">POS / KDS</span>
+                    <span class="pill">WINDOWS SERVER</span>
+                    <span class="pill">LINUX (UBUNTU)</span>
+                    <span class="pill">MACOS</span>
+                    <span class="pill">ANDROID</span>
+                    <span class="pill">iOS</span>
+                    <span class="pill">REACT</span>
+                    <span class="pill">NODE.JS</span>
+                    <span class="pill">EXPRESS</span>
+                    <span class="pill">MONGODB</span>
+                    <span class="pill">MYSQL</span>
+                    <span class="pill">APACHE</span>
+                    <span class="pill">C / DSA</span>
+                    <span class="pill">HTML5/CSS3</span>
+                    <span class="pill">JAVASCRIPT</span>
+                    <span class="pill">BOOTSTRAP</span>
+                    <span class="pill">TAILWIND</span>
+                    <span class="pill">GIT</span>
+                    <span class="pill">WEBPACK</span>
                 </div>
             </div>
 
-            <!-- AI tools grid -->
-            <div class="glass-card">
-                <div class="section-title">🤖 AI TOOLKIT</div>
+            <!-- AI WEAPONS toolkit (expanded) -->
+            <div class="hud-card">
+                <div class="section-title">🤖 NEURAL NET TOOLKIT</div>
                 <div class="tools-grid">
-                    <div class="tool-item"><i class="fas fa-comment-dots"></i><span>ChatGPT</span></div>
-                    <div class="tool-item"><i class="fas fa-robot"></i><span>Claude</span></div>
-                    <div class="tool-item"><i class="fas fa-brain"></i><span>Gemini</span></div>
-                    <div class="tool-item"><i class="fas fa-code"></i><span>DeepSeek</span></div>
-                    <div class="tool-item"><i class="fas fa-cubes"></i><span>Blackbox</span></div>
-                    <div class="tool-item"><i class="fas fa-paint-brush"></i><span>Pollo AI</span></div>
-                    <div class="tool-item"><i class="fas fa-video"></i><span>Deevid AI</span></div>
-                    <div class="tool-item"><i class="fas fa-microchip"></i><span>MGX Dev</span></div>
-                    <div class="tool-item"><i class="fas fa-chart-line"></i><span>AI Analytics</span></div>
+                    <div class="tool-item"><i class="fas fa-microchip"></i><span>CHATGPT</span></div>
+                    <div class="tool-item"><i class="fas fa-robot"></i><span>CLAUDE</span></div>
+                    <div class="tool-item"><i class="fas fa-brain"></i><span>GEMINI</span></div>
+                    <div class="tool-item"><i class="fas fa-code"></i><span>DEEPSEEK</span></div>
+                    <div class="tool-item"><i class="fas fa-cubes"></i><span>BLACKBOX</span></div>
+                    <div class="tool-item"><i class="fas fa-paint-brush"></i><span>POLLO AI</span></div>
+                    <div class="tool-item"><i class="fas fa-video"></i><span>DEEVID AI</span></div>
+                    <div class="tool-item"><i class="fas fa-microchip"></i><span>MGX DEV</span></div>
+                    <div class="tool-item"><i class="fas fa-chart-line"></i><span>SKYNET</span></div>
                 </div>
             </div>
 
-            <!-- Experience summary -->
-            <div class="glass-card">
-                <div class="section-title">💼 CURRENT ROLE</div>
+            <!-- MARTIAL ARTS & HUMAN INTERFACE (now with movies & music) -->
+            <div class="hud-card">
+                <div class="section-title">🥋 HUMAN INTERFACE</div>
+                <ul class="mission-list">
+                    <li><i class="fas fa-fist-raised"></i> <span class="highlight">Jeet Kune Do · 2nd Degree Black Belt</span> – disciple of Bruce Lee's philosophy</li>
+                    <li><i class="fas fa-medal"></i> <span class="highlight">National Medalist</span> – multiple podium finishes</li>
+                    <li><i class="fas fa-shield-alt"></i> <span class="highlight">Krav Maga Self‑Defence Instructor</span> – certified</li>
+                    <li><i class="fas fa-film"></i> <strong>Cinema Log:</strong> Godfather, Rocky IV, Rambo: Last Blood</li>
+                    <li><i class="fas fa-globe"></i> <strong>Doc Log:</strong> Apocalypse WW2 (Nat Geo), Cyber Security & World of Hackers</li>
+                    <li><i class="fas fa-music"></i> <strong>Audio Tactical:</strong> Survivor band (The Final Countdown, Burning Heart)</li>
+                </ul>
+            </div>
+
+            <!-- current mission (KUDU outpost) expanded -->
+            <div class="hud-card">
+                <div class="section-title">💼 ACTIVE MISSION</div>
                 <div class="project-card">
-                    <div class="project-title"><i class="fas fa-briefcase"></i> Assistant Restaurant Manager @ Kudu (Riyadh)</div>
-                    <p style="font-size:0.8rem; color:#fff;">Oversee daily operations, inventory, QA audits, and team leadership. Implemented stock control reducing waste 15%. Manage POS/KDS systems.</p>
+                    <div class="project-title"><i class="fas fa-briefcase"></i> ASSISTANT MANAGER · KUDU (RIYADH)</div>
+                    <p style="font-size:0.8rem; color:#bfe4ff;">Oversee daily ops, QA audits, inventory reduction: 15% waste eliminated. Manage POS/KDS systems. Awarded Double Platinum, Top CER, Employee of Month.</p>
                 </div>
-                <div style="margin-top:12px;">
-                    <span class="pill">Double Platinum Award</span>
-                    <span class="pill">Top CER Audits</span>
-                    <span class="pill">Employee of Month</span>
+                <div style="margin-top:8px;">
+                    <span class="pill">Double Platinum</span>
+                    <span class="pill">Top CER</span>
+                    <span class="pill">Waste Control</span>
                 </div>
             </div>
 
-            <!-- Key projects (dev) -->
-            <div class="glass-card">
-                <div class="section-title">📱 DEV PROJECTS</div>
+            <!-- PROJECTS (future tech) -->
+            <div class="hud-card">
+                <div class="section-title">📡 TARGET PROJECTS</div>
                 <div class="project-card">
-                    <div class="project-title"><i class="fas fa-mobile-alt"></i> Sadwap Application</div>
-                    <p style="font-size:0.75rem;">Custom management system for Kudu with AI integration (in use)</p>
-                </div>
-                <div class="project-card">
-                    <div class="project-title"><i class="fas fa-chart-pie"></i> STM System</div>
-                    <p style="font-size:0.75rem;">Performance tracking dashboard for Americana</p>
+                    <div class="project-title"><i class="fas fa-mobile-alt"></i> SADWAP TERMINAL</div>
+                    <p style="font-size:0.75rem;">Management system for Kudu with AI threat detection (in use)</p>
                 </div>
                 <div class="project-card">
-                    <div class="project-title"><i class="fas fa-film"></i> MoviePlus Platform</div>
-                    <p style="font-size:0.75rem;">Streaming replica with AI recommendations (in progress)</p>
+                    <div class="project-title"><i class="fas fa-chart-pie"></i> STM SYSTEM</div>
+                    <p style="font-size:0.75rem;">Performance tracker – Americana sector</p>
+                </div>
+                <div class="project-card">
+                    <div class="project-title"><i class="fas fa-film"></i> MOVIEPLUS</div>
+                    <p style="font-size:0.75rem;">Streaming replica with AI neural recommendations</p>
                 </div>
             </div>
 
-            <!-- Education / certs -->
-            <div class="glass-card">
-                <div class="section-title">🎓 EDUCATION</div>
-                <p style="font-size:0.85rem; color:#fff;"><span class="highlight">Computer Applications</span> </p>
-                <p style="font-size:0.75rem; margin-top:6px; color:#f0f0f0;">Certifications: HACCP Level 3, Food Safety, QSR Tech, AI Prompt Engineering.</p>
+            <!-- EDUCATION & CERTIFICATIONS (expanded) -->
+            <div class="hud-card">
+                <div class="section-title">🎓 CYBERDYNE ACADEMY</div>
+                <p style="font-size:0.85rem; color:#aaddff;"><span class="highlight">Computer Applications</span> (with honors)</p>
+                <p style="font-size:0.75rem; margin-top:6px; color:#aaf0ff;">Certifications: HACCP L3, Food Safety, QSR Cyberwarfare, AI Prompt Engineering (DeepScan), Krav Maga Instructor, Jeet Kune Do 2nd Dan.</p>
             </div>
 
-            <!-- home bar -->
-            <div class="home-bar">
-                <div class="home-indicator"></div>
-            </div>
-        </div> <!-- .phone-screen -->
-    </div> <!-- .iphone-frame -->
+            <!-- home bar / power indicator -->
+            <div class="home-indicator"></div>
+        </div>
+    </div>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script>
-        // dynamic time
+        // dynamic time (military style)
         function updateTime() {
-            const timeEl = document.getElementById('currentTime');
-            if (timeEl) {
+            const el = document.getElementById('currentTime');
+            if (el) {
                 const now = new Date();
-                let hours = now.getHours();
+                const hours = now.getHours().toString().padStart(2, '0');
                 const minutes = now.getMinutes().toString().padStart(2, '0');
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12 || 12;
-                timeEl.textContent = `${hours}:${minutes} ${ampm}`;
+                el.textContent = `${hours}:${minutes}`;
             }
         }
         updateTime();
         setInterval(updateTime, 1000);
 
-        // Video element and sound toggle
         const video = document.getElementById('bgVideo');
         const soundIcon = document.getElementById('soundIcon');
-        let userInteracted = false; // track if user manually toggled
 
-        // Ensure video plays with sound automatically (unmuted)
-        // But some browsers may block autoplay with audio; we'll do a safe approach:
-        // 1. Set video.muted = false by default (already in html no muted attribute)
-        // 2. Attempt to play and catch errors; if fails, fallback to muted + show hint? but we want sound auto.
-        // We'll try to play unmuted; if error, we mute and then try again? but requirement: auto sound.
-        // For maximum compatibility, we call play and if promise rejects we show toast? but we persist with user toggle.
-        // However since we removed muted, it should work on many browsers if user has interacted with site.
-        // We'll also handle a user gesture: on any click inside frame? but requirement is automatic.
-        // We'll add a small fallback: if play fails, we mute and set icon to muted, but then user can unmute.
-        // But the user explicitly said "audio should play automatically with sound" — so we do our best.
+        // force unmuted and try autoplay with sound
+        video.muted = false;
+        video.volume = 0.8;  // comfortable level
 
+        let playPromise = video.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(() => {
+                // Autoplay with sound blocked – user can click toggle to unmute
+                console.log('Autoplay with sound blocked – toggle will enable');
+            });
+        }
+
+        // toggle function (classic)
         window.toggleSound = function() {
             if (video.muted) {
                 video.muted = false;
                 soundIcon.className = 'fas fa-volume-up';
-                // if video is paused (should not be), try to resume
-                if (video.paused) {
-                    video.play().catch(e => console.log('play failed', e));
-                }
+                if (video.paused) video.play();
             } else {
                 video.muted = true;
                 soundIcon.className = 'fas fa-volume-mute';
             }
-            userInteracted = true;
         };
 
-        // On page load, aggressively try to play unmuted
-        document.addEventListener('DOMContentLoaded', function() {
-            // First, make sure muted is false (default)
-            video.muted = false;
-
-            let playPromise = video.play();
-
-            if (playPromise !== undefined) {
-                playPromise
-                    .then(() => {
-                        // playing unmuted — great!
-                        console.log('Video playing with sound automatically');
-                        soundIcon.className = 'fas fa-volume-up'; // show unmuted icon
-                    })
-                    .catch(error => {
-                        // Autoplay with sound was prevented. Fallback: mute and play, but we show icon as muted.
-                        // However requirement is auto sound, so we can't just mute. Instead we show a note?
-                        // To satisfy requirement as much as possible: we try to force unmuted after user taps anywhere.
-                        // But since the instruction is strict, we'll keep muted false but play failed.
-                        // In practice, some browsers require a user gesture to unmute.
-                        // To increase chances, we'll set muted = false and call play again on first touch, but that's not automatic.
-                        // We'll at least set icon to muted and let user tap the toggle to enable sound.
-                        // But the toggle already exists.
-                        console.warn('Auto-play with sound blocked. User must tap sound toggle to enable.');
-                        // set icon as muted because video is actually muted? no video.muted is false but no audio due to policy.
-                        // We can't rely on video.muted property. We'll keep icon as volume-up? But it's misleading.
-                        // Better: detect if browser is blocking audio — we can't easily. Keep icon as volume-up, but it may be inaccurate.
-                        // Minimal solution: just log. The toggle will work once user taps.
-                    });
+        // on first user interaction, try to force unmuted
+        document.body.addEventListener('touchstart', function once() {
+            if (video.muted) {
+                video.muted = false;
+                video.play();
             }
-
-            // Extra: if video ever becomes paused, try to resume (but keep sound)
-            video.addEventListener('pause', () => {
-                // do not automatically replay if paused by user, but we can try to keep playing
-                // only if not ended
-                if (!video.ended) {
-                    // but to avoid loops, we just check a short time later
-                }
-            });
-        });
-
-        // small improvement: on any user click on the frame (excluding toggle) we could force unmuted play if failed? 
-        // but that might be intrusive. We'll rely on the toggle button.
-
-        // But the user said "audio should play automatically with sound", so we set muted = false and play.
-        // On many devices (iOS specific), autoplay with sound is impossible without user interaction.
-        // For iOS, we can't bypass. The toggle remains the way to enable sound.
-        // We'll add a tiny note? not needed.
-        // Also we can set the video to unmuted and call play on touchstart of document once.
-        // But that would require first touch. Not fully automatic. 
-        // We'll keep as is, because it's the most compliant while trying.
+            document.body.removeEventListener('touchstart', once);
+        }, { once: true });
     </script>
-    <!-- Explanation: video muted attribute removed, toggle starts as volume-up. Browser policies may still block,
-         but this is the closest to "auto play with sound". The user can unmute via toggle if blocked. -->
 </body>
 </html>
