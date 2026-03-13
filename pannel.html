@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KUDU · T-800 ACTIVE · LASER MATRIX</title>
+    <title>KUDU · T-800 NEXUS · STABILIZED MATRIX</title>
     <style>
-        /* ===== TERMINATOR FUTURE LASER CORE ===== */
+        /* ========== T-800 NEXUS CORE ========== */
         * {
             margin: 0;
             padding: 0;
@@ -13,38 +13,38 @@
         }
 
         body {
-            background: #000000;
+            background: #020208;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 1.2rem;
-            font-family: 'Share Tech Mono', 'Courier New', Courier, monospace;
+            font-family: 'Share Tech Mono', 'Courier New', monospace;
             position: relative;
             overflow-x: hidden;
         }
 
-        /* laser grid background (holographic) */
+        /* Modernized grid – nano mesh */
         body::before {
             content: "";
             position: fixed;
             inset: 0;
             background: 
-                linear-gradient(90deg, rgba(255, 0, 60, 0.03) 1px, transparent 1px),
-                linear-gradient(0deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
+                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(255, 64, 255, 0.05) 1px, transparent 1px);
+            background-size: 45px 45px;
             pointer-events: none;
             z-index: 0;
-            animation: gridPulse 8s infinite alternate;
+            animation: gridStabilized 12s infinite alternate ease-in-out;
         }
 
-        @keyframes gridPulse {
-            0% { opacity: 0.2; filter: blur(0.5px); }
-            100% { opacity: 0.8; filter: blur(0px); }
+        @keyframes gridStabilized {
+            0% { opacity: 0.25; background-size: 45px 45px; filter: blur(0.5px); }
+            100% { opacity: 0.7; background-size: 50px 50px; filter: blur(0px); }
         }
 
-        /* deep scanning laser beams */
+        /* Refined scanning beams – smoother gradients */
         .laser-scanner {
             position: fixed;
             top: 0;
@@ -59,347 +59,360 @@
         .beam-horizontal {
             position: absolute;
             width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #ff3030, #00ffff, #ff3030, transparent);
-            filter: blur(3px) drop-shadow(0 0 20px cyan);
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #00ffff, #ff40ff, #00ffff, transparent);
+            filter: blur(5px) drop-shadow(0 0 25px cyan);
             top: 30%;
-            animation: sweepHorizontal 7s ease-in-out infinite;
-            opacity: 0.7;
-            box-shadow: 0 0 30px #0ff, 0 0 60px #f0f;
+            animation: sweepSmooth 12s cubic-bezier(0.45, 0.05, 0.2, 0.99) infinite;
+            opacity: 0.6;
+            box-shadow: 0 0 40px #0ff, 0 0 80px #f0f;
         }
 
         .beam-vertical {
             position: absolute;
-            width: 3px;
+            width: 4px;
             height: 100%;
-            background: linear-gradient(180deg, transparent, #00ff9d, #ff0055, #00ff9d, transparent);
-            filter: blur(3px) drop-shadow(0 0 25px lime);
-            left: 60%;
-            animation: sweepVertical 9s ease-in-out infinite;
-            opacity: 0.6;
-            box-shadow: 0 0 40px #0f0, 0 0 80px #ff00b3;
+            background: linear-gradient(180deg, transparent, #00ffaa, #ff40c0, #00ffaa, transparent);
+            filter: blur(5px) drop-shadow(0 0 30px #0ff);
+            left: 50%;
+            animation: sweepVerticalSmooth 15s cubic-bezier(0.3, 0.8, 0.2, 1) infinite;
+            opacity: 0.5;
+            box-shadow: 0 0 50px #0ff, 0 0 90px #ff40ff;
         }
 
-        @keyframes sweepHorizontal {
-            0% { top: 5%; opacity: 0.2; filter: blur(5px); }
-            25% { top: 30%; opacity: 1; filter: blur(2px); }
-            50% { top: 70%; opacity: 0.8; filter: blur(1px); }
-            75% { top: 40%; opacity: 1; filter: blur(3px); }
-            100% { top: 5%; opacity: 0.2; filter: blur(5px); }
+        @keyframes sweepSmooth {
+            0% { top: 0%; opacity: 0.2; filter: blur(8px); }
+            25% { top: 30%; opacity: 0.9; filter: blur(3px); }
+            50% { top: 70%; opacity: 0.8; filter: blur(2px); }
+            75% { top: 40%; opacity: 0.9; filter: blur(3px); }
+            100% { top: 0%; opacity: 0.2; filter: blur(8px); }
         }
 
-        @keyframes sweepVertical {
-            0% { left: 10%; opacity: 0.3; filter: blur(4px); }
-            33% { left: 45%; opacity: 1; filter: blur(0px); }
-            66% { left: 80%; opacity: 0.9; filter: blur(2px); }
-            100% { left: 10%; opacity: 0.3; filter: blur(4px); }
+        @keyframes sweepVerticalSmooth {
+            0% { left: 0%; opacity: 0.2; filter: blur(8px); }
+            33% { left: 45%; opacity: 1; filter: blur(2px); }
+            66% { left: 80%; opacity: 0.9; filter: blur(3px); }
+            100% { left: 0%; opacity: 0.2; filter: blur(8px); }
         }
 
-        /* main interface – armoured plate */
+        /* Main container – modern crystal armor */
         .cyber-container {
-            max-width: 1500px;
+            max-width: 1600px;
             width: 100%;
-            background: rgba(0, 5, 10, 0.7);
-            backdrop-filter: blur(12px) brightness(1.5);
-            border: 2px solid;
-            border-image: repeating-linear-gradient(45deg, #00ffff, #ff0055, #00ffff) 30;
-            box-shadow: 0 0 70px rgba(0, 255, 255, 0.5), inset 0 0 60px rgba(255, 0, 0, 0.3);
-            padding: 2rem 1.8rem;
-            border-radius: 40px 12px 40px 12px;
+            background: rgba(0, 8, 18, 0.65);
+            backdrop-filter: blur(16px) brightness(1.3);
+            border: 2px solid rgba(0, 255, 255, 0.5);
+            border-radius: 48px 16px 48px 16px;
+            box-shadow: 0 0 100px rgba(0, 255, 255, 0.4), inset 0 0 80px rgba(255, 64, 255, 0.25);
+            padding: 2.2rem 2rem;
             position: relative;
             z-index: 10;
-            transition: 0.3s;
+            transition: box-shadow 0.4s;
         }
 
-        /* header like HK display */
+        .cyber-container:hover {
+            box-shadow: 0 0 140px rgba(0, 255, 255, 0.7), inset 0 0 100px rgba(255, 64, 255, 0.4);
+        }
+
+        /* HUD header – sharp & modern */
         .hud-header {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 3px solid #0ff;
-            padding-bottom: 0.7rem;
-            margin-bottom: 2rem;
-            color: #aaffff;
-            text-shadow: 0 0 10px cyan, 0 0 20px magenta;
+            border-bottom: 2px solid #0ff;
+            padding-bottom: 1rem;
+            margin-bottom: 2.2rem;
+            color: #e0ffff;
+            text-shadow: 0 0 15px cyan, 0 0 35px magenta;
             font-family: 'Orbitron', 'Courier New', monospace;
         }
 
         .hud-title {
-            font-size: 2.4rem;
+            font-size: 2.6rem;
             font-weight: 900;
-            letter-spacing: 6px;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            background: linear-gradient(45deg, #00ffff, #ff66ff);
+            background: linear-gradient(135deg, #0ff, #ff80ff, #0ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 25px #00ffff);
+            filter: drop-shadow(0 0 30px #0ff);
         }
 
         .hud-title span {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             background: none;
-            -webkit-text-fill-color: #ff0055;
-            filter: drop-shadow(0 0 10px red);
+            -webkit-text-fill-color: #ff88ff;
+            filter: drop-shadow(0 0 15px magenta);
         }
 
         .target-counter {
-            background: #110022;
-            border: 2px solid magenta;
-            padding: 0.5rem 2rem;
-            border-radius: 40px;
+            background: rgba(17, 0, 34, 0.7);
+            border: 2px solid #ff66ff;
+            padding: 0.5rem 2.2rem;
+            border-radius: 60px;
             font-size: 1.6rem;
-            color: #00ffc3;
-            box-shadow: 0 0 30px #00ffff, inset 0 0 10px cyan;
-            backdrop-filter: blur(5px);
-            font-weight: bold;
+            color: #00ffea;
+            box-shadow: 0 0 40px #00ffff, inset 0 0 15px cyan;
+            backdrop-filter: blur(12px);
+            font-weight: 600;
         }
 
-        /* laser targeting grid cards */
+        /* Personnel grid – modern glass cards */
         .personnel-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 2rem;
-            perspective: 800px;
+            perspective: 1000px;
         }
 
-        /* each card = armoured target */
+        /* Card – stabilized laser target */
         .target-card {
-            background: rgba(0, 10, 20, 0.6);
-            backdrop-filter: blur(15px);
-            border: 2px solid transparent;
-            border-image: repeating-linear-gradient(35deg, #ff0055, #00ffff, #ff0055) 10;
-            border-radius: 24px;
-            padding: 1.8rem 1.5rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(255, 0, 255, 0.2) inset, 0 0 40px rgba(0, 255, 255, 0.3);
-            transform: rotateX(2deg) rotateY(0.5deg);
-            transition: 0.2s cubic-bezier(0.2, 1.6, 0.5, 1);
-            color: #bbfffc;
+            background: rgba(8, 15, 25, 0.55);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(0, 255, 255, 0.4);
+            border-radius: 32px;
+            padding: 2rem 1.8rem;
+            box-shadow: 0 25px 40px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 0, 255, 0.2) inset, 0 0 30px rgba(0, 255, 255, 0.2);
+            transform: rotateX(1deg) rotateY(0.2deg);
+            transition: all 0.3s cubic-bezier(0.2, 1, 0.3, 1);
+            color: #d0f0ff;
             position: relative;
             isolation: isolate;
         }
 
         .target-card:hover {
-            transform: rotateX(0deg) scale(1.02) translateY(-10px);
-            border-image: repeating-linear-gradient(35deg, cyan, magenta, cyan) 10;
-            box-shadow: 0 0 60px #ff00c8, 0 0 120px #0ff, inset 0 0 30px magenta;
+            transform: rotateX(0deg) scale(1.02) translateY(-8px);
+            border-color: #ff40ff;
+            box-shadow: 0 0 50px #ff40ff, 0 0 100px cyan, inset 0 0 40px magenta;
         }
 
-        /* laser target dot */
+        /* Laser dot – refined */
         .target-card::before {
             content: "";
             position: absolute;
-            top: 10px;
-            right: 15px;
-            width: 16px;
-            height: 16px;
-            background: #ff0040;
+            top: 16px;
+            right: 20px;
+            width: 14px;
+            height: 14px;
+            background: #ff2266;
             border-radius: 50%;
-            box-shadow: 0 0 25px red, 0 0 45px #ff00b3;
-            animation: laserPoint 1.2s infinite alternate;
+            box-shadow: 0 0 30px #ff0066, 0 0 60px cyan;
+            animation: laserPulse 1.4s infinite alternate ease-in-out;
         }
 
-        @keyframes laserPoint {
-            0% { opacity: 0.4; box-shadow: 0 0 10px red; }
-            100% { opacity: 1; box-shadow: 0 0 40px #ff00aa, 0 0 80px cyan; }
+        @keyframes laserPulse {
+            0% { opacity: 0.5; transform: scale(0.9); box-shadow: 0 0 15px #ff0066; }
+            100% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 50px #ff40ff, 0 0 80px cyan; }
         }
 
-        /* nameplate – glowing */
+        /* Name – modern gradient */
         .person-name {
             font-size: 2rem;
             font-weight: 800;
             font-family: 'Orbitron', monospace;
-            background: linear-gradient(135deg, #ffffff, #93ffff);
+            background: linear-gradient(135deg, #ffffff, #a0ffff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-transform: uppercase;
             letter-spacing: -0.5px;
-            filter: drop-shadow(0 0 12px #0ff);
-            border-left: 6px solid magenta;
-            padding-left: 0.8rem;
+            filter: drop-shadow(0 0 15px #0ff);
+            border-left: 5px solid #ff40ff;
+            padding-left: 1rem;
             line-height: 1.2;
+            margin-bottom: 0.3rem;
         }
 
         .job-scan {
             display: inline-block;
-            background: #14001a;
+            background: rgba(20, 0, 30, 0.7);
             border: 2px solid #0ff;
             color: #0ff;
-            font-weight: 400;
-            padding: 0.3rem 1.4rem;
-            border-radius: 30px;
-            margin: 0.8rem 0 0.2rem 0;
+            font-weight: 500;
+            padding: 0.25rem 1.6rem;
+            border-radius: 40px;
+            margin: 0.7rem 0 0.3rem;
             font-size: 0.9rem;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            box-shadow: 0 0 18px cyan;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px cyan;
+            backdrop-filter: blur(5px);
         }
 
         .dept-tag {
-            color: #ffa0ff;
-            font-size: 0.9rem;
+            color: #ffc0ff;
+            font-size: 0.95rem;
             filter: drop-shadow(0 0 8px magenta);
-            margin-bottom: 1rem;
-            border-bottom: 1px dashed #00ffff;
-            padding-bottom: 0.5rem;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.5);
+            padding-bottom: 0.6rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
         }
 
-        /* contact items – laser etched */
+        /* Contact items – sleek */
         .contact-item {
             display: flex;
             align-items: center;
             gap: 1rem;
-            background: rgba(0, 255, 255, 0.05);
-            border: 1px solid #00ffff;
-            border-radius: 60px;
-            padding: 0.6rem 1.2rem;
-            margin-bottom: 0.8rem;
-            backdrop-filter: blur(10px);
-            transition: 0.1s;
-            box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+            background: rgba(0, 30, 40, 0.4);
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            border-radius: 50px;
+            padding: 0.7rem 1.3rem;
+            margin-bottom: 0.9rem;
+            backdrop-filter: blur(8px);
+            transition: 0.15s;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
         }
 
         .contact-item:hover {
-            background: rgba(180, 0, 255, 0.2);
-            border-color: magenta;
-            box-shadow: 0 0 30px magenta, inset 0 0 10px magenta;
+            background: rgba(60, 0, 80, 0.5);
+            border-color: #ff40ff;
+            box-shadow: 0 0 35px magenta, inset 0 0 15px magenta;
         }
 
         .contact-icon {
-            font-size: 2rem;
-            filter: drop-shadow(0 0 10px cyan);
+            font-size: 1.8rem;
+            filter: drop-shadow(0 0 8px cyan);
             width: 36px;
             text-align: center;
         }
 
-        .contact-detail {
-            flex: 1;
-        }
-
         .contact-label {
-            font-size: 0.55rem;
-            letter-spacing: 3px;
-            color: #aaf0ff;
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            color: #aaffff;
             text-transform: uppercase;
-            opacity: 0.8;
+            opacity: 0.9;
         }
 
         .contact-value a {
             color: #ffffff;
             text-decoration: none;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 500;
-            border-bottom: 1px dotted #00ffff;
+            border-bottom: 1px dotted #0ff;
             text-shadow: 0 0 8px cyan;
             word-break: break-all;
             transition: 0.1s;
         }
 
         .contact-value a:hover {
-            color: #ff89ff;
+            color: #ffaaff;
             text-shadow: 0 0 15px magenta, 0 0 30px cyan;
             border-bottom: 2px solid magenta;
         }
 
-        /* location/status laser badges */
+        /* Badges – cleaner */
         .meta-badge {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
-            margin: 1rem 0 0.5rem;
+            gap: 0.7rem;
+            margin: 1rem 0 0.8rem;
         }
 
         .badge {
             border: 1px solid #0ff;
-            background: #001010;
+            background: rgba(0, 20, 30, 0.6);
             color: #0ff;
-            padding: 0.25rem 1.2rem;
-            border-radius: 40px;
+            padding: 0.25rem 1.4rem;
+            border-radius: 50px;
             font-size: 0.8rem;
-            box-shadow: 0 0 12px cyan;
-            backdrop-filter: blur(5px);
+            box-shadow: 0 0 15px cyan;
+            backdrop-filter: blur(6px);
         }
 
         .badge.busy {
-            border-color: #ff4444;
-            color: #ff7b7b;
-            box-shadow: 0 0 20px red;
+            border-color: #ff5555;
+            color: #ffaaaa;
+            box-shadow: 0 0 20px #ff3333;
         }
 
         .footer-chip {
             margin-top: 1.2rem;
             display: flex;
             justify-content: space-between;
-            border-top: 2px solid #ff00aa;
-            padding-top: 0.8rem;
-            font-size: 0.7rem;
-            color: #71ffff;
+            border-top: 2px solid #ff40ff;
+            padding-top: 0.9rem;
+            font-size: 0.75rem;
+            color: #8fffff;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .abha-pulse {
-            color: #ff77ff;
-            animation: flicker 3s infinite;
+            color: #ffaaff;
+            animation: softFlicker 4s infinite;
         }
 
-        @keyframes flicker {
-            0% { opacity: 0.5; text-shadow: 0 0 2px magenta; }
-            50% { opacity: 1; text-shadow: 0 0 18px magenta, 0 0 30px cyan; }
-            100% { opacity: 0.5; text-shadow: 0 0 2px cyan; }
+        @keyframes softFlicker {
+            0% { opacity: 0.7; text-shadow: 0 0 5px magenta; }
+            50% { opacity: 1; text-shadow: 0 0 20px magenta, 0 0 30px cyan; }
+            100% { opacity: 0.7; text-shadow: 0 0 5px magenta; }
         }
 
-        /* laser range finder corners */
+        /* Corner detail – refined */
         .corner-triangle {
             position: absolute;
-            width: 25px;
-            height: 25px;
+            width: 28px;
+            height: 28px;
             border-color: #0ff;
             border-style: solid;
             border-width: 4px 0 0 4px;
-            top: -3px;
-            left: -3px;
-            filter: drop-shadow(0 0 15px cyan);
+            top: -2px;
+            left: -2px;
+            filter: drop-shadow(0 0 12px cyan);
+            opacity: 0.8;
         }
 
-        /* extra machine glitch */
-        .glitch-text {
-            animation: glitch 4s infinite;
+        /* Responsive */
+        @media (max-width: 600px) {
+            .hud-title { font-size: 2rem; }
+            .hud-title span { font-size: 1.4rem; }
+            .target-counter { font-size: 1.2rem; padding: 0.4rem 1.2rem; }
+            .person-name { font-size: 1.6rem; }
         }
 
-        @keyframes glitch {
-            2%, 6% { transform: skew(2deg, 1deg); opacity: 0.9; text-shadow: -2px 0 red, 2px 0 blue; }
+        /* footer note */
+        .system-footer {
+            color: #6080c0;
+            font-size: 0.65rem;
+            margin-top: 1.2rem;
+            font-family: 'Share Tech Mono';
+            z-index: 20;
+            text-shadow: 0 0 8px blue;
+            letter-spacing: 0.5px;
         }
     </style>
-    <!-- import futuristic font -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- laser beams overlay -->
     <div class="laser-scanner">
         <div class="beam-horizontal"></div>
         <div class="beam-vertical"></div>
-        <div class="beam-horizontal" style="top:70%; animation-delay: -2s; background: linear-gradient(90deg, transparent, #ff00b3, #00ffb3, #ff00b3, transparent);"></div>
-        <div class="beam-vertical" style="left:20%; animation-delay: -4s; background: linear-gradient(180deg, transparent, #ffaa00, #00ffff, #ffaa00, transparent);"></div>
+        <div class="beam-horizontal" style="top:70%; animation-delay: -4s; background: linear-gradient(90deg, transparent, #ff80ff, #00ffff, #ff80ff, transparent);"></div>
+        <div class="beam-vertical" style="left:70%; animation-delay: -6s; background: linear-gradient(180deg, transparent, #ffff80, #ff40c0, #ffff80, transparent);"></div>
     </div>
 
     <div class="cyber-container">
         <div class="hud-header">
-            <div class="hud-title">⫸ T-800 LASER CORE <span>// KUDU ADMIN</span></div>
+            <div class="hud-title">⫸ T-800 NEXUS <span>// KUDU DIRECTORY</span></div>
             <div class="target-counter" id="targetCount">14 TARGETS</div>
         </div>
 
         <div id="cyberGrid" class="personnel-grid"></div>
 
-        <!-- ABHA southern encrypted coordinate -->
-        <div style="margin-top: 2.2rem; border-top: 2px solid magenta; padding-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 3rem; font-family: 'Share Tech Mono';">
-            <div style="color: #00ffff; text-shadow: 0 0 10px cyan;">KS-22 (ABHA) SOUTHERN · LOCK: 24.673N 46.724E</div>
-            <div style="color: #ff80ff; text-shadow: 0 0 10px magenta;">AVAYA: 7922 · ks-022@kudu.com.sa · +966561825680</div>
+        <!-- ABHA coordinate – modern typography -->
+        <div style="margin-top: 2.2rem; border-top: 2px solid rgba(255, 64, 255, 0.7); padding-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 2rem; font-family: 'Share Tech Mono';">
+            <div style="color: #00ffff; text-shadow: 0 0 12px cyan;">KS-22 (ABHA) SOUTHERN · 24.673N 46.724E</div>
+            <div style="color: #ffaaff; text-shadow: 0 0 12px magenta;">AVAYA: 7922 · ks-022@kudu.com.sa · +966561825680</div>
         </div>
     </div>
 
+    <div class="system-footer">⏻ T-800 ACTIVE · HOLO LINKS STABLE · TAP TO DIAL / EMAIL</div>
+
     <script>
-        (function laserLoad() {
+        (function stabilizedLoad() {
             const personnel = [
                 { name: "Amal A. Al Enazi", job: "HR Director", dept: "HR", email: "aalenaizi@kudu.com.sa", mobile: null, workPhone: "1555", location: "HQ", status: "Free for next 8 hours", company: "Kudu Company for food and Catering" },
                 { name: "Hani Sowa'ilim", job: "HR Manager", dept: "HR", email: "hswailim@kudu.com.sa", mobile: "0503404445", workPhone: null, location: "Riyadh-HO", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering" },
@@ -429,18 +442,15 @@
                 const card = document.createElement('div');
                 card.className = 'target-card';
 
-                // corner decoration
                 const corner = document.createElement('div');
                 corner.className = 'corner-triangle';
                 card.appendChild(corner);
 
-                // name
                 const nameDiv = document.createElement('div');
                 nameDiv.className = 'person-name';
                 nameDiv.innerText = p.name;
                 card.appendChild(nameDiv);
 
-                // job & dept
                 const jobSpan = document.createElement('div');
                 jobSpan.className = 'job-scan';
                 jobSpan.innerText = p.job;
@@ -451,7 +461,6 @@
                 deptDiv.innerText = p.dept || '—';
                 card.appendChild(deptDiv);
 
-                // contact rows
                 const emailVal = (p.email === 'ppayyadakkaht@kudu.co...' && p.altEmail) ? p.altEmail : p.email;
                 const emailHref = `mailto:${emailVal}`;
                 const emailItem = document.createElement('div');
@@ -480,7 +489,6 @@
                     card.appendChild(phoneItem);
                 }
 
-                // location and status badges
                 const meta = document.createElement('div');
                 meta.className = 'meta-badge';
                 meta.innerHTML = `
@@ -489,7 +497,6 @@
                 `;
                 card.appendChild(meta);
 
-                // optionally second phone if both exist
                 if (p.workPhone && p.mobile) {
                     const workItem = document.createElement('div');
                     workItem.className = 'contact-item';
@@ -503,7 +510,6 @@
                     card.appendChild(workItem);
                 }
 
-                // footer chip
                 const footer = document.createElement('div');
                 footer.className = 'footer-chip';
                 footer.innerHTML = `
@@ -515,7 +521,7 @@
                 grid.appendChild(card);
             });
 
-            // PPV email correction
+            // Corrections
             const allCards = grid.children;
             for (let card of allCards) {
                 if (card.innerText.includes('PPVthran')) {
@@ -534,11 +540,8 @@
                 }
             }
 
-            // update target count
             document.getElementById('targetCount').innerText = personnel.length + ' TARGETS';
         })();
     </script>
-
-    <div style="color: #7070c0; font-size: 0.6rem; margin-top: 1rem; font-family: 'Share Tech Mono'; z-index: 20; text-shadow: 0 0 6px blue;">⏻ T-800 ACTIVE · PHOTON LINKS READY · TAP TO DIAL / EMAIL</div>
 </body>
 </html>
