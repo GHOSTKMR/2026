@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KUDU · T-800 ACTIVE · LASER MATRIX</title>
+    <style>
+        /* ===== TERMINATOR FUTURE LASER CORE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.2rem;
+            font-family: 'Share Tech Mono', 'Courier New', Courier, monospace;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* laser grid background (holographic) */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: 
+                linear-gradient(90deg, rgba(255, 0, 60, 0.03) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+            animation: gridPulse 8s infinite alternate;
+        }
+
+        @keyframes gridPulse {
+            0% { opacity: 0.2; filter: blur(0.5px); }
+            100% { opacity: 0.8; filter: blur(0px); }
+        }
+
+        /* deep scanning laser beams */
+        .laser-scanner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .beam-horizontal {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ff3030, #00ffff, #ff3030, transparent);
+            filter: blur(3px) drop-shadow(0 0 20px cyan);
+            top: 30%;
+            animation: sweepHorizontal 7s ease-in-out infinite;
+            opacity: 0.7;
+            box-shadow: 0 0 30px #0ff, 0 0 60px #f0f;
+        }
+
+        .beam-vertical {
+            position: absolute;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, #00ff9d, #ff0055, #00ff9d, transparent);
+            filter: blur(3px) drop-shadow(0 0 25px lime);
+            left: 60%;
+            animation: sweepVertical 9s ease-in-out infinite;
+            opacity: 0.6;
+            box-shadow: 0 0 40px #0f0, 0 0 80px #ff00b3;
+        }
+
+        @keyframes sweepHorizontal {
+            0% { top: 5%; opacity: 0.2; filter: blur(5px); }
+            25% { top: 30%; opacity: 1; filter: blur(2px); }
+            50% { top: 70%; opacity: 0.8; filter: blur(1px); }
+            75% { top: 40%; opacity: 1; filter: blur(3px); }
+            100% { top: 5%; opacity: 0.2; filter: blur(5px); }
+        }
+
+        @keyframes sweepVertical {
+            0% { left: 10%; opacity: 0.3; filter: blur(4px); }
+            33% { left: 45%; opacity: 1; filter: blur(0px); }
+            66% { left: 80%; opacity: 0.9; filter: blur(2px); }
+            100% { left: 10%; opacity: 0.3; filter: blur(4px); }
+        }
+
+        /* main interface – armoured plate */
+        .cyber-container {
+            max-width: 1500px;
+            width: 100%;
+            background: rgba(0, 5, 10, 0.7);
+            backdrop-filter: blur(12px) brightness(1.5);
+            border: 2px solid;
+            border-image: repeating-linear-gradient(45deg, #00ffff, #ff0055, #00ffff) 30;
+            box-shadow: 0 0 70px rgba(0, 255, 255, 0.5), inset 0 0 60px rgba(255, 0, 0, 0.3);
+            padding: 2rem 1.8rem;
+            border-radius: 40px 12px 40px 12px;
+            position: relative;
+            z-index: 10;
+            transition: 0.3s;
+        }
+
+        /* header like HK display */
+        .hud-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #0ff;
+            padding-bottom: 0.7rem;
+            margin-bottom: 2rem;
+            color: #aaffff;
+            text-shadow: 0 0 10px cyan, 0 0 20px magenta;
+            font-family: 'Orbitron', 'Courier New', monospace;
+        }
+
+        .hud-title {
+            font-size: 2.4rem;
+            font-weight: 900;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            background: linear-gradient(45deg, #00ffff, #ff66ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 25px #00ffff);
+        }
+
+        .hud-title span {
+            font-size: 1.6rem;
+            background: none;
+            -webkit-text-fill-color: #ff0055;
+            filter: drop-shadow(0 0 10px red);
+        }
+
+        .target-counter {
+            background: #110022;
+            border: 2px solid magenta;
+            padding: 0.5rem 2rem;
+            border-radius: 40px;
+            font-size: 1.6rem;
+            color: #00ffc3;
+            box-shadow: 0 0 30px #00ffff, inset 0 0 10px cyan;
+            backdrop-filter: blur(5px);
+            font-weight: bold;
+        }
+
+        /* laser targeting grid cards */
+        .personnel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 2rem;
+            perspective: 800px;
+        }
+
+        /* each card = armoured target */
+        .target-card {
+            background: rgba(0, 10, 20, 0.6);
+            backdrop-filter: blur(15px);
+            border: 2px solid transparent;
+            border-image: repeating-linear-gradient(35deg, #ff0055, #00ffff, #ff0055) 10;
+            border-radius: 24px;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(255, 0, 255, 0.2) inset, 0 0 40px rgba(0, 255, 255, 0.3);
+            transform: rotateX(2deg) rotateY(0.5deg);
+            transition: 0.2s cubic-bezier(0.2, 1.6, 0.5, 1);
+            color: #bbfffc;
+            position: relative;
+            isolation: isolate;
+        }
+
+        .target-card:hover {
+            transform: rotateX(0deg) scale(1.02) translateY(-10px);
+            border-image: repeating-linear-gradient(35deg, cyan, magenta, cyan) 10;
+            box-shadow: 0 0 60px #ff00c8, 0 0 120px #0ff, inset 0 0 30px magenta;
+        }
+
+        /* laser target dot */
+        .target-card::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            width: 16px;
+            height: 16px;
+            background: #ff0040;
+            border-radius: 50%;
+            box-shadow: 0 0 25px red, 0 0 45px #ff00b3;
+            animation: laserPoint 1.2s infinite alternate;
+        }
+
+        @keyframes laserPoint {
+            0% { opacity: 0.4; box-shadow: 0 0 10px red; }
+            100% { opacity: 1; box-shadow: 0 0 40px #ff00aa, 0 0 80px cyan; }
+        }
+
+        /* nameplate – glowing */
+        .person-name {
+            font-size: 2rem;
+            font-weight: 800;
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(135deg, #ffffff, #93ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+            filter: drop-shadow(0 0 12px #0ff);
+            border-left: 6px solid magenta;
+            padding-left: 0.8rem;
+            line-height: 1.2;
+        }
+
+        .job-scan {
+            display: inline-block;
+            background: #14001a;
+            border: 2px solid #0ff;
+            color: #0ff;
+            font-weight: 400;
+            padding: 0.3rem 1.4rem;
+            border-radius: 30px;
+            margin: 0.8rem 0 0.2rem 0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            box-shadow: 0 0 18px cyan;
+        }
+
+        .dept-tag {
+            color: #ffa0ff;
+            font-size: 0.9rem;
+            filter: drop-shadow(0 0 8px magenta);
+            margin-bottom: 1rem;
+            border-bottom: 1px dashed #00ffff;
+            padding-bottom: 0.5rem;
+        }
+
+        /* contact items – laser etched */
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(0, 255, 255, 0.05);
+            border: 1px solid #00ffff;
+            border-radius: 60px;
+            padding: 0.6rem 1.2rem;
+            margin-bottom: 0.8rem;
+            backdrop-filter: blur(10px);
+            transition: 0.1s;
+            box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+        }
+
+        .contact-item:hover {
+            background: rgba(180, 0, 255, 0.2);
+            border-color: magenta;
+            box-shadow: 0 0 30px magenta, inset 0 0 10px magenta;
+        }
+
+        .contact-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 10px cyan);
+            width: 36px;
+            text-align: center;
+        }
+
+        .contact-detail {
+            flex: 1;
+        }
+
+        .contact-label {
+            font-size: 0.55rem;
+            letter-spacing: 3px;
+            color: #aaf0ff;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        .contact-value a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 500;
+            border-bottom: 1px dotted #00ffff;
+            text-shadow: 0 0 8px cyan;
+            word-break: break-all;
+            transition: 0.1s;
+        }
+
+        .contact-value a:hover {
+            color: #ff89ff;
+            text-shadow: 0 0 15px magenta, 0 0 30px cyan;
+            border-bottom: 2px solid magenta;
+        }
+
+        /* location/status laser badges */
+        .meta-badge {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0 0.5rem;
+        }
+
+        .badge {
+            border: 1px solid #0ff;
+            background: #001010;
+            color: #0ff;
+            padding: 0.25rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            box-shadow: 0 0 12px cyan;
+            backdrop-filter: blur(5px);
+        }
+
+        .badge.busy {
+            border-color: #ff4444;
+            color: #ff7b7b;
+            box-shadow: 0 0 20px red;
+        }
+
+        .footer-chip {
+            margin-top: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            border-top: 2px solid #ff00aa;
+            padding-top: 0.8rem;
+            font-size: 0.7rem;
+            color: #71ffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .abha-pulse {
+            color: #ff77ff;
+            animation: flicker 3s infinite;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.5; text-shadow: 0 0 2px magenta; }
+            50% { opacity: 1; text-shadow: 0 0 18px magenta, 0 0 30px cyan; }
+            100% { opacity: 0.5; text-shadow: 0 0 2px cyan; }
+        }
+
+        /* laser range finder corners */
+        .corner-triangle {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border-color: #0ff;
+            border-style: solid;
+            border-width: 4px 0 0 4px;
+            top: -3px;
+            left: -3px;
+            filter: drop-shadow(0 0 15px cyan);
+        }
+
+        /* extra machine glitch */
+        .glitch-text {
+            animation: glitch 4s infinite;
+        }
+
+        @keyframes glitch {
+            2%, 6% { transform: skew(2deg, 1deg); opacity: 0.9; text-shadow: -2px 0 red, 2px 0 blue; }
+        }
+    </style>
+    <!-- import futuristic font -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- laser beams overlay -->
+    <div class="laser-scanner">
+        <div class="beam-horizontal"></div>
+        <div class="beam-vertical"></div>
+        <div class="beam-horizontal" style="top:70%; animation-delay: -2s; background: linear-gradient(90deg, transparent, #ff00b3, #00ffb3, #ff00b3, transparent);"></div>
+        <div class="beam-vertical" style="left:20%; animation-delay: -4s; background: linear-gradient(180deg, transparent, #ffaa00, #00ffff, #ffaa00, transparent);"></div>
+    </div>
+
+    <div class="cyber-container">
+        <div class="hud-header">
+            <div class="hud-title">⫸ T-800 LASER CORE <span>// KUDU ADMIN</span></div>
+            <div class="target-counter" id="targetCount">14 TARGETS</div>
+        </div>
+
+        <div id="cyberGrid" class="personnel-grid"></div>
+
+        <!-- ABHA southern encrypted coordinate -->
+        <div style="margin-top: 2.2rem; border-top: 2px solid magenta; padding-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 3rem; font-family: 'Share Tech Mono';">
+            <div style="color: #00ffff; text-shadow: 0 0 10px cyan;">KS-22 (ABHA) SOUTHERN · LOCK: 24.673N 46.724E</div>
+            <div style="color: #ff80ff; text-shadow: 0 0 10px magenta;">AVAYA: 7922 · ks-022@kudu.com.sa · +966561825680</div>
+        </div>
+    </div>
+
+    <script>
+        (function laserLoad() {
+            const personnel = [
+                { name: "Amal A. Al Enazi", job: "HR Director", dept: "HR", email: "aalenaizi@kudu.com.sa", mobile: null, workPhone: "1555", location: "HQ", status: "Free for next 8 hours", company: "Kudu Company for food and Catering" },
+                { name: "Hani Sowa'ilim", job: "HR Manager", dept: "HR", email: "hswailim@kudu.com.sa", mobile: "0503404445", workPhone: null, location: "Riyadh-HO", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering" },
+                { name: "PPVthran P", job: "Area Manager - Operation", dept: "Operation", email: "ppayyadakkaht@kudu.co...", mobile: "966561825680", workPhone: null, location: "Abha", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering", altEmail: "ks-022@kudu.com.sa" },
+                { name: "Mahmoud Hafez", job: "Area Supervisor", dept: "Operation", email: "mhafez@kudu.com.sa", mobile: "0581827031", workPhone: null, location: "Western Region", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering" },
+                { name: "Murat Ungun", job: "Chief Executive Officer", dept: "Executive Management", email: "mungun@kudu.com.sa", mobile: "0569444420", workPhone: "1302", location: "Riyadh", status: "Busy - Free at 09:00 PM", company: "Kudu for Food and Catering" },
+                { name: "Mohamed Eldahshan", job: "Eastern Region", dept: "Operation", email: "meldahshan@kudu.com.sa", mobile: "0543289624", workPhone: null, location: "Eastern Region", status: "Free for next 8 hours", company: "Kudu for Food and Catering" },
+                { name: "Mueen Ahange", job: "Cares Coach", dept: "OPS Excellence", email: "mahange@kudu.com.sa", mobile: "0573207876", workPhone: null, location: "Jeddah", status: "Free for next 8 hours", company: "Kudu Company for food and Catering" },
+                { name: "Owais Mattoo", job: "Cares Coach", dept: "OPS EXCELLENCE TEAM", email: "omattoo@kudu.com.sa", mobile: "0568870172", workPhone: null, location: "Riyadh", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering" },
+                { name: "Pradeep B. Muralidha", job: "Restaurant Auditor", dept: "Finance", email: "pmuralidha@kudu.com.sa", mobile: "0573417738", workPhone: null, location: "Riyadh", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering" },
+                { name: "Kamal Huda", job: "Restaurant Audit Supervisor", dept: "Internal Audit Department", email: "khuda@kudu.com.sa", mobile: "0564856331", workPhone: null, location: "Western RO", status: "Free for next 8 hours", company: "Kudu Company for food and Catering" },
+                { name: "Kareem Sheta", job: "Restaurant Auditor", dept: "Internal Audit Department", email: "ksheta@kudu.com.sa", mobile: "058207276", workPhone: null, location: "Western RO", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering" },
+                { name: "Ahmed A. Zidan", job: "IT Technician", dept: "IT", email: "azidan@kudu.com.sa", mobile: "05517533885", workPhone: null, location: "Western RO", status: "Free for next 8 hours", company: "Kudu Company for Food & Catering" },
+                { name: "Ali A. Nasan", job: "IT Director", dept: "IT", email: "anasan@kudu.com.sa", mobile: "+966 0502057051", workPhone: null, location: "Riyadh", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering" },
+                { name: "Emad M. Salim", job: "Senior Operations Director", dept: "Operation", email: "emad@kudu.com.sa", mobile: "0504456413", workPhone: "1801", location: "Riyadh HO", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering" }
+            ];
+
+            function formatTel(raw) {
+                if (!raw) return null;
+                return raw.replace(/[\s\-]/g, '');
+            }
+
+            const grid = document.getElementById('cyberGrid');
+            if (!grid) return;
+
+            personnel.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'target-card';
+
+                // corner decoration
+                const corner = document.createElement('div');
+                corner.className = 'corner-triangle';
+                card.appendChild(corner);
+
+                // name
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'person-name';
+                nameDiv.innerText = p.name;
+                card.appendChild(nameDiv);
+
+                // job & dept
+                const jobSpan = document.createElement('div');
+                jobSpan.className = 'job-scan';
+                jobSpan.innerText = p.job;
+                card.appendChild(jobSpan);
+
+                const deptDiv = document.createElement('div');
+                deptDiv.className = 'dept-tag';
+                deptDiv.innerText = p.dept || '—';
+                card.appendChild(deptDiv);
+
+                // contact rows
+                const emailVal = (p.email === 'ppayyadakkaht@kudu.co...' && p.altEmail) ? p.altEmail : p.email;
+                const emailHref = `mailto:${emailVal}`;
+                const emailItem = document.createElement('div');
+                emailItem.className = 'contact-item';
+                emailItem.innerHTML = `
+                    <span class="contact-icon">📡</span>
+                    <div class="contact-detail">
+                        <span class="contact-label">LASER COMM</span>
+                        <span class="contact-value"><a href="${emailHref}" target="_blank">${emailVal}</a></span>
+                    </div>
+                `;
+                card.appendChild(emailItem);
+
+                const phoneRaw = p.mobile || p.workPhone;
+                if (phoneRaw) {
+                    const phoneItem = document.createElement('div');
+                    phoneItem.className = 'contact-item';
+                    const telLink = `tel:${formatTel(phoneRaw)}`;
+                    phoneItem.innerHTML = `
+                        <span class="contact-icon">⚡</span>
+                        <div class="contact-detail">
+                            <span class="contact-label">${p.mobile ? 'CELL' : 'WORK FREQ'}</span>
+                            <span class="contact-value"><a href="${telLink}">${phoneRaw}</a></span>
+                        </div>
+                    `;
+                    card.appendChild(phoneItem);
+                }
+
+                // location and status badges
+                const meta = document.createElement('div');
+                meta.className = 'meta-badge';
+                meta.innerHTML = `
+                    <span class="badge">📍 ${p.location || 'unk'}</span>
+                    <span class="badge ${p.status.includes('Busy') ? 'busy' : ''}">⏳ ${p.status}</span>
+                `;
+                card.appendChild(meta);
+
+                // optionally second phone if both exist
+                if (p.workPhone && p.mobile) {
+                    const workItem = document.createElement('div');
+                    workItem.className = 'contact-item';
+                    workItem.innerHTML = `
+                        <span class="contact-icon">☢️</span>
+                        <div class="contact-detail">
+                            <span class="contact-label">OFFICE LASER</span>
+                            <span class="contact-value"><a href="tel:${p.workPhone}">${p.workPhone}</a></span>
+                        </div>
+                    `;
+                    card.appendChild(workItem);
+                }
+
+                // footer chip
+                const footer = document.createElement('div');
+                footer.className = 'footer-chip';
+                footer.innerHTML = `
+                    <span>🏭 ${p.company || 'Kudu'}</span>
+                    <span class="abha-pulse">⚡ ${p.dept || ''}</span>
+                `;
+                card.appendChild(footer);
+
+                grid.appendChild(card);
+            });
+
+            // PPV email correction
+            const allCards = grid.children;
+            for (let card of allCards) {
+                if (card.innerText.includes('PPVthran')) {
+                    const link = card.querySelector('a[href^="mailto:"]');
+                    if (link && link.innerText.includes('ppayyadakkaht@kudu.co...')) {
+                        link.innerText = 'ks-022@kudu.com.sa';
+                        link.setAttribute('href', 'mailto:ks-022@kudu.com.sa');
+                    }
+                }
+                if (card.innerText.includes('Mahmoud Hafez')) {
+                    const link = card.querySelector('a[href^="mailto:"]');
+                    if (link && link.innerText.includes('mahfaz')) {
+                        link.innerText = 'mhafez@kudu.com.sa';
+                        link.setAttribute('href', 'mailto:mhafez@kudu.com.sa');
+                    }
+                }
+            }
+
+            // update target count
+            document.getElementById('targetCount').innerText = personnel.length + ' TARGETS';
+        })();
+    </script>
+
+    <div style="color: #7070c0; font-size: 0.6rem; margin-top: 1rem; font-family: 'Share Tech Mono'; z-index: 20; text-shadow: 0 0 6px blue;">⏻ T-800 ACTIVE · PHOTON LINKS READY · TAP TO DIAL / EMAIL</div>
+</body>
+</html>
