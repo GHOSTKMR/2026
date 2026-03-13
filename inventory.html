@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Inventory Control · Mobile Optimized</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* MODERN MOBILE-FIRST INVENTORY SYSTEM */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        :root {
+            --primary: #1e3a5f;
+            --primary-light: #2b4c7c;
+            --primary-dark: #0b2a44;
+            --accent: #2e7eb0;
+            --accent-light: #4a9bd6;
+            --success: #2e7d32;
+            --warning: #b85e00;
+            --danger: #b71c1c;
+            --bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+
+        [data-theme="dark"] {
+            --primary: #0f2b45;
+            --primary-light: #1e3a5f;
+            --primary-dark: #071c2e;
+            --accent: #3b8fc2;
+            --accent-light: #5aa9e0;
+            --success: #3d9b4d;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --bg: #121826;
+            --card-bg: #1e2538;
+            --text: #e9edf2;
+            --text-light: #9aa8b9;
+            --border: #2d3748;
+            --shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
+            transition: background 0.2s, color 0.2s;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        /* iPhone Safe Area Support */
+        .container-fluid {
+            padding: 12px 12px 20px 12px;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* Header – iPhone friendly */
+        .app-header {
+            background: linear-gradient(145deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 18px 16px;
+            border-radius: 24px 24px 24px 24px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .app-header h1 {
+            font-size: 1.7rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .app-header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .live-time {
+            background: rgba(0,0,0,0.2);
+            padding: 8px 14px;
+            border-radius: 40px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .live-time #clock {
+            font-size: 1.3rem;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .live-time #date-display {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* Metric Cards – Swipeable on small screens */
+        .metrics-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding: 4px 2px 16px 2px;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .metrics-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .metric-card-mini {
+            flex: 0 0 160px;
+            background: var(--card-bg);
+            border-radius: 22px;
+            padding: 16px 14px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.1s;
+        }
+
+        .metric-card-mini .metric-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+
+        .metric-card-mini .metric-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1.2;
+        }
+
+        .metric-change {
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            margin-top: 6px;
+        }
+
+        .positive { color: var(--success); }
+        .negative { color: var(--danger); }
+
+        /* Panel Styles */
+        .card-panel {
+            background: var(--card-bg);
+            border-radius: 28px;
+            padding: 20px 16px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .panel-title {
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--accent);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-container {
+            height: 260px;
+            width: 100%;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        /* Sales Targets – stacked, big touch areas */
+        .sales-stack {
+            background: var(--primary);
+            border-radius: 24px;
+            padding: 20px 16px;
+            margin-bottom: 20px;
+        }
+
+        .sales-stack .input-group-custom {
+            margin-bottom: 16px;
+        }
+
+        .sales-stack label {
+            display: block;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+            margin-left: 4px;
+        }
+
+        .sales-stack .form-control,
+        .sales-stack .form-select {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 40px;
+            padding: 16px 18px;
+            font-size: 1rem;
+            height: auto;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .sales-stack .form-control::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .sales-stack .form-control:focus,
+        .sales-stack .form-select:focus {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--accent-light);
+            box-shadow: none;
+        }
+
+        /* Date Navigator */
+        .date-navigator {
+            background: var(--primary-light);
+            border-radius: 24px;
+            padding: 18px 16px;
+            margin-bottom: 20px;
+        }
+
+        .date-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .date-row select {
+            flex: 1 1 0;
+            min-width: 0;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            border-radius: 40px;
+            padding: 14px 12px;
+            font-size: 0.95rem;
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons .btn {
+            flex: 1 1 calc(50% - 4px);
+            border-radius: 60px;
+            padding: 16px 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: none;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.2);
+            min-height: 56px;
+        }
+
+        .action-buttons .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .selected-date-badge {
+            background: var(--accent-light);
+            color: white;
+            text-align: center;
+            padding: 14px 12px;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 1rem;
+            margin-top: 12px;
+        }
+
+        /* Table – horizontal scroll but super legible on iPhone */
+        .inventory-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 24px;
+            background: var(--card-bg);
+            padding: 4px 0;
+            margin-top: 12px;
+        }
+
+        .inventory-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 6px;
+            min-width: 900px; /* ensures scroll on small */
+        }
+
+        .inventory-table th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            font-size: 0.75rem;
+            padding: 16px 6px;
+            white-space: nowrap;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .inventory-table td {
+            background: var(--card-bg);
+            padding: 12px 4px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.8rem;
+        }
+
+        .inventory-table td input {
+            width: 70px;
+            padding: 12px 6px;
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.8rem;
+            text-align: center;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-ok {
+            background: rgba(46, 125, 50, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(46,125,50,0.3);
+        }
+
+        .status-warning {
+            background: rgba(184, 94, 0, 0.15);
+            color: var(--warning);
+            border: 1px solid rgba(184,94,0,0.3);
+        }
+
+        .status-critical {
+            background: rgba(183, 28, 28, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(183,28,28,0.3);
+        }
+
+        /* Variance colors */
+        .variance-positive {
+            color: var(--success);
+            font-weight: 600;
+        }
+        .variance-negative {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        /* iPhone bottom export button */
+        .export-fixed {
+            position: sticky;
+            bottom: 16px;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .btn-export {
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 60px;
+            padding: 16px 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 90%;
+            max-width: 300px;
+        }
+
+        /* Dark mode toggle – always reachable */
+        .theme-toggle-mobile {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            background: var(--primary);
+            width: 56px;
+            height: 56px;
+            border-radius: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: 0.2s;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        /* Welcome modal – iPhone sized */
+        .welcome-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 16px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .welcome-content {
+            background: var(--card-bg);
+            border-radius: 36px;
+            padding: 28px 20px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .notification-item {
+            padding: 16px;
+            border-radius: 24px;
+            margin-bottom: 12px;
+            background: rgba(255,255,255,0.05);
+            border-left: 6px solid;
+        }
+
+        .btn-close-modal {
+            background: var(--accent);
+            border: none;
+            border-radius: 60px;
+            padding: 18px;
+            font-weight: 600;
+            width: 100%;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        /* misc */
+        .text-small { font-size: 0.7rem; }
+        .text-muted { color: var(--text-light); }
+
+        /* iOS input fixes */
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dark Mode Floating Toggle -->
+    <div class="theme-toggle-mobile" id="themeToggleMobile" aria-label="Toggle theme">
+        <i class="fas fa-moon" id="themeIconMobile"></i>
+    </div>
+
+    <!-- Welcome Modal -->
+    <div class="welcome-modal" id="welcomeModal" style="display: none;">
+        <div class="welcome-content">
+            <h3 class="mb-3"><i class="fas fa-calendar-alt me-2"></i>October 2025</h3>
+            <div class="notification-item" style="border-left-color: #4299e1;">
+                <h5><i class="fas fa-money-bill-wave me-2"></i>Salary Days</h5>
+                <p class="mb-0">Oct 25-27: +25% sales expected</p>
+            </div>
+            <div class="notification-item" style="border-left-color: #48bb78;">
+                <h5><i class="fas fa-calendar-day me-2"></i>Weekend Special</h5>
+                <p class="mb-0">Fridays & Saturdays: +40% consumption</p>
+            </div>
+            <div class="notification-item" style="border-left-color: #ed8936;">
+                <h5><i class="fas fa-bullhorn me-2"></i>MIX FALCON Campaign</h5>
+                <p class="mb-0">+30% sales boost</p>
+            </div>
+            <button class="btn-close-modal mt-3" id="closeWelcomeMobile"><i class="fas fa-check me-2"></i>Continue</button>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <!-- Header with time -->
+        <div class="app-header">
+            <div class="d-flex align-items-center justify-content-between">
+                <h1><i class="fas fa-boxes me-1"></i>InvControl</h1>
+                <span class="badge bg-white text-dark px-3 py-2 rounded-pill">v4.7</span>
+            </div>
+            <p>Real‑time inventory & variance</p>
+            <div class="live-time">
+                <div id="clockMobile">--:--:--</div>
+                <div id="dateMobile" class="small"></div>
+            </div>
+        </div>
+
+        <!-- Horizontal metric cards (swipe) -->
+        <div class="metrics-scroll">
+            <div class="metric-card-mini">
+                <div class="metric-label">Total Items</div>
+                <div class="metric-value" id="total-items-mobile">0</div>
+                <div class="metric-change positive"><i class="fas fa-arrow-up"></i> +5.2%</div>
+            </div>
+            <div class="metric-card-mini">
+                <div class="metric-label">Variance</div>
+                <div class="metric-value" id="overall-variance-mobile">0%</div>
+                <div class="metric-change negative"><i class="fas fa-arrow-down"></i> -2.1%</div>
+            </div>
+            <div class="metric-card-mini">
+                <div class="metric-label">To Replenish</div>
+                <div class="metric-value" id="items-to-replenish-mobile">0</div>
+                <div class="metric-change positive"><i class="fas fa-arrow-down"></i> 12%</div>
+            </div>
+            <div class="metric-card-mini">
+                <div class="metric-label">MTD Sales</div>
+                <div class="metric-value" id="mtd-sales-mobile">SAR 0</div>
+                <div class="metric-change positive"><i class="fas fa-arrow-up"></i> +8.5%</div>
+            </div>
+        </div>
+
+        <!-- Chart panel -->
+        <div class="card-panel">
+            <div class="panel-title"><i class="fas fa-chart-bar"></i> Variance Analytics</div>
+            <div class="chart-container">
+                <canvas id="varianceChartMobile"></canvas>
+            </div>
+        </div>
+
+        <!-- Sales targets (big touch friendly) -->
+        <div class="sales-stack">
+            <div class="input-group-custom">
+                <label>📊 Month to Date Sales (SAR)</label>
+                <input type="number" id="month-to-date-sales-mobile" class="form-control" value="10900" placeholder="e.g. 10900">
+            </div>
+            <div class="input-group-custom">
+                <label>📈 Average Daily Sales</label>
+                <input type="text" id="average-daily-sales-mobile" class="form-control" readonly placeholder="Auto">
+            </div>
+            <div class="input-group-custom">
+                <label>🔮 Forecast Days</label>
+                <select id="forecast-days-mobile" class="form-select">
+                    <option value="1">1 Day</option>
+                    <option value="2">2 Days</option>
+                    <option value="3" selected>3 Days</option>
+                    <option value="4">4 Days</option>
+                    <option value="5">5 Days</option>
+                    <option value="6">6 Days</option>
+                    <option value="7">7 Days</option>
+                    <option value="8">8 Days</option>
+                    <option value="9">9 Days</option>
+                    <option value="10">10 Days</option>
+                </select>
+            </div>
+            <div class="input-group-custom">
+                <label>💰 Sales Forecast (SAR)</label>
+                <input type="number" id="sales-forecast-mobile" class="form-control" readonly placeholder="Auto">
+            </div>
+        </div>
+
+        <!-- Date navigator + actions -->
+        <div class="date-navigator">
+            <div class="date-row">
+                <select id="month-select-mobile">
+                    <option value="">Month</option>
+                    <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+                    <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+                    <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+                    <option value="10" selected>October</option><option value="11">November</option><option value="12">December</option>
+                </select>
+                <select id="day-select-mobile">
+                    <option value="">Day</option>
+                </select>
+                <select id="year-select-mobile">
+                    <option value="">Year</option>
+                </select>
+            </div>
+            <div class="action-buttons">
+                <button class="btn" id="load-btn-mobile"><i class="fas fa-search"></i> Load</button>
+                <button class="btn" id="new-day-btn-mobile"><i class="fas fa-plus-circle"></i> New</button>
+                <button class="btn btn-primary" id="save-btn-mobile"><i class="fas fa-save"></i> Save</button>
+            </div>
+            <div class="selected-date-badge" id="selected-date-display-mobile">Select a date</div>
+        </div>
+
+        <!-- Inventory table (horizontal scroll) -->
+        <div class="card-panel" style="padding: 12px 8px;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="panel-title mb-0"><i class="fas fa-clipboard-list"></i> Inventory</div>
+                <button class="btn btn-success rounded-pill px-4 py-2" id="export-btn-mobile"><i class="fas fa-file-excel"></i> Export</button>
+            </div>
+            <div class="inventory-scroll">
+                <table class="inventory-table" id="inventory-table-mobile">
+                    <thead>
+                        <tr>
+                            <th>Item</th><th>System</th><th>On Hand</th><th>Var</th><th>MTD Cons</th><th>Avg Cons</th><th>C/1000</th><th>To Order</th><th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-body-mobile"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ----- same static items as original -----
+            const staticItems = [
+                "Philly Beef", "Beef Steak", "Chicken Steak", "Lunch Chicken", "Grill Chicken", 
+                "Spicy Chicken", "12 inch Tortilla", "10.5 inch Tortilla", "8 inch Tortilla", 
+                "Chicken Burger", "Junior Burger", "Nuggets", "Regular Bytes", "Spicy Bytes", 
+                "Veggie", "Nachoes", "Quatro", "Aldella Strips", "Hotdog", "Eggs", 
+                "Pancake Powder", "Fries", "Crispy", "Hushbrown", "Vanilla Muffin", 
+                "Choco Muffin", "Sansbastian Cake", "Brownese Cheese Cake", "Smokey Beef", 
+                "Smokey Chicken", "Smokey Turkey", "Steak Bread", "Brown Bread", "Big Bun", 
+                "Small Bun", "Kiddie Bread", "4.0 Potato Bun", "Potato Steak Bread", 
+                "White Bread", "Multigrain Bread", "Water", "Coffee Beans", "Milk Powder", 
+                "Hot Chocolate", "Karak", "Mushroom", "Sweet Kernel", "Pepsi Bib", 
+                "Diet Pepsi Bib", "7 Up Bib", "Dew Bib", "Merinda Bib", "Pepsi Cans", 
+                "Diet Pepsi Cans", "Merinda Cans", "7up Cans", "Dew Cans", "7up Diet Cans", 
+                "Lipton Can Peach", "Lipto Can Red Fruit", "Tomato", "Onion", "Green Pepper", 
+                "Chives", "Cherry Tomato", "Cucumber", "Lettuce", "Salad"
+            ];
+
+            // ----- DOM elements (mobile version) -----
+            const monthSelect = document.getElementById('month-select-mobile');
+            const daySelect = document.getElementById('day-select-mobile');
+            const yearSelect = document.getElementById('year-select-mobile');
+            const loadBtn = document.getElementById('load-btn-mobile');
+            const newDayBtn = document.getElementById('new-day-btn-mobile');
+            const saveBtn = document.getElementById('save-btn-mobile');
+            const exportBtn = document.getElementById('export-btn-mobile');
+            const selectedDisplay = document.getElementById('selected-date-display-mobile');
+            const inventoryBody = document.getElementById('inventory-body-mobile');
+            const mtdSalesInput = document.getElementById('month-to-date-sales-mobile');
+            const avgDailyInput = document.getElementById('average-daily-sales-mobile');
+            const forecastDaysSelect = document.getElementById('forecast-days-mobile');
+            const salesForecastInput = document.getElementById('sales-forecast-mobile');
+            const themeToggle = document.getElementById('themeToggleMobile');
+            const themeIcon = document.getElementById('themeIconMobile');
+            const welcomeModal = document.getElementById('welcomeModal');
+            const closeWelcome = document.getElementById('closeWelcomeMobile');
+            const clockEl = document.getElementById('clockMobile');
+            const dateEl = document.getElementById('dateMobile');
+
+            // metric elements
+            const totalItemsEl = document.getElementById('total-items-mobile');
+            const overallVarEl = document.getElementById('overall-variance-mobile');
+            const toReplenishEl = document.getElementById('items-to-replenish-mobile');
+            const mtdSalesEl = document.getElementById('mtd-sales-mobile');
+
+            // Chart
+            let chart;
+            const chartCanvas = document.getElementById('varianceChartMobile');
+
+            // Current date & data
+            let currentDate = null;
+            let currentData = [];
+
+            // Helper: month name
+            function getMonthName(m) {
+                const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                return months[parseInt(m)-1];
+            }
+
+            // Populate year
+            const yr = new Date().getFullYear();
+            for (let y = yr-1; y <= yr+2; y++) {
+                let opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y;
+                yearSelect.appendChild(opt);
+            }
+            yearSelect.value = yr;
+
+            // day select based on month/year
+            function updateDays() {
+                let m = parseInt(monthSelect.value);
+                let y = parseInt(yearSelect.value);
+                if (!m || !y) return;
+                let days = new Date(y, m, 0).getDate();
+                daySelect.innerHTML = '<option value="">Day</option>';
+                for (let d=1; d<=days; d++) {
+                    let opt = document.createElement('option');
+                    opt.value = d;
+                    opt.textContent = d;
+                    daySelect.appendChild(opt);
+                }
+                // set current day
+                daySelect.value = new Date().getDate();
+            }
+            monthSelect.addEventListener('change', updateDays);
+            yearSelect.addEventListener('change', updateDays);
+            updateDays();
+
+            // Clock update
+            function updateClockMobile() {
+                let now = new Date();
+                clockEl.textContent = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+                dateEl.textContent = now.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', year:'numeric'});
+            }
+            setInterval(updateClockMobile, 1000);
+            updateClockMobile();
+
+            // Load initial date
+            function initDate() {
+                let today = new Date();
+                monthSelect.value = today.getMonth()+1;
+                yearSelect.value = today.getFullYear();
+                updateDays();
+                daySelect.value = today.getDate();
+                currentDate = `${yearSelect.value}/${monthSelect.value}/${daySelect.value}`;
+                selectedDisplay.textContent = `Inventory for ${getMonthName(monthSelect.value)} ${daySelect.value}, ${yearSelect.value}`;
+            }
+            initDate();
+
+            // Build table rows
+            function renderInventory() {
+                inventoryBody.innerHTML = '';
+                staticItems.forEach(item => {
+                    let tr = document.createElement('tr');
+
+                    // item name
+                    let td1 = document.createElement('td'); td1.textContent = item; td1.style.fontWeight = '500';
+
+                    // system count input
+                    let td2 = document.createElement('td');
+                    let sysInp = document.createElement('input');
+                    sysInp.type = 'number'; sysInp.value = '0'; sysInp.step = '0.01'; sysInp.className = 'system-count';
+                    td2.appendChild(sysInp);
+
+                    // on hand input
+                    let td3 = document.createElement('td');
+                    let handInp = document.createElement('input');
+                    handInp.type = 'number'; handInp.value = '0'; handInp.step = '0.01'; handInp.className = 'on-hand';
+                    td3.appendChild(handInp);
+
+                    // variance display
+                    let td4 = document.createElement('td'); td4.className = 'variance-val'; td4.textContent = '0';
+
+                    // MTD consumption input
+                    let td5 = document.createElement('td');
+                    let mtdInp = document.createElement('input');
+                    mtdInp.type = 'number'; mtdInp.value = '0'; mtdInp.step = '0.01'; mtdInp.className = 'mtd-cons';
+                    td5.appendChild(mtdInp);
+
+                    // avg consumption
+                    let td6 = document.createElement('td'); td6.className = 'avg-cons'; td6.textContent = '0';
+                    // C/1000
+                    let td7 = document.createElement('td'); td7.className = 'cper1000'; td7.textContent = '0';
+                    // to order
+                    let td8 = document.createElement('td'); td8.className = 'to-order'; td8.textContent = '0';
+                    // status
+                    let td9 = document.createElement('td'); td9.className = 'status-cell';
+
+                    tr.append(td1, td2, td3, td4, td5, td6, td7, td8, td9);
+                    inventoryBody.appendChild(tr);
+
+                    // attach calculation to inputs
+                    function calcRow() {
+                        let system = parseFloat(sysInp.value) || 0;
+                        let onHand = parseFloat(handInp.value) || 0;
+                        let variance = onHand - system;
+                        td4.textContent = variance.toFixed(2);
+                        td4.className = variance < 0 ? 'variance-negative' : (variance > 0 ? 'variance-positive' : '');
+
+                        let mtd = parseFloat(mtdInp.value) || 0;
+                        let day = parseInt(daySelect.value) || 1;
+                        let avgCons = mtd / day;
+                        td6.textContent = avgCons.toFixed(2);
+
+                        let avgDaily = parseFloat(avgDailyInput.value) || 1;
+                        let c1000 = (avgCons / avgDaily) * 1000;
+                        td7.textContent = c1000.toFixed(2);
+
+                        let forecast = parseFloat(salesForecastInput.value) || 0;
+                        let toOrder = c1000 * (forecast / 1000);
+                        td8.textContent = toOrder.toFixed(2);
+
+                        let replenish = toOrder - system;
+                        let badge = '';
+                        if (replenish <= 0) badge = '<span class="status-badge status-ok">OK</span>';
+                        else if (replenish <= 10) badge = '<span class="status-badge status-warning">LOW</span>';
+                        else badge = '<span class="status-badge status-critical">ORDER</span>';
+                        td9.innerHTML = badge;
+                    }
+
+                    sysInp.addEventListener('input', calcRow);
+                    handInp.addEventListener('input', calcRow);
+                    mtdInp.addEventListener('input', function() { calcRow(); saveMTD(); });
+                });
+            }
+            renderInventory();
+
+            // Save MTD consumption
+            function saveMTD() {
+                let mtdObj = {};
+                document.querySelectorAll('#inventory-body-mobile tr').forEach((row, idx) => {
+                    let item = staticItems[idx];
+                    let mtdVal = row.querySelector('.mtd-cons')?.value || 0;
+                    mtdObj[item] = parseFloat(mtdVal);
+                });
+                localStorage.setItem('mtdConsumptionMobile', JSON.stringify(mtdObj));
+            }
+
+            // Load MTD
+            function loadMTD() {
+                let saved = localStorage.getItem('mtdConsumptionMobile');
+                if (!saved) return;
+                let mtdObj = JSON.parse(saved);
+                document.querySelectorAll('#inventory-body-mobile tr').forEach((row, idx) => {
+                    let item = staticItems[idx];
+                    if (mtdObj[item] !== undefined) {
+                        let inp = row.querySelector('.mtd-cons');
+                        if (inp) inp.value = mtdObj[item];
+                    }
+                });
+            }
+            loadMTD();
+
+            // Sales calculations
+            function calcSales() {
+                let mtd = parseFloat(mtdSalesInput.value) || 0;
+                let day = parseInt(daySelect.value) || 1;
+                let avg = mtd / day;
+                avgDailyInput.value = avg.toFixed(2);
+                let days = parseInt(forecastDaysSelect.value) || 1;
+                let forecast = avg * days;
+                salesForecastInput.value = forecast.toFixed(2);
+                // recalc all rows
+                document.querySelectorAll('#inventory-body-mobile tr').forEach(row => {
+                    let sys = row.querySelector('.system-count');
+                    let hand = row.querySelector('.on-hand');
+                    if (sys) sys.dispatchEvent(new Event('input'));
+                });
+                // update metrics
+                updateMetrics();
+            }
+
+            mtdSalesInput.addEventListener('input', calcSales);
+            forecastDaysSelect.addEventListener('change', calcSales);
+            daySelect.addEventListener('change', calcSales);
+            calcSales();
+
+            // Update metrics
+            function updateMetrics() {
+                totalItemsEl.textContent = staticItems.length;
+                let totalVar = 0, totalSys = 0, replenishCount = 0;
+                document.querySelectorAll('#inventory-body-mobile tr').forEach(row => {
+                    let sys = parseFloat(row.querySelector('.system-count')?.value) || 0;
+                    let varTxt = row.querySelector('.variance-val')?.textContent || '0';
+                    totalSys += sys;
+                    totalVar += Math.abs(parseFloat(varTxt));
+                    let statusSpan = row.querySelector('.status-badge');
+                    if (statusSpan && statusSpan.textContent.includes('ORDER')) replenishCount++;
+                });
+                let varPercent = totalSys ? (totalVar/totalSys*100).toFixed(1) : 0;
+                overallVarEl.textContent = varPercent + '%';
+                toReplenishEl.textContent = replenishCount;
+                mtdSalesEl.textContent = 'SAR ' + (parseFloat(mtdSalesInput.value) || 0).toLocaleString();
+            }
+
+            // Chart update
+            function updateChart() {
+                if (!currentData || currentData.length === 0) {
+                    if (chart) chart.destroy();
+                    return;
+                }
+                let sorted = [...currentData].sort((a,b) => Math.abs(b.variance) - Math.abs(a.variance)).slice(0,8);
+                let labels = sorted.map(d => d.itemName.substring(0,10)+'…');
+                let sysData = sorted.map(d => d.systemCount);
+                let onHandData = sorted.map(d => d.onHand);
+                let varData = sorted.map(d => d.variance);
+
+                if (chart) chart.destroy();
+                chart = new Chart(chartCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: 'System', data: sysData, backgroundColor: '#4299e1' },
+                            { label: 'On Hand', data: onHandData, backgroundColor: '#48bb78' },
+                            { label: 'Variance', data: varData, backgroundColor: '#ed8936' }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { labels: { color: getComputedStyle(document.body).getPropertyValue('--text') } } }
+                    }
+                });
+            }
+
+            // Save current inventory to localStorage
+            function saveInventory() {
+                if (!currentDate) return;
+                let data = [];
+                document.querySelectorAll('#inventory-body-mobile tr').forEach((row, idx) => {
+                    let item = staticItems[idx];
+                    let system = parseFloat(row.querySelector('.system-count')?.value) || 0;
+                    let onHand = parseFloat(row.querySelector('.on-hand')?.value) || 0;
+                    let mtd = parseFloat(row.querySelector('.mtd-cons')?.value) || 0;
+                    let variance = parseFloat(row.querySelector('.variance-val')?.textContent) || 0;
+                    let avg = parseFloat(row.querySelector('.avg-cons')?.textContent) || 0;
+                    let c1000 = parseFloat(row.querySelector('.cper1000')?.textContent) || 0;
+                    let toOrder = parseFloat(row.querySelector('.to-order')?.textContent) || 0;
+                    let status = row.querySelector('.status-badge')?.textContent || 'OK';
+                    data.push({ itemName: item, systemCount: system, onHand, variance, mtdConsumption: mtd, avgConsumption: avg, consumptionPer1000: c1000, toOrder, status });
+                });
+                localStorage.setItem(`inventory_${currentDate}`, JSON.stringify(data));
+                currentData = data;
+                alert('✅ Saved for ' + currentDate);
+                updateChart();
+            }
+
+            // Load inventory
+            function loadInventory() {
+                let m = monthSelect.value, d = daySelect.value, y = yearSelect.value;
+                if (!m || !d || !y) { alert('Select full date'); return; }
+                currentDate = `${y}/${m}/${d}`;
+                selectedDisplay.textContent = `Inventory for ${getMonthName(m)} ${d}, ${y}`;
+                let saved = localStorage.getItem(`inventory_${currentDate}`);
+                if (!saved) { alert('No data for this date'); return; }
+                let data = JSON.parse(saved);
+                currentData = data;
+                document.querySelectorAll('#inventory-body-mobile tr').forEach((row, idx) => {
+                    if (data[idx]) {
+                        row.querySelector('.system-count').value = data[idx].systemCount;
+                        row.querySelector('.on-hand').value = data[idx].onHand;
+                        row.querySelector('.mtd-cons').value = data[idx].mtdConsumption;
+                        // trigger calc
+                        row.querySelector('.system-count').dispatchEvent(new Event('input'));
+                    }
+                });
+                updateChart();
+            }
+
+            // New day: zero system/onHand
+            function newDay() {
+                document.querySelectorAll('#inventory-body-mobile tr').forEach(row => {
+                    row.querySelector('.system-count').value = 0;
+                    row.querySelector('.on-hand').value = 0;
+                    row.querySelector('.system-count').dispatchEvent(new Event('input'));
+                });
+                alert('New day – ready');
+            }
+
+            // Export
+            function exportExcel() {
+                if (!currentData || currentData.length === 0) { alert('No data to export'); return; }
+                let wsData = [['Item','System','On Hand','Variance','MTD Cons','Avg Cons','C/1000','To Order','Status']];
+                currentData.forEach(i => wsData.push([i.itemName, i.systemCount, i.onHand, i.variance, i.mtdConsumption, i.avgConsumption, i.consumptionPer1000, i.toOrder, i.status]));
+                let wb = XLSX.utils.book_new();
+                let ws = XLSX.utils.aoa_to_sheet(wsData);
+                XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
+                XLSX.writeFile(wb, `Inv_${currentDate.replace(/\//g,'-')}.xlsx`);
+            }
+
+            loadBtn.addEventListener('click', loadInventory);
+            newDayBtn.addEventListener('click', newDay);
+            saveBtn.addEventListener('click', saveInventory);
+            exportBtn.addEventListener('click', exportExcel);
+
+            // Theme toggle
+            themeToggle.addEventListener('click', () => {
+                let body = document.body;
+                let current = body.getAttribute('data-theme') || 'light';
+                let newTheme = current === 'light' ? 'dark' : 'light';
+                body.setAttribute('data-theme', newTheme);
+                themeIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                localStorage.setItem('themeMobile', newTheme);
+                if (chart) chart.destroy(); setTimeout(()=>updateChart(),10);
+            });
+            // load saved theme
+            let savedTheme = localStorage.getItem('themeMobile') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+            themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
+            // Welcome modal (show once)
+            let lastWelcome = localStorage.getItem('welcomeShownOct');
+            if (!lastWelcome) {
+                welcomeModal.style.display = 'flex';
+                localStorage.setItem('welcomeShownOct', 'yes');
+            }
+            closeWelcome.addEventListener('click', () => welcomeModal.style.display = 'none');
+            welcomeModal.addEventListener('click', (e) => { if (e.target === welcomeModal) welcomeModal.style.display = 'none'; });
+
+            // initial metrics & chart
+            setTimeout(() => {
+                updateMetrics();
+                // try load today
+                loadInventory();
+            }, 300);
+        })();
+    </script>
+</body>
+</html>
