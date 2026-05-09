@@ -8,8 +8,6 @@
     <!-- Google Fonts + Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Chart.js CDN for analytics placeholders -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -29,8 +27,10 @@
             --accent-blue: #1e4a76;
             --accent-blue-hover: #0f3b5c;
             --success-green: #10b981;
-            --warning-orange: #f59e0b;
-            --critical-red: #ef4444;
+            --expiry-orange: #f97316;
+            --sales-purple: #8b5cf6;
+            --chatbot-teal: #14b8a6;
+            --admin-red: #ef4444;
             --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 5px 10px -5px rgba(0, 0, 0, 0.02);
             --sidebar-width: 260px;
@@ -38,6 +38,7 @@
             --hover-bg: #eef2ff;
             --module-bg: #f8fafc;
             --toast-bg: #ffffff;
+            --video-overlay: rgba(0,0,0,0.4);
         }
 
         /* Dark Mode */
@@ -56,6 +57,7 @@
             --hover-bg: #334155;
             --module-bg: #0f172a;
             --toast-bg: #1e293b;
+            --video-overlay: rgba(0,0,0,0.6);
         }
 
         body {
@@ -68,13 +70,12 @@
             transition: background 0.2s ease, color 0.2s ease;
         }
 
-        /* Layout Grid */
         .dashboard-container {
             display: flex;
             min-height: 100vh;
         }
 
-        /* SIDEBAR (collapsible) */
+        /* SIDEBAR */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--sidebar-bg);
@@ -154,8 +155,6 @@
             position: sticky;
             top: 0;
             z-index: 15;
-            background: var(--header-bg);
-            backdrop-filter: blur(4px);
         }
         .menu-toggle {
             background: none;
@@ -163,13 +162,12 @@
             font-size: 1.3rem;
             cursor: pointer;
             color: var(--text-primary);
-            display: flex;
-            align-items: center;
         }
         .nav-actions {
             display: flex;
             align-items: center;
             gap: 1rem;
+            flex-wrap: wrap;
         }
         .lang-switch {
             display: flex;
@@ -213,10 +211,55 @@
             border-radius: 2rem;
             border: 1px solid var(--border-light);
         }
+        .refresh-btn {
+            background: var(--accent-blue);
+            border: none;
+            border-radius: 2rem;
+            padding: 0.3rem 1rem;
+            color: white;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
 
         /* Dashboard content */
         .dashboard-inner {
             padding: 1.8rem;
+        }
+
+        /* Video Banner */
+        .video-banner {
+            background: var(--card-white);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            margin-bottom: 1.8rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+        }
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            max-height: 280px;
+            background: #000;
+        }
+        .video-wrapper video {
+            width: 100%;
+            height: auto;
+            max-height: 280px;
+            object-fit: cover;
+            display: block;
+        }
+        .video-caption {
+            position: absolute;
+            bottom: 12px;
+            left: 20px;
+            background: var(--video-overlay);
+            backdrop-filter: blur(8px);
+            padding: 6px 16px;
+            border-radius: 40px;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+            pointer-events: none;
         }
 
         /* Welcome row */
@@ -224,7 +267,7 @@
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
-            margin-bottom: 2rem;
+            margin-bottom: 1.8rem;
         }
         .greeting h1 {
             font-size: 1.6rem;
@@ -240,122 +283,118 @@
             font-size: 0.85rem;
         }
 
-        /* KPI Cards Grid */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .kpi-card {
+        /* Enhanced Quick Access Modules */
+        .quick-modules-full {
             background: var(--card-white);
-            padding: 1.2rem;
-            border-radius: 1.2rem;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+            margin-bottom: 1.8rem;
             box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-light);
-            transition: transform 0.1s;
-            cursor: pointer;
-        }
-        .kpi-title {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            font-weight: 600;
-            color: var(--text-secondary);
-            letter-spacing: 0.5px;
-        }
-        .kpi-value {
-            font-size: 1.9rem;
-            font-weight: 700;
-            margin: 0.5rem 0;
-        }
-        .trend {
-            font-size: 0.7rem;
-        }
-
-        /* Two column layout for alerts and quick access */
-        .two-col-grid {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 1.8rem;
-            margin-bottom: 2rem;
-        }
-        .alert-section, .quick-modules {
-            background: var(--card-white);
-            border-radius: 1.2rem;
-            padding: 1.2rem;
-            border: 1px solid var(--border-light);
         }
         .section-title {
-            font-weight: 600;
-            margin-bottom: 1rem;
-            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
+            color: var(--accent-blue);
+            border-left: 3px solid var(--accent-blue);
+            padding-left: 12px;
         }
-        .alert-item {
-            padding: 0.8rem 0;
-            border-bottom: 1px solid var(--border-light);
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-        .priority-critical { color: var(--critical-red); }
-        .priority-warning { color: var(--warning-orange); }
-        .priority-low { color: var(--success-green); }
-
-        .modules-grid {
+        .modules-grid-enhanced {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            gap: 0.8rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
         }
-        .module-btn {
+        .module-card {
             background: var(--module-bg);
             border: 1px solid var(--border-light);
-            border-radius: 1rem;
-            padding: 0.7rem 0.2rem;
+            border-radius: 1.2rem;
+            padding: 1rem 0.8rem;
             text-align: center;
-            font-size: 0.8rem;
-            font-weight: 500;
             cursor: pointer;
-            transition: 0.15s;
+            transition: all 0.25s ease;
             color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
         }
-        .module-btn:hover {
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
             background: var(--accent-blue);
-            color: white;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        .module-card:hover::before {
+            transform: scaleX(1);
+        }
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
             border-color: var(--accent-blue);
         }
-
-        /* Charts + Activity Row */
-        .charts-activity-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.8rem;
-            margin-bottom: 1.5rem;
+        .module-icon {
+            font-size: 2.2rem;
+            margin-bottom: 0.2rem;
         }
-        .chart-card, .activity-feed {
+        .module-card h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .module-card p {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+        .module-badge {
+            font-size: 0.65rem;
+            background: rgba(0,0,0,0.05);
+            padding: 3px 8px;
+            border-radius: 20px;
+            margin-top: 5px;
+        }
+        body.dark .module-badge {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Specific module colors */
+        .module-card.expiry .module-icon { color: var(--expiry-orange); }
+        .module-card.sales .module-icon { color: var(--sales-purple); }
+        .module-card.chatbot .module-icon { color: var(--chatbot-teal); }
+        .module-card.admin .module-icon { color: var(--admin-red); }
+        .module-card.inventory .module-icon { color: var(--accent-blue); }
+        .module-card.transfers .module-icon { color: #f59e0b; }
+        .module-card.reports .module-icon { color: #8b5cf6; }
+
+        /* Activity Feed */
+        .activity-feed-full {
             background: var(--card-white);
             border-radius: 1.2rem;
-            padding: 1rem;
+            padding: 1.2rem;
             border: 1px solid var(--border-light);
         }
-        canvas { max-height: 200px; width: 100%; }
         .activity-item {
             font-size: 0.8rem;
-            padding: 0.6rem 0;
+            padding: 0.7rem 0;
             border-bottom: 1px solid var(--border-light);
             display: flex;
-            gap: 0.5rem;
+            gap: 0.8rem;
             align-items: center;
         }
 
         /* Responsive */
-        @media (max-width: 1024px) {
-            .two-col-grid, .charts-activity-grid {
-                grid-template-columns: 1fr;
-            }
-        }
         @media (max-width: 768px) {
             .sidebar {
                 width: 80%;
@@ -364,8 +403,15 @@
             .dashboard-inner {
                 padding: 1rem;
             }
-            .kpi-grid {
+            .modules-grid-enhanced {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
                 gap: 0.8rem;
+            }
+            .module-card {
+                padding: 0.8rem 0.5rem;
+            }
+            .module-icon {
+                font-size: 1.8rem;
             }
         }
         [dir="rtl"] .sidebar {
@@ -375,14 +421,6 @@
         [dir="rtl"] .main-content {
             margin-left: 0;
             margin-right: var(--sidebar-width);
-        }
-        [dir="rtl"] .main-content.full-width {
-            margin-right: 0;
-        }
-        @media (max-width: 768px) {
-            [dir="rtl"] .main-content {
-                margin-right: 0;
-            }
         }
         .notification-toast {
             position: fixed;
@@ -411,18 +449,17 @@
             <p style="font-size: 0.7rem; color:var(--text-secondary); margin-top: 4px;">Ops Platform</p>
         </div>
         <ul class="sidebar-menu" id="sidebarMenu">
-            <li class="active"><a href="#" data-key="dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
-            <li><a href="https://ghostkmr.github.io/2026/inventory.html" data-key="inventory"><i class="fas fa-boxes"></i> <span>Inventory</span></a></li>
-            <li><a href="https://ghostkmr.github.io/2026/expiration tracker.html" data-key="expiry"><i class="fas fa-calendar-times"></i> <span>Expiry Tracker</span></a></li>
-            <li><a href="https://ghostkmr.github.io/2026/salestracker.html" data-key="sales"><i class="fas fa-chart-line"></i> <span>Sales</span></a></li>
-            <li><a href="https://ghostkmr.github.io/2026/transferrecords.html" data-key="transfers"><i class="fas fa-exchange-alt"></i> <span>Transfers</span></a></li>
-            <li><a href="https://ghostkmr.github.io/2026/void and refunds.html" data-key="reports"><i class="fas fa-file-alt"></i> <span>voids and refunds</span></a></li>
-            <li><a href="https://ghostkmr.github.io/2026/srv.html" data-key="audit"><i class="fas fa-shield-alt"></i> <span>Restaurant Visit Report</span></a></li>
-             <li><a href="https://ghostkmr.github.io/2026/pannel.html" data-key="audit"><i class="fas fa-shield-alt"></i> <span>Admin pannel</span></a></li>
-            <li><a href="https://ghostkmr.github.io/2026/portal.html" data-key="audit"><i class="fas fa-shield-alt"></i> <span>chat bot ops</span></a></li>
-            <li><a href="https://ghostkmr.github.io/2026/chatbotformobile.html" data-key="audit"><i class="fas fa-shield-alt"></i> <span>chat bot pannel</span></a></li>
-            <li><a href="https://ghostkmr.github.io/2026/newlaunch.html" data-key="audit"><i class="fas fa-shield-alt"></i> <span>chat bot new launch</span></a></li>
-           
+            <li class="active"><a href="#" data-url="#" data-key="dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+            <li><a href="https://ghostkmr.github.io/2026/inventory.html" data-key="inventory" target="_self"><i class="fas fa-boxes"></i> <span>Inventory</span></a></li>
+            <li><a href="https://ghostkmr.github.io/2026/expiration%20tracker.html" data-key="expiry" target="_self"><i class="fas fa-calendar-times"></i> <span>Expiry Tracker</span></a></li>
+            <li><a href="https://ghostkmr.github.io/2026/salestracker.html" data-key="sales" target="_self"><i class="fas fa-chart-line"></i> <span>Sales</span></a></li>
+            <li><a href="https://ghostkmr.github.io/2026/transferrecords.html" data-key="transfers" target="_self"><i class="fas fa-exchange-alt"></i> <span>Transfers</span></a></li>
+            <li><a href="https://ghostkmr.github.io/2026/void%20and%20refunds.html" data-key="reports" target="_self"><i class="fas fa-file-alt"></i> <span>Voids & Refunds</span></a></li>
+            <li><a href="https://ghostkmr.github.io/2026/srv.html" data-key="audit" target="_self"><i class="fas fa-shield-alt"></i> <span>Restaurant Visit Report</span></a></li>
+            <li><a href="https://ghostkmr.github.io/2026/pannel.html" data-key="admin" target="_self"><i class="fas fa-user-cog"></i> <span>Admin Panel</span></a></li>
+            <li><a href="https://ghostkmr.github.io/2026/portal.html" data-key="chatbot" target="_self"><i class="fas fa-robot"></i> <span>Chatbot Ops</span></a></li>
+            <li><a href="https://ghostkmr.github.io/2026/chatbotformobile.html" data-key="chatmobile" target="_self"><i class="fas fa-mobile-alt"></i> <span>Chatbot Mobile</span></a></li>
+            <li><a href="https://ghostkmr.github.io/2026/newlaunch.html" data-key="newlaunch" target="_self"><i class="fas fa-rocket"></i> <span>New Launch</span></a></li>
         </ul>
     </aside> 
 
@@ -438,16 +475,26 @@
                     <button class="lang-btn active" id="langEn">EN</button>
                     <button class="lang-btn" id="langAr">AR</button>
                 </div>
-                <div class="user-badge"><i class="fas fa-user-circle"></i> <span id="userName">Guest</span></div>
+                <div class="user-badge"><i class="fas fa-user-circle"></i> <span id="userName">Ops Manager</span></div>
+                <button class="refresh-btn" id="refreshDataBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
             </div>
         </div>
 
         <div class="dashboard-inner" id="dashboardInner">
-            <!-- Welcome Header -->
+            <!-- Video Banner Advertisement -->
+            <div class="video-banner">
+                <div class="video-wrapper">
+                    <video id="promoVideo" autoplay loop muted playsinline>
+                        <source src="https://ghostkmr.github.io/2026/shabab.mp4" type="video/mp4">
+                    </video>
+                    <div class="video-caption"><i class="fas fa-play-circle"></i> SADWAP Platform · Streamline Operations</div>
+                </div>
+            </div>
+
             <div class="welcome-header">
                 <div class="greeting">
-                    <h1 id="welcomeMsg">Welcome back, Guest!</h1>
-                    <p id="branchInfo" style="color:var(--text-secondary);">Main Branch · Shift: Morning (08:00 - 16:00)</p>
+                    <h1 id="welcomeMsg">Welcome back, Ops Manager!</h1>
+                    <p id="branchInfo" style="color:var(--text-secondary);">Main Branch · Real-time Intelligence</p>
                 </div>
                 <div class="info-badge">
                     <span id="currentDate"></span> 
@@ -455,57 +502,16 @@
                 </div>
             </div>
 
-            <!-- KPI Grid -->
-            <div class="kpi-grid" id="kpiContainer">
-                <div class="kpi-card"><div class="kpi-title" data-key="todaySales">Today Sales</div><div class="kpi-value">$12,480</div><span class="trend">+8% vs yesterday</span></div>
-                <div class="kpi-card"><div class="kpi-title" data-key="totalOrders">Total Orders</div><div class="kpi-value">342</div><span class="trend">+12 orders</span></div>
-                <div class="kpi-card"><div class="kpi-title" data-key="expiringItems">Expiring Items</div><div class="kpi-value">14</div><span class="trend" style="color:#f59e0b;">⚠️ 6 within 2 days</span></div>
-                <div class="kpi-card"><div class="kpi-title" data-key="criticalAlerts">Critical Alerts</div><div class="kpi-value" style="color:#ef4444;">3</div><span class="trend">Action required</span></div>
-                <div class="kpi-card"><div class="kpi-title" data-key="wasteEntries">Waste Entries</div><div class="kpi-value">$230</div><span class="trend">-5% vs prior</span></div>
-                <div class="kpi-card"><div class="kpi-title" data-key="inventoryStatus">Inventory Status</div><div class="kpi-value">87%</div><span class="trend">Optimal</span></div>
+            <!-- Enhanced Quick Access Modules -->
+            <div class="quick-modules-full">
+                <div class="section-title"><i class="fas fa-th-large"></i> <span data-key="quickAccess">Quick Access Modules</span></div>
+                <div class="modules-grid-enhanced" id="modulesGrid"></div>
             </div>
 
-            <!-- Alerts + Quick Access -->
-            <div class="two-col-grid">
-                <div class="alert-section">
-                    <div class="section-title"><i class="fas fa-bell"></i> <span data-key="alertsTitle">Operational Alerts</span></div>
-                    <div id="alertsList">
-                        <div class="alert-item"><i class="fas fa-exclamation-circle priority-critical"></i> <span><strong>Dairy products</strong> expire in 1 day (25 units)</span></div>
-                        <div class="alert-item"><i class="fas fa-boxes priority-warning"></i> <span><strong>Low stock:</strong> Chicken breast below threshold</span></div>
-                        <div class="alert-item"><i class="fas fa-clipboard-list priority-low"></i> <span>Inventory audit reminder - tomorrow 9AM</span></div>
-                        <div class="alert-item"><i class="fas fa-thermometer-half priority-critical"></i> <span>Cooler #3 temperature fluctuation</span></div>
-                    </div>
-                </div>
-                <div class="quick-modules">
-                    <div class="section-title"><i class="fas fa-th-large"></i> <span data-key="quickAccess">Quick Access Modules</span></div>
-                    <div class="modules-grid" id="modulesGrid">
-                        <div class="module-btn" data-module="inventory">📦 Inventory Mgmt</div>
-                        <div class="module-btn" data-module="expiry">⏳ Expiry Tracker</div>
-                        <div class="module-btn" data-module="sales">📊 Sales Dashboard</div>
-                        <div class="module-btn" data-module="chatbot">🤖 SOP Chatbot</div>
-                        <div class="module-btn" data-module="waste">🗑️ Waste Tracking</div>
-                        <div class="module-btn" data-module="transfer">🔄 Transfer Mgmt</div>
-                        <div class="module-btn" data-module="reports">📑 Reports</div>
-                        <div class="module-btn" data-module="audit">🔍 Audit Tools</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts + Activity Feed -->
-            <div class="charts-activity-grid">
-                <div class="chart-card">
-                    <div class="section-title"><i class="fas fa-chart-simple"></i> <span data-key="salesTrend">Sales Trend (Last 7 days)</span></div>
-                    <canvas id="salesChart" width="400" height="180" style="max-width:100%; height:auto;"></canvas>
-                </div>
-                <div class="activity-feed">
-                    <div class="section-title"><i class="fas fa-history"></i> <span data-key="recentActivity">Recent Activity</span></div>
-                    <div id="activityList">
-                        <div class="activity-item"><i class="fas fa-plus-circle" style="color: #10b981;"></i> <span>Inventory added: 120kg potatoes</span><small style="margin-left:auto;">2m ago</small></div>
-                        <div class="activity-item"><i class="fas fa-exchange-alt"></i> <span>Transfer #T342 approved</span><small style="margin-left:auto;">15m ago</small></div>
-                        <div class="activity-item"><i class="fas fa-trash-alt"></i> <span>Waste entry recorded (expired dairy)</span><small style="margin-left:auto;">1h ago</small></div>
-                        <div class="activity-item"><i class="fas fa-chart-line"></i> <span>Sales target exceeded by 12%</span><small style="margin-left:auto;">3h ago</small></div>
-                    </div>
-                </div>
+            <!-- Recent Activity - Full Width -->
+            <div class="activity-feed-full">
+                <div class="section-title"><i class="fas fa-history"></i> <span data-key="recentActivity">Recent Activity</span></div>
+                <div id="activityList"></div>
             </div>
         </div>
     </div>
@@ -513,192 +519,286 @@
 <div id="toastMessage" class="notification-toast"><i class="fas fa-check-circle"></i> <span></span></div>
 
 <script>
-    // ---------- Bilingual Dictionary ----------
+    // ---------- TRANSLATIONS ----------
     const translations = {
-        en: {
-            dashboard: "Dashboard", inventory: "Inventory", expiry: "Expiry Tracker", sales: "Sales", waste: "Waste Tracking",
-            transfers: "Transfers", reports: "Reports", audit: "Audit Tools",
-            todaySales: "Today Sales", totalOrders: "Total Orders", expiringItems: "Expiring Items", criticalAlerts: "Critical Alerts",
-            wasteEntries: "Waste Entries", inventoryStatus: "Inventory Status", alertsTitle: "Operational Alerts",
-            quickAccess: "Quick Access Modules", salesTrend: "Sales Trend (Last 7 days)", recentActivity: "Recent Activity",
-            welcomeMsg: "Welcome back, Guest!", branchInfo: "Main Branch · Shift: Morning (08:00 - 16:00)"
+        en: { 
+            dashboard:"Dashboard", inventory:"Inventory", expiry:"Expiry Tracker", sales:"Sales", transfers:"Transfers", 
+            reports:"Reports", audit:"Audit Tools", admin:"Admin Panel", chatbot:"Chatbot Ops", 
+            chatmobile:"Chatbot Mobile", newlaunch:"New Launch", quickAccess:"Quick Access Modules", 
+            recentActivity:"Recent Activity", welcomeMsg:"Welcome back, Ops Manager!", 
+            branchInfo:"Main Branch · Real-time Intelligence" 
         },
-        ar: {
-            dashboard: "لوحة القيادة", inventory: "إدارة المخزون", expiry: "متتبع انتهاء الصلاحية", sales: "المبيعات", waste: "تتبع الهدر",
-            transfers: "التحويلات", reports: "التقارير", audit: "أدوات التدقيق",
-            todaySales: "مبيعات اليوم", totalOrders: "إجمالي الطلبات", expiringItems: "عناصر منتهية الصلاحية", criticalAlerts: "تنبيهات حرجة",
-            wasteEntries: "مدخلات الهدر", inventoryStatus: "حالة المخزون", alertsTitle: "تنبيهات تشغيلية",
-            quickAccess: "الوصول السريع", salesTrend: "اتجاه المبيعات (آخر 7 أيام)", recentActivity: "النشاط الأخير",
-            welcomeMsg: "مرحباً بعودتك، ضيف!", branchInfo: "الفرع الرئيسي · الفترة: صباحية (08:00 - 16:00)"
+        ar: { 
+            dashboard:"لوحة القيادة", inventory:"المخزون", expiry:"انتهاء الصلاحية", sales:"المبيعات", 
+            transfers:"التحويلات", reports:"التقارير", audit:"التدقيق", admin:"لوحة الإدارة", 
+            chatbot:"بوت الدردشة", chatmobile:"جوال البوت", newlaunch:"إطلاق جديد", 
+            quickAccess:"الوصول السريع", recentActivity:"النشاط الأخير",
+            welcomeMsg:"مرحباً بعودتك!", branchInfo:"الفرع الرئيسي · ذكاء فوري" 
         }
     };
-    let currentLang = "en";
-    let chartInstance = null;
-
-    // Dark Mode State
-    let isDarkMode = localStorage.getItem('sadwap_theme') === 'dark';
+    let currentLang = "en", isDarkMode = localStorage.getItem('sadwap_theme') === 'dark';
     
-    function applyTheme() {
-        if (isDarkMode) {
-            document.body.classList.add('dark');
-            document.getElementById('themeText').innerHTML = '<i class="fas fa-sun"></i> Light';
-            document.getElementById('themeToggleBtn').innerHTML = '<i class="fas fa-sun"></i> <span id="themeText">Light</span>';
-        } else {
-            document.body.classList.remove('dark');
-            document.getElementById('themeText').innerHTML = '<i class="fas fa-moon"></i> Dark';
-            document.getElementById('themeToggleBtn').innerHTML = '<i class="fas fa-moon"></i> <span id="themeText">Dark</span>';
+    function showToast(msg, type="success") { 
+        let t=document.getElementById("toastMessage"); 
+        t.querySelector("span").innerText=msg; 
+        t.style.display="flex"; 
+        t.style.borderLeftColor=type==="error"?"#ef4444":"#10b981"; 
+        setTimeout(()=>t.style.display="none",2500); 
+    }
+    
+    function applyTheme() { 
+        isDarkMode?document.body.classList.add('dark'):document.body.classList.remove('dark'); 
+        localStorage.setItem('sadwap_theme',isDarkMode?'dark':'light'); 
+        document.getElementById('themeText').innerHTML=isDarkMode?'<i class="fas fa-sun"></i> Light':'<i class="fas fa-moon"></i> Dark'; 
+    }
+    function toggleTheme(){ isDarkMode=!isDarkMode; applyTheme(); showToast(isDarkMode?"Dark mode enabled":"Light mode enabled"); }
+    
+    // --- Activity Feed Management ---
+    function addActivityLog(message) {
+        const container = document.getElementById("activityList");
+        const div = document.createElement("div");
+        div.className = "activity-item";
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        div.innerHTML = `<i class="fas fa-bell" style="color: var(--accent-blue);"></i> <span>${message}</span><small style="margin-left:auto;">${timeStr}</small>`;
+        container.prepend(div);
+        if(container.children.length > 12) container.removeChild(container.lastChild);
+        
+        let logs = JSON.parse(localStorage.getItem('activity_logs')) || [];
+        logs.unshift({ message, time: timeStr });
+        if(logs.length > 30) logs.pop();
+        localStorage.setItem('activity_logs', JSON.stringify(logs));
+    }
+    
+    function loadActivityLogs() {
+        let logs = JSON.parse(localStorage.getItem('activity_logs')) || [];
+        const container = document.getElementById("activityList");
+        container.innerHTML = "";
+        if(logs.length === 0){
+            container.innerHTML = `<div class="activity-item"><i class="fas fa-check-circle"></i> <span>Welcome to SADWAP Dashboard. Your activity will appear here.</span></div>`;
+            return;
         }
-        localStorage.setItem('sadwap_theme', isDarkMode ? 'dark' : 'light');
+        logs.slice(0,12).forEach(log => {
+            const div = document.createElement("div");
+            div.className = "activity-item";
+            div.innerHTML = `<i class="fas fa-history" style="color: var(--accent-blue);"></i> <span>${log.message}</span><small style="margin-left:auto;">${log.time}</small>`;
+            container.appendChild(div);
+        });
     }
     
-    function toggleTheme() {
-        isDarkMode = !isDarkMode;
-        applyTheme();
-        showToast(isDarkMode ? "Dark mode enabled" : "Light mode enabled", "success");
-        // Refresh chart for proper dark mode colors (optional)
-        if (chartInstance) { chartInstance.destroy(); initSalesChart(); }
+    function refreshAllData() {
+        addActivityLog("🔄 Manual data sync completed");
+        showToast("Dashboard refreshed successfully", "success");
     }
-
-    // Helper: update UI language & RTL
+    
+    // --- Language & RTL ---
     function setLanguage(lang) {
         currentLang = lang;
         const t = translations[lang];
         document.getElementById("welcomeMsg").innerText = t.welcomeMsg;
         document.getElementById("branchInfo").innerText = t.branchInfo;
-        document.querySelectorAll("[data-key]").forEach(el => {
-            const key = el.getAttribute("data-key");
-            if (t[key]) el.innerText = t[key];
+        document.querySelectorAll("[data-key]").forEach(el => { 
+            let k=el.getAttribute("data-key"); 
+            if(t[k]) el.innerText=t[k]; 
         });
-        // Sidebar texts
-        const menuItems = document.querySelectorAll("#sidebarMenu li a");
-        const menuKeys = ["dashboard", "inventory", "expiry", "sales", "waste", "transfers", "reports", "audit"];
-        menuItems.forEach((item, idx) => {
-            if (menuKeys[idx]) item.querySelector("span").innerText = t[menuKeys[idx]];
+        const menuMap = { dashboard:"dashboard", inventory:"inventory", expiry:"expiry", sales:"sales", transfers:"transfers", 
+                         reports:"reports", audit:"audit", admin:"admin", chatbot:"chatbot", chatmobile:"chatmobile", newlaunch:"newlaunch" };
+        document.querySelectorAll("#sidebarMenu li a").forEach(a => { 
+            let key=a.getAttribute("data-key"); 
+            if(key && menuMap[key]) a.querySelector("span").innerText = t[menuMap[key]]; 
         });
-        // change RTL attribute
-        if (lang === "ar") {
-            document.documentElement.setAttribute("dir", "rtl");
-            document.body.style.textAlign = "right";
-            document.querySelector(".dashboard-container").style.flexDirection = "row-reverse";
-        } else {
-            document.documentElement.setAttribute("dir", "ltr");
-            document.body.style.textAlign = "left";
-            document.querySelector(".dashboard-container").style.flexDirection = "row";
+        if(lang === "ar") { 
+            document.documentElement.setAttribute("dir","rtl"); 
+            document.body.style.textAlign="right"; 
+            document.querySelector(".dashboard-container").style.flexDirection="row-reverse";
+            if(!document.getElementById("sidebar").classList.contains("collapsed")){
+                document.getElementById("mainContent").style.marginRight = "260px";
+                document.getElementById("mainContent").style.marginLeft = "0";
+            }
+        } else { 
+            document.documentElement.setAttribute("dir","ltr"); 
+            document.body.style.textAlign="left"; 
+            document.querySelector(".dashboard-container").style.flexDirection="row";
+            if(!document.getElementById("sidebar").classList.contains("collapsed")){
+                document.getElementById("mainContent").style.marginLeft = "260px";
+                document.getElementById("mainContent").style.marginRight = "0";
+            }
         }
-        // adjust layout margins after language
-        const sidebar = document.getElementById("sidebar");
-        const main = document.getElementById("mainContent");
-        if (lang === "ar" && !sidebar.classList.contains("collapsed")) main.style.marginRight = "260px";
-        else if (lang === "ar" && sidebar.classList.contains("collapsed")) main.style.marginRight = "0";
-        else if (lang !== "ar" && !sidebar.classList.contains("collapsed")) main.style.marginLeft = "260px";
-        else main.style.marginLeft = "0";
+        buildQuickModules();
     }
-
-    // Sidebar collapse & responsive
-    const sidebar = document.getElementById("sidebar");
-    const mainContent = document.getElementById("mainContent");
-    const menuToggle = document.getElementById("menuToggle");
-    function toggleSidebar() {
-        sidebar.classList.toggle("collapsed");
-        if (currentLang === "ar") {
-            mainContent.classList.toggle("full-width");
-            mainContent.style.marginRight = sidebar.classList.contains("collapsed") ? "0" : "260px";
-            mainContent.style.marginLeft = "0";
+    
+    // --- Enhanced Quick Access Modules with beautiful cards ---
+    function buildQuickModules(){
+        const modules = [
+            { 
+                name: "Expiry Tracker", 
+                nameAr: "متتبع انتهاء الصلاحية",
+                icon: "fas fa-calendar-times", 
+                url: "https://ghostkmr.github.io/2026/expiration%20tracker.html", 
+                key: "expiry",
+                color: "#f97316",
+                description: "Monitor expiring products",
+                descriptionAr: "مراقبة المنتجات المنتهية"
+            },
+            { 
+                name: "Sales Dashboard", 
+                nameAr: "لوحة المبيعات",
+                icon: "fas fa-chart-line", 
+                url: "https://ghostkmr.github.io/2026/salestracker.html", 
+                key: "sales",
+                color: "#8b5cf6",
+                description: "Track daily revenue",
+                descriptionAr: "تتبع الإيرادات اليومية"
+            },
+            { 
+                name: "SOP Chatbot", 
+                nameAr: "بوت الدردشة",
+                icon: "fas fa-robot", 
+                url: "https://ghostkmr.github.io/2026/portal.html", 
+                key: "chatbot",
+                color: "#14b8a6",
+                description: "AI assistant & SOPs",
+                descriptionAr: "مساعد ذكي وإجراءات"
+            },
+            { 
+                name: "Admin Panel", 
+                nameAr: "لوحة الإدارة",
+                icon: "fas fa-user-cog", 
+                url: "https://ghostkmr.github.io/2026/pannel.html", 
+                key: "admin",
+                color: "#ef4444",
+                description: "System configuration",
+                descriptionAr: "تكوين النظام"
+            },
+            { 
+                name: "Inventory Mgmt", 
+                nameAr: "إدارة المخزون",
+                icon: "fas fa-boxes", 
+                url: "https://ghostkmr.github.io/2026/inventory.html", 
+                key: "inventory",
+                color: "#1e4a76",
+                description: "Stock & supplies",
+                descriptionAr: "المخزون والمستلزمات"
+            },
+            { 
+                name: "Transfers", 
+                nameAr: "التحويلات",
+                icon: "fas fa-exchange-alt", 
+                url: "https://ghostkmr.github.io/2026/transferrecords.html", 
+                key: "transfers",
+                color: "#f59e0b",
+                description: "Stock movements",
+                descriptionAr: "حركات المخزون"
+            },
+            { 
+                name: "Reports", 
+                nameAr: "التقارير",
+                icon: "fas fa-file-alt", 
+                url: "https://ghostkmr.github.io/2026/void%20and%20refunds.html", 
+                key: "reports",
+                color: "#8b5cf6",
+                description: "Voids & refunds",
+                descriptionAr: "الإلغاءات والمبالغ"
+            },
+            { 
+                name: "Audit Tools", 
+                nameAr: "أدوات التدقيق",
+                icon: "fas fa-shield-alt", 
+                url: "https://ghostkmr.github.io/2026/srv.html", 
+                key: "audit",
+                color: "#10b981",
+                description: "Compliance checks",
+                descriptionAr: "فحوصات الامتثال"
+            }
+        ];
+        const grid = document.getElementById("modulesGrid");
+        grid.innerHTML = "";
+        modules.forEach(mod => {
+            const btn = document.createElement("a");
+            btn.className = `module-card ${mod.key}`;
+            btn.href = mod.url;
+            btn.target = "_self";
+            const displayName = currentLang === 'en' ? mod.name : mod.nameAr;
+            const displayDesc = currentLang === 'en' ? mod.description : mod.descriptionAr;
+            btn.innerHTML = `
+                <div class="module-icon" style="color: ${mod.color};"><i class="${mod.icon}"></i></div>
+                <h3>${displayName}</h3>
+                <p>${displayDesc}</p>
+                <div class="module-badge"><i class="fas fa-arrow-right"></i> Launch</div>
+            `;
+            btn.addEventListener("click", function(e) {
+                addActivityLog(`🚀 Launched ${displayName} module`);
+                showToast(`Opening ${displayName}...`, "success");
+            });
+            grid.appendChild(btn);
+        });
+    }
+    
+    // --- Sidebar Toggle ---
+    const sidebar = document.getElementById("sidebar"), mainC = document.getElementById("mainContent"), menuToggle = document.getElementById("menuToggle");
+    function toggleSidebar() { 
+        sidebar.classList.toggle("collapsed"); 
+        mainC.classList.toggle("full-width"); 
+        if(currentLang === "ar") {
+            if(sidebar.classList.contains("collapsed")) mainC.style.marginRight = "0";
+            else mainC.style.marginRight = "260px";
+            mainC.style.marginLeft = "0";
         } else {
-            mainContent.classList.toggle("full-width");
-            mainContent.style.marginLeft = sidebar.classList.contains("collapsed") ? "0" : "260px";
-            mainContent.style.marginRight = "0";
+            if(sidebar.classList.contains("collapsed")) mainC.style.marginLeft = "0";
+            else mainC.style.marginLeft = "260px";
+            mainC.style.marginRight = "0";
         }
     }
     menuToggle.addEventListener("click", toggleSidebar);
-    if (window.innerWidth < 768) toggleSidebar();
-
-    // Live time & date
-    function updateDateTime() {
-        const now = new Date();
-        const dateOpt = { year: 'numeric', month: 'short', day: 'numeric' };
-        document.getElementById("currentDate").innerText = now.toLocaleDateString(undefined, dateOpt);
-        document.getElementById("currentTime").innerText = now.toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' });
-    }
-    setInterval(updateDateTime, 1000);
-    updateDateTime();
-
-    // Chart.js implementation
-    function initSalesChart() {
-        const ctx = document.getElementById('salesChart').getContext('2d');
-        if (chartInstance) chartInstance.destroy();
-        const textColor = isDarkMode ? '#f1f5f9' : '#1e293b';
-        chartInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{ label: currentLang === 'en' ? 'Sales ($)' : 'المبيعات ($)', data: [8450, 8900, 10200, 9800, 11500, 12480, 13100], borderColor: '#38bdf8', tension: 0.2, fill: false, pointBackgroundColor: '#38bdf8' }]
-            },
-            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: textColor } } } }
-        });
-    }
-
-    function showToast(message, type = "success") {
-        const toast = document.getElementById("toastMessage");
-        toast.style.display = "flex";
-        toast.querySelector("span").innerText = message;
-        if (type === "error") toast.style.borderLeftColor = "#ef4444";
-        else toast.style.borderLeftColor = "#10b981";
-        setTimeout(() => { toast.style.display = "none"; }, 2500);
-    }
-
-    // Quick module interactions
-    document.querySelectorAll(".module-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const module = btn.getAttribute("data-module");
-            showToast(`🔧 Opening ${module} module (demo placeholder)`, "success");
-        });
-    });
-
-    // Language switcher
-    document.getElementById("langEn").addEventListener("click", () => {
-        document.getElementById("langEn").classList.add("active");
-        document.getElementById("langAr").classList.remove("active");
-        setLanguage("en");
-        if (chartInstance) { chartInstance.destroy(); initSalesChart(); }
-        else initSalesChart();
-    });
-    document.getElementById("langAr").addEventListener("click", () => {
-        document.getElementById("langAr").classList.add("active");
-        document.getElementById("langEn").classList.remove("active");
-        setLanguage("ar");
-        if (chartInstance) { chartInstance.destroy(); initSalesChart(); }
-        else initSalesChart();
-    });
+    if(window.innerWidth<768) toggleSidebar();
     
-    // Theme toggle event
+    // --- Event Listeners ---
     document.getElementById("themeToggleBtn").addEventListener("click", toggleTheme);
-
-    // Activity feed simulation
-    function addActivityLog(message) {
-        const activityDiv = document.getElementById("activityList");
-        const newItem = document.createElement("div");
-        newItem.className = "activity-item";
-        newItem.innerHTML = `<i class="fas fa-bell"></i> <span>${message}</span><small style="margin-left:auto;">just now</small>`;
-        activityDiv.prepend(newItem);
-        if (activityDiv.children.length > 6) activityDiv.removeChild(activityDiv.lastChild);
+    document.getElementById("langEn").addEventListener("click", ()=>{ 
+        document.getElementById("langEn").classList.add("active"); 
+        document.getElementById("langAr").classList.remove("active"); 
+        setLanguage("en"); 
+    });
+    document.getElementById("langAr").addEventListener("click", ()=>{ 
+        document.getElementById("langAr").classList.add("active"); 
+        document.getElementById("langEn").classList.remove("active"); 
+        setLanguage("ar"); 
+    });
+    document.getElementById("refreshDataBtn").addEventListener("click", refreshAllData);
+    
+    // Video autoplay
+    const video = document.getElementById('promoVideo'); 
+    if(video){ 
+        video.muted = false; 
+        video.play().catch(()=>{ 
+            video.muted = true; 
+            video.play(); 
+        }); 
     }
-    setTimeout(() => {
-        addActivityLog("⏰ Expiry alert: Yogurt batch due tomorrow");
-        showToast("New operational alert: Low stock on produce", "warning");
-    }, 3000);
-
-    // initialization
-    initSalesChart();
+    
+    // Date/Time updater
+    function updateDateTime() { 
+        const n=new Date(); 
+        document.getElementById("currentDate").innerText=n.toLocaleDateString(); 
+        document.getElementById("currentTime").innerText=n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); 
+    }
+    setInterval(updateDateTime,1000); 
+    updateDateTime();
+    
+    // --- Initial Load ---
     setLanguage("en");
-    applyTheme();   // apply saved dark mode preference
-    document.getElementById("langEn").classList.add("active");
+    applyTheme();
+    buildQuickModules();
+    loadActivityLogs();
     
-    // KPI click toast
-    const kpis = document.querySelectorAll(".kpi-card");
-    kpis.forEach(k => k.addEventListener("click", () => showToast(`View detailed analytics (demo)`, "info")));
-    
-    console.log("Enterprise Dashboard ready — bilingual, dark mode, guest user");
+    let existingLogs = JSON.parse(localStorage.getItem('activity_logs')) || [];
+    if(existingLogs.length === 0){
+        addActivityLog("🚀 SADWAP Dashboard initialized");
+        addActivityLog("📋 Quick access modules ready: Expiry, Sales, Chatbot, Admin");
+        addActivityLog("🔗 All modules open in same tab for seamless workflow");
+    } else {
+        addActivityLog("👋 Session started - Dashboard ready");
+    }
 </script>
 </body>
 </html>
