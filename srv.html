@@ -1,2730 +1,534 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <link rel="icon" href="https://public-frontend-cos.metadl.com/mgx/img/favicon.png" type="image/png">
-    <title>Restaurant Cleaning Task Manager</title>
-    
-    <!-- Bootstrap 5.3.3 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    
-    <!-- PDF Export Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>SADWAP | Enterprise Sales Dashboard (SAR)</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF + AutoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Restaurant Cleaning Task Manager - Single File Styles */
-        :root {
-            --bs-primary: #0d6efd;
-            --bs-secondary: #6c757d;
-            --bs-success: #198754;
-            --bs-danger: #dc3545;
-            --bs-warning: #ffc107;
-            --bs-info: #0dcaf0;
-            --bs-light: #f8f9fa;
-            --bs-dark: #212529;
-            --bs-restaurant: #e63946;
-            --bs-restaurant-light: #f8d7da;
-            --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-            --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
-            --border-radius: 0.75rem;
-            --border-radius-sm: 0.375rem;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --touch-target: 44px;
-        }
-
-        [data-bs-theme="dark"] {
-            --bs-body-bg: #0d1117;
-            --bs-body-color: #f0f6fc;
-            --bs-secondary-bg: #21262d;
-            --bs-tertiary-bg: #30363d;
-            --bs-card-bg: #161b22;
-            --bs-border-color: #30363d;
-            --bs-restaurant: #ff6b6b;
-            --bs-restaurant-light: #3d2d2d;
-        }
-
         * {
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --primary-soft: #eff6ff;
+            --success: #10b981;
+            --success-soft: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-soft: #fffbeb;
+            --danger: #ef4444;
+            --danger-soft: #fef2f2;
+            --info: #8b5cf6;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --card-bg: #ffffff;
+            --border: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark {
+            --primary: #3b82f6;
+            --primary-soft: #1e293b;
+            --gray-50: #0f172a;
+            --gray-100: #1e293b;
+            --gray-200: #334155;
+            --gray-300: #475569;
+            --gray-400: #64748b;
+            --gray-500: #94a3b8;
+            --gray-600: #cbd5e1;
+            --gray-700: #e2e8f0;
+            --gray-800: #f1f5f9;
+            --card-bg: #1e293b;
+            --border: #334155;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            background-color: var(--bs-body-bg);
-            color: var(--bs-body-color);
-            transition: var(--transition);
-            padding-bottom: 100px;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            background: var(--gray-100);
+            color: var(--gray-800);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            transition: background 0.2s, color 0.2s;
         }
 
-        /* Custom scrollbars */
-        ::-webkit-scrollbar {
-            width: 12px;
-            height: 12px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bs-secondary-bg);
-            border-radius: 6px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--bs-secondary);
-            border-radius: 6px;
-            transition: var(--transition);
-            min-height: 40px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--bs-primary);
-        }
-
-        * {
-            scrollbar-width: auto;
-            scrollbar-color: var(--bs-secondary) var(--bs-secondary-bg);
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-
-        /* Loading Overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .container {
+            max-width: 1400px;
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            backdrop-filter: blur(4px);
+            margin: 0 auto;
+            padding: 0;
         }
 
-        .loading-spinner {
-            text-align: center;
-            color: white;
-        }
-
-        /* Header Styles */
-        .app-header {
-            background: linear-gradient(135deg, var(--bs-restaurant), #c1121f);
-            color: white;
-            padding: 1rem 0;
-            box-shadow: var(--shadow-lg);
-            position: sticky;
-            top: 0;
-            z-index: 1020;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .restaurant-logo {
-            max-height: 40px;
-            max-width: 150px;
-            filter: brightness(0) invert(1);
-        }
-
-        .store-info {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: var(--border-radius-sm);
-            padding: 1rem;
-            backdrop-filter: blur(10px);
-        }
-
-        .store-info .form-control {
-            background-color: rgba(255, 255, 255, 0.9);
-            border: none;
-            color: var(--bs-dark);
-            min-height: var(--touch-target);
-        }
-
-        .store-info .form-control:focus {
-            background-color: white;
-            box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
-        }
-
-        /* Card Styles */
-        .card {
-            background-color: var(--bs-card-bg, white);
-            border: 1px solid var(--bs-border-color, #dee2e6);
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .card-header {
-            border-bottom: 1px solid var(--bs-border-color);
-            background: linear-gradient(135deg, var(--bs-primary), #0056b3);
-        }
-
-        /* Stats Cards */
-        .stats-section .card {
-            border: none;
-            background: linear-gradient(135deg, var(--bs-card-bg), var(--bs-secondary-bg));
-        }
-
-        .stats-card {
-            transition: var(--transition);
-            cursor: pointer;
-            min-height: 120px;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-4px) scale(1.02);
-        }
-
-        .stats-card .card-body {
-            padding: 1rem;
-        }
-
-        .stats-icon {
-            transition: var(--transition);
-        }
-
-        .stats-card:hover .stats-icon {
-            transform: scale(1.1);
-        }
-
-        .stats-number {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-            transition: var(--transition);
-        }
-
-        .stats-label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            opacity: 0.8;
-        }
-
-        /* Camera Styles */
-        .camera-container {
-            position: relative;
-            width: 100%;
-            height: 280px;
-            background: linear-gradient(135deg, var(--bs-secondary-bg), var(--bs-tertiary-bg));
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            border: 2px dashed var(--bs-border-color);
-            transition: var(--transition);
-        }
-
-        .camera-container:hover {
-            border-color: var(--bs-primary);
-        }
-
-        #videoElement {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-            border-radius: var(--border-radius);
-        }
-
-        #canvasElement {
-            display: none;
-        }
-
-        .camera-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            transition: var(--transition);
-            padding: 1rem;
-            text-align: center;
-        }
-
-        /* Photo Progress Indicator */
-        .photo-progress {
-            background: var(--bs-secondary-bg);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .progress-text {
-            font-weight: 600;
-            color: var(--bs-primary);
-        }
-
-        .min-photos-text {
-            font-size: 0.875rem;
-            color: var(--bs-secondary);
-        }
-
-        .progress-bar-container {
-            margin-bottom: 0.5rem;
-        }
-
-        .progress-bar {
-            transition: width 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-
-        /* Camera Controls */
-        .camera-controls {
-            margin-top: 1rem;
-        }
-
-        .camera-controls .btn {
-            min-height: var(--touch-target);
-            font-weight: 500;
-            border-radius: var(--border-radius-sm);
-        }
-
-        /* Photo Gallery */
-        .photo-gallery {
-            background: var(--bs-secondary-bg);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            margin-top: 1rem;
-        }
-
-        .gallery-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .photo-thumbnails {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 0.75rem;
-        }
-
-        .photo-thumbnail {
-            position: relative;
-            aspect-ratio: 1;
-            border-radius: var(--border-radius-sm);
-            overflow: hidden;
-            border: 2px solid var(--bs-border-color);
-            transition: var(--transition);
-            cursor: pointer;
-        }
-
-        .photo-thumbnail:hover {
-            transform: scale(1.05);
-            border-color: var(--bs-primary);
-        }
-
-        .photo-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .photo-thumbnail .photo-number {
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            background: var(--bs-primary);
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-
-        .photo-thumbnail .delete-photo {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background: var(--bs-danger);
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .photo-thumbnail .delete-photo:hover {
-            transform: scale(1.1);
-        }
-
-        /* Task Cards */
-        .task-card {
-            margin-bottom: 1rem;
-            border-left: 4px solid var(--bs-primary);
-            transition: var(--transition);
-        }
-
-        .task-card.high-priority {
-            border-left-color: var(--bs-danger);
-        }
-
-        .task-card.medium-priority {
-            border-left-color: var(--bs-warning);
-        }
-
-        .task-card.low-priority {
-            border-left-color: var(--bs-success);
-        }
-
-        .task-card:hover {
-            transform: translateX(4px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .task-images {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-            gap: 0.5rem;
-            margin: 1rem 0;
-        }
-
-        .task-image {
-            width: 100%;
-            height: 60px;
-            object-fit: cover;
-            border-radius: var(--border-radius-sm);
-            transition: var(--transition);
-            cursor: pointer;
-            border: 1px solid var(--bs-border-color);
-        }
-
-        .task-image:hover {
-            transform: scale(1.05);
-            border-color: var(--bs-primary);
-        }
-
-        /* Task List */
-        .task-list-content {
-            max-height: 600px;
-            overflow-y: auto;
-            padding: 1rem;
-        }
-
-        .task-filters {
-            background-color: var(--bs-secondary-bg);
-        }
-
-        /* Crew and Team Member Styles */
-        .crew-member, .team-member {
-            display: inline-flex;
-            align-items: center;
-            background: linear-gradient(135deg, var(--bs-primary), #0056b3);
-            color: white;
-            padding: 0.375rem 0.75rem;
-            border-radius: 1.5rem;
-            margin: 0.25rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: var(--transition);
+        /* Header with Language Toggle */
+        .dashboard-header {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
             box-shadow: var(--shadow-sm);
-            min-height: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
-        .crew-member:hover, .team-member:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow);
+        .lang-switch {
+            display: flex;
+            gap: 8px;
+            background: var(--gray-100);
+            padding: 4px;
+            border-radius: 40px;
         }
 
-        .crew-member .remove-crew, 
-        .team-member .remove-team-member {
-            margin-left: 0.5rem;
-            cursor: pointer;
-            background: none;
+        .lang-btn {
+            background: transparent;
             border: none;
-            color: white;
-            font-size: 1rem;
-            transition: var(--transition);
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: var(--touch-target);
-            min-width: var(--touch-target);
-        }
-
-        .crew-member .remove-crew:hover,
-        .team-member .remove-team-member:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-        }
-
-        /* Suggestions Dropdown */
-        .crew-input-container {
-            position: relative;
-        }
-
-        .suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background-color: var(--bs-card-bg);
-            border: 1px solid var(--bs-border-color);
-            border-top: none;
-            border-radius: 0 0 var(--border-radius-sm) var(--border-radius-sm);
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 10;
-            display: none;
-            box-shadow: var(--shadow);
-        }
-
-        .suggestion-item {
-            padding: 0.75rem;
-            cursor: pointer;
-            border-bottom: 1px solid var(--bs-border-color);
-            transition: var(--transition);
-            min-height: var(--touch-target);
-            display: flex;
-            align-items: center;
-        }
-
-        .suggestion-item:hover {
-            background-color: var(--bs-primary);
-            color: white;
-        }
-
-        .suggestion-item:last-child {
-            border-bottom: none;
-        }
-
-        /* Status Badges */
-        .status-badge {
-            font-size: 0.75rem;
+            padding: 8px 20px;
+            border-radius: 32px;
             font-weight: 600;
-            padding: 0.375rem 0.75rem;
-            border-radius: 1rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--gray-600);
         }
 
-        /* Priority Colors */
-        .priority-high {
-            color: var(--bs-danger);
-        }
-
-        .priority-medium {
-            color: var(--bs-warning);
-        }
-
-        .priority-low {
-            color: var(--bs-success);
-        }
-
-        /* Button Styles */
-        .btn {
-            border-radius: var(--border-radius-sm);
-            font-weight: 500;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            min-height: var(--touch-target);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--bs-primary), #0056b3);
-            border: none;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--bs-success), #0a5c36);
-            border: none;
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, var(--bs-danger), #a71e2a);
-            border: none;
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, var(--bs-warning), #d39e00);
-            border: none;
-        }
-
-        .btn-restaurant {
-            background: linear-gradient(135deg, var(--bs-restaurant), #c1121f);
-            border: none;
+        .lang-btn.active {
+            background: var(--primary);
             color: white;
         }
 
-        /* Floating Action Button */
-        .fab-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-
-        .fab {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
+        .month-selector {
             display: flex;
             align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-lg);
-            transition: var(--transition);
+            gap: 12px;
+            background: var(--gray-100);
+            border-radius: 12px;
+            padding: 6px 16px;
         }
 
-        .fab:hover {
-            transform: scale(1.1) translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        #month-select {
+            background: var(--card-bg);
+            color: var(--gray-800);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
         }
 
-        /* Data Status Indicator */
-        .data-status {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 1000;
-            font-size: 0.875rem;
-            background: linear-gradient(135deg, var(--bs-success), #0a5c36);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: var(--border-radius);
-            display: none;
-            align-items: center;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
+        /* Summary Cards - 6 Cards for Enhanced Metrics */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
-        /* Empty State */
-        .empty-state {
+        @media (max-width: 1000px) { .summary-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 600px) { .summary-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .summary-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 18px 12px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
             text-align: center;
-            padding: 3rem 1rem;
-            color: var(--bs-secondary);
         }
 
-        /* Form Controls */
-        .form-control, .form-select {
-            background-color: var(--bs-card-bg);
-            color: var(--bs-body-color);
-            border: 1px solid var(--bs-border-color);
-            border-radius: var(--border-radius-sm);
-            transition: var(--transition);
-            min-height: var(--touch-target);
+        .summary-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .summary-card .label { font-size: 0.7rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; }
+        .summary-card .value { font-size: 1.5rem; font-weight: 700; margin: 8px 0 4px; color: var(--gray-800); }
+        .summary-card .sub { font-size: 0.65rem; color: var(--gray-400); }
+
+        .progress { height: 6px; background: var(--gray-200); border-radius: 10px; margin-top: 10px; }
+        .progress-bar { background: var(--primary); border-radius: 10px; }
+
+        /* Notification Panel */
+        .notification-panel {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 24px 0;
+            border: 1px solid var(--border);
         }
 
-        .form-control:focus, .form-select:focus {
-            background-color: var(--bs-card-bg);
-            color: var(--bs-body-color);
-            border-color: var(--bs-primary);
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        .notification-panel h5 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
         }
 
-        /* Validation Alert */
-        .alert {
-            border-radius: var(--border-radius-sm);
-            border: none;
+        .notification-item {
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            background: var(--gray-50);
+            border-left: 4px solid var(--primary);
+            font-size: 0.85rem;
         }
 
-        /* Photo Modal */
-        .photo-carousel {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+        .forecast-item { background: var(--primary-soft); border-left-color: var(--warning); }
+        .comparison-item { background: var(--success-soft); border-left-color: var(--success); }
+
+        /* Chart */
+        #chart-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            margin: 24px 0;
         }
+        canvas { max-height: 280px; width: 100%; }
 
-        .carousel-photo {
-            width: 100%;
-            max-height: 400px;
-            object-fit: contain;
-            border-radius: var(--border-radius-sm);
-            border: 1px solid var(--bs-border-color);
+        /* Table */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
         }
+        .card-header { background: var(--gray-50); padding: 16px 20px; font-weight: 600; border-bottom: 1px solid var(--border); }
+        .table-responsive { overflow-x: auto; }
+        .table { color: var(--gray-700); border-color: var(--border); min-width: 800px; font-size: 0.8rem; margin: 0; }
+        .table th { background: var(--gray-50); color: var(--gray-600); font-weight: 600; padding: 12px; white-space: nowrap; }
+        .table td { padding: 10px 12px; border-color: var(--border); }
+        .sales-input { width: 85px; background: var(--gray-50); border: 1px solid var(--border); border-radius: 8px; padding: 8px; color: var(--gray-800); font-size: 0.75rem; text-align: center; }
+        .sales-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        .result-cell { font-weight: 600; font-size: 0.75rem; text-align: center; }
+        .total-row td { background: var(--gray-50); font-weight: 700; border-top: 2px solid var(--border); }
 
-        /* Animations */
-        .fade-in {
-            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes fadeIn {
-            from { 
-                opacity: 0; 
-                transform: translateY(20px);
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0);
-            }
-        }
-
-        .slide-in {
-            animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(-100%);
-            }
-            to {
-                transform: translateX(0);
-            }
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(13, 110, 253, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(13, 110, 253, 0);
-            }
-        }
-
-        /* Mobile Responsive Design */
-        @media (max-width: 768px) {
-            body {
-                padding-bottom: 80px;
-            }
-            
-            .container-fluid {
-                padding-left: 0.75rem;
-                padding-right: 0.75rem;
-            }
-            
-            .card-body {
-                padding: 1rem;
-            }
-            
-            .camera-container {
-                height: 240px;
-            }
-            
-            .stats-number {
-                font-size: 1.5rem;
-            }
-            
-            .stats-card {
-                padding: 0.75rem;
-                min-height: 100px;
-            }
-            
-            .stats-card .card-body {
-                padding: 0.75rem;
-            }
-            
-            .task-list-content {
-                max-height: 400px;
-            }
-            
-            .fab {
-                width: 48px;
-                height: 48px;
-            }
-            
-            .fab-container {
-                bottom: 15px;
-                right: 15px;
-            }
-            
-            .data-status {
-                bottom: 15px;
-                left: 15px;
-                font-size: 0.8rem;
-                padding: 0.375rem 0.75rem;
-            }
-
-            .photo-thumbnails {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .task-images {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width: 576px) {
-            .app-header {
-                padding: 0.75rem 0;
-            }
-            
-            .store-info {
-                padding: 0.75rem;
-            }
-            
-            .camera-container {
-                height: 200px;
-            }
-            
-            .task-card {
-                margin-bottom: 0.75rem;
-            }
-            
-            .crew-member, .team-member {
-                font-size: 0.8rem;
-                padding: 0.25rem 0.5rem;
-                margin: 0.125rem;
-            }
-
-            .photo-progress {
-                padding: 0.75rem;
-            }
-
-            .stats-number {
-                font-size: 1.25rem;
-            }
-
-            .stats-label {
-                font-size: 0.8rem;
-            }
-
-            .photo-thumbnails {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.5rem;
-            }
-
-            .task-images {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.5rem;
-            }
-
-            .task-image {
-                height: 50px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .camera-container {
-                height: 180px;
-            }
-
-            .photo-thumbnails {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .task-images {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        @media (max-height: 500px) and (orientation: landscape) {
-            .camera-container {
-                height: 160px;
-            }
-
-            .stats-card {
-                min-height: 80px;
-            }
-
-            .photo-progress {
-                padding: 0.5rem;
-            }
-        }
-
-        /* Print Styles */
-        @media print {
-            .fab-container,
-            .data-status,
-            .camera-controls,
-            .btn,
-            .toast-container {
-                display: none !important;
-            }
-            
-            .card {
-                box-shadow: none;
-                border: 1px solid #ddd;
-            }
-            
-            .task-image {
-                max-height: 200px;
-            }
-        }
-
-        /* High Contrast Mode */
-        @media (prefers-contrast: high) {
-            .card {
-                border: 2px solid var(--bs-border-color);
-            }
-            
-            .btn {
-                border: 2px solid currentColor;
-            }
-
-            .photo-thumbnail {
-                border-width: 3px;
-            }
-        }
-
-        /* Focus Styles for Accessibility */
-        .btn:focus,
-        .form-control:focus,
-        .form-select:focus,
-        .photo-thumbnail:focus {
-            outline: 2px solid var(--bs-primary);
-            outline-offset: 2px;
-        }
-
-        /* Touch device optimizations */
-        @media (hover: none) and (pointer: coarse) {
-            .card:hover {
-                transform: none;
-            }
-            
-            .stats-card:hover {
-                transform: none;
-            }
-            
-            .task-card:hover {
-                transform: none;
-            }
-            
-            .photo-thumbnail:hover {
-                transform: none;
-            }
-            
-            .task-image:hover {
-                transform: none;
-            }
-        }
+        /* Buttons */
+        .btn-container { display: flex; gap: 12px; padding: 20px; flex-wrap: wrap; border-top: 1px solid var(--border); }
+        .btn { border-radius: 10px; font-weight: 600; font-size: 0.8rem; padding: 10px 20px; border: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .btn-danger { background: var(--danger); color: white; }
+        .theme-toggle { position: fixed; bottom: 24px; right: 24px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 40px; padding: 10px 16px; cursor: pointer; z-index: 1000; display: flex; align-items: center; gap: 8px; }
+        
+        [dir="rtl"] .notification-item { border-left: none; border-right: 4px solid var(--primary); }
+        [dir="rtl"] .forecast-item { border-right-color: var(--warning); }
+        
+        .text-success { color: var(--success) !important; }
+        .text-warning { color: var(--warning) !important; }
+        .text-danger { color: var(--danger) !important; }
+        .currency-symbol { font-size: 0.7rem; margin-right: 2px; }
     </style>
 </head>
-<body data-bs-theme="light">
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <p class="mt-3">Processing...</p>
+<body>
+<div class="container">
+    <div class="dashboard-header">
+        <div>
+            <h2 style="font-size: 1.4rem; font-weight: 700; margin: 0;"><i class="fas fa-chart-line me-2" style="color: var(--primary);"></i><span id="titleMain">Sales Performance Dashboard</span></h2>
+            <p class="text-muted mb-0 mt-1" style="font-size: 0.75rem;"><span id="subtitleCurrency">Real-time tracking · SAR currency</span></p>
         </div>
-    </div>
-
-    <!-- App Header -->
-    <header class="app-header">
-        <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col-auto">
-                    <button class="btn btn-link text-white d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
-                        <i class="bi bi-list fs-4"></i>
-                    </button>
-                </div>
-                <div class="col text-center">
-                    <div class="logo-container">
-                        <img src="https://najjarprofessionalsolutions.com/wp-content/uploads/2024/09/1-32-1536x838.png" alt="Restaurant Logo" class="restaurant-logo">
-                    </div>
-                </div>
-                <div class="col-auto">
-                    <button class="btn btn-link text-white" id="themeToggleBtn" title="Toggle Theme">
-                        <i class="bi bi-moon fs-5"></i>
-                    </button>
-                </div>
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+            <div class="lang-switch">
+                <button class="lang-btn active" id="langEn">EN</button>
+                <button class="lang-btn" id="langAr">AR</button>
             </div>
-            
-            <!-- Store Info -->
-            <div class="store-info mt-3">
-                <div class="row g-2">
-                    <div class="col-md-6">
-                        <label for="storeName" class="form-label small">Store Name</label>
-                        <input type="text" class="form-control form-control-sm" id="storeName" 
-                               placeholder="Enter store name" value="Fine Dining Restaurant">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="storeLocation" class="form-label small">Location</label>
-                        <input type="text" class="form-control form-control-sm" id="storeLocation" 
-                               placeholder="Enter store location" value="123 Main Street, City">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Mobile Navigation Offcanvas -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Menu</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body">
-            <nav class="nav flex-column">
-                <a class="nav-link" href="#dashboard" data-section="dashboard">
-                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                </a>
-                <a class="nav-link" href="#tasks" data-section="tasks">
-                    <i class="bi bi-list-check me-2"></i>Tasks
-                </a>
-                <a class="nav-link" href="#team" data-section="team">
-                    <i class="bi bi-people me-2"></i>Team
-                </a>
-                <a class="nav-link" href="#add-task" data-section="add-task">
-                    <i class="bi bi-plus-circle me-2"></i>Add Task
-                </a>
-            </nav>
-        </div>
-    </div>
-
-    <main class="container-fluid py-3">
-        <!-- Stats Overview -->
-        <section class="stats-section mb-4">
-            <div class="row g-3">
-                <div class="col-6 col-md-3">
-                    <div class="card stats-card h-100">
-                        <div class="card-body text-center">
-                            <div class="stats-icon text-primary mb-2">
-                                <i class="bi bi-clipboard-check fs-2"></i>
-                            </div>
-                            <div class="stats-number text-primary" id="totalTasks">0</div>
-                            <div class="stats-label">Total Tasks</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card stats-card h-100">
-                        <div class="card-body text-center">
-                            <div class="stats-icon text-warning mb-2">
-                                <i class="bi bi-clock fs-2"></i>
-                            </div>
-                            <div class="stats-number text-warning" id="pendingTasks">0</div>
-                            <div class="stats-label">Pending</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card stats-card h-100">
-                        <div class="card-body text-center">
-                            <div class="stats-icon text-info mb-2">
-                                <i class="bi bi-arrow-clockwise fs-2"></i>
-                            </div>
-                            <div class="stats-number text-info" id="inProgressTasks">0</div>
-                            <div class="stats-label">In Progress</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card stats-card h-100">
-                        <div class="card-body text-center">
-                            <div class="stats-icon text-success mb-2">
-                                <i class="bi bi-check-circle fs-2"></i>
-                            </div>
-                            <div class="stats-number text-success" id="completedTasks">0</div>
-                            <div class="stats-label">Completed</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Team Management -->
-        <section class="team-section mb-4">
-            <div class="card">
-                <div class="card-header bg-info text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">
-                            <i class="bi bi-people me-2"></i>Team Management
-                        </h5>
-                        <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" 
-                                data-bs-target="#teamCollapse" aria-expanded="false">
-                            <i class="bi bi-chevron-down"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="collapse" id="teamCollapse">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-lg-6 mb-3">
-                                <label for="teamMemberInput" class="form-label fw-bold">Add Team Member</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="teamMemberInput" 
-                                           placeholder="Enter team member name">
-                                    <button class="btn btn-primary" type="button" id="addTeamMember">
-                                        <i class="bi bi-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <label class="form-label fw-bold">Team Members</label>
-                                <div class="team-member-list" id="teamMemberList">
-                                    <div class="text-muted small" id="noTeamMembers">No team members added yet</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Main Content -->
-        <div class="row g-4">
-            <!-- Task Form -->
-            <div class="col-xl-5">
-                <div class="card task-form-card">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="card-title mb-0">
-                            <i class="bi bi-plus-circle me-2"></i>Add New Cleaning Task
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="taskForm">
-                            <!-- Before Pictures Section -->
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">
-                                    <i class="bi bi-camera me-1"></i>Take Before Pictures
-                                    <span class="text-danger">*</span>
-                                </label>
-                                
-                                <!-- Photo Progress Indicator -->
-                                <div class="photo-progress mb-3">
-                                    <div class="progress-info">
-                                        <div class="progress-text" id="photoProgressText">0 Photos Taken</div>
-                                        <div class="min-photos-text">Minimum 3 required</div>
-                                    </div>
-                                    <div class="progress-bar-container">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-success" id="photoProgress" role="progressbar" 
-                                                 style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Camera Container -->
-                                <div class="camera-container">
-                                    <video id="videoElement" autoplay playsinline></video>
-                                    <canvas id="canvasElement"></canvas>
-                                    <div id="cameraPlaceholder" class="camera-placeholder">
-                                        <i class="bi bi-camera display-1 text-muted"></i>
-                                        <p class="mt-2 text-muted">Camera not started</p>
-                                        <p class="small text-muted">Take at least 3 before pictures</p>
-                                    </div>
-                                </div>
-
-                                <!-- Camera Controls -->
-                                <div class="camera-controls mt-3">
-                                    <div class="row g-2">
-                                        <div class="col-4">
-                                            <button type="button" id="startCamera" class="btn btn-outline-primary w-100">
-                                                <i class="bi bi-camera-video"></i>
-                                                <span class="d-none d-sm-inline ms-1">Start</span>
-                                            </button>
-                                        </div>
-                                        <div class="col-4">
-                                            <button type="button" id="captureButton" class="btn btn-success w-100" disabled>
-                                                <i class="bi bi-camera"></i>
-                                                <span class="d-none d-sm-inline ms-1">Capture</span>
-                                            </button>
-                                        </div>
-                                        <div class="col-4">
-                                            <button type="button" id="stopCamera" class="btn btn-warning w-100" disabled>
-                                                <i class="bi bi-stop-circle"></i>
-                                                <span class="d-none d-sm-inline ms-1">Stop</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Photo Gallery -->
-                                <div class="photo-gallery mt-3" id="photoGallery" style="display: none;">
-                                    <div class="gallery-header">
-                                        <h6 class="mb-2">Before Pictures</h6>
-                                        <button type="button" class="btn btn-sm btn-outline-danger" id="clearAllPhotos">
-                                            <i class="bi bi-trash"></i> Clear All
-                                        </button>
-                                    </div>
-                                    <div class="photo-thumbnails" id="photoThumbnails">
-                                        <!-- Photo thumbnails will be inserted here -->
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Task Details -->
-                            <div class="mb-3">
-                                <label for="taskDescription" class="form-label fw-bold">
-                                    Task Description <span class="text-danger">*</span>
-                                </label>
-                                <textarea class="form-control" id="taskDescription" rows="3" 
-                                          placeholder="Describe the cleaning task in detail..." required></textarea>
-                            </div>
-
-                            <!-- Crew Assignment -->
-                            <div class="mb-3">
-                                <label for="crewInput" class="form-label fw-bold">
-                                    Assign to Team Members <span class="text-danger">*</span>
-                                </label>
-                                <div class="crew-input-container">
-                                    <input type="text" class="form-control" id="crewInput" 
-                                           placeholder="Type crew member name">
-                                    <div class="suggestions" id="crewSuggestions"></div>
-                                </div>
-                                <div class="mt-2" id="selectedCrew"></div>
-                                <small class="text-muted">Type a name and press Enter to add crew members</small>
-                            </div>
-
-                            <!-- Priority and Area -->
-                            <div class="row g-3 mb-3">
-                                <div class="col-sm-6">
-                                    <label for="priority" class="form-label fw-bold">
-                                        Priority <span class="text-danger">*</span>
-                                    </label>
-                                    <select class="form-select" id="priority" required>
-                                        <option value="" selected disabled>Select priority</option>
-                                        <option value="Low">Low</option>
-                                        <option value="Medium">Medium</option>
-                                        <option value="High">High</option>
-                                    </select>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label for="area" class="form-label fw-bold">
-                                        Area <span class="text-danger">*</span>
-                                    </label>
-                                    <select class="form-select" id="area" required>
-                                        <option value="" selected disabled>Select area</option>
-                                        <option value="Kitchen">Kitchen</option>
-                                        <option value="Dining Area">Dining Area</option>
-                                        <option value="Restrooms">Restrooms</option>
-                                        <option value="Storage">Storage</option>
-                                        <option value="Entrance">Entrance</option>
-                                        <option value="Parking">Parking</option>
-                                        <option value="Bar Area">Bar Area</option>
-                                        <option value="Office">Office</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Dates and Status -->
-                            <div class="row g-3 mb-3">
-                                <div class="col-sm-6">
-                                    <label for="dueDate" class="form-label fw-bold">
-                                        Due Date <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="date" class="form-control" id="dueDate" required>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label for="finishDate" class="form-label fw-bold">Finish Date</label>
-                                    <input type="date" class="form-control" id="finishDate">
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="status" class="form-label fw-bold">
-                                    Status <span class="text-danger">*</span>
-                                </label>
-                                <select class="form-select" id="status" required>
-                                    <option value="Pending" selected>Pending</option>
-                                    <option value="In Progress">In Progress</option>
-                                    <option value="Completed">Completed</option>
-                                </select>
-                            </div>
-
-                            <!-- Validation Messages -->
-                            <div class="alert alert-warning d-none" id="validationAlert">
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                <span id="validationMessage"></span>
-                            </div>
-
-                            <button type="submit" class="btn btn-restaurant w-100 py-3 fw-bold" id="submitTaskBtn">
-                                <i class="bi bi-plus-circle me-2"></i>Add Task
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Task List -->
-            <div class="col-xl-7">
-                <div class="card task-list-card">
-                    <div class="card-header bg-primary text-white">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">
-                                <i class="bi bi-list-check me-2"></i>Task List
-                            </h5>
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="badge bg-light text-dark" id="taskCount">0 tasks</span>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-light active" id="showListBtn" title="Show List">
-                                        <i class="bi bi-list"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-light" id="hideListBtn" title="Hide List">
-                                        <i class="bi bi-eye-slash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body p-0" id="taskListContainer">
-                        <!-- Filter Controls -->
-                        <div class="task-filters p-3 border-bottom">
-                            <div class="row g-2">
-                                <div class="col-sm-6">
-                                    <select class="form-select form-select-sm" id="statusFilter">
-                                        <option value="">All Status</option>
-                                        <option value="Pending">Pending</option>
-                                        <option value="In Progress">In Progress</option>
-                                        <option value="Completed">Completed</option>
-                                    </select>
-                                </div>
-                                <div class="col-sm-6">
-                                    <select class="form-select form-select-sm" id="priorityFilter">
-                                        <option value="">All Priorities</option>
-                                        <option value="High">High Priority</option>
-                                        <option value="Medium">Medium Priority</option>
-                                        <option value="Low">Low Priority</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div id="taskList" class="task-list-content">
-                            <div class="empty-state" id="emptyTaskMessage">
-                                <i class="bi bi-clipboard-x display-1 text-muted"></i>
-                                <h5 class="mt-3">No tasks yet</h5>
-                                <p class="text-muted">Add your first cleaning task with before pictures to get started</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Floating Action Buttons -->
-    <div class="fab-container">
-        <button class="btn btn-danger fab" id="exportPdf" title="Export as PDF">
-            <i class="bi bi-file-pdf fs-5"></i>
-        </button>
-    </div>
-
-    <!-- Photo Modal -->
-    <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="photoModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="photoModalLabel">Before Pictures</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="photo-carousel" id="photoCarousel">
-                        <!-- Photos will be inserted here -->
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
+            <div class="month-selector">
+                <label for="month-select" id="periodLabel">PERIOD:</label>
+                <select id="month-select">
+                    <option value="January">JANUARY</option><option value="February">FEBRUARY</option><option value="March">MARCH</option>
+                    <option value="April">APRIL</option><option value="May">MAY</option><option value="June">JUNE</option>
+                    <option value="July">JULY</option><option value="August">AUGUST</option><option value="September">SEPTEMBER</option>
+                    <option value="October">OCTOBER</option><option value="November">NOVEMBER</option><option value="December">DECEMBER</option>
+                </select>
             </div>
         </div>
     </div>
 
-    <!-- Toast Container -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <i class="bi bi-info-circle text-primary me-2"></i>
-                <strong class="me-auto">Notification</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+    <!-- Enhanced Summary Cards - 6 Cards -->
+    <div class="summary-grid">
+        <div class="summary-card"><div class="label" id="cardLastMonthTotal">LAST MONTH TOTAL</div><div class="value" id="lastMonthTotal">SAR 0</div><div class="sub" id="lastMonthSub">previous period</div></div>
+        <div class="summary-card"><div class="label" id="cardCurrentMTD">CURRENT MTD (Actual)</div><div class="value" id="currentMTDActual">SAR 0</div><div class="sub" id="currentMTDSub">up to yesterday</div></div>
+        <div class="summary-card"><div class="label" id="cardMTDTarget">MTD TARGET</div><div class="value" id="mtdTarget">SAR 0</div><div class="progress"><div class="progress-bar" id="targetProgress" style="width:0%"></div></div></div>
+        <div class="summary-card"><div class="label" id="cardMTDAchievement">MTD ACHIEVEMENT</div><div class="value" id="achievementRate">0%</div><div class="progress"><div class="progress-bar" id="achProgress" style="width:0%"></div></div></div>
+        <div class="summary-card"><div class="label" id="cardGrossUptoyesterday">GROSS (UP TO YESTERDAY)</div><div class="value" id="grossUptoyesterday">SAR 0</div><div class="sub" id="grossSub">total sales MTD</div></div>
+        <div class="summary-card"><div class="label" id="cardGrowth">YOY GROWTH</div><div class="value" id="growthRate">0%</div><div class="sub" id="growthSub">vs last year same period</div></div>
+    </div>
+
+    <!-- Forecast & Comparison Section -->
+    <div class="notification-panel">
+        <h5 id="forecastTitle"><i class="fas fa-chart-line me-2"></i> FORECAST & COMPARATIVE ANALYSIS</h5>
+        <div id="trendAnalysis" style="margin-bottom: 16px; padding: 12px; background: var(--gray-50); border-radius: 12px;"></div>
+        <div id="comparisonContainer"></div>
+        <div id="dailyForecastContainer"></div>
+    </div>
+
+    <!-- Chart -->
+    <div id="chart-container"><canvas id="performance-chart"></canvas></div>
+
+    <!-- Data Table -->
+    <div class="card">
+        <div class="card-header" id="tableHeader"><i class="fas fa-table me-2"></i> DAILY PERFORMANCE · Input mode</div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-bordered mb-0">
+                    <thead><tr><th id="colDay">DAY</th><th id="colSales">SALES (SAR)</th><th id="colTarget">TARGET (SAR)</th><th id="colLastYear">LAST YR (SAR)</th><th id="colTC">TC%</th><th id="colAC">A.C</th><th id="colACH">ACH%</th><th id="colGrowth">GROWTH%</th><th id="colAvg">AVG%</th></tr></thead>
+                    <tbody id="sales-table-body"></tbody>
+                    <tfoot><tr class="total-row"><td><strong id="totalLabel">TOTAL</strong></td>
+                        <td id="total-sales"><strong>SAR0</strong></td><td id="total-target"><strong>SAR0</strong></td><td id="total-lastyear"><strong>SAR0</strong></td>
+                        <td id="total-tc"><strong>0%</strong></td><td id="total-ac"><strong>0</strong></td><td id="total-achieved"><strong>0%</strong></td>
+                        <td id="total-growth"><strong>0%</strong></td><td id="total-average"><strong>0%</strong></td>
+                    </tr></tfoot>
+                </table>
             </div>
-            <div class="toast-body" id="toastMessage">
-                <!-- Toast message will be inserted here -->
+            <div class="btn-container"><button class="btn btn-primary" id="exportPdf"><i class="fas fa-file-pdf"></i> <span id="exportBtnText">Export PDF</span></button>
+                <button class="btn btn-danger" id="clearAll"><i class="fas fa-trash-alt"></i> <span id="clearBtnText">Clear All Data</span></button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Data Status Indicator -->
-    <div class="data-status" id="dataStatus">
-        <i class="bi bi-check-circle me-1"></i>
-        <span>Data saved successfully!</span>
-    </div>
+<div class="theme-toggle" id="themeToggle"><i class="fas fa-moon" id="themeIcon"></i><span id="themeText">Dark Mode</span></div>
 
-    <!-- Bootstrap 5.3.3 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // Restaurant Cleaning Task Manager - Single File JavaScript
-        class TaskManager {
-            constructor() {
-                this.tasks = [];
-                this.teamMembers = [];
-                this.assignedCrew = [];
-                this.capturedPhotos = []; // Array to store before pictures
-                this.minPhotos = 3;
-                this.stream = null;
-                this.storeName = "Fine Dining Restaurant";
-                this.storeLocation = "123 Main Street, City";
-                
-                this.initializeElements();
-                this.initializeEventListeners();
-                this.loadData();
-                this.updateUI();
-                this.setupTouchEvents();
-            }
-            
-            initializeElements() {
-                // DOM Elements
-                this.elements = {
-                    // Theme and UI
-                    themeToggleBtn: document.getElementById('themeToggleBtn'),
-                    loadingOverlay: document.getElementById('loadingOverlay'),
-                    
-                    // Forms
-                    taskForm: document.getElementById('taskForm'),
-                    teamMemberInput: document.getElementById('teamMemberInput'),
-                    addTeamMemberBtn: document.getElementById('addTeamMember'),
-                    
-                    // Task inputs
-                    taskDescription: document.getElementById('taskDescription'),
-                    crewInput: document.getElementById('crewInput'),
-                    crewSuggestions: document.getElementById('crewSuggestions'),
-                    selectedCrew: document.getElementById('selectedCrew'),
-                    priority: document.getElementById('priority'),
-                    area: document.getElementById('area'),
-                    dueDate: document.getElementById('dueDate'),
-                    finishDate: document.getElementById('finishDate'),
-                    status: document.getElementById('status'),
-                    
-                    // Camera and Photos
-                    videoElement: document.getElementById('videoElement'),
-                    canvasElement: document.getElementById('canvasElement'),
-                    cameraPlaceholder: document.getElementById('cameraPlaceholder'),
-                    startCameraBtn: document.getElementById('startCamera'),
-                    captureButton: document.getElementById('captureButton'),
-                    stopCameraBtn: document.getElementById('stopCamera'),
-                    
-                    // Photo Progress
-                    photoProgress: document.getElementById('photoProgress'),
-                    photoProgressText: document.getElementById('photoProgressText'),
-                    photoGallery: document.getElementById('photoGallery'),
-                    photoThumbnails: document.getElementById('photoThumbnails'),
-                    clearAllPhotos: document.getElementById('clearAllPhotos'),
-                    
-                    // Lists and displays
-                    taskList: document.getElementById('taskList'),
-                    taskCount: document.getElementById('taskCount'),
-                    emptyTaskMessage: document.getElementById('emptyTaskMessage'),
-                    teamMemberList: document.getElementById('teamMemberList'),
-                    noTeamMembers: document.getElementById('noTeamMembers'),
-                    
-                    // Stats
-                    totalTasks: document.getElementById('totalTasks'),
-                    pendingTasks: document.getElementById('pendingTasks'),
-                    inProgressTasks: document.getElementById('inProgressTasks'),
-                    completedTasks: document.getElementById('completedTasks'),
-                    
-                    // Controls
-                    showListBtn: document.getElementById('showListBtn'),
-                    hideListBtn: document.getElementById('hideListBtn'),
-                    taskListContainer: document.getElementById('taskListContainer'),
-                    statusFilter: document.getElementById('statusFilter'),
-                    priorityFilter: document.getElementById('priorityFilter'),
-                    exportPdf: document.getElementById('exportPdf'),
-                    
-                    // Store info
-                    storeNameInput: document.getElementById('storeName'),
-                    storeLocationInput: document.getElementById('storeLocation'),
-                    
-                    // Validation
-                    validationAlert: document.getElementById('validationAlert'),
-                    validationMessage: document.getElementById('validationMessage'),
-                    submitTaskBtn: document.getElementById('submitTaskBtn'),
-                    
-                    // Notifications
-                    dataStatus: document.getElementById('dataStatus'),
-                    liveToast: document.getElementById('liveToast'),
-                    toastMessage: document.getElementById('toastMessage'),
-                    
-                    // Modal
-                    photoModal: document.getElementById('photoModal'),
-                    photoCarousel: document.getElementById('photoCarousel')
-                };
-            }
-            
-            initializeEventListeners() {
-                // Theme toggle
-                this.elements.themeToggleBtn.addEventListener('click', () => this.toggleTheme());
-                
-                // Task form
-                this.elements.taskForm.addEventListener('submit', (e) => this.handleTaskSubmit(e));
-                
-                // Team management
-                this.elements.addTeamMemberBtn.addEventListener('click', () => this.addTeamMember());
-                this.elements.teamMemberInput.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        this.addTeamMember();
-                    }
-                });
-                
-                // Crew assignment
-                this.elements.crewInput.addEventListener('input', (e) => this.handleCrewInput(e));
-                this.elements.crewInput.addEventListener('keydown', (e) => this.handleCrewKeydown(e));
-                this.elements.crewInput.addEventListener('blur', () => this.hideSuggestions());
-                
-                // Camera controls
-                this.elements.startCameraBtn.addEventListener('click', () => this.startCamera());
-                this.elements.captureButton.addEventListener('click', () => this.capturePhoto());
-                this.elements.stopCameraBtn.addEventListener('click', () => this.stopCamera());
-                this.elements.clearAllPhotos.addEventListener('click', () => this.clearAllPhotos());
-                
-                // List controls
-                this.elements.showListBtn.addEventListener('click', () => this.showTaskList());
-                this.elements.hideListBtn.addEventListener('click', () => this.hideTaskList());
-                
-                // Filters
-                this.elements.statusFilter.addEventListener('change', () => this.filterTasks());
-                this.elements.priorityFilter.addEventListener('change', () => this.filterTasks());
-                
-                // Store info
-                this.elements.storeNameInput.addEventListener('change', () => this.saveStoreInfo());
-                this.elements.storeLocationInput.addEventListener('change', () => this.saveStoreInfo());
-                
-                // PDF export
-                this.elements.exportPdf.addEventListener('click', () => this.exportToPDF());
-                
-                // Set minimum dates
-                const today = new Date().toISOString().split('T')[0];
-                this.elements.dueDate.min = today;
-                this.elements.finishDate.min = today;
-                
-                // Mobile menu navigation
-                document.querySelectorAll('[data-section]').forEach(link => {
-                    link.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const section = e.target.getAttribute('data-section');
-                        this.navigateToSection(section);
-                    });
-                });
-
-                // Form validation on input
-                this.elements.taskForm.addEventListener('input', () => this.validateForm());
-            }
-
-            setupTouchEvents() {
-                // Add touch event support for better mobile interaction
-                let touchStartX = 0;
-                let touchStartY = 0;
-
-                this.elements.photoThumbnails.addEventListener('touchstart', (e) => {
-                    touchStartX = e.touches[0].clientX;
-                    touchStartY = e.touches[0].clientY;
-                });
-
-                this.elements.photoThumbnails.addEventListener('touchend', (e) => {
-                    const touchEndX = e.changedTouches[0].clientX;
-                    const touchEndY = e.changedTouches[0].clientY;
-                    const deltaX = touchEndX - touchStartX;
-                    const deltaY = touchEndY - touchStartY;
-
-                    // Detect swipe gestures
-                    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
-                        // Handle swipe if needed
-                        this.updatePhotoGallery();
-                    }
-                });
-            }
-            
-            // Data Management
-            loadData() {
-                try {
-                    // Load team members
-                    const savedTeamMembers = localStorage.getItem('restaurantTeamMembers');
-                    if (savedTeamMembers) {
-                        this.teamMembers = JSON.parse(savedTeamMembers);
-                    } else {
-                        this.teamMembers = ['John Smith', 'Maria Garcia', 'David Johnson', 'Sarah Wilson', 'Emily Chen', 'Michael Brown'];
-                        this.saveTeamMembers();
-                    }
-                    
-                    // Load tasks
-                    const savedTasks = localStorage.getItem('restaurantCleaningTasks');
-                    if (savedTasks) {
-                        this.tasks = JSON.parse(savedTasks);
-                    } else {
-                        this.createSampleTasks();
-                    }
-                    
-                    // Load store info
-                    const savedStoreName = localStorage.getItem('restaurantStoreName');
-                    const savedStoreLocation = localStorage.getItem('restaurantStoreLocation');
-                    
-                    if (savedStoreName) {
-                        this.storeName = savedStoreName;
-                        this.elements.storeNameInput.value = savedStoreName;
-                    }
-                    
-                    if (savedStoreLocation) {
-                        this.storeLocation = savedStoreLocation;
-                        this.elements.storeLocationInput.value = savedStoreLocation;
-                    }
-                    
-                    // Load theme
-                    const savedTheme = localStorage.getItem('restaurantTheme') || 'light';
-                    document.body.setAttribute('data-bs-theme', savedTheme);
-                    this.updateThemeIcon(savedTheme);
-                    
-                    this.showDataStatus('Data loaded successfully!', 'success');
-                } catch (error) {
-                    console.error('Error loading data:', error);
-                    this.showToast('Error loading data', 'danger');
-                }
-            }
-            
-            createSampleTasks() {
-                const today = new Date();
-                const tomorrow = new Date(today);
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                
-                // Create sample before photos (placeholder data)
-                const sampleBeforePhotos = [
-                    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5CZWZvcmUgMTwvdGV4dD48L3N2Zz4=',
-                    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjYmJiIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5CZWZvcmUgMjwvdGV4dD48L3N2Zz4=',
-                    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjOTk5Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5CZWZvcmUgMzwvdGV4dD48L3N2Zz4=',
-                    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNzc3Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5CZWZvcmUgNDwvdGV4dD48L3N2Zz4='
-                ];
-                
-                this.tasks = [
-                    {
-                        id: Date.now(),
-                        description: "Deep clean kitchen floors and sanitize all surfaces",
-                        assignedTo: ["John Smith", "Maria Garcia"],
-                        priority: "High",
-                        area: "Kitchen",
-                        dueDate: today.toISOString().split('T')[0],
-                        finishDate: "",
-                        status: "Pending",
-                        beforePhotos: sampleBeforePhotos,
-                        createdAt: new Date().toISOString()
-                    },
-                    {
-                        id: Date.now() + 1,
-                        description: "Restock restroom supplies and clean mirrors",
-                        assignedTo: ["David Johnson"],
-                        priority: "Medium",
-                        area: "Restrooms",
-                        dueDate: tomorrow.toISOString().split('T')[0],
-                        finishDate: "",
-                        status: "In Progress",
-                        beforePhotos: sampleBeforePhotos.slice(0, 3), // Only 3 photos for this task
-                        createdAt: new Date().toISOString()
-                    }
-                ];
-                this.saveTasks();
-            }
-            
-            saveTeamMembers() {
-                try {
-                    localStorage.setItem('restaurantTeamMembers', JSON.stringify(this.teamMembers));
-                    this.showDataStatus('Team members saved!', 'success');
-                } catch (error) {
-                    console.error('Error saving team members:', error);
-                    this.showToast('Error saving team members', 'danger');
-                }
-            }
-            
-            saveTasks() {
-                try {
-                    localStorage.setItem('restaurantCleaningTasks', JSON.stringify(this.tasks));
-                    this.showDataStatus('Tasks saved!', 'success');
-                } catch (error) {
-                    console.error('Error saving tasks:', error);
-                    this.showToast('Error saving tasks', 'danger');
-                }
-            }
-            
-            saveStoreInfo() {
-                try {
-                    this.storeName = this.elements.storeNameInput.value;
-                    this.storeLocation = this.elements.storeLocationInput.value;
-                    
-                    localStorage.setItem('restaurantStoreName', this.storeName);
-                    localStorage.setItem('restaurantStoreLocation', this.storeLocation);
-                    
-                    this.showDataStatus('Store information saved!', 'success');
-                } catch (error) {
-                    console.error('Error saving store info:', error);
-                    this.showToast('Error saving store information', 'danger');
-                }
-            }
-            
-            // Theme Management
-            toggleTheme() {
-                const currentTheme = document.body.getAttribute('data-bs-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                document.body.setAttribute('data-bs-theme', newTheme);
-                this.updateThemeIcon(newTheme);
-                localStorage.setItem('restaurantTheme', newTheme);
-            }
-            
-            updateThemeIcon(theme) {
-                const icon = this.elements.themeToggleBtn.querySelector('i');
-                icon.className = theme === 'light' ? 'bi bi-moon fs-5' : 'bi bi-sun fs-5';
-            }
-            
-            // Team Management
-            addTeamMember() {
-                const name = this.elements.teamMemberInput.value.trim();
-                if (name && !this.teamMembers.includes(name)) {
-                    this.teamMembers.push(name);
-                    this.saveTeamMembers();
-                    this.renderTeamMembers();
-                    this.elements.teamMemberInput.value = '';
-                    this.showToast(`Team member "${name}" added successfully!`, 'success');
-                } else if (this.teamMembers.includes(name)) {
-                    this.showToast(`Team member "${name}" already exists!`, 'warning');
-                } else {
-                    this.showToast('Please enter a valid name', 'warning');
-                }
-            }
-            
-            removeTeamMember(name) {
-                if (confirm(`Are you sure you want to remove ${name} from the team?`)) {
-                    this.teamMembers = this.teamMembers.filter(member => member !== name);
-                    this.saveTeamMembers();
-                    this.renderTeamMembers();
-                    this.showToast(`Team member "${name}" removed!`, 'info');
-                }
-            }
-            
-            renderTeamMembers() {
-                this.elements.teamMemberList.innerHTML = '';
-                
-                if (this.teamMembers.length === 0) {
-                    this.elements.noTeamMembers.style.display = 'block';
-                    this.elements.teamMemberList.appendChild(this.elements.noTeamMembers);
-                    return;
-                }
-                
-                this.elements.noTeamMembers.style.display = 'none';
-                
-                this.teamMembers.forEach(member => {
-                    const span = document.createElement('span');
-                    span.className = 'team-member fade-in';
-                    span.innerHTML = `
-                        ${member}
-                        <button type="button" class="remove-team-member" title="Remove ${member}">
-                            <i class="bi bi-x"></i>
-                        </button>
-                    `;
-                    
-                    span.querySelector('.remove-team-member').addEventListener('click', () => {
-                        this.removeTeamMember(member);
-                    });
-                    
-                    this.elements.teamMemberList.appendChild(span);
-                });
-            }
-            
-            // Crew Assignment
-            handleCrewInput(e) {
-                const value = e.target.value.toLowerCase();
-                if (value.length > 0) {
-                    const filteredCrew = this.teamMembers.filter(member => 
-                        member.toLowerCase().includes(value) && 
-                        !this.assignedCrew.includes(member)
-                    );
-                    this.showSuggestions(filteredCrew);
-                } else {
-                    this.hideSuggestions();
-                }
-            }
-            
-            handleCrewKeydown(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    this.addCrewMember(e.target.value.trim());
-                    e.target.value = '';
-                    this.hideSuggestions();
-                }
-            }
-            
-            showSuggestions(suggestions) {
-                if (suggestions.length === 0) {
-                    this.hideSuggestions();
-                    return;
-                }
-                
-                this.elements.crewSuggestions.innerHTML = '';
-                suggestions.forEach(member => {
-                    const div = document.createElement('div');
-                    div.className = 'suggestion-item';
-                    div.textContent = member;
-                    div.addEventListener('mousedown', (e) => {
-                        e.preventDefault(); // Prevent blur event
-                        this.addCrewMember(member);
-                        this.elements.crewInput.value = '';
-                        this.hideSuggestions();
-                    });
-                    this.elements.crewSuggestions.appendChild(div);
-                });
-                
-                this.elements.crewSuggestions.style.display = 'block';
-            }
-            
-            hideSuggestions() {
-                setTimeout(() => {
-                    this.elements.crewSuggestions.style.display = 'none';
-                }, 150);
-            }
-            
-            addCrewMember(name) {
-                if (name && !this.assignedCrew.includes(name)) {
-                    if (this.teamMembers.includes(name)) {
-                        this.assignedCrew.push(name);
-                        this.renderCrewMembers();
-                        this.validateForm();
-                    } else {
-                        this.showToast(`"${name}" is not in your team. Add them to your team first.`, 'warning');
-                    }
-                } else if (this.assignedCrew.includes(name)) {
-                    this.showToast(`"${name}" is already assigned to this task.`, 'info');
-                }
-            }
-            
-            removeCrewMember(name) {
-                this.assignedCrew = this.assignedCrew.filter(member => member !== name);
-                this.renderCrewMembers();
-                this.validateForm();
-            }
-            
-            renderCrewMembers() {
-                this.elements.selectedCrew.innerHTML = '';
-                this.assignedCrew.forEach(member => {
-                    const span = document.createElement('span');
-                    span.className = 'crew-member fade-in';
-                    span.innerHTML = `
-                        ${member}
-                        <button type="button" class="remove-crew" title="Remove ${member}">
-                            <i class="bi bi-x"></i>
-                        </button>
-                    `;
-                    
-                    span.querySelector('.remove-crew').addEventListener('click', () => {
-                        this.removeCrewMember(member);
-                    });
-                    
-                    this.elements.selectedCrew.appendChild(span);
-                });
-            }
-            
-            // Camera Functions
-            async startCamera() {
-                try {
-                    this.showLoading();
-                    
-                    // Stop any existing stream
-                    if (this.stream) {
-                        this.stream.getTracks().forEach(track => track.stop());
-                    }
-                    
-                    this.stream = await navigator.mediaDevices.getUserMedia({ 
-                        video: { 
-                            facingMode: 'environment',
-                            width: { ideal: 1280 },
-                            height: { ideal: 720 }
-                        } 
-                    });
-                    
-                    this.elements.videoElement.srcObject = this.stream;
-                    this.elements.videoElement.style.display = 'block';
-                    this.elements.cameraPlaceholder.style.display = 'none';
-                    
-                    this.elements.startCameraBtn.disabled = true;
-                    this.elements.captureButton.disabled = false;
-                    this.elements.stopCameraBtn.disabled = false;
-                    
-                    // Add pulse effect to indicate active camera
-                    this.elements.videoElement.classList.add('pulse');
-                    
-                    this.hideLoading();
-                    this.showToast('Camera started successfully!', 'success');
-                } catch (err) {
-                    this.hideLoading();
-                    console.error('Camera error:', err);
-                    this.showToast('Error accessing camera: ' + err.message, 'danger');
-                }
-            }
-            
-            capturePhoto() {
-                try {
-                    const context = this.elements.canvasElement.getContext('2d');
-                    this.elements.canvasElement.width = this.elements.videoElement.videoWidth;
-                    this.elements.canvasElement.height = this.elements.videoElement.videoHeight;
-                    
-                    context.drawImage(this.elements.videoElement, 0, 0, 
-                        this.elements.canvasElement.width, this.elements.canvasElement.height);
-                    
-                    // Convert to data URL with compression
-                    const photoData = this.elements.canvasElement.toDataURL('image/jpeg', 0.8);
-                    this.capturedPhotos.push(photoData);
-                    
-                    this.updatePhotoProgress();
-                    this.updatePhotoGallery();
-                    this.validateForm();
-                    
-                    const photoNumber = this.capturedPhotos.length;
-                    this.showToast(`Before picture ${photoNumber} captured successfully!`, 'success');
-                    
-                    // Show message when minimum photos reached
-                    if (this.capturedPhotos.length >= this.minPhotos) {
-                        this.showToast(`Minimum ${this.minPhotos} photos captured! You can now save the task or take more photos.`, 'success');
-                    }
-                } catch (error) {
-                    console.error('Capture error:', error);
-                    this.showToast('Error capturing photo', 'danger');
-                }
-            }
-            
-            stopCamera() {
-                if (this.stream) {
-                    this.stream.getTracks().forEach(track => track.stop());
-                    this.stream = null;
-                }
-                
-                this.elements.videoElement.style.display = 'none';
-                this.elements.videoElement.classList.remove('pulse');
-                this.elements.cameraPlaceholder.style.display = 'flex';
-                
-                this.elements.startCameraBtn.disabled = false;
-                this.elements.captureButton.disabled = true;
-                this.elements.stopCameraBtn.disabled = true;
-                
-                this.showToast('Camera stopped', 'info');
-            }
-            
-            updatePhotoProgress() {
-                const progress = Math.min((this.capturedPhotos.length / this.minPhotos) * 100, 100);
-                this.elements.photoProgress.style.width = `${progress}%`;
-                this.elements.photoProgress.setAttribute('aria-valuenow', progress);
-                this.elements.photoProgressText.textContent = `${this.capturedPhotos.length} Photos Taken`;
-                
-                // Change progress bar color based on minimum requirement
-                if (this.capturedPhotos.length >= this.minPhotos) {
-                    this.elements.photoProgress.className = 'progress-bar bg-success';
-                } else {
-                    this.elements.photoProgress.className = 'progress-bar bg-warning';
-                }
-            }
-            
-            updatePhotoGallery() {
-                if (this.capturedPhotos.length === 0) {
-                    this.elements.photoGallery.style.display = 'none';
-                    return;
-                }
-                
-                this.elements.photoGallery.style.display = 'block';
-                this.elements.photoThumbnails.innerHTML = '';
-                
-                this.capturedPhotos.forEach((photo, index) => {
-                    const thumbnail = document.createElement('div');
-                    thumbnail.className = 'photo-thumbnail fade-in';
-                    thumbnail.innerHTML = `
-                        <img src="${photo}" alt="Before Photo ${index + 1}">
-                        <div class="photo-number">${index + 1}</div>
-                        <button class="delete-photo" title="Delete photo ${index + 1}">
-                            <i class="bi bi-x"></i>
-                        </button>
-                    `;
-                    
-                    // Click to view full size
-                    thumbnail.addEventListener('click', (e) => {
-                        if (!e.target.closest('.delete-photo')) {
-                            this.showPhotoModal(index);
-                        }
-                    });
-                    
-                    // Delete photo
-                    thumbnail.querySelector('.delete-photo').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        this.deletePhoto(index);
-                    });
-                    
-                    this.elements.photoThumbnails.appendChild(thumbnail);
-                });
-            }
-            
-            deletePhoto(index) {
-                if (confirm(`Are you sure you want to delete photo ${index + 1}?`)) {
-                    this.capturedPhotos.splice(index, 1);
-                    this.updatePhotoProgress();
-                    this.updatePhotoGallery();
-                    this.validateForm();
-                    this.showToast(`Photo ${index + 1} deleted`, 'info');
-                }
-            }
-            
-            clearAllPhotos() {
-                if (this.capturedPhotos.length === 0) return;
-                
-                if (confirm('Are you sure you want to delete all photos?')) {
-                    this.capturedPhotos = [];
-                    this.updatePhotoProgress();
-                    this.updatePhotoGallery();
-                    this.validateForm();
-                    this.showToast('All photos cleared', 'info');
-                }
-            }
-            
-            showPhotoModal(startIndex = 0) {
-                if (this.capturedPhotos.length === 0) return;
-                
-                this.elements.photoCarousel.innerHTML = '';
-                
-                this.capturedPhotos.forEach((photo, index) => {
-                    const photoDiv = document.createElement('div');
-                    photoDiv.className = 'mb-3';
-                    photoDiv.innerHTML = `
-                        <h6>Before Photo ${index + 1} of ${this.capturedPhotos.length}</h6>
-                        <img src="${photo}" class="carousel-photo" alt="Before Photo ${index + 1}">
-                    `;
-                    this.elements.photoCarousel.appendChild(photoDiv);
-                });
-                
-                const modal = new bootstrap.Modal(this.elements.photoModal);
-                modal.show();
-            }
-            
-            // Form Validation
-            validateForm() {
-                const errors = [];
-                
-                // Check photos (minimum 3 required)
-                if (this.capturedPhotos.length < this.minPhotos) {
-                    errors.push(`Please capture at least ${this.minPhotos} before pictures (${this.capturedPhotos.length}/${this.minPhotos} taken)`);
-                }
-                
-                // Check crew assignment
-                if (this.assignedCrew.length === 0) {
-                    errors.push('Please assign at least one team member');
-                }
-                
-                // Check required fields
-                if (!this.elements.taskDescription.value.trim()) {
-                    errors.push('Task description is required');
-                }
-                
-                if (!this.elements.priority.value) {
-                    errors.push('Priority is required');
-                }
-                
-                if (!this.elements.area.value) {
-                    errors.push('Area is required');
-                }
-                
-                if (!this.elements.dueDate.value) {
-                    errors.push('Due date is required');
-                }
-                
-                // Display validation errors
-                if (errors.length > 0) {
-                    this.elements.validationAlert.classList.remove('d-none');
-                    this.elements.validationMessage.innerHTML = errors.map(error => `• ${error}`).join('<br>');
-                    this.elements.submitTaskBtn.disabled = true;
-                    return false;
-                } else {
-                    this.elements.validationAlert.classList.add('d-none');
-                    this.elements.submitTaskBtn.disabled = false;
-                    return true;
-                }
-            }
-            
-            // Task Management
-            handleTaskSubmit(e) {
-                e.preventDefault();
-                
-                if (!this.validateForm()) {
-                    this.showToast('Please fix the validation errors before submitting', 'warning');
-                    return;
-                }
-                
-                const task = {
-                    id: Date.now(),
-                    description: this.elements.taskDescription.value,
-                    assignedTo: [...this.assignedCrew],
-                    priority: this.elements.priority.value,
-                    area: this.elements.area.value,
-                    dueDate: this.elements.dueDate.value,
-                    finishDate: this.elements.finishDate.value,
-                    status: this.elements.status.value,
-                    beforePhotos: [...this.capturedPhotos], // Store all before photos
-                    createdAt: new Date().toISOString()
-                };
-                
-                this.tasks.push(task);
-                this.saveTasks();
-                this.updateUI();
-                this.resetForm();
-                
-                this.showToast(`Task with ${this.capturedPhotos.length} before pictures added successfully!`, 'success');
-            }
-            
-            resetForm() {
-                this.elements.taskForm.reset();
-                this.capturedPhotos = [];
-                this.assignedCrew = [];
-                this.renderCrewMembers();
-                this.updatePhotoProgress();
-                this.updatePhotoGallery();
-                this.validateForm();
-                
-                this.elements.cameraPlaceholder.style.display = 'flex';
-                this.elements.videoElement.style.display = 'none';
-                this.elements.videoElement.classList.remove('pulse');
-                
-                this.elements.startCameraBtn.disabled = false;
-                this.elements.captureButton.disabled = true;
-                this.elements.stopCameraBtn.disabled = true;
-                
-                if (this.stream) {
-                    this.stream.getTracks().forEach(track => track.stop());
-                    this.stream = null;
-                }
-            }
-            
-            deleteTask(id) {
-                if (confirm('Are you sure you want to delete this task?')) {
-                    this.tasks = this.tasks.filter(task => task.id !== id);
-                    this.saveTasks();
-                    this.updateUI();
-                    this.showToast('Task deleted successfully!', 'success');
-                }
-            }
-            
-            editTask(id) {
-                const task = this.tasks.find(t => t.id === id);
-                if (task) {
-                    // Populate form with task data
-                    this.elements.taskDescription.value = task.description;
-                    this.elements.priority.value = task.priority;
-                    this.elements.area.value = task.area;
-                    this.elements.dueDate.value = task.dueDate;
-                    this.elements.finishDate.value = task.finishDate || '';
-                    this.elements.status.value = task.status;
-                    
-                    this.assignedCrew = [...task.assignedTo];
-                    this.renderCrewMembers();
-                    
-                    // Load before photos
-                    if (task.beforePhotos && task.beforePhotos.length > 0) {
-                        this.capturedPhotos = [...task.beforePhotos];
-                        this.updatePhotoProgress();
-                        this.updatePhotoGallery();
-                    }
-                    
-                    this.validateForm();
-                    
-                    // Remove the task being edited
-                    this.tasks = this.tasks.filter(t => t.id !== id);
-                    this.saveTasks();
-                    this.updateUI();
-                    
-                    // Scroll to form
-                    document.querySelector('.task-form-card').scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'start' 
-                    });
-                    
-                    this.showToast('Task loaded for editing!', 'info');
-                }
-            }
-            
-            // UI Updates
-            updateUI() {
-                this.updateTaskList();
-                this.updateTaskCount();
-                this.updateStats();
-                this.renderTeamMembers();
-            }
-            
-            updateTaskList() {
-                if (this.tasks.length === 0) {
-                    this.elements.emptyTaskMessage.style.display = 'block';
-                    this.elements.taskList.innerHTML = '';
-                    this.elements.taskList.appendChild(this.elements.emptyTaskMessage);
-                    return;
-                }
-                
-                this.elements.emptyTaskMessage.style.display = 'none';
-                
-                // Sort tasks by due date and priority
-                const sortedTasks = [...this.tasks].sort((a, b) => {
-                    const dateA = new Date(a.dueDate);
-                    const dateB = new Date(b.dueDate);
-                    if (dateA.getTime() === dateB.getTime()) {
-                        const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
-                        return priorityOrder[b.priority] - priorityOrder[a.priority];
-                    }
-                    return dateA - dateB;
-                });
-                
-                this.elements.taskList.innerHTML = '';
-                
-                sortedTasks.forEach(task => {
-                    const taskCard = this.createTaskCard(task);
-                    this.elements.taskList.appendChild(taskCard);
-                });
-                
-                this.filterTasks();
-            }
-            
-            createTaskCard(task) {
-                const taskCard = document.createElement('div');
-                taskCard.className = `card task-card mb-3 fade-in ${task.priority.toLowerCase()}-priority`;
-                taskCard.setAttribute('data-status', task.status);
-                taskCard.setAttribute('data-priority', task.priority);
-                
-                // Priority and status classes
-                const priorityClass = this.getPriorityClass(task.priority);
-                const statusClass = this.getStatusClass(task.status);
-                
-                // Format dates
-                const dueDate = new Date(task.dueDate).toLocaleDateString();
-                const finishDate = task.finishDate ? new Date(task.finishDate).toLocaleDateString() : 'Not set';
-                const createdDate = new Date(task.createdAt).toLocaleDateString();
-                
-                // Create before photos HTML
-                const photosHTML = task.beforePhotos && task.beforePhotos.length > 0 ? `
-                    <div class="mb-3">
-                        <small class="text-muted d-block mb-2">
-                            <i class="bi bi-camera me-1"></i>Before Pictures (${task.beforePhotos.length}):
-                        </small>
-                        <div class="task-images">
-                            ${task.beforePhotos.map((photo, index) => 
-                                `<img src="${photo}" class="task-image" alt="Before Photo ${index + 1}" 
-                                      onclick="taskManager.showTaskPhotoModal(${task.id}, ${index})">`
-                            ).join('')}
-                        </div>
-                    </div>
-                ` : '';
-                
-                taskCard.innerHTML = `
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <h6 class="card-title mb-0">${this.escapeHtml(task.description)}</h6>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary border-0" type="button" 
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item" href="#" data-action="edit" data-id="${task.id}">
-                                            <i class="bi bi-pencil me-2"></i>Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item text-danger" href="#" data-action="delete" data-id="${task.id}">
-                                            <i class="bi bi-trash me-2"></i>Delete
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        ${photosHTML}
-                        
-                        <div class="d-flex flex-wrap gap-2 mb-3">
-                            <span class="badge ${priorityClass} status-badge">${task.priority} Priority</span>
-                            <span class="badge ${statusClass} status-badge">${task.status}</span>
-                            <span class="badge bg-info status-badge">${task.area}</span>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <small class="text-muted d-block mb-1">
-                                <i class="bi bi-people me-1"></i>Assigned to:
-                            </small>
-                            <div class="d-flex flex-wrap gap-1">
-                                ${task.assignedTo.map(member => 
-                                    `<span class="crew-member">${this.escapeHtml(member)}</span>`
-                                ).join('')}
-                            </div>
-                        </div>
-                        
-                        <div class="row g-2 small text-muted">
-                            <div class="col-sm-4">
-                                <i class="bi bi-calendar-event me-1"></i>
-                                <strong>Due:</strong> ${dueDate}
-                            </div>
-                            <div class="col-sm-4">
-                                <i class="bi bi-calendar-check me-1"></i>
-                                <strong>Finish:</strong> ${finishDate}
-                            </div>
-                            <div class="col-sm-4">
-                                <i class="bi bi-calendar-plus me-1"></i>
-                                <strong>Created:</strong> ${createdDate}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                // Add event listeners
-                taskCard.addEventListener('click', (e) => {
-                    if (e.target.closest('[data-action]')) {
-                        e.preventDefault();
-                        const action = e.target.closest('[data-action]').getAttribute('data-action');
-                        const id = parseInt(e.target.closest('[data-action]').getAttribute('data-id'));
-                        
-                        if (action === 'edit') {
-                            this.editTask(id);
-                        } else if (action === 'delete') {
-                            this.deleteTask(id);
-                        }
-                    }
-                });
-                
-                return taskCard;
-            }
-            
-            showTaskPhotoModal(taskId, startIndex = 0) {
-                const task = this.tasks.find(t => t.id === taskId);
-                if (!task || !task.beforePhotos || task.beforePhotos.length === 0) return;
-                
-                this.elements.photoCarousel.innerHTML = '';
-                
-                task.beforePhotos.forEach((photo, index) => {
-                    const photoDiv = document.createElement('div');
-                    photoDiv.className = 'mb-3';
-                    photoDiv.innerHTML = `
-                        <h6>Before Photo ${index + 1} of ${task.beforePhotos.length}</h6>
-                        <img src="${photo}" class="carousel-photo" alt="Before Photo ${index + 1}">
-                    `;
-                    this.elements.photoCarousel.appendChild(photoDiv);
-                });
-                
-                const modal = new bootstrap.Modal(this.elements.photoModal);
-                modal.show();
-            }
-            
-            getPriorityClass(priority) {
-                switch (priority) {
-                    case 'High': return 'bg-danger';
-                    case 'Medium': return 'bg-warning text-dark';
-                    case 'Low': return 'bg-success';
-                    default: return 'bg-secondary';
-                }
-            }
-            
-            getStatusClass(status) {
-                switch (status) {
-                    case 'Pending': return 'bg-secondary';
-                    case 'In Progress': return 'bg-primary';
-                    case 'Completed': return 'bg-success';
-                    default: return 'bg-secondary';
-                }
-            }
-            
-            updateTaskCount() {
-                const count = this.tasks.length;
-                this.elements.taskCount.textContent = `${count} ${count === 1 ? 'task' : 'tasks'}`;
-            }
-            
-            updateStats() {
-                const total = this.tasks.length;
-                const pending = this.tasks.filter(task => task.status === 'Pending').length;
-                const inProgress = this.tasks.filter(task => task.status === 'In Progress').length;
-                const completed = this.tasks.filter(task => task.status === 'Completed').length;
-                
-                this.elements.totalTasks.textContent = total;
-                this.elements.pendingTasks.textContent = pending;
-                this.elements.inProgressTasks.textContent = inProgress;
-                this.elements.completedTasks.textContent = completed;
-            }
-            
-            // List Controls
-            showTaskList() {
-                this.elements.taskListContainer.style.display = 'block';
-                this.elements.showListBtn.classList.add('active');
-                this.elements.hideListBtn.classList.remove('active');
-            }
-            
-            hideTaskList() {
-                this.elements.taskListContainer.style.display = 'none';
-                this.elements.hideListBtn.classList.add('active');
-                this.elements.showListBtn.classList.remove('active');
-            }
-            
-            // Filtering
-            filterTasks() {
-                const statusFilter = this.elements.statusFilter.value;
-                const priorityFilter = this.elements.priorityFilter.value;
-                
-                const taskCards = this.elements.taskList.querySelectorAll('.task-card');
-                
-                taskCards.forEach(card => {
-                    const taskStatus = card.getAttribute('data-status');
-                    const taskPriority = card.getAttribute('data-priority');
-                    
-                    const statusMatch = !statusFilter || taskStatus === statusFilter;
-                    const priorityMatch = !priorityFilter || taskPriority === priorityFilter;
-                    
-                    if (statusMatch && priorityMatch) {
-                        card.style.display = 'block';
-                        card.classList.add('fade-in');
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            }
-            
-            // Navigation
-            navigateToSection(section) {
-                const sections = {
-                    'dashboard': () => window.scrollTo({ top: 0, behavior: 'smooth' }),
-                    'tasks': () => document.querySelector('.task-list-card').scrollIntoView({ behavior: 'smooth' }),
-                    'team': () => document.querySelector('.team-section').scrollIntoView({ behavior: 'smooth' }),
-                    'add-task': () => document.querySelector('.task-form-card').scrollIntoView({ behavior: 'smooth' })
-                };
-                
-                if (sections[section]) {
-                    sections[section]();
-                    // Close mobile menu
-                    const offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('mobileMenu'));
-                    if (offcanvas) {
-                        offcanvas.hide();
-                    }
-                }
-            }
-            
-            // PDF Export
-            async exportToPDF() {
-                if (this.tasks.length === 0) {
-                    this.showToast('No tasks to export!', 'warning');
-                    return;
-                }
-                
-                try {
-                    this.showLoading();
-                    
-                    const element = document.createElement('div');
-                    element.className = 'pdf-content';
-                    element.style.cssText = `
-                        background-color: white;
-                        color: black;
-                        padding: 30px;
-                        font-family: Arial, sans-serif;
-                        line-height: 1.6;
-                    `;
-                    
-                    // Create PDF content
-                    let pdfHTML = this.createPDFHeader();
-                    pdfHTML += this.createPDFSummary();
-                    pdfHTML += await this.createPDFTasks();
-                    
-                    element.innerHTML = pdfHTML;
-                    
-                    // PDF generation options
-                    const opt = {
-                        margin: [15, 15, 15, 15],
-                        filename: `cleaning-tasks-${this.storeName.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.pdf`,
-                        image: { type: 'jpeg', quality: 0.95 },
-                        html2canvas: { 
-                            scale: 2,
-                            useCORS: true,
-                            logging: false,
-                            letterRendering: true,
-                            allowTaint: true
-                        },
-                        jsPDF: { 
-                            unit: 'mm', 
-                            format: 'a4', 
-                            orientation: 'portrait',
-                            compress: true
-                        },
-                        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-                    };
-                    
-                    await html2pdf().set(opt).from(element).save();
-                    this.showToast('PDF exported successfully!', 'success');
-                    
-                } catch (error) {
-                    console.error('PDF generation error:', error);
-                    this.showToast('Error generating PDF: ' + error.message, 'danger');
-                } finally {
-                    this.hideLoading();
-                }
-            }
-            
-            createPDFHeader() {
-                return `
-                    <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #e63946; padding-bottom: 20px;">
-                        <div style="font-size: 28px; color: #e63946; margin-bottom: 15px; font-weight: bold;">🍽️ ${this.escapeHtml(this.storeName)}</div>
-                        <h2>Cleaning Task Report</h2>
-                        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #e63946;">
-                            <p><strong>Location:</strong> ${this.escapeHtml(this.storeLocation)}</p>
-                            <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
-                            <p><strong>Total Tasks:</strong> ${this.tasks.length}</p>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            createPDFSummary() {
-                const stats = {
-                    total: this.tasks.length,
-                    pending: this.tasks.filter(t => t.status === 'Pending').length,
-                    inProgress: this.tasks.filter(t => t.status === 'In Progress').length,
-                    completed: this.tasks.filter(t => t.status === 'Completed').length,
-                    high: this.tasks.filter(t => t.priority === 'High').length,
-                    medium: this.tasks.filter(t => t.priority === 'Medium').length,
-                    low: this.tasks.filter(t => t.priority === 'Low').length
-                };
-                
-                const areas = [...new Set(this.tasks.map(t => t.area))];
-                const teamMembers = [...new Set(this.tasks.flatMap(t => t.assignedTo))];
-                const totalPhotos = this.tasks.reduce((sum, task) => sum + (task.beforePhotos ? task.beforePhotos.length : 0), 0);
-                
-                return `
-                    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 30px 0; border: 1px solid #dee2e6;">
-                        <h3>📊 Summary Statistics</h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 20px 0;">
-                            <div>
-                                <h4>Task Status</h4>
-                                <p>✅ Completed: ${stats.completed}</p>
-                                <p>🔄 In Progress: ${stats.inProgress}</p>
-                                <p>⏳ Pending: ${stats.pending}</p>
-                            </div>
-                            <div>
-                                <h4>Priority Levels</h4>
-                                <p style="color: #dc3545; font-weight: bold;">🔴 High: ${stats.high}</p>
-                                <p style="color: #856404; font-weight: bold;">🟡 Medium: ${stats.medium}</p>
-                                <p style="color: #155724; font-weight: bold;">🟢 Low: ${stats.low}</p>
-                            </div>
-                            <div>
-                                <h4>Documentation</h4>
-                                <p>📸 Total Before Photos: ${totalPhotos}</p>
-                                <p>📋 Avg Photos/Task: ${(totalPhotos / stats.total || 0).toFixed(1)}</p>
-                            </div>
-                            <div>
-                                <h4>Areas Covered</h4>
-                                ${areas.map(area => `<p>📍 ${area}</p>`).join('')}
-                            </div>
-                        </div>
-                        <div style="margin-top: 20px;">
-                            <h4>Team Members (${teamMembers.length})</h4>
-                            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                                ${teamMembers.map(member => `<span style="background-color: #e3f2fd; color: #1976d2; padding: 4px 12px; border-radius: 16px; font-size: 14px; border: 1px solid #bbdefb;">${this.escapeHtml(member)}</span>`).join('')}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            async createPDFTasks() {
-                let tasksHTML = '<div><h3>📋 Task Details</h3>';
-                
-                // Sort tasks by priority and due date
-                const sortedTasks = [...this.tasks].sort((a, b) => {
-                    const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
-                    if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
-                        return priorityOrder[b.priority] - priorityOrder[a.priority];
-                    }
-                    return new Date(a.dueDate) - new Date(b.dueDate);
-                });
-                
-                sortedTasks.forEach((task, index) => {
-                    const dueDate = new Date(task.dueDate).toLocaleDateString();
-                    const finishDate = task.finishDate ? new Date(task.finishDate).toLocaleDateString() : 'Not set';
-                    const createdDate = new Date(task.createdAt).toLocaleDateString();
-                    
-                    // Create before photos HTML for PDF
-                    const photosHTML = task.beforePhotos && task.beforePhotos.length > 0 ? `
-                        <div style="margin: 15px 0;">
-                            <p style="font-weight: bold; margin-bottom: 10px;">📸 Before Pictures (${task.beforePhotos.length}):</p>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
-                                ${task.beforePhotos.map((photo, photoIndex) => `
-                                    <div style="text-align: center;">
-                                        <img src="${photo}" style="width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;" alt="Before Photo ${photoIndex + 1}">
-                                        <p style="font-size: 12px; color: #666; margin-top: 5px;">Before Photo ${photoIndex + 1}</p>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : '<p style="color: #999; font-style: italic;">No before photos available for this task</p>';
-                    
-                    tasksHTML += `
-                        <div style="border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 20px; page-break-inside: avoid; background-color: white;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
-                                <h4>Task ${index + 1}: ${this.escapeHtml(task.description)}</h4>
-                                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                                    <span style="color: ${task.priority === 'High' ? '#dc3545' : task.priority === 'Medium' ? '#856404' : '#155724'}; font-weight: bold; background-color: ${task.priority === 'High' ? '#f8d7da' : task.priority === 'Medium' ? '#fff3cd' : '#d4edda'}; padding: 4px 8px; border-radius: 4px;">${task.priority}</span>
-                                    <span style="color: ${task.status === 'Completed' ? '#155724' : task.status === 'In Progress' ? '#004085' : '#6c757d'}; background-color: ${task.status === 'Completed' ? '#d4edda' : task.status === 'In Progress' ? '#cce7ff' : '#f8f9fa'}; padding: 4px 8px; border-radius: 4px;">${task.status}</span>
-                                </div>
-                            </div>
-                            
-                            ${photosHTML}
-                            
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
-                                <div>
-                                    <span style="font-weight: bold; color: #495057; font-size: 14px; margin-bottom: 4px; display: block;">📍 Area</span>
-                                    <span style="color: #212529; font-size: 14px;">${task.area}</span>
-                                </div>
-                                <div>
-                                    <span style="font-weight: bold; color: #495057; font-size: 14px; margin-bottom: 4px; display: block;">📅 Due Date</span>
-                                    <span style="color: #212529; font-size: 14px;">${dueDate}</span>
-                                </div>
-                                <div>
-                                    <span style="font-weight: bold; color: #495057; font-size: 14px; margin-bottom: 4px; display: block;">✅ Finish Date</span>
-                                    <span style="color: #212529; font-size: 14px;">${finishDate}</span>
-                                </div>
-                                <div>
-                                    <span style="font-weight: bold; color: #495057; font-size: 14px; margin-bottom: 4px; display: block;">📝 Created</span>
-                                    <span style="color: #212529; font-size: 14px;">${createdDate}</span>
-                                </div>
-                            </div>
-                            
-                            <div style="margin-top: 15px;">
-                                <span style="font-weight: bold; color: #495057; font-size: 14px; margin-bottom: 4px; display: block;">👥 Assigned Team Members:</span>
-                                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
-                                    ${task.assignedTo.map(member => 
-                                        `<span style="background-color: #e3f2fd; color: #1976d2; padding: 4px 12px; border-radius: 16px; font-size: 14px; border: 1px solid #bbdefb;">${this.escapeHtml(member)}</span>`
-                                    ).join('')}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                tasksHTML += '</div>';
-                return tasksHTML;
-            }
-            
-            // Utility Functions
-            showLoading() {
-                this.elements.loadingOverlay.style.display = 'flex';
-            }
-            
-            hideLoading() {
-                this.elements.loadingOverlay.style.display = 'none';
-            }
-            
-            showToast(message, type = 'info') {
-                const toastElement = this.elements.liveToast;
-                const toastMessage = this.elements.toastMessage;
-                
-                // Update toast content
-                toastMessage.textContent = message;
-                
-                // Update toast styling based on type
-                const header = toastElement.querySelector('.toast-header');
-                const icon = header.querySelector('i');
-                
-                // Reset classes
-                icon.className = 'me-2';
-                header.className = 'toast-header';
-                
-                switch (type) {
-                    case 'success':
-                        icon.classList.add('bi', 'bi-check-circle', 'text-success');
-                        break;
-                    case 'danger':
-                        icon.classList.add('bi', 'bi-exclamation-triangle', 'text-danger');
-                        break;
-                    case 'warning':
-                        icon.classList.add('bi', 'bi-exclamation-circle', 'text-warning');
-                        break;
-                    default:
-                        icon.classList.add('bi', 'bi-info-circle', 'text-primary');
-                }
-                
-                // Show toast
-                const toast = new bootstrap.Toast(toastElement);
-                toast.show();
-            }
-            
-            showDataStatus(message, type) {
-                this.elements.dataStatus.querySelector('span').textContent = message;
-                this.elements.dataStatus.style.display = 'flex';
-                
-                setTimeout(() => {
-                    this.elements.dataStatus.style.display = 'none';
-                }, 2000);
-            }
-            
-            escapeHtml(text) {
-                const map = {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#039;'
-                };
-                return text.replace(/[&<>"']/g, m => map[m]);
-            }
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // ======================== TRANSLATIONS ========================
+    const translations = {
+        en: {
+            titleMain: "Sales Performance Dashboard", subtitleCurrency: "Real-time tracking · SAR currency",
+            cardLastMonthTotal: "LAST MONTH TOTAL", cardCurrentMTD: "CURRENT MTD (Actual)", cardMTDTarget: "MTD TARGET",
+            cardMTDAchievement: "MTD ACHIEVEMENT", cardGrossUptoyesterday: "GROSS (UP TO YESTERDAY)", cardGrowth: "YOY GROWTH",
+            forecastTitle: "FORECAST & COMPARATIVE ANALYSIS", tableHeader: "DAILY PERFORMANCE · Input mode",
+            colDay: "DAY", colSales: "SALES (SAR)", colTarget: "TARGET (SAR)", colLastYear: "LAST YR (SAR)",
+            colTC: "TC%", colAC: "A.C", colACH: "ACH%", colGrowth: "GROWTH%", colAvg: "AVG%",
+            totalLabel: "TOTAL", exportBtnText: "Export PDF", clearBtnText: "Clear All Data", periodLabel: "PERIOD:"
+        },
+        ar: {
+            titleMain: "لوحة أداء المبيعات", subtitleCurrency: "تتبع فوري · عملة الريال السعودي",
+            cardLastMonthTotal: "إجمالي الشهر الماضي", cardCurrentMTD: "شهر جاري (فعلي)", cardMTDTarget: "هدف الشهر الجاري",
+            cardMTDAchievement: "تحقيق الشهر الجاري", cardGrossUptoyesterday: "الإجمالي حتى أمس", cardGrowth: "نمو سنوي",
+            forecastTitle: "التوقعات والتحليل المقارن", tableHeader: "الأداء اليومي · وضع الإدخال",
+            colDay: "اليوم", colSales: "المبيعات (ريال)", colTarget: "الهدف (ريال)", colLastYear: "العام الماضي (ريال)",
+            colTC: "نسبة التكلفة", colAC: "أداء التكلفة", colACH: "نسبة الإنجاز", colGrowth: "نسبة النمو", colAvg: "المتوسط",
+            totalLabel: "الإجمالي", exportBtnText: "تصدير PDF", clearBtnText: "مسح جميع البيانات", periodLabel: "الفترة:"
         }
+    };
+    let currentLang = "en";
+    
+    function updateLanguage() {
+        const t = translations[currentLang];
+        document.getElementById("titleMain").innerText = t.titleMain;
+        document.getElementById("subtitleCurrency").innerText = t.subtitleCurrency;
+        document.getElementById("cardLastMonthTotal").innerText = t.cardLastMonthTotal;
+        document.getElementById("cardCurrentMTD").innerText = t.cardCurrentMTD;
+        document.getElementById("cardMTDTarget").innerText = t.cardMTDTarget;
+        document.getElementById("cardMTDAchievement").innerText = t.cardMTDAchievement;
+        document.getElementById("cardGrossUptoyesterday").innerText = t.cardGrossUptoyesterday;
+        document.getElementById("cardGrowth").innerText = t.cardGrowth;
+        document.getElementById("forecastTitle").innerHTML = `<i class="fas fa-chart-line me-2"></i> ${t.forecastTitle}`;
+        document.getElementById("tableHeader").innerHTML = `<i class="fas fa-table me-2"></i> ${t.tableHeader}`;
+        document.getElementById("colDay").innerText = t.colDay;
+        document.getElementById("colSales").innerText = t.colSales;
+        document.getElementById("colTarget").innerText = t.colTarget;
+        document.getElementById("colLastYear").innerText = t.colLastYear;
+        document.getElementById("colTC").innerText = t.colTC;
+        document.getElementById("colAC").innerText = t.colAC;
+        document.getElementById("colACH").innerText = t.colACH;
+        document.getElementById("colGrowth").innerText = t.colGrowth;
+        document.getElementById("colAvg").innerText = t.colAvg;
+        document.getElementById("totalLabel").innerHTML = `<strong>${t.totalLabel}</strong>`;
+        document.getElementById("exportBtnText").innerText = t.exportBtnText;
+        document.getElementById("clearBtnText").innerText = t.clearBtnText;
+        document.getElementById("periodLabel").innerText = t.periodLabel;
+        document.documentElement.setAttribute("dir", currentLang === "ar" ? "rtl" : "ltr");
+        document.body.style.textAlign = currentLang === "ar" ? "right" : "left";
+        renderDashboard();
+    }
 
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', () => {
-            window.taskManager = new TaskManager();
-        });
+    // ======================== DATA STORAGE ========================
+    const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    let currentMonth = "January";
+    let salesData = {}, targetData = {}, lastYearData = {}, tcData = {}, acData = {}, achievedData = {}, growthData = {}, averageData = {};
+    let chart = null;
 
-        // Handle page visibility changes to manage camera
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden && window.taskManager && window.taskManager.stream) {
-                // Stop camera when page is hidden
-                window.taskManager.stopCamera();
-            }
-        });
+    months.forEach(m => {
+        salesData[m] = JSON.parse(localStorage.getItem(`salesData_${m}`)) || Array(30).fill('');
+        targetData[m] = JSON.parse(localStorage.getItem(`targetData_${m}`)) || Array(30).fill('');
+        lastYearData[m] = JSON.parse(localStorage.getItem(`lastYearData_${m}`)) || Array(30).fill('');
+        tcData[m] = JSON.parse(localStorage.getItem(`tcData_${m}`)) || Array(30).fill('');
+        acData[m] = JSON.parse(localStorage.getItem(`acData_${m}`)) || Array(30).fill('');
+        achievedData[m] = JSON.parse(localStorage.getItem(`achievedData_${m}`)) || Array(30).fill('');
+        growthData[m] = JSON.parse(localStorage.getItem(`growthData_${m}`)) || Array(30).fill('');
+        averageData[m] = JSON.parse(localStorage.getItem(`averageData_${m}`)) || Array(30).fill('');
+    });
 
-        // Handle orientation changes on mobile
-        window.addEventListener('orientationchange', () => {
-            setTimeout(() => {
-                if (window.taskManager) {
-                    window.taskManager.updateUI();
-                }
-            }, 100);
-        });
-    </script>
+    function formatSAR(val) { return Math.round(val).toLocaleString(); }
+    function calculateAC(sales, tc) { return tc > 0 ? sales / tc : 0; }
+    function saveData() { months.forEach(m => { localStorage.setItem(`salesData_${m}`, JSON.stringify(salesData[m])); localStorage.setItem(`targetData_${m}`, JSON.stringify(targetData[m])); localStorage.setItem(`lastYearData_${m}`, JSON.stringify(lastYearData[m])); localStorage.setItem(`tcData_${m}`, JSON.stringify(tcData[m])); }); }
+
+    function generateTable() {
+        const tbody = $("#sales-table-body"); tbody.empty();
+        for (let i = 1; i <= 30; i++) {
+            tbody.append(`<tr><td>${i}</td><td><input type="number" class="sales-input" id="sales-${i}" value="${salesData[currentMonth][i-1] || ''}" placeholder="0"></td>
+                <td><input type="number" class="sales-input" id="target-${i}" value="${targetData[currentMonth][i-1] || ''}" placeholder="0"></td>
+                <td><input type="number" class="sales-input" id="lastYear-${i}" value="${lastYearData[currentMonth][i-1] || ''}" placeholder="0"></td>
+                <td><input type="number" class="sales-input" id="tc-${i}" value="${tcData[currentMonth][i-1] || ''}" placeholder="0" min="0" max="100"></td>
+                <td class="result-cell" id="ac-${i}">0</td><td class="result-cell" id="achieved-${i}">0%</td>
+                <td class="result-cell" id="growth-${i}">0%</td><td class="result-cell" id="average-${i}">0%</td></tr>`);
+        }
+    }
+
+    function calculateDailyForecast(today, salesArray, targetArray) {
+        let achievementHistory = [];
+        for (let i = 1; i < today && i <= 30; i++) {
+            const target = parseFloat(targetArray[i-1]) || 0;
+            const sales = parseFloat(salesArray[i-1]) || 0;
+            if (target > 0) achievementHistory.push((sales / target) * 100);
+        }
+        if (achievementHistory.length === 0) return null;
+        const recentDays = achievementHistory.slice(-5);
+        const trendWeight = recentDays.reduce((a,b) => a + b, 0) / recentDays.length;
+        const overallAvg = achievementHistory.reduce((a,b) => a + b, 0) / achievementHistory.length;
+        const forecastAchievement = (trendWeight * 0.7 + overallAvg * 0.3);
+        const todayTarget = parseFloat(targetArray[today-1]) || 0;
+        const forecastSales = (forecastAchievement / 100) * todayTarget;
+        return { forecastSales, forecastAchievement, avgAch: overallAvg, trendAch: trendWeight };
+    }
+
+    function renderDashboard() {
+        let totalSales = 0, totalTarget = 0, totalLastYear = 0, totalTC = 0, totalAC = 0, totalAchieved = 0, totalGrowth = 0, totalAverage = 0, validDays = 0;
+        const today = new Date().getDate();
+        for (let i = 1; i <= 30; i++) {
+            const sales = parseFloat($(`#sales-${i}`).val()) || 0;
+            const target = parseFloat($(`#target-${i}`).val()) || 0;
+            const lastYear = parseFloat($(`#lastYear-${i}`).val()) || 0;
+            const tc = parseFloat($(`#tc-${i}`).val()) || 0;
+            const ac = calculateAC(sales, tc);
+            const achieved = target > 0 ? (sales / target) * 100 : 0;
+            const growth = lastYear > 0 ? ((sales - lastYear) / lastYear) * 100 : 0;
+            const avg = (ac + growth) / 2;
+            $(`#ac-${i}`).text(ac.toFixed(1)).removeClass('text-success text-warning text-danger').addClass(ac >= 20 ? 'text-success' : ac >= 10 ? 'text-warning' : 'text-danger');
+            $(`#achieved-${i}`).text(achieved.toFixed(1) + '%').removeClass('text-success text-warning text-danger').addClass(achieved >= 105 ? 'text-success' : achieved >= 100 ? 'text-warning' : 'text-danger');
+            $(`#growth-${i}`).text(growth.toFixed(1) + '%').removeClass('text-success text-warning text-danger').addClass(growth > 0 ? 'text-success' : growth === 0 ? 'text-warning' : 'text-danger');
+            salesData[currentMonth][i-1] = sales; targetData[currentMonth][i-1] = target; lastYearData[currentMonth][i-1] = lastYear; tcData[currentMonth][i-1] = tc;
+            acData[currentMonth][i-1] = ac; achievedData[currentMonth][i-1] = achieved; growthData[currentMonth][i-1] = growth; averageData[currentMonth][i-1] = avg;
+            if (sales || target || lastYear || tc) { totalSales += sales; totalTarget += target; totalLastYear += lastYear; totalTC += tc; totalAC += ac; totalAchieved += achieved; totalGrowth += growth; totalAverage += avg; validDays++; }
+        }
+        saveData();
+
+        // Calculate MTD up to yesterday (excluding today)
+        const yesterday = today > 1 ? today - 1 : 30;
+        let mtdSales = 0, mtdTarget = 0, mtdLastYear = 0;
+        for (let i = 1; i <= yesterday; i++) { mtdSales += parseFloat(salesData[currentMonth][i-1]) || 0; mtdTarget += parseFloat(targetData[currentMonth][i-1]) || 0; mtdLastYear += parseFloat(lastYearData[currentMonth][i-1]) || 0; }
+        
+        // Last Month Total
+        const prevMonthIndex = months.indexOf(currentMonth) - 1;
+        let lastMonthTotal = 0;
+        if (prevMonthIndex >= 0) { const prevMonth = months[prevMonthIndex]; for (let i = 0; i < 30; i++) lastMonthTotal += parseFloat(salesData[prevMonth][i]) || 0; }
+        
+        const mtdAchRate = mtdTarget > 0 ? (mtdSales / mtdTarget) * 100 : 0;
+        const yoyGrowth = mtdLastYear > 0 ? ((mtdSales - mtdLastYear) / mtdLastYear) * 100 : 0;
+        
+        document.getElementById("lastMonthTotal").innerHTML = `SAR ${formatSAR(lastMonthTotal)}`;
+        document.getElementById("currentMTDActual").innerHTML = `SAR ${formatSAR(mtdSales)}`;
+        document.getElementById("mtdTarget").innerHTML = `SAR ${formatSAR(mtdTarget)}`;
+        document.getElementById("achievementRate").innerHTML = `${mtdAchRate.toFixed(1)}%`;
+        document.getElementById("grossUptoyesterday").innerHTML = `SAR ${formatSAR(mtdSales)}`;
+        document.getElementById("growthRate").innerHTML = `${yoyGrowth >= 0 ? '+' : ''}${yoyGrowth.toFixed(1)}%`;
+        document.getElementById("targetProgress").style.width = `${Math.min((mtdTarget / (totalTarget || 1)) * 100, 100)}%`;
+        document.getElementById("achProgress").style.width = `${Math.min(mtdAchRate, 100)}%`;
+        
+        // Totals row
+        $("#total-sales").html(`SAR ${formatSAR(totalSales)}`); $("#total-target").html(`SAR ${formatSAR(totalTarget)}`); $("#total-lastyear").html(`SAR ${formatSAR(totalLastYear)}`);
+        const avgTC = validDays ? totalTC / validDays : 0; $("#total-tc").text(avgTC.toFixed(1) + '%');
+        const avgAC = validDays ? totalAC / validDays : 0; $("#total-ac").text(avgAC.toFixed(1));
+        const avgAch = validDays ? totalAchieved / validDays : 0; $("#total-achieved").text(avgAch.toFixed(1) + '%');
+        const avgGr = validDays ? totalGrowth / validDays : 0; $("#total-growth").text(avgGr.toFixed(1) + '%');
+        const avgAvg = validDays ? totalAverage / validDays : 0; $("#total-average").text(avgAvg.toFixed(1) + '%');
+        
+        // Daily Forecast based on achievement trends
+        const forecast = calculateDailyForecast(today, salesData[currentMonth], targetData[currentMonth]);
+        let forecastHtml = `<div class="notification-item forecast-item"><strong><i class="fas fa-chart-simple me-2"></i>${currentLang === 'en' ? 'TODAY\'S SALES FORECAST' : 'توقعات مبيعات اليوم'}</strong><div class="mt-2">`;
+        if (forecast) {
+            const status = forecast.forecastAchievement >= 100 ? 'text-success' : forecast.forecastAchievement >= 85 ? 'text-warning' : 'text-danger';
+            forecastHtml += `<div class="d-flex justify-content-between"><span>${currentLang === 'en' ? 'Predicted Sales' : 'المبيعات المتوقعة'}:</span><strong class="${status}">SAR ${formatSAR(forecast.forecastSales)}</strong></div>`;
+            forecastHtml += `<div class="d-flex justify-content-between mt-1"><span>${currentLang === 'en' ? 'Expected Achievement' : 'الإنجاز المتوقع'}:</span><strong class="${status}">${forecast.forecastAchievement.toFixed(1)}%</strong></div>`;
+            forecastHtml += `<div class="small text-muted mt-2">📊 ${currentLang === 'en' ? 'Based on' : 'بناءً على'} ${forecast.avgAch.toFixed(1)}% ${currentLang === 'en' ? 'avg achievement (last days trend' : 'متوسط الإنجاز (اتجاه الأيام الأخيرة'} ${forecast.trendAch.toFixed(1)}%)</div>`;
+        } else { forecastHtml += `<div class="text-warning">⚠️ ${currentLang === 'en' ? 'Insufficient data for forecast. Enter previous days targets and sales.' : 'بيانات غير كافية للتوقعات. أدخل أهداف ومبيعات الأيام السابقة.'}</div>`; }
+        forecastHtml += `</div></div>`;
+        document.getElementById("dailyForecastContainer").innerHTML = forecastHtml;
+        
+        // Comparison Section: Last Month vs Current MTD vs Projected
+        const totalMonthlyTarget = totalTarget;
+        const remainingTarget = totalMonthlyTarget - mtdTarget;
+        const avgAchievement = mtdTarget > 0 ? (mtdSales / mtdTarget) * 100 : 100;
+        const projectedEndMonth = mtdSales + (remainingTarget * (avgAchievement / 100));
+        const projectedAchievement = totalMonthlyTarget > 0 ? (projectedEndMonth / totalMonthlyTarget) * 100 : 0;
+        
+        const comparisonHtml = `<div class="notification-item comparison-item"><strong><i class="fas fa-chart-line me-2"></i>${currentLang === 'en' ? 'MONTHLY COMPARISON' : 'مقارنة شهرية'}</strong>
+            <div class="row mt-2"><div class="col-6"><small>${currentLang === 'en' ? 'Last Month Total' : 'إجمالي الشهر الماضي'}</small><br><strong>SAR ${formatSAR(lastMonthTotal)}</strong></div>
+            <div class="col-6"><small>${currentLang === 'en' ? 'Current MTD (up to yesterday)' : 'الشهر الجاري حتى أمس'}</small><br><strong>SAR ${formatSAR(mtdSales)}</strong></div>
+            <div class="col-6 mt-2"><small>${currentLang === 'en' ? 'Projected Month-End' : 'متوقع نهاية الشهر'}</small><br><strong class="${projectedAchievement >= 100 ? 'text-success' : 'text-warning'}">SAR ${formatSAR(projectedEndMonth)}</strong></div>
+            <div class="col-6 mt-2"><small>${currentLang === 'en' ? 'Projected Achievement' : 'الإنجاز المتوقع'}</small><br><strong class="${projectedAchievement >= 100 ? 'text-success' : 'text-warning'}">${projectedAchievement.toFixed(1)}%</strong></div></div>
+            <div class="progress mt-2"><div class="progress-bar" style="width:${Math.min(projectedAchievement, 100)}%"></div></div></div>`;
+        document.getElementById("comparisonContainer").innerHTML = comparisonHtml;
+        
+        // Trend analysis
+        const trendMsg = projectedAchievement >= 105 ? (currentLang === 'en' ? '✓ EXCELLENT: On track to exceed target' : '✓ ممتاز: على الطريق لتجاوز الهدف') : 
+                        projectedAchievement >= 100 ? (currentLang === 'en' ? '⚠ GOOD: On track to achieve target' : '⚠ جيد: على الطريق لتحقيق الهدف') :
+                        (currentLang === 'en' ? '⚠ CAUTION: Below target trajectory. Action recommended.' : '⚠ تحذير: أقل من مسار الهدف. يوصى باتخاذ إجراء.');
+        document.getElementById("trendAnalysis").innerHTML = `<div class="d-flex align-items-center gap-2"><i class="fas fa-${projectedAchievement >= 100 ? 'check-circle text-success' : 'exclamation-triangle text-warning'}"></i><strong>${trendMsg}</strong></div><div class="small text-muted mt-1">${currentLang === 'en' ? 'Based on current MTD achievement and historical trends' : 'بناءً على إنجاز الشهر الجاري والاتجاهات التاريخية'}</div>`;
+        
+        updateChart();
+    }
+
+    function updateChart() {
+        const ctx = document.getElementById("performance-chart").getContext("2d");
+        if (chart) chart.destroy();
+        chart = new Chart(ctx, { type: "line", data: { labels: Array.from({ length: 30 }, (_, i) => `D${i + 1}`), datasets: [
+            { label: "ACH %", data: achievedData[currentMonth], borderColor: "#2563eb", borderWidth: 2, tension: 0.3, pointRadius: 2, fill: false },
+            { label: "Growth %", data: growthData[currentMonth], borderColor: "#10b981", borderWidth: 2, tension: 0.3, pointRadius: 2, fill: false, yAxisID: 'y1' }
+        ] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 }, color: getComputedStyle(document.body).getPropertyValue('--gray-600') } } }, scales: { y1: { position: 'right', ticks: { callback: v => v + '%' } } } } });
+    }
+
+    async function exportToPDF() { const { jsPDF } = window.jspdf; const pdf = new jsPDF('landscape'); pdf.setFontSize(16); pdf.setTextColor(37, 99, 235); pdf.text(`SALES REPORT - ${currentMonth} (SAR)`, 14, 15); pdf.setFontSize(9); pdf.setTextColor(107, 114, 128); pdf.text(`Generated: ${new Date().toLocaleString()}`, 14, 22); pdf.autoTable({ html: '#sales-table-body', startY: 30, head: [['DAY', 'SALES', 'TARGET', 'LAST YR', 'TC%', 'AC', 'ACH%', 'GROWTH%', 'AVG%']] }); pdf.save(`${currentMonth}_Sales_Report.pdf`); }
+    function clearAllData() { if (confirm("⚠️ Delete all data for this month?")) { salesData[currentMonth] = Array(30).fill(''); targetData[currentMonth] = Array(30).fill(''); lastYearData[currentMonth] = Array(30).fill(''); tcData[currentMonth] = Array(30).fill(''); saveData(); generateTable(); renderDashboard(); } }
+
+    $("#month-select").on("change", function() { currentMonth = $(this).val(); generateTable(); renderDashboard(); });
+    $(document).on("input", ".sales-input", renderDashboard);
+    $("#clearAll").on("click", clearAllData);
+    $("#exportPdf").on("click", exportToPDF);
+    $(document).ready(() => { generateTable(); renderDashboard(); });
+    
+    // Language & Theme
+    document.getElementById("langEn").addEventListener("click", () => { currentLang = "en"; document.getElementById("langEn").classList.add("active"); document.getElementById("langAr").classList.remove("active"); updateLanguage(); });
+    document.getElementById("langAr").addEventListener("click", () => { currentLang = "ar"; document.getElementById("langAr").classList.add("active"); document.getElementById("langEn").classList.remove("active"); updateLanguage(); });
+    let isDark = localStorage.getItem('sadwapTheme') === 'dark';
+    function applyTheme() { if (isDark) { document.body.classList.add('dark'); document.getElementById('themeIcon').className = 'fas fa-sun'; document.getElementById('themeText').innerText = 'Light Mode'; } else { document.body.classList.remove('dark'); document.getElementById('themeIcon').className = 'fas fa-moon'; document.getElementById('themeText').innerText = 'Dark Mode'; } if (chart) updateChart(); }
+    applyTheme();
+    document.getElementById('themeToggle').addEventListener('click', () => { isDark = !isDark; localStorage.setItem('sadwapTheme', isDark ? 'dark' : 'light'); applyTheme(); });
+    updateLanguage();
+</script>
 </body>
 </html>
