@@ -1,547 +1,487 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KUDU · T-800 NEXUS · STABILIZED MATRIX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>SADWAP | Corporate Phone Book</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        /* ========== T-800 NEXUS CORE ========== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #1e4a76;
+            --primary-dark: #0f3b5c;
+            --primary-soft: #eef2f8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --card-bg: #ffffff;
+            --border: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --radius-card: 20px;
+            --radius-element: 12px;
+            --touch-target: 44px;
+        }
+
+        body.dark {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-soft: #1e293b;
+            --gray-50: #0f172a;
+            --gray-100: #1e293b;
+            --gray-200: #334155;
+            --gray-500: #94a3b8;
+            --gray-600: #cbd5e1;
+            --gray-700: #e2e8f0;
+            --gray-800: #f1f5f9;
+            --card-bg: #1e293b;
+            --border: #334155;
         }
 
         body {
-            background: #020208;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-800);
+            transition: background 0.2s, color 0.2s;
+            padding: 20px;
             min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            padding: 1.2rem;
-            font-family: 'Share Tech Mono', 'Courier New', monospace;
-            position: relative;
-            overflow-x: hidden;
+            flex-wrap: wrap;
+            gap: 16px;
         }
+        .logo-area h1 { font-size: 1.5rem; font-weight: 700; margin: 0; color: var(--primary); }
+        .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .lang-switch { display: flex; gap: 6px; background: var(--gray-200); padding: 4px; border-radius: 40px; }
+        .lang-btn { background: transparent; border: none; padding: 6px 18px; border-radius: 32px; font-weight: 600; font-size: 0.75rem; cursor: pointer; color: var(--gray-600); transition: all 0.2s; }
+        .lang-btn.active { background: var(--primary); color: white; }
+        .theme-toggle { background: var(--gray-200); border: none; border-radius: 40px; padding: 6px 18px; display: flex; align-items: center; gap: 6px; color: var(--gray-700); font-weight: 500; font-size: 0.75rem; cursor: pointer; }
 
-        /* Modernized grid – nano mesh */
-        body::before {
-            content: "";
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 16px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 0.7rem; text-transform: uppercase; color: var(--gray-500); letter-spacing: 0.5px; }
+
+        /* Add Contact Form */
+        .form-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+        .form-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: var(--primary); }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px; }
+        .form-control {
+            background: var(--gray-50);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            color: var(--gray-800);
+            width: 100%;
+            min-height: var(--touch-target);
+        }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30,74,118,0.1); }
+        .btn { border-radius: 40px; padding: 12px 24px; font-weight: 600; font-size: 0.8rem; border: none; cursor: pointer; transition: opacity 0.2s; min-height: var(--touch-target); display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:active { opacity: 0.8; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-outline { background: var(--gray-100); border: 1px solid var(--border); color: var(--gray-700); }
+
+        /* Search */
+        .search-bar { margin-bottom: 20px; }
+        .search-input { width: 100%; padding: 14px 20px; border-radius: 40px; border: 1px solid var(--border); background: var(--card-bg); color: var(--gray-800); font-size: 0.9rem; }
+
+        /* Contact Grid */
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .contact-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .contact-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .contact-name { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+        .contact-job { font-size: 0.75rem; color: var(--gray-500); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+        .contact-detail { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 0.8rem; }
+        .contact-detail i { width: 24px; color: var(--primary); font-size: 1rem; }
+        .contact-detail a { color: var(--gray-700); text-decoration: none; word-break: break-all; }
+        .contact-detail a:hover { color: var(--primary); text-decoration: underline; }
+        .contact-actions { display: flex; gap: 8px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
+        .action-btn { background: none; border: none; padding: 8px 12px; border-radius: 40px; cursor: pointer; font-size: 0.7rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s; }
+        .action-btn.call { background: var(--success); color: white; }
+        .action-btn.email { background: var(--primary); color: white; }
+        .action-btn.delete { background: var(--danger); color: white; }
+        .action-btn:active { opacity: 0.8; }
+
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--gray-500); }
+
+        /* Toast */
+        .toast-notify {
             position: fixed;
-            inset: 0;
-            background: 
-                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(0deg, rgba(255, 64, 255, 0.05) 1px, transparent 1px);
-            background-size: 45px 45px;
-            pointer-events: none;
-            z-index: 0;
-            animation: gridStabilized 12s infinite alternate ease-in-out;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border-left: 4px solid var(--success);
+            padding: 12px 16px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            z-index: 1100;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
-        @keyframes gridStabilized {
-            0% { opacity: 0.25; background-size: 45px 45px; filter: blur(0.5px); }
-            100% { opacity: 0.7; background-size: 50px 50px; filter: blur(0px); }
-        }
-
-        /* Refined scanning beams – smoother gradients */
-        .laser-scanner {
+        /* Modal */
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 2;
-            overflow: hidden;
-        }
-
-        .beam-horizontal {
-            position: absolute;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, #00ffff, #ff40ff, #00ffff, transparent);
-            filter: blur(5px) drop-shadow(0 0 25px cyan);
-            top: 30%;
-            animation: sweepSmooth 12s cubic-bezier(0.45, 0.05, 0.2, 0.99) infinite;
-            opacity: 0.6;
-            box-shadow: 0 0 40px #0ff, 0 0 80px #f0f;
-        }
-
-        .beam-vertical {
-            position: absolute;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, transparent, #00ffaa, #ff40c0, #00ffaa, transparent);
-            filter: blur(5px) drop-shadow(0 0 30px #0ff);
-            left: 50%;
-            animation: sweepVerticalSmooth 15s cubic-bezier(0.3, 0.8, 0.2, 1) infinite;
-            opacity: 0.5;
-            box-shadow: 0 0 50px #0ff, 0 0 90px #ff40ff;
-        }
-
-        @keyframes sweepSmooth {
-            0% { top: 0%; opacity: 0.2; filter: blur(8px); }
-            25% { top: 30%; opacity: 0.9; filter: blur(3px); }
-            50% { top: 70%; opacity: 0.8; filter: blur(2px); }
-            75% { top: 40%; opacity: 0.9; filter: blur(3px); }
-            100% { top: 0%; opacity: 0.2; filter: blur(8px); }
-        }
-
-        @keyframes sweepVerticalSmooth {
-            0% { left: 0%; opacity: 0.2; filter: blur(8px); }
-            33% { left: 45%; opacity: 1; filter: blur(2px); }
-            66% { left: 80%; opacity: 0.9; filter: blur(3px); }
-            100% { left: 0%; opacity: 0.2; filter: blur(8px); }
-        }
-
-        /* Main container – modern crystal armor */
-        .cyber-container {
-            max-width: 1600px;
-            width: 100%;
-            background: rgba(0, 8, 18, 0.65);
-            backdrop-filter: blur(16px) brightness(1.3);
-            border: 2px solid rgba(0, 255, 255, 0.5);
-            border-radius: 48px 16px 48px 16px;
-            box-shadow: 0 0 100px rgba(0, 255, 255, 0.4), inset 0 0 80px rgba(255, 64, 255, 0.25);
-            padding: 2.2rem 2rem;
-            position: relative;
-            z-index: 10;
-            transition: box-shadow 0.4s;
-        }
-
-        .cyber-container:hover {
-            box-shadow: 0 0 140px rgba(0, 255, 255, 0.7), inset 0 0 100px rgba(255, 64, 255, 0.4);
-        }
-
-        /* HUD header – sharp & modern */
-        .hud-header {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            display: none;
             align-items: center;
-            border-bottom: 2px solid #0ff;
-            padding-bottom: 1rem;
-            margin-bottom: 2.2rem;
-            color: #e0ffff;
-            text-shadow: 0 0 15px cyan, 0 0 35px magenta;
-            font-family: 'Orbitron', 'Courier New', monospace;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 24px;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid var(--border);
+        }
+        .modal-content h3 { margin-bottom: 16px; }
+        .modal-buttons { display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end; }
+
+        @media (max-width: 640px) {
+            body { padding: 12px; }
+            .contacts-grid { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
         }
 
-        .hud-title {
-            font-size: 2.6rem;
-            font-weight: 900;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            background: linear-gradient(135deg, #0ff, #ff80ff, #0ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px #0ff);
-        }
-
-        .hud-title span {
-            font-size: 1.8rem;
-            background: none;
-            -webkit-text-fill-color: #ff88ff;
-            filter: drop-shadow(0 0 15px magenta);
-        }
-
-        .target-counter {
-            background: rgba(17, 0, 34, 0.7);
-            border: 2px solid #ff66ff;
-            padding: 0.5rem 2.2rem;
-            border-radius: 60px;
-            font-size: 1.6rem;
-            color: #00ffea;
-            box-shadow: 0 0 40px #00ffff, inset 0 0 15px cyan;
-            backdrop-filter: blur(12px);
-            font-weight: 600;
-        }
-
-        /* Personnel grid – modern glass cards */
-        .personnel-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2rem;
-            perspective: 1000px;
-        }
-
-        /* Card – stabilized laser target */
-        .target-card {
-            background: rgba(8, 15, 25, 0.55);
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(0, 255, 255, 0.4);
-            border-radius: 32px;
-            padding: 2rem 1.8rem;
-            box-shadow: 0 25px 40px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 0, 255, 0.2) inset, 0 0 30px rgba(0, 255, 255, 0.2);
-            transform: rotateX(1deg) rotateY(0.2deg);
-            transition: all 0.3s cubic-bezier(0.2, 1, 0.3, 1);
-            color: #d0f0ff;
-            position: relative;
-            isolation: isolate;
-        }
-
-        .target-card:hover {
-            transform: rotateX(0deg) scale(1.02) translateY(-8px);
-            border-color: #ff40ff;
-            box-shadow: 0 0 50px #ff40ff, 0 0 100px cyan, inset 0 0 40px magenta;
-        }
-
-        /* Laser dot – refined */
-        .target-card::before {
-            content: "";
-            position: absolute;
-            top: 16px;
-            right: 20px;
-            width: 14px;
-            height: 14px;
-            background: #ff2266;
-            border-radius: 50%;
-            box-shadow: 0 0 30px #ff0066, 0 0 60px cyan;
-            animation: laserPulse 1.4s infinite alternate ease-in-out;
-        }
-
-        @keyframes laserPulse {
-            0% { opacity: 0.5; transform: scale(0.9); box-shadow: 0 0 15px #ff0066; }
-            100% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 50px #ff40ff, 0 0 80px cyan; }
-        }
-
-        /* Name – modern gradient */
-        .person-name {
-            font-size: 2rem;
-            font-weight: 800;
-            font-family: 'Orbitron', monospace;
-            background: linear-gradient(135deg, #ffffff, #a0ffff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
-            letter-spacing: -0.5px;
-            filter: drop-shadow(0 0 15px #0ff);
-            border-left: 5px solid #ff40ff;
-            padding-left: 1rem;
-            line-height: 1.2;
-            margin-bottom: 0.3rem;
-        }
-
-        .job-scan {
-            display: inline-block;
-            background: rgba(20, 0, 30, 0.7);
-            border: 2px solid #0ff;
-            color: #0ff;
-            font-weight: 500;
-            padding: 0.25rem 1.6rem;
-            border-radius: 40px;
-            margin: 0.7rem 0 0.3rem;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 0 20px cyan;
-            backdrop-filter: blur(5px);
-        }
-
-        .dept-tag {
-            color: #ffc0ff;
-            font-size: 0.95rem;
-            filter: drop-shadow(0 0 8px magenta);
-            margin-bottom: 1.2rem;
-            border-bottom: 1px solid rgba(0, 255, 255, 0.5);
-            padding-bottom: 0.6rem;
-            font-weight: 400;
-            letter-spacing: 0.5px;
-        }
-
-        /* Contact items – sleek */
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background: rgba(0, 30, 40, 0.4);
-            border: 1px solid rgba(0, 255, 255, 0.5);
-            border-radius: 50px;
-            padding: 0.7rem 1.3rem;
-            margin-bottom: 0.9rem;
-            backdrop-filter: blur(8px);
-            transition: 0.15s;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
-        }
-
-        .contact-item:hover {
-            background: rgba(60, 0, 80, 0.5);
-            border-color: #ff40ff;
-            box-shadow: 0 0 35px magenta, inset 0 0 15px magenta;
-        }
-
-        .contact-icon {
-            font-size: 1.8rem;
-            filter: drop-shadow(0 0 8px cyan);
-            width: 36px;
-            text-align: center;
-        }
-
-        .contact-label {
-            font-size: 0.6rem;
-            letter-spacing: 2px;
-            color: #aaffff;
-            text-transform: uppercase;
-            opacity: 0.9;
-        }
-
-        .contact-value a {
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 1.1rem;
-            font-weight: 500;
-            border-bottom: 1px dotted #0ff;
-            text-shadow: 0 0 8px cyan;
-            word-break: break-all;
-            transition: 0.1s;
-        }
-
-        .contact-value a:hover {
-            color: #ffaaff;
-            text-shadow: 0 0 15px magenta, 0 0 30px cyan;
-            border-bottom: 2px solid magenta;
-        }
-
-        /* Badges – cleaner */
-        .meta-badge {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.7rem;
-            margin: 1rem 0 0.8rem;
-        }
-
-        .badge {
-            border: 1px solid #0ff;
-            background: rgba(0, 20, 30, 0.6);
-            color: #0ff;
-            padding: 0.25rem 1.4rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            box-shadow: 0 0 15px cyan;
-            backdrop-filter: blur(6px);
-        }
-
-        .badge.busy {
-            border-color: #ff5555;
-            color: #ffaaaa;
-            box-shadow: 0 0 20px #ff3333;
-        }
-
-        .footer-chip {
-            margin-top: 1.2rem;
-            display: flex;
-            justify-content: space-between;
-            border-top: 2px solid #ff40ff;
-            padding-top: 0.9rem;
-            font-size: 0.75rem;
-            color: #8fffff;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .abha-pulse {
-            color: #ffaaff;
-            animation: softFlicker 4s infinite;
-        }
-
-        @keyframes softFlicker {
-            0% { opacity: 0.7; text-shadow: 0 0 5px magenta; }
-            50% { opacity: 1; text-shadow: 0 0 20px magenta, 0 0 30px cyan; }
-            100% { opacity: 0.7; text-shadow: 0 0 5px magenta; }
-        }
-
-        /* Corner detail – refined */
-        .corner-triangle {
-            position: absolute;
-            width: 28px;
-            height: 28px;
-            border-color: #0ff;
-            border-style: solid;
-            border-width: 4px 0 0 4px;
-            top: -2px;
-            left: -2px;
-            filter: drop-shadow(0 0 12px cyan);
-            opacity: 0.8;
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .hud-title { font-size: 2rem; }
-            .hud-title span { font-size: 1.4rem; }
-            .target-counter { font-size: 1.2rem; padding: 0.4rem 1.2rem; }
-            .person-name { font-size: 1.6rem; }
-        }
-
-        /* footer note */
-        .system-footer {
-            color: #6080c0;
-            font-size: 0.65rem;
-            margin-top: 1.2rem;
-            font-family: 'Share Tech Mono';
-            z-index: 20;
-            text-shadow: 0 0 8px blue;
-            letter-spacing: 0.5px;
-        }
+        [dir="rtl"] .contact-detail { flex-direction: row-reverse; }
+        [dir="rtl"] .contact-detail i { margin-left: 12px; margin-right: 0; }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="laser-scanner">
-        <div class="beam-horizontal"></div>
-        <div class="beam-vertical"></div>
-        <div class="beam-horizontal" style="top:70%; animation-delay: -4s; background: linear-gradient(90deg, transparent, #ff80ff, #00ffff, #ff80ff, transparent);"></div>
-        <div class="beam-vertical" style="left:70%; animation-delay: -6s; background: linear-gradient(180deg, transparent, #ffff80, #ff40c0, #ffff80, transparent);"></div>
-    </div>
-
-    <div class="cyber-container">
-        <div class="hud-header">
-            <div class="hud-title">⫸ T-800 NEXUS <span>// KUDU DIRECTORY</span></div>
-            <div class="target-counter" id="targetCount">14 TARGETS</div>
-        </div>
-
-        <div id="cyberGrid" class="personnel-grid"></div>
-
-        <!-- ABHA coordinate – modern typography -->
-        <div style="margin-top: 2.2rem; border-top: 2px solid rgba(255, 64, 255, 0.7); padding-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 2rem; font-family: 'Share Tech Mono';">
-            <div style="color: #00ffff; text-shadow: 0 0 12px cyan;">KS-22 (ABHA) SOUTHERN · 24.673N 46.724E</div>
-            <div style="color: #ffaaff; text-shadow: 0 0 12px magenta;">AVAYA: 7922 · ks-022@kudu.com.sa · +966561825680</div>
+<div class="container">
+    <!-- Header -->
+    <div class="header-card">
+        <div class="logo-area"><h1><i class="bi bi-telephone-forward me-2"></i><span id="titleMain">Corporate Phone Book</span></h1></div>
+        <div class="controls">
+            <div class="lang-switch"><button class="lang-btn active" id="langEn">EN</button><button class="lang-btn" id="langAr">AR</button></div>
+            <button class="theme-toggle" id="themeToggle"><i class="bi bi-moon"></i> <span id="themeText">Dark</span></button>
         </div>
     </div>
 
-    <div class="system-footer">⏻ T-800 ACTIVE · HOLO LINKS STABLE · TAP TO DIAL / EMAIL</div>
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-value" id="totalContacts">0</div><div class="stat-label" data-key="totalContacts">TOTAL CONTACTS</div></div>
+        <div class="stat-card"><div class="stat-value" id="departments">0</div><div class="stat-label" data-key="departments">DEPARTMENTS</div></div>
+        <div class="stat-card"><div class="stat-value" id="lastUpdated">—</div><div class="stat-label" data-key="lastUpdated">LAST UPDATED</div></div>
+    </div>
 
-    <script>
-        (function stabilizedLoad() {
-            const personnel = [
-                { name: "Amal A. Al Enazi", job: "HR Director", dept: "HR", email: "aalenaizi@kudu.com.sa", mobile: null, workPhone: "1555", location: "HQ", status: "Free for next 8 hours", company: "Kudu Company for food and Catering" },
-                { name: "Hani Sowa'ilim", job: "HR Manager", dept: "HR", email: "hswailim@kudu.com.sa", mobile: "0503404445", workPhone: null, location: "Riyadh-HO", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering" },
-                { name: "PPVthran P", job: "Area Manager - Operation", dept: "Operation", email: "ppayyadakkaht@kudu.co...", mobile: "966561825680", workPhone: null, location: "Abha", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering", altEmail: "ks-022@kudu.com.sa" },
-                { name: "Mahmoud Hafez", job: "Area Supervisor", dept: "Operation", email: "mhafez@kudu.com.sa", mobile: "0581827031", workPhone: null, location: "Western Region", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering" },
-                { name: "Murat Ungun", job: "Chief Executive Officer", dept: "Executive Management", email: "mungun@kudu.com.sa", mobile: "0569444420", workPhone: "1302", location: "Riyadh", status: "Busy - Free at 09:00 PM", company: "Kudu for Food and Catering" },
-                { name: "Mohamed Eldahshan", job: "Eastern Region", dept: "Operation", email: "meldahshan@kudu.com.sa", mobile: "0543289624", workPhone: null, location: "Eastern Region", status: "Free for next 8 hours", company: "Kudu for Food and Catering" },
-                { name: "Mueen Ahange", job: "Cares Coach", dept: "OPS Excellence", email: "mahange@kudu.com.sa", mobile: "0573207876", workPhone: null, location: "Jeddah", status: "Free for next 8 hours", company: "Kudu Company for food and Catering" },
-                { name: "Owais Mattoo", job: "Cares Coach", dept: "OPS EXCELLENCE TEAM", email: "omattoo@kudu.com.sa", mobile: "0568870172", workPhone: null, location: "Riyadh", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering" },
-                { name: "Pradeep B. Muralidha", job: "Restaurant Auditor", dept: "Finance", email: "pmuralidha@kudu.com.sa", mobile: "0573417738", workPhone: null, location: "Riyadh", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering" },
-                { name: "Kamal Huda", job: "Restaurant Audit Supervisor", dept: "Internal Audit Department", email: "khuda@kudu.com.sa", mobile: "0564856331", workPhone: null, location: "Western RO", status: "Free for next 8 hours", company: "Kudu Company for food and Catering" },
-                { name: "Kareem Sheta", job: "Restaurant Auditor", dept: "Internal Audit Department", email: "ksheta@kudu.com.sa", mobile: "058207276", workPhone: null, location: "Western RO", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering" },
-                { name: "Ahmed A. Zidan", job: "IT Technician", dept: "IT", email: "azidan@kudu.com.sa", mobile: "05517533885", workPhone: null, location: "Western RO", status: "Free for next 8 hours", company: "Kudu Company for Food & Catering" },
-                { name: "Ali A. Nasan", job: "IT Director", dept: "IT", email: "anasan@kudu.com.sa", mobile: "+966 0502057051", workPhone: null, location: "Riyadh", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering" },
-                { name: "Emad M. Salim", job: "Senior Operations Director", dept: "Operation", email: "emad@kudu.com.sa", mobile: "0504456413", workPhone: "1801", location: "Riyadh HO", status: "Free for next 8 hours", company: "Kudu Company for Food and Catering" }
-            ];
+    <!-- Add Contact Form -->
+    <div class="form-card">
+        <h3><i class="bi bi-person-plus me-2"></i><span data-key="addNewContact">Add New Contact</span></h3>
+        <div class="form-row">
+            <input type="text" class="form-control" id="newName" placeholder="Full Name" required>
+            <input type="text" class="form-control" id="newJob" placeholder="Job Title">
+            <input type="text" class="form-control" id="newDept" placeholder="Department">
+        </div>
+        <div class="form-row">
+            <input type="tel" class="form-control" id="newPhone" placeholder="Phone Number" required>
+            <input type="email" class="form-control" id="newEmail" placeholder="Email Address">
+            <input type="text" class="form-control" id="newLocation" placeholder="Location">
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 12px;">
+            <button class="btn btn-primary" id="saveContactBtn"><i class="bi bi-save"></i> <span data-key="saveContact">Save Contact</span></button>
+            <button class="btn btn-outline" id="clearFormBtn"><i class="bi bi-arrow-clockwise"></i> <span data-key="clear">Clear</span></button>
+        </div>
+    </div>
 
-            function formatTel(raw) {
-                if (!raw) return null;
-                return raw.replace(/[\s\-]/g, '');
-            }
+    <!-- Search -->
+    <div class="search-bar"><input type="text" class="search-input" id="searchInput" placeholder="🔍 Search by name, job, department or location..."></div>
 
-            const grid = document.getElementById('cyberGrid');
-            if (!grid) return;
+    <!-- Contacts Grid -->
+    <div id="contactsGrid" class="contacts-grid"></div>
+    <div id="emptyState" class="empty-state" style="display: none;"><i class="bi bi-person-circle" style="font-size: 3rem;"></i><p data-key="noContacts">No contacts found</p></div>
+</div>
 
-            personnel.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'target-card';
+<div id="toastMsg" class="toast-notify"><i class="bi bi-check-circle-fill"></i> <span id="toastText"></span></div>
 
-                const corner = document.createElement('div');
-                corner.className = 'corner-triangle';
-                card.appendChild(corner);
+<script>
+    // ======================== TRANSLATIONS ========================
+    const translations = {
+        en: { titleMain: "Corporate Phone Book", totalContacts: "TOTAL CONTACTS", departments: "DEPARTMENTS", lastUpdated: "LAST UPDATED", addNewContact: "Add New Contact", saveContact: "Save Contact", clear: "Clear", noContacts: "No contacts found", call: "Call", email: "Email", delete: "Delete", confirmDelete: "Delete this contact?" },
+        ar: { titleMain: "دفتر الهاتف المؤسسي", totalContacts: "إجمالي جهات الاتصال", departments: "الأقسام", lastUpdated: "آخر تحديث", addNewContact: "إضافة جهة اتصال", saveContact: "حفظ", clear: "مسح", noContacts: "لا توجد جهات اتصال", call: "اتصال", email: "بريد إلكتروني", delete: "حذف", confirmDelete: "حذف جهة الاتصال هذه؟" }
+    };
+    let currentLang = "en";
 
-                const nameDiv = document.createElement('div');
-                nameDiv.className = 'person-name';
-                nameDiv.innerText = p.name;
-                card.appendChild(nameDiv);
+    // Default contacts data
+    let contacts = [
+        { id: 1, name: "Amal A. Al Enazi", job: "HR Director", dept: "HR", phone: "+966555555551", email: "aalenaizi@kudu.com.sa", location: "HQ" },
+        { id: 2, name: "Hani Sowa'ilim", job: "HR Manager", dept: "HR", phone: "+966503404445", email: "hswailim@kudu.com.sa", location: "Riyadh-HO" },
+        { id: 3, name: "PPVthran P", job: "Area Manager - Operation", dept: "Operation", phone: "+966561825680", email: "ks-022@kudu.com.sa", location: "Abha" },
+        { id: 4, name: "Mahmoud Hafez", job: "Area Supervisor", dept: "Operation", phone: "+966581827031", email: "mhafez@kudu.com.sa", location: "Western Region" },
+        { id: 5, name: "Murat Ungun", job: "Chief Executive Officer", dept: "Executive", phone: "+966569444420", email: "mungun@kudu.com.sa", location: "Riyadh" },
+        { id: 6, name: "Mohamed Eldahshan", job: "Eastern Region Manager", dept: "Operation", phone: "+966543289624", email: "meldahshan@kudu.com.sa", location: "Eastern Region" },
+        { id: 7, name: "Mueen Ahange", job: "Cares Coach", dept: "OPS Excellence", phone: "+966573207876", email: "mahange@kudu.com.sa", location: "Jeddah" },
+        { id: 8, name: "Owais Mattoo", job: "Cares Coach", dept: "OPS Excellence", phone: "+966568870172", email: "omattoo@kudu.com.sa", location: "Riyadh" }
+    ];
 
-                const jobSpan = document.createElement('div');
-                jobSpan.className = 'job-scan';
-                jobSpan.innerText = p.job;
-                card.appendChild(jobSpan);
+    let nextId = 9;
 
-                const deptDiv = document.createElement('div');
-                deptDiv.className = 'dept-tag';
-                deptDiv.innerText = p.dept || '—';
-                card.appendChild(deptDiv);
+    // Load from localStorage
+    function loadData() {
+        const saved = localStorage.getItem('corporate_phonebook');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            contacts = parsed.contacts;
+            nextId = parsed.nextId;
+        }
+        renderContacts();
+        updateStats();
+    }
 
-                const emailVal = (p.email === 'ppayyadakkaht@kudu.co...' && p.altEmail) ? p.altEmail : p.email;
-                const emailHref = `mailto:${emailVal}`;
-                const emailItem = document.createElement('div');
-                emailItem.className = 'contact-item';
-                emailItem.innerHTML = `
-                    <span class="contact-icon">📡</span>
-                    <div class="contact-detail">
-                        <span class="contact-label">LASER COMM</span>
-                        <span class="contact-value"><a href="${emailHref}" target="_blank">${emailVal}</a></span>
-                    </div>
-                `;
-                card.appendChild(emailItem);
+    function saveData() {
+        localStorage.setItem('corporate_phonebook', JSON.stringify({ contacts, nextId }));
+        updateStats();
+    }
 
-                const phoneRaw = p.mobile || p.workPhone;
-                if (phoneRaw) {
-                    const phoneItem = document.createElement('div');
-                    phoneItem.className = 'contact-item';
-                    const telLink = `tel:${formatTel(phoneRaw)}`;
-                    phoneItem.innerHTML = `
-                        <span class="contact-icon">⚡</span>
-                        <div class="contact-detail">
-                            <span class="contact-label">${p.mobile ? 'CELL' : 'WORK FREQ'}</span>
-                            <span class="contact-value"><a href="${telLink}">${phoneRaw}</a></span>
-                        </div>
-                    `;
-                    card.appendChild(phoneItem);
-                }
+    function updateStats() {
+        document.getElementById('totalContacts').innerText = contacts.length;
+        const uniqueDepts = new Set(contacts.map(c => c.dept).filter(d => d));
+        document.getElementById('departments').innerText = uniqueDepts.size;
+        document.getElementById('lastUpdated').innerText = new Date().toLocaleDateString();
+    }
 
-                const meta = document.createElement('div');
-                meta.className = 'meta-badge';
-                meta.innerHTML = `
-                    <span class="badge">📍 ${p.location || 'unk'}</span>
-                    <span class="badge ${p.status.includes('Busy') ? 'busy' : ''}">⏳ ${p.status}</span>
-                `;
-                card.appendChild(meta);
+    function renderContacts() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = contacts.filter(c => 
+            c.name.toLowerCase().includes(searchTerm) ||
+            (c.job && c.job.toLowerCase().includes(searchTerm)) ||
+            (c.dept && c.dept.toLowerCase().includes(searchTerm)) ||
+            (c.location && c.location.toLowerCase().includes(searchTerm))
+        );
+        
+        const grid = document.getElementById('contactsGrid');
+        const emptyState = document.getElementById('emptyState');
+        
+        if (filtered.length === 0) {
+            grid.innerHTML = '';
+            emptyState.style.display = 'block';
+            return;
+        }
+        emptyState.style.display = 'none';
+        
+        grid.innerHTML = filtered.map(c => `
+            <div class="contact-card" data-id="${c.id}">
+                <div class="contact-name">${escapeHtml(c.name)}</div>
+                <div class="contact-job">${escapeHtml(c.job || '—')} • ${escapeHtml(c.dept || '—')}</div>
+                <div class="contact-detail"><i class="bi bi-telephone"></i> <a href="tel:${c.phone}">${c.phone}</a></div>
+                ${c.email ? `<div class="contact-detail"><i class="bi bi-envelope"></i> <a href="mailto:${c.email}">${c.email}</a></div>` : ''}
+                ${c.location ? `<div class="contact-detail"><i class="bi bi-geo-alt"></i> <span>${c.location}</span></div>` : ''}
+                <div class="contact-actions">
+                    <button class="action-btn call" onclick="makeCall('${c.phone}')"><i class="bi bi-telephone-fill"></i> <span data-key="call">Call</span></button>
+                    ${c.email ? `<button class="action-btn email" onclick="sendEmail('${c.email}')"><i class="bi bi-envelope-fill"></i> <span data-key="email">Email</span></button>` : ''}
+                    <button class="action-btn delete" onclick="deleteContact(${c.id})"><i class="bi bi-trash-fill"></i> <span data-key="delete">Delete</span></button>
+                </div>
+            </div>
+        `).join('');
+        
+        // Re-apply translations for dynamic buttons
+        applyButtonTexts();
+    }
 
-                if (p.workPhone && p.mobile) {
-                    const workItem = document.createElement('div');
-                    workItem.className = 'contact-item';
-                    workItem.innerHTML = `
-                        <span class="contact-icon">☢️</span>
-                        <div class="contact-detail">
-                            <span class="contact-label">OFFICE LASER</span>
-                            <span class="contact-value"><a href="tel:${p.workPhone}">${p.workPhone}</a></span>
-                        </div>
-                    `;
-                    card.appendChild(workItem);
-                }
+    function applyButtonTexts() {
+        const t = translations[currentLang];
+        document.querySelectorAll('.action-btn.call span').forEach(el => el.innerText = t.call);
+        document.querySelectorAll('.action-btn.email span').forEach(el => el.innerText = t.email);
+        document.querySelectorAll('.action-btn.delete span').forEach(el => el.innerText = t.delete);
+    }
 
-                const footer = document.createElement('div');
-                footer.className = 'footer-chip';
-                footer.innerHTML = `
-                    <span>🏭 ${p.company || 'Kudu'}</span>
-                    <span class="abha-pulse">⚡ ${p.dept || ''}</span>
-                `;
-                card.appendChild(footer);
+    window.makeCall = function(phone) {
+        window.location.href = `tel:${phone}`;
+        showToast(`Calling ${phone}`, 'success');
+    };
 
-                grid.appendChild(card);
-            });
+    window.sendEmail = function(email) {
+        window.location.href = `mailto:${email}`;
+        showToast(`Email to ${email}`, 'success');
+    };
 
-            // Corrections
-            const allCards = grid.children;
-            for (let card of allCards) {
-                if (card.innerText.includes('PPVthran')) {
-                    const link = card.querySelector('a[href^="mailto:"]');
-                    if (link && link.innerText.includes('ppayyadakkaht@kudu.co...')) {
-                        link.innerText = 'ks-022@kudu.com.sa';
-                        link.setAttribute('href', 'mailto:ks-022@kudu.com.sa');
-                    }
-                }
-                if (card.innerText.includes('Mahmoud Hafez')) {
-                    const link = card.querySelector('a[href^="mailto:"]');
-                    if (link && link.innerText.includes('mahfaz')) {
-                        link.innerText = 'mhafez@kudu.com.sa';
-                        link.setAttribute('href', 'mailto:mhafez@kudu.com.sa');
-                    }
-                }
-            }
+    window.deleteContact = function(id) {
+        if (confirm(translations[currentLang].confirmDelete)) {
+            contacts = contacts.filter(c => c.id !== id);
+            saveData();
+            renderContacts();
+            showToast(translations[currentLang].delete + ' ' + (currentLang === 'en' ? 'successful' : 'ناجح'), 'info');
+        }
+    };
 
-            document.getElementById('targetCount').innerText = personnel.length + ' TARGETS';
-        })();
-    </script>
+    function addNewContact() {
+        const name = document.getElementById('newName').value.trim();
+        const phone = document.getElementById('newPhone').value.trim();
+        if (!name || !phone) {
+            showToast(currentLang === 'en' ? 'Name and phone are required' : 'الاسم والهاتف مطلوبان', 'error');
+            return;
+        }
+        
+        const newContact = {
+            id: nextId++,
+            name: name,
+            job: document.getElementById('newJob').value.trim(),
+            dept: document.getElementById('newDept').value.trim(),
+            phone: phone,
+            email: document.getElementById('newEmail').value.trim(),
+            location: document.getElementById('newLocation').value.trim()
+        };
+        
+        contacts.push(newContact);
+        saveData();
+        renderContacts();
+        clearForm();
+        showToast(currentLang === 'en' ? 'Contact added successfully' : 'تم إضافة جهة الاتصال', 'success');
+    }
+
+    function clearForm() {
+        document.getElementById('newName').value = '';
+        document.getElementById('newJob').value = '';
+        document.getElementById('newDept').value = '';
+        document.getElementById('newPhone').value = '';
+        document.getElementById('newEmail').value = '';
+        document.getElementById('newLocation').value = '';
+    }
+
+    function showToast(msg, type = 'success') {
+        const toast = document.getElementById('toastMsg');
+        document.getElementById('toastText').innerText = msg;
+        toast.style.display = 'flex';
+        toast.style.borderLeftColor = type === 'error' ? '#ef4444' : '#10b981';
+        setTimeout(() => toast.style.display = 'none', 2000);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Language & Theme
+    function updateLanguage() {
+        const t = translations[currentLang];
+        document.getElementById('titleMain').innerText = t.titleMain;
+        document.querySelectorAll('[data-key]').forEach(el => {
+            const key = el.getAttribute('data-key');
+            if (t[key]) el.innerText = t[key];
+        });
+        document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+        applyButtonTexts();
+        renderContacts();
+    }
+
+    document.getElementById('langEn').addEventListener('click', () => {
+        currentLang = 'en';
+        document.getElementById('langEn').classList.add('active');
+        document.getElementById('langAr').classList.remove('active');
+        updateLanguage();
+    });
+    document.getElementById('langAr').addEventListener('click', () => {
+        currentLang = 'ar';
+        document.getElementById('langAr').classList.add('active');
+        document.getElementById('langEn').classList.remove('active');
+        updateLanguage();
+    });
+
+    let darkMode = localStorage.getItem('phonebookDark') === 'true';
+    function applyDarkMode() {
+        if (darkMode) document.body.classList.add('dark');
+        else document.body.classList.remove('dark');
+        document.getElementById('themeText').innerText = darkMode ? 'Light' : 'Dark';
+        document.getElementById('themeToggle').innerHTML = darkMode ? '<i class="bi bi-sun"></i> Light' : '<i class="bi bi-moon"></i> Dark';
+    }
+    document.getElementById('themeToggle').addEventListener('click', () => {
+        darkMode = !darkMode;
+        localStorage.setItem('phonebookDark', darkMode);
+        applyDarkMode();
+    });
+
+    // Event Listeners
+    document.getElementById('saveContactBtn').addEventListener('click', addNewContact);
+    document.getElementById('clearFormBtn').addEventListener('click', clearForm);
+    document.getElementById('searchInput').addEventListener('input', () => renderContacts());
+
+    // Initialize
+    applyDarkMode();
+    updateLanguage();
+    loadData();
+</script>
 </body>
 </html>
