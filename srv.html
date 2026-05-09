@@ -1,38 +1,27 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>SADWAP | Enterprise Sales Dashboard (SAR)</title>
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- jsPDF + AutoTable -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>SADWAP | Cleaning Task Manager</title>
+    
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    
+    <!-- PDF Export Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <style>
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1e40af;
-            --primary-soft: #eff6ff;
+            --primary: #2c5f8a;
+            --primary-dark: #1e405e;
+            --primary-soft: #eef2f8;
             --success: #10b981;
-            --success-soft: #ecfdf5;
             --warning: #f59e0b;
-            --warning-soft: #fffbeb;
             --danger: #ef4444;
-            --danger-soft: #fef2f2;
-            --info: #8b5cf6;
+            --info: #3b82f6;
             --gray-50: #f9fafb;
             --gray-100: #f3f4f6;
             --gray-200: #e5e7eb;
@@ -47,10 +36,14 @@
             --border: #e5e7eb;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --radius-card: 20px;
+            --radius-element: 12px;
+            --touch-target: 44px;
         }
 
         body.dark {
             --primary: #3b82f6;
+            --primary-dark: #2563eb;
             --primary-soft: #1e293b;
             --gray-50: #0f172a;
             --gray-100: #1e293b;
@@ -65,26 +58,36 @@
             --border: #334155;
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--gray-100);
             color: var(--gray-800);
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
             transition: background 0.2s, color 0.2s;
-        }
-
-        .container {
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
             padding: 0;
+            margin: 0;
         }
 
-        /* Header with Language Toggle */
-        .dashboard-header {
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .app-container { padding: 12px; }
+        }
+
+        /* Header */
+        .header-card {
             background: var(--card-bg);
-            border-radius: 16px;
+            border-radius: var(--radius-card);
             padding: 20px 24px;
             margin-bottom: 24px;
             border: 1px solid var(--border);
@@ -95,440 +98,282 @@
             flex-wrap: wrap;
             gap: 16px;
         }
+        .logo-area h1 { font-size: 1.3rem; font-weight: 700; margin: 0; color: var(--primary); letter-spacing: -0.3px; }
+        .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .lang-switch { display: flex; gap: 6px; background: var(--gray-200); padding: 4px; border-radius: 40px; }
+        .lang-btn { background: transparent; border: none; padding: 6px 18px; border-radius: 32px; font-weight: 600; font-size: 0.7rem; cursor: pointer; color: var(--gray-600); transition: all 0.2s; }
+        .lang-btn.active { background: var(--primary); color: white; }
+        .theme-toggle { background: var(--gray-200); border: none; border-radius: 40px; padding: 6px 18px; display: flex; align-items: center; gap: 6px; color: var(--gray-700); font-weight: 500; font-size: 0.7rem; }
 
-        .lang-switch {
-            display: flex;
-            gap: 8px;
-            background: var(--gray-100);
-            padding: 4px;
-            border-radius: 40px;
-        }
-
-        .lang-btn {
-            background: transparent;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 32px;
-            font-weight: 600;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--gray-600);
-        }
-
-        .lang-btn.active {
+        /* Store Info */
+        .store-card {
             background: var(--primary);
+            border-radius: var(--radius-card);
+            padding: 16px 20px;
+            margin-bottom: 24px;
             color: white;
         }
+        .store-card .form-control { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: white; border-radius: 40px; padding: 10px 16px; font-size: 0.85rem; }
+        .store-card .form-control::placeholder { color: rgba(255,255,255,0.6); }
+        .store-card .form-label { font-size: 0.7rem; margin-bottom: 4px; opacity: 0.9; }
 
-        .month-selector {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--gray-100);
-            border-radius: 12px;
-            padding: 6px 16px;
-        }
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+        .stat-card { background: var(--card-bg); border-radius: var(--radius-card); padding: 16px; border: 1px solid var(--border); text-align: center; transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .stat-title { font-size: 0.65rem; text-transform: uppercase; font-weight: 600; color: var(--gray-500); letter-spacing: 0.3px; }
+        .stat-value { font-size: 1.6rem; font-weight: 700; margin: 4px 0; }
+        .stat-icon { font-size: 0.9rem; }
 
-        #month-select {
-            background: var(--card-bg);
-            color: var(--gray-800);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
+        /* Cards */
+        .card { background: var(--card-bg); border-radius: var(--radius-card); border: 1px solid var(--border); margin-bottom: 24px; overflow: hidden; }
+        .card-header { background: var(--primary); color: white; padding: 16px 20px; font-weight: 600; border: none; }
+        .card-body { padding: 20px; }
 
-        /* Summary Cards - 6 Cards for Enhanced Metrics */
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
+        /* Camera */
+        .camera-container { background: var(--gray-900); border-radius: var(--radius-element); overflow: hidden; min-height: 240px; position: relative; }
+        #videoElement { width: 100%; height: 240px; object-fit: cover; display: none; }
+        .camera-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 240px; color: var(--gray-500); }
+        .photo-progress { background: var(--gray-100); border-radius: var(--radius-element); padding: 12px; margin-bottom: 16px; }
+        .progress { height: 8px; border-radius: 10px; }
 
-        @media (max-width: 1000px) { .summary-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 600px) { .summary-grid { grid-template-columns: repeat(2, 1fr); } }
+        /* Photo Gallery */
+        .photo-thumbnails { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px; margin-top: 12px; }
+        .photo-thumbnail { position: relative; aspect-ratio: 1; border-radius: var(--radius-element); overflow: hidden; border: 2px solid var(--border); cursor: pointer; }
+        .photo-thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-number { position: absolute; top: 4px; left: 4px; background: var(--primary); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; }
+        .delete-photo { position: absolute; top: 4px; right: 4px; background: var(--danger); color: white; border: none; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-        .summary-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 18px 12px;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
-            transition: all 0.2s;
-            text-align: center;
-        }
+        /* Task Cards */
+        .task-card { background: var(--card-bg); border-radius: var(--radius-card); padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); border-left-width: 4px; transition: all 0.2s; }
+        .task-card.high-priority { border-left-color: var(--danger); }
+        .task-card.medium-priority { border-left-color: var(--warning); }
+        .task-card.low-priority { border-left-color: var(--success); }
+        .task-images { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+        .task-image { width: 60px; height: 60px; object-fit: cover; border-radius: var(--radius-element); cursor: pointer; border: 1px solid var(--border); }
 
-        .summary-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-        .summary-card .label { font-size: 0.7rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; }
-        .summary-card .value { font-size: 1.5rem; font-weight: 700; margin: 8px 0 4px; color: var(--gray-800); }
-        .summary-card .sub { font-size: 0.65rem; color: var(--gray-400); }
+        /* Crew Members */
+        .crew-member, .team-member { display: inline-flex; align-items: center; background: var(--primary-soft); color: var(--primary); padding: 4px 12px; border-radius: 40px; margin: 4px; font-size: 0.75rem; font-weight: 500; gap: 6px; }
+        .remove-crew, .remove-team-member { background: none; border: none; color: inherit; cursor: pointer; font-size: 1rem; display: flex; align-items: center; }
 
-        .progress { height: 6px; background: var(--gray-200); border-radius: 10px; margin-top: 10px; }
-        .progress-bar { background: var(--primary); border-radius: 10px; }
-
-        /* Notification Panel */
-        .notification-panel {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            margin: 24px 0;
-            border: 1px solid var(--border);
-        }
-
-        .notification-panel h5 {
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .notification-item {
-            padding: 14px 16px;
-            margin-bottom: 10px;
-            border-radius: 12px;
-            background: var(--gray-50);
-            border-left: 4px solid var(--primary);
-            font-size: 0.85rem;
-        }
-
-        .forecast-item { background: var(--primary-soft); border-left-color: var(--warning); }
-        .comparison-item { background: var(--success-soft); border-left-color: var(--success); }
-
-        /* Chart */
-        #chart-container {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid var(--border);
-            margin: 24px 0;
-        }
-        canvas { max-height: 280px; width: 100%; }
-
-        /* Table */
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-        }
-        .card-header { background: var(--gray-50); padding: 16px 20px; font-weight: 600; border-bottom: 1px solid var(--border); }
-        .table-responsive { overflow-x: auto; }
-        .table { color: var(--gray-700); border-color: var(--border); min-width: 800px; font-size: 0.8rem; margin: 0; }
-        .table th { background: var(--gray-50); color: var(--gray-600); font-weight: 600; padding: 12px; white-space: nowrap; }
-        .table td { padding: 10px 12px; border-color: var(--border); }
-        .sales-input { width: 85px; background: var(--gray-50); border: 1px solid var(--border); border-radius: 8px; padding: 8px; color: var(--gray-800); font-size: 0.75rem; text-align: center; }
-        .sales-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-        .result-cell { font-weight: 600; font-size: 0.75rem; text-align: center; }
-        .total-row td { background: var(--gray-50); font-weight: 700; border-top: 2px solid var(--border); }
+        /* Form Controls */
+        .form-control, .form-select { background: var(--gray-50); border: 1px solid var(--border); border-radius: 40px; padding: 12px 16px; font-size: 0.85rem; color: var(--gray-800); min-height: var(--touch-target); }
+        .form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(44,95,138,0.1); }
+        textarea.form-control { border-radius: 20px; }
 
         /* Buttons */
-        .btn-container { display: flex; gap: 12px; padding: 20px; flex-wrap: wrap; border-top: 1px solid var(--border); }
-        .btn { border-radius: 10px; font-weight: 600; font-size: 0.8rem; padding: 10px 20px; border: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn { border-radius: 40px; padding: 12px 20px; font-weight: 600; font-size: 0.8rem; border: none; transition: all 0.2s; min-height: var(--touch-target); display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .btn-success { background: var(--success); color: white; }
         .btn-danger { background: var(--danger); color: white; }
-        .theme-toggle { position: fixed; bottom: 24px; right: 24px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 40px; padding: 10px 16px; cursor: pointer; z-index: 1000; display: flex; align-items: center; gap: 8px; }
-        
-        [dir="rtl"] .notification-item { border-left: none; border-right: 4px solid var(--primary); }
-        [dir="rtl"] .forecast-item { border-right-color: var(--warning); }
-        
-        .text-success { color: var(--success) !important; }
-        .text-warning { color: var(--warning) !important; }
-        .text-danger { color: var(--danger) !important; }
-        .currency-symbol { font-size: 0.7rem; margin-right: 2px; }
+        .btn-outline { background: var(--gray-100); border: 1px solid var(--border); color: var(--gray-700); }
+
+        /* Toast */
+        .toast-notify { position: fixed; bottom: 20px; left: 20px; right: 20px; background: var(--card-bg); border-left: 4px solid var(--success); padding: 12px 16px; border-radius: 12px; box-shadow: var(--shadow-md); z-index: 1100; display: none; align-items: center; gap: 10px; font-size: 0.8rem; max-width: 400px; margin: 0 auto; }
+
+        /* RTL */
+        [dir="rtl"] .task-card { border-left-width: 1px; border-right-width: 4px; }
+        [dir="rtl"] .task-card.high-priority { border-right-color: var(--danger); border-left-color: var(--border); }
+        [dir="rtl"] .task-card.medium-priority { border-right-color: var(--warning); }
+        [dir="rtl"] .task-card.low-priority { border-right-color: var(--success); }
+
+        @media (max-width: 640px) {
+            .card-body { padding: 16px; }
+            .photo-thumbnails { grid-template-columns: repeat(3, 1fr); }
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="dashboard-header">
-        <div>
-            <h2 style="font-size: 1.4rem; font-weight: 700; margin: 0;"><i class="fas fa-chart-line me-2" style="color: var(--primary);"></i><span id="titleMain">Sales Performance Dashboard</span></h2>
-            <p class="text-muted mb-0 mt-1" style="font-size: 0.75rem;"><span id="subtitleCurrency">Real-time tracking · SAR currency</span></p>
-        </div>
-        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
-            <div class="lang-switch">
-                <button class="lang-btn active" id="langEn">EN</button>
-                <button class="lang-btn" id="langAr">AR</button>
-            </div>
-            <div class="month-selector">
-                <label for="month-select" id="periodLabel">PERIOD:</label>
-                <select id="month-select">
-                    <option value="January">JANUARY</option><option value="February">FEBRUARY</option><option value="March">MARCH</option>
-                    <option value="April">APRIL</option><option value="May">MAY</option><option value="June">JUNE</option>
-                    <option value="July">JULY</option><option value="August">AUGUST</option><option value="September">SEPTEMBER</option>
-                    <option value="October">OCTOBER</option><option value="November">NOVEMBER</option><option value="December">DECEMBER</option>
-                </select>
-            </div>
+<div class="app-container">
+    <!-- Header -->
+    <div class="header-card">
+        <div class="logo-area"><h1><i class="bi bi-clipboard-check me-2"></i><span id="titleMain">Cleaning Task Manager</span></h1></div>
+        <div class="controls">
+            <div class="lang-switch"><button class="lang-btn active" id="langEn">EN</button><button class="lang-btn" id="langAr">AR</button></div>
+            <button class="theme-toggle" id="themeToggle"><i class="bi bi-moon"></i> <span id="themeText">Dark</span></button>
         </div>
     </div>
 
-    <!-- Enhanced Summary Cards - 6 Cards -->
-    <div class="summary-grid">
-        <div class="summary-card"><div class="label" id="cardLastMonthTotal">LAST MONTH TOTAL</div><div class="value" id="lastMonthTotal">SAR 0</div><div class="sub" id="lastMonthSub">previous period</div></div>
-        <div class="summary-card"><div class="label" id="cardCurrentMTD">CURRENT MTD (Actual)</div><div class="value" id="currentMTDActual">SAR 0</div><div class="sub" id="currentMTDSub">up to yesterday</div></div>
-        <div class="summary-card"><div class="label" id="cardMTDTarget">MTD TARGET</div><div class="value" id="mtdTarget">SAR 0</div><div class="progress"><div class="progress-bar" id="targetProgress" style="width:0%"></div></div></div>
-        <div class="summary-card"><div class="label" id="cardMTDAchievement">MTD ACHIEVEMENT</div><div class="value" id="achievementRate">0%</div><div class="progress"><div class="progress-bar" id="achProgress" style="width:0%"></div></div></div>
-        <div class="summary-card"><div class="label" id="cardGrossUptoyesterday">GROSS (UP TO YESTERDAY)</div><div class="value" id="grossUptoyesterday">SAR 0</div><div class="sub" id="grossSub">total sales MTD</div></div>
-        <div class="summary-card"><div class="label" id="cardGrowth">YOY GROWTH</div><div class="value" id="growthRate">0%</div><div class="sub" id="growthSub">vs last year same period</div></div>
+    <!-- Store Info -->
+    <div class="store-card">
+        <div class="row g-2">
+            <div class="col-md-6"><label class="form-label" data-key="storeNameLabel">Store Name</label><input type="text" class="form-control" id="storeName" value="Fine Dining Restaurant"></div>
+            <div class="col-md-6"><label class="form-label" data-key="locationLabel">Location</label><input type="text" class="form-control" id="storeLocation" value="123 Main Street, City"></div>
+        </div>
     </div>
 
-    <!-- Forecast & Comparison Section -->
-    <div class="notification-panel">
-        <h5 id="forecastTitle"><i class="fas fa-chart-line me-2"></i> FORECAST & COMPARATIVE ANALYSIS</h5>
-        <div id="trendAnalysis" style="margin-bottom: 16px; padding: 12px; background: var(--gray-50); border-radius: 12px;"></div>
-        <div id="comparisonContainer"></div>
-        <div id="dailyForecastContainer"></div>
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-title" data-key="totalTasks">TOTAL TASKS</div><div class="stat-value" id="totalTasks">0</div><div class="stat-icon text-primary"><i class="bi bi-clipboard"></i></div></div>
+        <div class="stat-card"><div class="stat-title" data-key="pendingTasks">PENDING</div><div class="stat-value" id="pendingTasks">0</div><div class="stat-icon text-warning"><i class="bi bi-clock"></i></div></div>
+        <div class="stat-card"><div class="stat-title" data-key="inProgressTasks">IN PROGRESS</div><div class="stat-value" id="inProgressTasks">0</div><div class="stat-icon text-info"><i class="bi bi-arrow-repeat"></i></div></div>
+        <div class="stat-card"><div class="stat-title" data-key="completedTasks">COMPLETED</div><div class="stat-value" id="completedTasks">0</div><div class="stat-icon text-success"><i class="bi bi-check-circle"></i></div></div>
     </div>
 
-    <!-- Chart -->
-    <div id="chart-container"><canvas id="performance-chart"></canvas></div>
-
-    <!-- Data Table -->
+    <!-- Team Management -->
     <div class="card">
-        <div class="card-header" id="tableHeader"><i class="fas fa-table me-2"></i> DAILY PERFORMANCE · Input mode</div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-bordered mb-0">
-                    <thead><tr><th id="colDay">DAY</th><th id="colSales">SALES (SAR)</th><th id="colTarget">TARGET (SAR)</th><th id="colLastYear">LAST YR (SAR)</th><th id="colTC">TC%</th><th id="colAC">A.C</th><th id="colACH">ACH%</th><th id="colGrowth">GROWTH%</th><th id="colAvg">AVG%</th></tr></thead>
-                    <tbody id="sales-table-body"></tbody>
-                    <tfoot><tr class="total-row"><td><strong id="totalLabel">TOTAL</strong></td>
-                        <td id="total-sales"><strong>SAR0</strong></td><td id="total-target"><strong>SAR0</strong></td><td id="total-lastyear"><strong>SAR0</strong></td>
-                        <td id="total-tc"><strong>0%</strong></td><td id="total-ac"><strong>0</strong></td><td id="total-achieved"><strong>0%</strong></td>
-                        <td id="total-growth"><strong>0%</strong></td><td id="total-average"><strong>0%</strong></td>
-                    </tr></tfoot>
-                </table>
+        <div class="card-header"><i class="bi bi-people me-2"></i><span data-key="teamManagement">Team Management</span></div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label" data-key="addTeamMemberLabel">Add Team Member</label><div class="input-group"><input type="text" class="form-control" id="teamMemberInput" placeholder="Enter name"><button class="btn btn-primary" id="addTeamMemberBtn"><i class="bi bi-plus"></i></button></div></div>
+                <div class="col-md-6"><label class="form-label" data-key="teamMembersLabel">Team Members</label><div id="teamMemberList" class="d-flex flex-wrap gap-1"></div></div>
             </div>
-            <div class="btn-container"><button class="btn btn-primary" id="exportPdf"><i class="fas fa-file-pdf"></i> <span id="exportBtnText">Export PDF</span></button>
-                <button class="btn btn-danger" id="clearAll"><i class="fas fa-trash-alt"></i> <span id="clearBtnText">Clear All Data</span></button>
+        </div>
+    </div>
+
+    <!-- Add Task Form & Task List Row -->
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card">
+                <div class="card-header"><i class="bi bi-plus-circle me-2"></i><span data-key="addNewTask">Add New Task</span></div>
+                <div class="card-body">
+                    <form id="taskForm">
+                        <!-- Camera Section -->
+                        <label class="form-label fw-bold"><span data-key="beforePictures">Before Pictures</span> <span class="text-danger">* (min 3)</span></label>
+                        <div class="photo-progress"><div class="d-flex justify-content-between mb-2"><span id="photoProgressText">0 Photos Taken</span><span class="text-muted small">Minimum 3 required</span></div><div class="progress"><div class="progress-bar bg-success" id="photoProgress" style="width:0%"></div></div></div>
+                        <div class="camera-container"><video id="videoElement" autoplay playsinline></video><canvas id="canvasElement" style="display:none;"></canvas><div id="cameraPlaceholder" class="camera-placeholder"><i class="bi bi-camera display-4"></i><p class="mt-2">Camera not started</p></div></div>
+                        <div class="d-flex gap-2 mt-3"><button type="button" class="btn btn-outline flex-grow-1" id="startCameraBtn"><i class="bi bi-camera-video"></i> Start</button><button type="button" class="btn btn-success flex-grow-1" id="captureBtn" disabled><i class="bi bi-camera"></i> Capture</button><button type="button" class="btn btn-warning flex-grow-1" id="stopCameraBtn" disabled><i class="bi bi-stop-circle"></i> Stop</button></div>
+                        <div id="photoGallery" style="display:none;"><div class="d-flex justify-content-between align-items-center mt-3"><small class="text-muted">Before Pictures</small><button type="button" class="btn btn-sm btn-outline-danger" id="clearAllPhotosBtn"><i class="bi bi-trash"></i> Clear All</button></div><div class="photo-thumbnails" id="photoThumbnails"></div></div>
+
+                        <!-- Task Details -->
+                        <div class="mt-3"><label class="form-label fw-bold"><span data-key="taskDescLabel">Task Description</span> <span class="text-danger">*</span></label><textarea class="form-control" id="taskDesc" rows="3" required></textarea></div>
+                        <div class="mt-3"><label class="form-label fw-bold"><span data-key="assignCrewLabel">Assign to Team Members</span> <span class="text-danger">*</span></label><input type="text" class="form-control" id="crewInput" placeholder="Type name and press Enter"><div id="selectedCrewList" class="d-flex flex-wrap gap-1 mt-2"></div></div>
+                        <div class="row g-2 mt-2"><div class="col-6"><label class="form-label fw-bold"><span data-key="priorityLabel">Priority</span></label><select class="form-select" id="prioritySelect"><option value="">Select</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></div><div class="col-6"><label class="form-label fw-bold"><span data-key="areaLabel">Area</span></label><select class="form-select" id="areaSelect"><option value="">Select</option><option value="Kitchen">Kitchen</option><option value="Dining Area">Dining Area</option><option value="Restrooms">Restrooms</option><option value="Storage">Storage</option><option value="Entrance">Entrance</option></select></div></div>
+                        <div class="row g-2 mt-2"><div class="col-6"><label class="form-label fw-bold"><span data-key="dueDateLabel">Due Date</span></label><input type="date" class="form-control" id="dueDateInput"></div><div class="col-6"><label class="form-label fw-bold"><span data-key="finishDateLabel">Finish Date</span></label><input type="date" class="form-control" id="finishDateInput"></div></div>
+                        <div class="mt-2"><label class="form-label fw-bold"><span data-key="statusLabel">Status</span></label><select class="form-select" id="statusSelect"><option value="Pending">Pending</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option></select></div>
+                        <div class="alert alert-warning mt-3 d-none" id="validationAlert"><i class="bi bi-exclamation-triangle me-2"></i><span id="validationMsg"></span></div>
+                        <button type="submit" class="btn btn-primary w-100 mt-3"><i class="bi bi-plus-circle me-2"></i><span data-key="addTaskBtn">Add Task</span></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center"><span><i class="bi bi-list-check me-2"></i><span data-key="taskList">Task List</span></span><div><span class="badge bg-light text-dark me-2" id="taskCount">0 tasks</span><button class="btn btn-sm btn-success" id="exportPdfBtn"><i class="bi bi-file-pdf"></i> PDF</button></div></div>
+                <div class="card-body p-0">
+                    <div class="p-3 border-bottom"><div class="row g-2"><div class="col-6"><select class="form-select form-select-sm" id="statusFilter"><option value="">All Status</option><option value="Pending">Pending</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option></select></div><div class="col-6"><select class="form-select form-select-sm" id="priorityFilter"><option value="">All Priorities</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></div></div></div>
+                    <div id="taskListContainer" class="p-3" style="max-height: 500px; overflow-y: auto;"></div>
+                    <div id="emptyState" class="text-center p-5"><i class="bi bi-clipboard-x display-4 text-muted"></i><p class="mt-2 text-muted">No tasks yet</p></div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="theme-toggle" id="themeToggle"><i class="fas fa-moon" id="themeIcon"></i><span id="themeText">Dark Mode</span></div>
+<div id="toastMsg" class="toast-notify"><i class="bi bi-check-circle-fill"></i> <span id="toastText"></span></div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // ======================== TRANSLATIONS ========================
     const translations = {
-        en: {
-            titleMain: "Sales Performance Dashboard", subtitleCurrency: "Real-time tracking · SAR currency",
-            cardLastMonthTotal: "LAST MONTH TOTAL", cardCurrentMTD: "CURRENT MTD (Actual)", cardMTDTarget: "MTD TARGET",
-            cardMTDAchievement: "MTD ACHIEVEMENT", cardGrossUptoyesterday: "GROSS (UP TO YESTERDAY)", cardGrowth: "YOY GROWTH",
-            forecastTitle: "FORECAST & COMPARATIVE ANALYSIS", tableHeader: "DAILY PERFORMANCE · Input mode",
-            colDay: "DAY", colSales: "SALES (SAR)", colTarget: "TARGET (SAR)", colLastYear: "LAST YR (SAR)",
-            colTC: "TC%", colAC: "A.C", colACH: "ACH%", colGrowth: "GROWTH%", colAvg: "AVG%",
-            totalLabel: "TOTAL", exportBtnText: "Export PDF", clearBtnText: "Clear All Data", periodLabel: "PERIOD:"
-        },
-        ar: {
-            titleMain: "لوحة أداء المبيعات", subtitleCurrency: "تتبع فوري · عملة الريال السعودي",
-            cardLastMonthTotal: "إجمالي الشهر الماضي", cardCurrentMTD: "شهر جاري (فعلي)", cardMTDTarget: "هدف الشهر الجاري",
-            cardMTDAchievement: "تحقيق الشهر الجاري", cardGrossUptoyesterday: "الإجمالي حتى أمس", cardGrowth: "نمو سنوي",
-            forecastTitle: "التوقعات والتحليل المقارن", tableHeader: "الأداء اليومي · وضع الإدخال",
-            colDay: "اليوم", colSales: "المبيعات (ريال)", colTarget: "الهدف (ريال)", colLastYear: "العام الماضي (ريال)",
-            colTC: "نسبة التكلفة", colAC: "أداء التكلفة", colACH: "نسبة الإنجاز", colGrowth: "نسبة النمو", colAvg: "المتوسط",
-            totalLabel: "الإجمالي", exportBtnText: "تصدير PDF", clearBtnText: "مسح جميع البيانات", periodLabel: "الفترة:"
-        }
+        en: { titleMain: "Cleaning Task Manager", storeNameLabel: "Store Name", locationLabel: "Location", totalTasks: "TOTAL TASKS", pendingTasks: "PENDING", inProgressTasks: "IN PROGRESS", completedTasks: "COMPLETED", teamManagement: "Team Management", addTeamMemberLabel: "Add Team Member", teamMembersLabel: "Team Members", addNewTask: "Add New Task", beforePictures: "Before Pictures", taskDescLabel: "Task Description", assignCrewLabel: "Assign to Team Members", priorityLabel: "Priority", areaLabel: "Area", dueDateLabel: "Due Date", finishDateLabel: "Finish Date", statusLabel: "Status", addTaskBtn: "Add Task", taskList: "Task List" },
+        ar: { titleMain: "مدير مهام التنظيف", storeNameLabel: "اسم المتجر", locationLabel: "الموقع", totalTasks: "إجمالي المهام", pendingTasks: "قيد الانتظار", inProgressTasks: "قيد التنفيذ", completedTasks: "مكتملة", teamManagement: "إدارة الفريق", addTeamMemberLabel: "إضافة عضو", teamMembersLabel: "أعضاء الفريق", addNewTask: "إضافة مهمة جديدة", beforePictures: "الصور قبل التنظيف", taskDescLabel: "وصف المهمة", assignCrewLabel: "تعيين لأعضاء الفريق", priorityLabel: "الأولوية", areaLabel: "المنطقة", dueDateLabel: "تاريخ الاستحقاق", finishDateLabel: "تاريخ الانتهاء", statusLabel: "الحالة", addTaskBtn: "إضافة مهمة", taskList: "قائمة المهام" }
     };
     let currentLang = "en";
-    
-    function updateLanguage() {
-        const t = translations[currentLang];
-        document.getElementById("titleMain").innerText = t.titleMain;
-        document.getElementById("subtitleCurrency").innerText = t.subtitleCurrency;
-        document.getElementById("cardLastMonthTotal").innerText = t.cardLastMonthTotal;
-        document.getElementById("cardCurrentMTD").innerText = t.cardCurrentMTD;
-        document.getElementById("cardMTDTarget").innerText = t.cardMTDTarget;
-        document.getElementById("cardMTDAchievement").innerText = t.cardMTDAchievement;
-        document.getElementById("cardGrossUptoyesterday").innerText = t.cardGrossUptoyesterday;
-        document.getElementById("cardGrowth").innerText = t.cardGrowth;
-        document.getElementById("forecastTitle").innerHTML = `<i class="fas fa-chart-line me-2"></i> ${t.forecastTitle}`;
-        document.getElementById("tableHeader").innerHTML = `<i class="fas fa-table me-2"></i> ${t.tableHeader}`;
-        document.getElementById("colDay").innerText = t.colDay;
-        document.getElementById("colSales").innerText = t.colSales;
-        document.getElementById("colTarget").innerText = t.colTarget;
-        document.getElementById("colLastYear").innerText = t.colLastYear;
-        document.getElementById("colTC").innerText = t.colTC;
-        document.getElementById("colAC").innerText = t.colAC;
-        document.getElementById("colACH").innerText = t.colACH;
-        document.getElementById("colGrowth").innerText = t.colGrowth;
-        document.getElementById("colAvg").innerText = t.colAvg;
-        document.getElementById("totalLabel").innerHTML = `<strong>${t.totalLabel}</strong>`;
-        document.getElementById("exportBtnText").innerText = t.exportBtnText;
-        document.getElementById("clearBtnText").innerText = t.clearBtnText;
-        document.getElementById("periodLabel").innerText = t.periodLabel;
-        document.documentElement.setAttribute("dir", currentLang === "ar" ? "rtl" : "ltr");
-        document.body.style.textAlign = currentLang === "ar" ? "right" : "left";
-        renderDashboard();
+    let tasks = [], teamMembers = [], assignedCrew = [], capturedPhotos = [];
+    let stream = null;
+    let minPhotos = 3;
+
+    // DOM Elements
+    const storeNameInput = document.getElementById('storeName'), storeLocationInput = document.getElementById('storeLocation');
+    const teamMemberInput = document.getElementById('teamMemberInput'), addTeamMemberBtn = document.getElementById('addTeamMemberBtn'), teamMemberList = document.getElementById('teamMemberList');
+    const taskForm = document.getElementById('taskForm'), taskDesc = document.getElementById('taskDesc'), crewInput = document.getElementById('crewInput'), selectedCrewList = document.getElementById('selectedCrewList');
+    const prioritySelect = document.getElementById('prioritySelect'), areaSelect = document.getElementById('areaSelect'), dueDateInput = document.getElementById('dueDateInput'), finishDateInput = document.getElementById('finishDateInput'), statusSelect = document.getElementById('statusSelect');
+    const startCameraBtn = document.getElementById('startCameraBtn'), captureBtn = document.getElementById('captureBtn'), stopCameraBtn = document.getElementById('stopCameraBtn');
+    const videoElement = document.getElementById('videoElement'), canvasElement = document.getElementById('canvasElement'), cameraPlaceholder = document.getElementById('cameraPlaceholder');
+    const photoProgress = document.getElementById('photoProgress'), photoProgressText = document.getElementById('photoProgressText'), photoGallery = document.getElementById('photoGallery'), photoThumbnails = document.getElementById('photoThumbnails'), clearAllPhotosBtn = document.getElementById('clearAllPhotosBtn');
+    const taskListContainer = document.getElementById('taskListContainer'), emptyState = document.getElementById('emptyState'), taskCount = document.getElementById('taskCount');
+    const totalTasksEl = document.getElementById('totalTasks'), pendingTasksEl = document.getElementById('pendingTasks'), inProgressTasksEl = document.getElementById('inProgressTasks'), completedTasksEl = document.getElementById('completedTasks');
+    const statusFilter = document.getElementById('statusFilter'), priorityFilter = document.getElementById('priorityFilter'), exportPdfBtn = document.getElementById('exportPdfBtn');
+    const validationAlert = document.getElementById('validationAlert'), validationMsg = document.getElementById('validationMsg');
+    const toast = document.getElementById('toastMsg'), toastText = document.getElementById('toastText');
+
+    function showToast(msg, type = 'success') { toastText.innerText = msg; toast.style.display = 'flex'; toast.style.borderLeftColor = type === 'error' ? '#ef4444' : '#10b981'; setTimeout(() => toast.style.display = 'none', 2500); }
+
+    // Load/Save Data
+    function loadData() {
+        const savedTeam = localStorage.getItem('restaurantTeamMembers');
+        if (savedTeam) teamMembers = JSON.parse(savedTeam);
+        else teamMembers = ['John Smith', 'Maria Garcia', 'David Johnson'];
+        const savedTasks = localStorage.getItem('restaurantCleaningTasks');
+        if (savedTasks) tasks = JSON.parse(savedTasks);
+        else tasks = [];
+        renderTeamMembers();
+        renderTasks();
+        updateStats();
     }
+    function saveData() { localStorage.setItem('restaurantTeamMembers', JSON.stringify(teamMembers)); localStorage.setItem('restaurantCleaningTasks', JSON.stringify(tasks)); }
 
-    // ======================== DATA STORAGE ========================
-    const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    let currentMonth = "January";
-    let salesData = {}, targetData = {}, lastYearData = {}, tcData = {}, acData = {}, achievedData = {}, growthData = {}, averageData = {};
-    let chart = null;
-
-    months.forEach(m => {
-        salesData[m] = JSON.parse(localStorage.getItem(`salesData_${m}`)) || Array(30).fill('');
-        targetData[m] = JSON.parse(localStorage.getItem(`targetData_${m}`)) || Array(30).fill('');
-        lastYearData[m] = JSON.parse(localStorage.getItem(`lastYearData_${m}`)) || Array(30).fill('');
-        tcData[m] = JSON.parse(localStorage.getItem(`tcData_${m}`)) || Array(30).fill('');
-        acData[m] = JSON.parse(localStorage.getItem(`acData_${m}`)) || Array(30).fill('');
-        achievedData[m] = JSON.parse(localStorage.getItem(`achievedData_${m}`)) || Array(30).fill('');
-        growthData[m] = JSON.parse(localStorage.getItem(`growthData_${m}`)) || Array(30).fill('');
-        averageData[m] = JSON.parse(localStorage.getItem(`averageData_${m}`)) || Array(30).fill('');
-    });
-
-    function formatSAR(val) { return Math.round(val).toLocaleString(); }
-    function calculateAC(sales, tc) { return tc > 0 ? sales / tc : 0; }
-    function saveData() { months.forEach(m => { localStorage.setItem(`salesData_${m}`, JSON.stringify(salesData[m])); localStorage.setItem(`targetData_${m}`, JSON.stringify(targetData[m])); localStorage.setItem(`lastYearData_${m}`, JSON.stringify(lastYearData[m])); localStorage.setItem(`tcData_${m}`, JSON.stringify(tcData[m])); }); }
-
-    function generateTable() {
-        const tbody = $("#sales-table-body"); tbody.empty();
-        for (let i = 1; i <= 30; i++) {
-            tbody.append(`<tr><td>${i}</td><td><input type="number" class="sales-input" id="sales-${i}" value="${salesData[currentMonth][i-1] || ''}" placeholder="0"></td>
-                <td><input type="number" class="sales-input" id="target-${i}" value="${targetData[currentMonth][i-1] || ''}" placeholder="0"></td>
-                <td><input type="number" class="sales-input" id="lastYear-${i}" value="${lastYearData[currentMonth][i-1] || ''}" placeholder="0"></td>
-                <td><input type="number" class="sales-input" id="tc-${i}" value="${tcData[currentMonth][i-1] || ''}" placeholder="0" min="0" max="100"></td>
-                <td class="result-cell" id="ac-${i}">0</td><td class="result-cell" id="achieved-${i}">0%</td>
-                <td class="result-cell" id="growth-${i}">0%</td><td class="result-cell" id="average-${i}">0%</td></tr>`);
-        }
+    function renderTeamMembers() {
+        teamMemberList.innerHTML = teamMembers.map(m => `<span class="team-member">${escapeHtml(m)}<button class="remove-team-member" onclick="removeTeamMember('${escapeHtml(m)}')"><i class="bi bi-x"></i></button></span>`).join('');
     }
+    window.removeTeamMember = function(name) { teamMembers = teamMembers.filter(m => m !== name); saveData(); renderTeamMembers(); showToast('Team member removed', 'info'); };
 
-    function calculateDailyForecast(today, salesArray, targetArray) {
-        let achievementHistory = [];
-        for (let i = 1; i < today && i <= 30; i++) {
-            const target = parseFloat(targetArray[i-1]) || 0;
-            const sales = parseFloat(salesArray[i-1]) || 0;
-            if (target > 0) achievementHistory.push((sales / target) * 100);
-        }
-        if (achievementHistory.length === 0) return null;
-        const recentDays = achievementHistory.slice(-5);
-        const trendWeight = recentDays.reduce((a,b) => a + b, 0) / recentDays.length;
-        const overallAvg = achievementHistory.reduce((a,b) => a + b, 0) / achievementHistory.length;
-        const forecastAchievement = (trendWeight * 0.7 + overallAvg * 0.3);
-        const todayTarget = parseFloat(targetArray[today-1]) || 0;
-        const forecastSales = (forecastAchievement / 100) * todayTarget;
-        return { forecastSales, forecastAchievement, avgAch: overallAvg, trendAch: trendWeight };
+    addTeamMemberBtn.addEventListener('click', () => { const name = teamMemberInput.value.trim(); if (name && !teamMembers.includes(name)) { teamMembers.push(name); saveData(); renderTeamMembers(); teamMemberInput.value = ''; showToast(`Added ${name}`, 'success'); } });
+
+    // Crew assignment
+    crewInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); const name = crewInput.value.trim(); if (name && !assignedCrew.includes(name) && teamMembers.includes(name)) { assignedCrew.push(name); renderCrewList(); crewInput.value = ''; validateForm(); } } });
+    function renderCrewList() { selectedCrewList.innerHTML = assignedCrew.map(m => `<span class="crew-member">${escapeHtml(m)}<button class="remove-crew" onclick="removeCrew('${escapeHtml(m)}')"><i class="bi bi-x"></i></button></span>`).join(''); }
+    window.removeCrew = function(name) { assignedCrew = assignedCrew.filter(m => m !== name); renderCrewList(); validateForm(); };
+
+    // Camera Functions
+    async function startCamera() { try { if (stream) stopCamera(); stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); videoElement.srcObject = stream; videoElement.style.display = 'block'; cameraPlaceholder.style.display = 'none'; startCameraBtn.disabled = true; captureBtn.disabled = false; stopCameraBtn.disabled = false; } catch(err) { showToast('Camera access denied', 'error'); } }
+    function stopCamera() { if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; } videoElement.style.display = 'none'; cameraPlaceholder.style.display = 'flex'; startCameraBtn.disabled = false; captureBtn.disabled = true; stopCameraBtn.disabled = true; }
+    function capturePhoto() { const ctx = canvasElement.getContext('2d'); canvasElement.width = videoElement.videoWidth; canvasElement.height = videoElement.videoHeight; ctx.drawImage(videoElement, 0, 0); const photoData = canvasElement.toDataURL('image/jpeg', 0.8); capturedPhotos.push(photoData); updatePhotoUI(); validateForm(); showToast(`Photo ${capturedPhotos.length} captured`, 'success'); }
+    function updatePhotoUI() { const pct = Math.min((capturedPhotos.length / minPhotos) * 100, 100); photoProgress.style.width = `${pct}%`; photoProgressText.textContent = `${capturedPhotos.length} Photos Taken`; if (capturedPhotos.length === 0) photoGallery.style.display = 'none'; else { photoGallery.style.display = 'block'; photoThumbnails.innerHTML = capturedPhotos.map((p, i) => `<div class="photo-thumbnail"><img src="${p}"><div class="photo-number">${i+1}</div><button class="delete-photo" onclick="deletePhoto(${i})"><i class="bi bi-x"></i></button></div>`).join(''); } }
+    window.deletePhoto = function(idx) { capturedPhotos.splice(idx, 1); updatePhotoUI(); validateForm(); };
+    clearAllPhotosBtn.addEventListener('click', () => { if (confirm('Clear all photos?')) { capturedPhotos = []; updatePhotoUI(); validateForm(); } });
+    startCameraBtn.addEventListener('click', startCamera); captureBtn.addEventListener('click', capturePhoto); stopCameraBtn.addEventListener('click', stopCamera);
+
+    function validateForm() { let errors = []; if (capturedPhotos.length < minPhotos) errors.push(`Minimum ${minPhotos} photos required (${capturedPhotos.length}/${minPhotos})`); if (assignedCrew.length === 0) errors.push('Assign at least one team member'); if (!taskDesc.value.trim()) errors.push('Task description required'); if (!prioritySelect.value) errors.push('Priority required'); if (!areaSelect.value) errors.push('Area required'); if (!dueDateInput.value) errors.push('Due date required'); if (errors.length > 0) { validationAlert.classList.remove('d-none'); validationMsg.innerHTML = errors.map(e => `• ${e}`).join('<br>'); return false; } validationAlert.classList.add('d-none'); return true; }
+
+    taskForm.addEventListener('submit', (e) => { e.preventDefault(); if (!validateForm()) return; const task = { id: Date.now(), description: taskDesc.value, assignedTo: [...assignedCrew], priority: prioritySelect.value, area: areaSelect.value, dueDate: dueDateInput.value, finishDate: finishDateInput.value || '', status: statusSelect.value, beforePhotos: [...capturedPhotos], createdAt: new Date().toISOString() }; tasks.push(task); saveData(); renderTasks(); updateStats(); resetForm(); showToast('Task added successfully!', 'success'); });
+
+    function resetForm() { taskDesc.value = ''; assignedCrew = []; renderCrewList(); capturedPhotos = []; updatePhotoUI(); prioritySelect.value = ''; areaSelect.value = ''; dueDateInput.value = ''; finishDateInput.value = ''; statusSelect.value = 'Pending'; crewInput.value = ''; stopCamera(); validateForm(); }
+
+    function renderTasks() {
+        const filtered = tasks.filter(t => { if (statusFilter.value && t.status !== statusFilter.value) return false; if (priorityFilter.value && t.priority !== priorityFilter.value) return false; return true; });
+        if (filtered.length === 0) { taskListContainer.innerHTML = ''; emptyState.style.display = 'block'; taskCount.textContent = `0 tasks`; return; }
+        emptyState.style.display = 'none'; taskCount.textContent = `${filtered.length} ${filtered.length === 1 ? 'task' : 'tasks'}`;
+        taskListContainer.innerHTML = filtered.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate)).map(task => `
+            <div class="task-card ${task.priority.toLowerCase()}-priority" data-status="${task.status}" data-priority="${task.priority}">
+                <div class="d-flex justify-content-between align-items-start"><h6 class="mb-2">${escapeHtml(task.description)}</h6><div class="dropdown"><button class="btn btn-sm btn-outline-secondary border-0" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></button><ul class="dropdown-menu"><li><a class="dropdown-item" href="#" onclick="editTask(${task.id})"><i class="bi bi-pencil me-2"></i>Edit</a></li><li><a class="dropdown-item text-danger" href="#" onclick="deleteTask(${task.id})"><i class="bi bi-trash me-2"></i>Delete</a></li></ul></div></div>
+                ${task.beforePhotos && task.beforePhotos.length > 0 ? `<div class="task-images">${task.beforePhotos.slice(0,4).map(p => `<img src="${p}" class="task-image" onclick="viewPhotos(${task.id})">`).join('')}${task.beforePhotos.length > 4 ? `<div class="task-image d-flex align-items-center justify-content-center bg-secondary text-white">+${task.beforePhotos.length-4}</div>` : ''}</div>` : ''}
+                <div class="d-flex flex-wrap gap-2 mb-2"><span class="badge ${task.priority === 'High' ? 'bg-danger' : task.priority === 'Medium' ? 'bg-warning text-dark' : 'bg-success'}">${task.priority}</span><span class="badge ${task.status === 'Completed' ? 'bg-success' : task.status === 'In Progress' ? 'bg-info' : 'bg-secondary'}">${task.status}</span><span class="badge bg-primary">${task.area}</span></div>
+                <div class="d-flex flex-wrap gap-1 mb-2">${task.assignedTo.map(m => `<span class="crew-member">${escapeHtml(m)}</span>`).join('')}</div>
+                <div class="small text-muted"><i class="bi bi-calendar-event"></i> Due: ${new Date(task.dueDate).toLocaleDateString()} ${task.finishDate ? `| <i class="bi bi-calendar-check"></i> Finish: ${new Date(task.finishDate).toLocaleDateString()}` : ''}</div>
+            </div>`).join('');
     }
+    window.editTask = function(id) { const task = tasks.find(t => t.id === id); if (task) { taskDesc.value = task.description; assignedCrew = [...task.assignedTo]; renderCrewList(); prioritySelect.value = task.priority; areaSelect.value = task.area; dueDateInput.value = task.dueDate; finishDateInput.value = task.finishDate || ''; statusSelect.value = task.status; capturedPhotos = [...task.beforePhotos]; updatePhotoUI(); tasks = tasks.filter(t => t.id !== id); saveData(); renderTasks(); updateStats(); document.querySelector('.card-header').scrollIntoView({ behavior: 'smooth' }); showToast('Task loaded for editing', 'info'); } };
+    window.deleteTask = function(id) { if (confirm('Delete this task?')) { tasks = tasks.filter(t => t.id !== id); saveData(); renderTasks(); updateStats(); showToast('Task deleted', 'info'); } };
+    window.viewPhotos = function(id) { const task = tasks.find(t => t.id === id); if (task && task.beforePhotos) { const modalHtml = task.beforePhotos.map(p => `<img src="${p}" style="width:100%; max-height:400px; object-fit:contain; margin-bottom:10px;">`).join(''); alert('View photos: ' + task.beforePhotos.length + ' photos captured'); } };
 
-    function renderDashboard() {
-        let totalSales = 0, totalTarget = 0, totalLastYear = 0, totalTC = 0, totalAC = 0, totalAchieved = 0, totalGrowth = 0, totalAverage = 0, validDays = 0;
-        const today = new Date().getDate();
-        for (let i = 1; i <= 30; i++) {
-            const sales = parseFloat($(`#sales-${i}`).val()) || 0;
-            const target = parseFloat($(`#target-${i}`).val()) || 0;
-            const lastYear = parseFloat($(`#lastYear-${i}`).val()) || 0;
-            const tc = parseFloat($(`#tc-${i}`).val()) || 0;
-            const ac = calculateAC(sales, tc);
-            const achieved = target > 0 ? (sales / target) * 100 : 0;
-            const growth = lastYear > 0 ? ((sales - lastYear) / lastYear) * 100 : 0;
-            const avg = (ac + growth) / 2;
-            $(`#ac-${i}`).text(ac.toFixed(1)).removeClass('text-success text-warning text-danger').addClass(ac >= 20 ? 'text-success' : ac >= 10 ? 'text-warning' : 'text-danger');
-            $(`#achieved-${i}`).text(achieved.toFixed(1) + '%').removeClass('text-success text-warning text-danger').addClass(achieved >= 105 ? 'text-success' : achieved >= 100 ? 'text-warning' : 'text-danger');
-            $(`#growth-${i}`).text(growth.toFixed(1) + '%').removeClass('text-success text-warning text-danger').addClass(growth > 0 ? 'text-success' : growth === 0 ? 'text-warning' : 'text-danger');
-            salesData[currentMonth][i-1] = sales; targetData[currentMonth][i-1] = target; lastYearData[currentMonth][i-1] = lastYear; tcData[currentMonth][i-1] = tc;
-            acData[currentMonth][i-1] = ac; achievedData[currentMonth][i-1] = achieved; growthData[currentMonth][i-1] = growth; averageData[currentMonth][i-1] = avg;
-            if (sales || target || lastYear || tc) { totalSales += sales; totalTarget += target; totalLastYear += lastYear; totalTC += tc; totalAC += ac; totalAchieved += achieved; totalGrowth += growth; totalAverage += avg; validDays++; }
-        }
-        saveData();
+    function updateStats() { totalTasksEl.textContent = tasks.length; pendingTasksEl.textContent = tasks.filter(t => t.status === 'Pending').length; inProgressTasksEl.textContent = tasks.filter(t => t.status === 'In Progress').length; completedTasksEl.textContent = tasks.filter(t => t.status === 'Completed').length; }
+    statusFilter.addEventListener('change', () => renderTasks()); priorityFilter.addEventListener('change', () => renderTasks());
 
-        // Calculate MTD up to yesterday (excluding today)
-        const yesterday = today > 1 ? today - 1 : 30;
-        let mtdSales = 0, mtdTarget = 0, mtdLastYear = 0;
-        for (let i = 1; i <= yesterday; i++) { mtdSales += parseFloat(salesData[currentMonth][i-1]) || 0; mtdTarget += parseFloat(targetData[currentMonth][i-1]) || 0; mtdLastYear += parseFloat(lastYearData[currentMonth][i-1]) || 0; }
-        
-        // Last Month Total
-        const prevMonthIndex = months.indexOf(currentMonth) - 1;
-        let lastMonthTotal = 0;
-        if (prevMonthIndex >= 0) { const prevMonth = months[prevMonthIndex]; for (let i = 0; i < 30; i++) lastMonthTotal += parseFloat(salesData[prevMonth][i]) || 0; }
-        
-        const mtdAchRate = mtdTarget > 0 ? (mtdSales / mtdTarget) * 100 : 0;
-        const yoyGrowth = mtdLastYear > 0 ? ((mtdSales - mtdLastYear) / mtdLastYear) * 100 : 0;
-        
-        document.getElementById("lastMonthTotal").innerHTML = `SAR ${formatSAR(lastMonthTotal)}`;
-        document.getElementById("currentMTDActual").innerHTML = `SAR ${formatSAR(mtdSales)}`;
-        document.getElementById("mtdTarget").innerHTML = `SAR ${formatSAR(mtdTarget)}`;
-        document.getElementById("achievementRate").innerHTML = `${mtdAchRate.toFixed(1)}%`;
-        document.getElementById("grossUptoyesterday").innerHTML = `SAR ${formatSAR(mtdSales)}`;
-        document.getElementById("growthRate").innerHTML = `${yoyGrowth >= 0 ? '+' : ''}${yoyGrowth.toFixed(1)}%`;
-        document.getElementById("targetProgress").style.width = `${Math.min((mtdTarget / (totalTarget || 1)) * 100, 100)}%`;
-        document.getElementById("achProgress").style.width = `${Math.min(mtdAchRate, 100)}%`;
-        
-        // Totals row
-        $("#total-sales").html(`SAR ${formatSAR(totalSales)}`); $("#total-target").html(`SAR ${formatSAR(totalTarget)}`); $("#total-lastyear").html(`SAR ${formatSAR(totalLastYear)}`);
-        const avgTC = validDays ? totalTC / validDays : 0; $("#total-tc").text(avgTC.toFixed(1) + '%');
-        const avgAC = validDays ? totalAC / validDays : 0; $("#total-ac").text(avgAC.toFixed(1));
-        const avgAch = validDays ? totalAchieved / validDays : 0; $("#total-achieved").text(avgAch.toFixed(1) + '%');
-        const avgGr = validDays ? totalGrowth / validDays : 0; $("#total-growth").text(avgGr.toFixed(1) + '%');
-        const avgAvg = validDays ? totalAverage / validDays : 0; $("#total-average").text(avgAvg.toFixed(1) + '%');
-        
-        // Daily Forecast based on achievement trends
-        const forecast = calculateDailyForecast(today, salesData[currentMonth], targetData[currentMonth]);
-        let forecastHtml = `<div class="notification-item forecast-item"><strong><i class="fas fa-chart-simple me-2"></i>${currentLang === 'en' ? 'TODAY\'S SALES FORECAST' : 'توقعات مبيعات اليوم'}</strong><div class="mt-2">`;
-        if (forecast) {
-            const status = forecast.forecastAchievement >= 100 ? 'text-success' : forecast.forecastAchievement >= 85 ? 'text-warning' : 'text-danger';
-            forecastHtml += `<div class="d-flex justify-content-between"><span>${currentLang === 'en' ? 'Predicted Sales' : 'المبيعات المتوقعة'}:</span><strong class="${status}">SAR ${formatSAR(forecast.forecastSales)}</strong></div>`;
-            forecastHtml += `<div class="d-flex justify-content-between mt-1"><span>${currentLang === 'en' ? 'Expected Achievement' : 'الإنجاز المتوقع'}:</span><strong class="${status}">${forecast.forecastAchievement.toFixed(1)}%</strong></div>`;
-            forecastHtml += `<div class="small text-muted mt-2">📊 ${currentLang === 'en' ? 'Based on' : 'بناءً على'} ${forecast.avgAch.toFixed(1)}% ${currentLang === 'en' ? 'avg achievement (last days trend' : 'متوسط الإنجاز (اتجاه الأيام الأخيرة'} ${forecast.trendAch.toFixed(1)}%)</div>`;
-        } else { forecastHtml += `<div class="text-warning">⚠️ ${currentLang === 'en' ? 'Insufficient data for forecast. Enter previous days targets and sales.' : 'بيانات غير كافية للتوقعات. أدخل أهداف ومبيعات الأيام السابقة.'}</div>`; }
-        forecastHtml += `</div></div>`;
-        document.getElementById("dailyForecastContainer").innerHTML = forecastHtml;
-        
-        // Comparison Section: Last Month vs Current MTD vs Projected
-        const totalMonthlyTarget = totalTarget;
-        const remainingTarget = totalMonthlyTarget - mtdTarget;
-        const avgAchievement = mtdTarget > 0 ? (mtdSales / mtdTarget) * 100 : 100;
-        const projectedEndMonth = mtdSales + (remainingTarget * (avgAchievement / 100));
-        const projectedAchievement = totalMonthlyTarget > 0 ? (projectedEndMonth / totalMonthlyTarget) * 100 : 0;
-        
-        const comparisonHtml = `<div class="notification-item comparison-item"><strong><i class="fas fa-chart-line me-2"></i>${currentLang === 'en' ? 'MONTHLY COMPARISON' : 'مقارنة شهرية'}</strong>
-            <div class="row mt-2"><div class="col-6"><small>${currentLang === 'en' ? 'Last Month Total' : 'إجمالي الشهر الماضي'}</small><br><strong>SAR ${formatSAR(lastMonthTotal)}</strong></div>
-            <div class="col-6"><small>${currentLang === 'en' ? 'Current MTD (up to yesterday)' : 'الشهر الجاري حتى أمس'}</small><br><strong>SAR ${formatSAR(mtdSales)}</strong></div>
-            <div class="col-6 mt-2"><small>${currentLang === 'en' ? 'Projected Month-End' : 'متوقع نهاية الشهر'}</small><br><strong class="${projectedAchievement >= 100 ? 'text-success' : 'text-warning'}">SAR ${formatSAR(projectedEndMonth)}</strong></div>
-            <div class="col-6 mt-2"><small>${currentLang === 'en' ? 'Projected Achievement' : 'الإنجاز المتوقع'}</small><br><strong class="${projectedAchievement >= 100 ? 'text-success' : 'text-warning'}">${projectedAchievement.toFixed(1)}%</strong></div></div>
-            <div class="progress mt-2"><div class="progress-bar" style="width:${Math.min(projectedAchievement, 100)}%"></div></div></div>`;
-        document.getElementById("comparisonContainer").innerHTML = comparisonHtml;
-        
-        // Trend analysis
-        const trendMsg = projectedAchievement >= 105 ? (currentLang === 'en' ? '✓ EXCELLENT: On track to exceed target' : '✓ ممتاز: على الطريق لتجاوز الهدف') : 
-                        projectedAchievement >= 100 ? (currentLang === 'en' ? '⚠ GOOD: On track to achieve target' : '⚠ جيد: على الطريق لتحقيق الهدف') :
-                        (currentLang === 'en' ? '⚠ CAUTION: Below target trajectory. Action recommended.' : '⚠ تحذير: أقل من مسار الهدف. يوصى باتخاذ إجراء.');
-        document.getElementById("trendAnalysis").innerHTML = `<div class="d-flex align-items-center gap-2"><i class="fas fa-${projectedAchievement >= 100 ? 'check-circle text-success' : 'exclamation-triangle text-warning'}"></i><strong>${trendMsg}</strong></div><div class="small text-muted mt-1">${currentLang === 'en' ? 'Based on current MTD achievement and historical trends' : 'بناءً على إنجاز الشهر الجاري والاتجاهات التاريخية'}</div>`;
-        
-        updateChart();
-    }
+    // PDF Export
+    exportPdfBtn.addEventListener('click', async () => { if (tasks.length === 0) { showToast('No tasks to export', 'warning'); return; } const element = document.createElement('div'); element.innerHTML = `<div style="padding:20px;"><h2>${storeNameInput.value} - Cleaning Tasks Report</h2><p>Date: ${new Date().toLocaleString()}</p><p>Total Tasks: ${tasks.length}</p><hr>${tasks.map(t => `<div style="margin-bottom:20px; border-bottom:1px solid #ccc; padding-bottom:10px;"><h4>${escapeHtml(t.description)}</h4><p>Priority: ${t.priority} | Status: ${t.status} | Area: ${t.area}</p><p>Due: ${new Date(t.dueDate).toLocaleDateString()}</p><p>Assigned: ${t.assignedTo.join(', ')}</p></div>`).join('')}</div>`; const opt = { margin: [10,10,10,10], filename: `cleaning-tasks-${new Date().toISOString().split('T')[0]}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }; html2pdf().set(opt).from(element).save(); showToast('PDF exported', 'success'); });
 
-    function updateChart() {
-        const ctx = document.getElementById("performance-chart").getContext("2d");
-        if (chart) chart.destroy();
-        chart = new Chart(ctx, { type: "line", data: { labels: Array.from({ length: 30 }, (_, i) => `D${i + 1}`), datasets: [
-            { label: "ACH %", data: achievedData[currentMonth], borderColor: "#2563eb", borderWidth: 2, tension: 0.3, pointRadius: 2, fill: false },
-            { label: "Growth %", data: growthData[currentMonth], borderColor: "#10b981", borderWidth: 2, tension: 0.3, pointRadius: 2, fill: false, yAxisID: 'y1' }
-        ] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 }, color: getComputedStyle(document.body).getPropertyValue('--gray-600') } } }, scales: { y1: { position: 'right', ticks: { callback: v => v + '%' } } } } });
-    }
-
-    async function exportToPDF() { const { jsPDF } = window.jspdf; const pdf = new jsPDF('landscape'); pdf.setFontSize(16); pdf.setTextColor(37, 99, 235); pdf.text(`SALES REPORT - ${currentMonth} (SAR)`, 14, 15); pdf.setFontSize(9); pdf.setTextColor(107, 114, 128); pdf.text(`Generated: ${new Date().toLocaleString()}`, 14, 22); pdf.autoTable({ html: '#sales-table-body', startY: 30, head: [['DAY', 'SALES', 'TARGET', 'LAST YR', 'TC%', 'AC', 'ACH%', 'GROWTH%', 'AVG%']] }); pdf.save(`${currentMonth}_Sales_Report.pdf`); }
-    function clearAllData() { if (confirm("⚠️ Delete all data for this month?")) { salesData[currentMonth] = Array(30).fill(''); targetData[currentMonth] = Array(30).fill(''); lastYearData[currentMonth] = Array(30).fill(''); tcData[currentMonth] = Array(30).fill(''); saveData(); generateTable(); renderDashboard(); } }
-
-    $("#month-select").on("change", function() { currentMonth = $(this).val(); generateTable(); renderDashboard(); });
-    $(document).on("input", ".sales-input", renderDashboard);
-    $("#clearAll").on("click", clearAllData);
-    $("#exportPdf").on("click", exportToPDF);
-    $(document).ready(() => { generateTable(); renderDashboard(); });
-    
     // Language & Theme
-    document.getElementById("langEn").addEventListener("click", () => { currentLang = "en"; document.getElementById("langEn").classList.add("active"); document.getElementById("langAr").classList.remove("active"); updateLanguage(); });
-    document.getElementById("langAr").addEventListener("click", () => { currentLang = "ar"; document.getElementById("langAr").classList.add("active"); document.getElementById("langEn").classList.remove("active"); updateLanguage(); });
-    let isDark = localStorage.getItem('sadwapTheme') === 'dark';
-    function applyTheme() { if (isDark) { document.body.classList.add('dark'); document.getElementById('themeIcon').className = 'fas fa-sun'; document.getElementById('themeText').innerText = 'Light Mode'; } else { document.body.classList.remove('dark'); document.getElementById('themeIcon').className = 'fas fa-moon'; document.getElementById('themeText').innerText = 'Dark Mode'; } if (chart) updateChart(); }
-    applyTheme();
-    document.getElementById('themeToggle').addEventListener('click', () => { isDark = !isDark; localStorage.setItem('sadwapTheme', isDark ? 'dark' : 'light'); applyTheme(); });
-    updateLanguage();
+    function updateLanguage() { const t = translations[currentLang]; document.getElementById('titleMain').innerText = t.titleMain; document.querySelectorAll('[data-key]').forEach(el => { const key = el.getAttribute('data-key'); if (t[key]) el.innerText = t[key]; }); document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr'); renderTasks(); }
+    document.getElementById('langEn').addEventListener('click', () => { currentLang = 'en'; document.getElementById('langEn').classList.add('active'); document.getElementById('langAr').classList.remove('active'); updateLanguage(); });
+    document.getElementById('langAr').addEventListener('click', () => { currentLang = 'ar'; document.getElementById('langAr').classList.add('active'); document.getElementById('langEn').classList.remove('active'); updateLanguage(); });
+    let darkMode = localStorage.getItem('taskManagerDark') === 'true';
+    function applyDarkMode() { if (darkMode) document.body.classList.add('dark'); else document.body.classList.remove('dark'); document.getElementById('themeText').innerText = darkMode ? 'Light' : 'Dark'; }
+    document.getElementById('themeToggle').addEventListener('click', () => { darkMode = !darkMode; localStorage.setItem('taskManagerDark', darkMode); applyDarkMode(); });
+    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    // Store info save
+    storeNameInput.addEventListener('change', () => localStorage.setItem('storeName', storeNameInput.value));
+    storeLocationInput.addEventListener('change', () => localStorage.setItem('storeLocation', storeLocationInput.value));
+    const savedStoreName = localStorage.getItem('storeName'); if (savedStoreName) storeNameInput.value = savedStoreName;
+    const savedStoreLocation = localStorage.getItem('storeLocation'); if (savedStoreLocation) storeLocationInput.value = savedStoreLocation;
+
+    // Initialize
+    applyDarkMode(); updateLanguage(); loadData(); updateStats(); renderTasks();
+    const today = new Date().toISOString().split('T')[0]; dueDateInput.min = today; finishDateInput.min = today;
 </script>
 </body>
 </html>
