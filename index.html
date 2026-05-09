@@ -1,19 +1,20 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <link rel="manifest" href="https://progressier.app/DQsSHv2bggUIQ4zV72z0/progressier.json"/>
-<script defer src="https://progressier.app/DQsSHv2bggUIQ4zV72z0/script.js"></script>
+    <script defer src="https://progressier.app/DQsSHv2bggUIQ4zV72z0/script.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="icon" href="https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/ccda845a-d9f3-4c25-b110-99647e3f934a.png" type="image/png">
-    <title>SADWAP · compact popup</title>
+    <title>SADWAP | IT Manager Console</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Corporate + Professional -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -24,857 +25,635 @@
         }
 
         :root {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --accent: #00ff88;
-            --accent-purple: #7c3aed;
-            --text-primary: #e6edf3;
-            --text-secondary: #8b949e;
-            --border-color: #30363d;
-            --danger: #f85149;
-            --font-heading: 'Orbitron', sans-serif;
-            --font-body: 'Inter', sans-serif;
+            --bg-deep: #0a0e17;
+            --bg-elevated: #111827;
+            --bg-card: #1a2332;
+            --border-soft: #2d3a4f;
+            --accent-corporate: #2b6cb0;
+            --accent-glow: #4299e1;
+            --accent-approve: #2ecc71;
+            --text-primary: #f0f4fa;
+            --text-muted: #9ca3af;
+            --danger-light: #f05252;
+            --warning-light: #f6ad55;
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
         body {
-            font-family: var(--font-body);
-            background: #000000;
+            font-family: var(--font-sans);
+            background: radial-gradient(circle at 20% 30%, #0f1722, #03060c);
             color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 8px;
-            position: relative;
+            padding: 20px;
         }
 
-        /* iPhone frame */
-        .iphone-frame {
+        /* professional container — clean floating card */
+        .corporate-container {
             width: 100%;
-            max-width: 390px;
-            background: #0b0f15;
-            border-radius: 52px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 0 6px #28303f, 0 0 0 12px #0f1219;
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--bg-deep);
+            border-radius: 32px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(66, 153, 225, 0.15);
             overflow: hidden;
-            position: relative;
             backdrop-filter: blur(2px);
-            aspect-ratio: 9 / 19;
-            display: flex;
-            flex-direction: column;
+            transition: all 0.2s ease;
         }
 
-        .phone-wallpaper {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 0;
-            opacity: 0.3;
-            pointer-events: none;
+        .app-main {
+            padding: 24px 22px 28px;
         }
 
-        .phone-screen {
-            position: relative;
-            z-index: 2;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 12px 16px 8px 16px;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            overflow-y: auto;
-            scrollbar-width: thin;
-        }
-
-        /* status bar */
-        .status-bar {
+        /* Status bar subtle */
+        .status-bar-corporate {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 6px 16px 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #ffffff;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+            margin-bottom: 24px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-soft);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
         }
         .time-status {
-            background: rgba(30, 40, 60, 0.5);
-            padding: 6px 16px;
+            font-family: var(--font-mono);
+            background: rgba(45, 58, 79, 0.4);
+            padding: 4px 12px;
             border-radius: 40px;
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.15);
-            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.5px;
         }
         .right-status {
             display: flex;
+            gap: 12px;
             align-items: center;
-            gap: 8px;
-            background: rgba(30, 40, 60, 0.4);
-            padding: 6px 14px;
-            border-radius: 40px;
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.1);
         }
         .signal-bars {
             display: flex;
-            align-items: flex-end;
             gap: 3px;
-            height: 16px;
+            align-items: flex-end;
         }
         .bar {
-            width: 4px;
-            background: white;
-            border-radius: 2px;
-            transition: 0.2s;
+            width: 3px;
+            background: #7e8a98;
+            border-radius: 1px;
         }
-        .bar1 { height: 8px; }
-        .bar2 { height: 11px; }
-        .bar3 { height: 14px; }
-        .bar4 { height: 16px; }
-        .bar.active { background: #00ffaa; box-shadow: 0 0 8px #00ffaa; }
-        .battery-indicator {
+        .bar1 { height: 6px; }
+        .bar2 { height: 9px; }
+        .bar3 { height: 12px; }
+        .bar4 { height: 14px; }
+        .bar.active { background: var(--accent-corporate); box-shadow: 0 0 2px var(--accent-glow); }
+
+        /* Header - professional alignment */
+        .header-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+        .brand {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 12px;
         }
-
-        /* ===== SMALL NOTIFICATION ICON ===== */
-        .notif-icon-badge {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-            margin-right: 6px;
-            flex-shrink: 0;
-        }
-        .notif-bell-small {
-            background: #ffaa33;
-            width: 38px;
-            height: 38px;
-            border-radius: 30px;
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--bg-card);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: black;
-            font-size: 1.3rem;
-            box-shadow: 0 0 15px #ffaa33aa;
-            transition: 0.2s;
+            border: 1px solid var(--accent-corporate);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        .notif-bell-small:active {
-            transform: scale(0.95);
-        }
-        .notif-count {
-            position: absolute;
-            top: -5px;
-            right: -8px;
-            background: #ff3b5c;
-            color: white;
-            border-radius: 40px;
-            padding: 2px 6px;
-            font-size: 0.6rem;
-            font-weight: 700;
-            border: 2px solid black;
-            min-width: 20px;
-            text-align: center;
-            line-height: 1.2;
-        }
-
-        /* logo area */
-        .logo-area {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-        .logo-wrap {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .login-logo {
-            width: 42px;
-            height: 42px;
-            border-radius: 14px;
-            border: 2px solid var(--accent);
-            object-fit: cover;
-            box-shadow: 0 0 20px #00ff8844;
+        .brand-icon img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
         }
         .app-title {
-            font-family: var(--font-heading);
-            font-size: 1.3rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            background: linear-gradient(130deg, #00ffaa, #a27cff);
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #cbd5e6, #90cdf4);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
+        .badge-manager {
+            background: #2d3748;
+            border-radius: 40px;
+            padding: 4px 10px;
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: #a3b8e0;
+            margin-left: 6px;
+        }
+
         .dev-avatar-small {
-            width: 38px;
-            height: 38px;
-            border-radius: 19px;
-            border: 2px solid var(--accent);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            border: 1.5px solid var(--accent-corporate);
             overflow: hidden;
-            cursor: pointer;
-            box-shadow: 0 0 15px #00ff8866;
-            display: block;
-            text-decoration: none;
-            flex-shrink: 0;
+            transition: 0.2s;
+            background: #0f1722;
         }
         .dev-avatar-small img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
+        }
+        .dev-avatar-small:hover { border-color: var(--accent-glow); transform: scale(1.02); }
+
+        /* notification bell - professional style */
+        .notif-icon-badge {
+            position: relative;
+            cursor: pointer;
+            margin-right: 4px;
+        }
+        .notif-bell-small {
+            background: #1e2a3a;
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-glow);
+            font-size: 1.4rem;
+            border: 1px solid #2d4a6e;
+            transition: all 0.15s;
+        }
+        .notif-bell-small:active { background: #2d3e54; transform: scale(0.96); }
+        .notif-count {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--danger-light);
+            color: white;
+            border-radius: 30px;
+            padding: 2px 6px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            border: 2px solid var(--bg-deep);
+            min-width: 20px;
+            text-align: center;
+            font-family: monospace;
         }
 
-        /* login card */
+        /* Login card - professional, clean */
         .login-card {
-            border-radius: 32px;
-            background: rgba(22, 27, 34, 0.6);
-            backdrop-filter: blur(20px);
-            padding: 18px 16px 16px 16px;
-            border: 1px solid rgba(255,255,255,0.08);
-            margin-bottom: 14px;
+            background: var(--bg-elevated);
+            border-radius: 28px;
+            padding: 20px 20px 24px;
+            border: 1px solid var(--border-soft);
+            margin-bottom: 24px;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
         }
         .login-heading {
-            font-family: var(--font-heading);
-            font-size: 0.9rem;
             font-weight: 600;
+            font-size: 0.9rem;
             letter-spacing: 1px;
-            color: var(--accent);
-            margin-bottom: 14px;
+            color: var(--accent-glow);
+            text-transform: uppercase;
+            margin-bottom: 16px;
         }
         .custom-input {
-            background: rgba(13, 17, 23, 0.8) !important;
-            border: 1px solid var(--border-color) !important;
-            border-radius: 30px !important;
+            background: var(--bg-deep) !important;
+            border: 1px solid var(--border-soft) !important;
+            border-radius: 18px !important;
             color: white !important;
             padding: 12px 18px !important;
             height: 52px;
             font-size: 0.9rem;
+            font-family: var(--font-mono);
             text-align: center;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
         }
-        .form-floating > label {
-            color: #aaa !important;
-            left: 16px;
-            font-size: 0.85rem;
-        }
-        .toggle-password {
-            position: absolute;
-            right: 14px;
-            top: 14px;
-            background: transparent;
-            border: none;
-            color: #aaa;
-            z-index: 5;
+        .custom-input:focus {
+            border-color: var(--accent-corporate) !important;
+            box-shadow: 0 0 0 2px rgba(43, 108, 176, 0.3) !important;
         }
         .btn-login {
-            background: linear-gradient(135deg, var(--accent), #00b8a9);
+            background: linear-gradient(95deg, #1e4b6e, #1f6392);
             border: none;
-            border-radius: 40px;
+            border-radius: 28px;
             padding: 12px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            font-family: var(--font-heading);
-            margin-top: 6px;
+            font-weight: 600;
             font-size: 0.9rem;
+            transition: 0.2s;
         }
+        .btn-login:hover { background: linear-gradient(95deg, #22638d, #2c74a5); transform: translateY(-1px); }
+        .forgot-link { color: var(--accent-glow); font-size: 0.7rem; text-decoration: none; }
+        .forgot-link:hover { text-decoration: underline; }
 
-        /* campaign video */
+        /* Campaign section corporate */
         .campaign-section {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 30px;
-            padding: 10px 10px 5px 10px;
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.05);
-            margin-bottom: 4px;
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 12px 14px;
+            border-left: 3px solid var(--accent-corporate);
         }
         .campaign-header {
             display: flex;
-            gap: 4px;
+            gap: 8px;
             align-items: center;
-            margin-bottom: 6px;
+            margin-bottom: 12px;
         }
-        .campaign-header i { color: #ff5e7c; font-size: 0.95rem; }
-        .campaign-header span {
-            font-weight: 600;
-            font-size: 0.8rem;
-            background: linear-gradient(145deg,#ff8a5c,#ff3b5c);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
+        .campaign-header i { color: var(--accent-glow); font-size: 1rem; }
+        .campaign-header span { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: #bdd3ff; }
         .campaign-video {
-            border-radius: 18px;
+            border-radius: 16px;
             overflow: hidden;
             aspect-ratio: 16/9;
-            border: 1px solid #ffffff26;
-            background: #000;
+            background: #000000;
+            border: 1px solid #2d4a6e;
         }
-        .campaign-video video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
+        .campaign-video video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* footer note - copyright */
         .footer-note {
             text-align: center;
-            color: #8b949e;
+            margin-top: 16px;
             font-size: 0.65rem;
-            padding: 8px 0 2px;
-            letter-spacing: 0.3px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            margin-top: 2px;
-        }
-        .footer-note i {
-            color: #ffaa33;
-            font-size: 0.6rem;
-            margin: 0 2px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-soft);
+            padding-top: 14px;
         }
 
-        .home-bar {
-            display: flex;
-            justify-content: center;
-            padding: 4px 0 2px;
+        /* POPUP + modal polished */
+        .today-popup {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2d3c;
+            border-left: 4px solid var(--accent-corporate);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 60px;
+            backdrop-filter: blur(12px);
+            z-index: 12000;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            font-size: 0.8rem;
+            font-weight: 500;
+            max-width: 320px;
+            white-space: normal;
+            border: 1px solid rgba(66, 153, 225, 0.4);
         }
-        .home-indicator {
-            width: 100px;
-            height: 5px;
-            background: #e0e7ff;
-            border-radius: 30px;
-            opacity: 0.5;
+        .security-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #251a1f;
+            border-left: 3px solid var(--danger-light);
+            color: #f8b4b4;
+            padding: 8px 20px;
+            border-radius: 40px;
+            backdrop-filter: blur(16px);
+            z-index: 9999;
+            opacity: 0;
+            transition: 0.3s ease;
+            font-size: 0.75rem;
+            font-weight: 500;
         }
+        .security-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        /* MODAL (scheduler for editing) */
+        /* modal scheduler - clean corporate */
         .iframe-modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(8px);
             z-index: 10000;
             align-items: center;
             justify-content: center;
-            padding: 8px;
+            padding: 16px;
         }
         .iframe-card {
             width: 100%;
-            max-width: 340px;
-            background: #121926;
-            border-radius: 36px;
-            padding: 14px 12px 12px;
-            border: 1px solid #3e5569;
-            box-shadow: 0 30px 50px #00000080;
-            max-height: 80vh;
-            display: flex;
-            flex-direction: column;
+            max-width: 400px;
+            background: #0f1729;
+            border-radius: 32px;
+            border: 1px solid #2e4a6e;
+            overflow: hidden;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
         }
         .iframe-header {
+            padding: 14px 18px;
+            background: #0b111e;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-            padding: 0 4px;
-            flex-shrink: 0;
+            border-bottom: 1px solid #283c54;
         }
-        .iframe-header h4 {
-            font-family: var(--font-heading);
-            color: var(--accent);
-            font-size: 1rem;
-            margin: 0;
-        }
+        .iframe-header h4 { font-size: 1rem; margin: 0; font-weight: 600; color: #90cdf4; }
         .close-iframe {
-            background: #2a3a4e;
+            background: none;
             border: none;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            cursor: pointer;
+            color: #b9c8e8;
+            font-size: 1.2rem;
         }
         .iframe-content {
-            background: #0d1824;
-            border-radius: 24px;
-            padding: 10px;
+            padding: 16px;
+            max-height: 65vh;
             overflow-y: auto;
-            border: 1px solid #2d445b;
-            flex: 1;
-        }
-
-        /* Schedule table inside modal */
-        .schedule-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #1b2532;
-            border-radius: 18px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-        .schedule-table th {
-            background: #232f40;
-            color: #aaccff;
-            font-weight: 600;
-            font-size: 0.65rem;
-            padding: 6px 2px;
-            text-align: center;
-            border-bottom: 2px solid #3e526b;
-        }
-        .schedule-table td {
-            padding: 4px 2px;
-            text-align: center;
-            border-bottom: 1px solid #2f4055;
-            color: #e0eaff;
         }
         .category-row {
-            background: #1f2d40;
-        }
-        .category-name {
+            background: #182433;
+            padding: 8px 12px;
+            border-radius: 24px;
+            margin: 8px 0 6px;
             font-weight: 700;
-            color: #ffcc88;
-            background: #1f2d40;
-            padding: 6px 6px;
-            text-align: left;
-            font-size: 0.75rem;
+            color: #9ac2e0;
         }
         .day-select {
-            background: #0d1a26;
-            border: 1px solid #3f5e7c;
+            background: #0a111e;
+            border: 1px solid #2f4b6e;
             color: white;
             border-radius: 30px;
-            padding: 4px 2px;
-            font-size: 0.6rem;
-            width: 68px;
+            padding: 6px 8px;
+            font-size: 0.7rem;
+            width: 85px;
         }
-        .remove-btn {
-            color: #ff8a8a;
-            cursor: pointer;
-            font-size: 0.95rem;
-        }
+        .remove-btn { color: #f68b8b; cursor: pointer; font-size: 1.2rem; margin-left: 4px; }
         .add-row {
-            background: #25344a;
-            border: 1px dashed #6d8bb0;
-            border-radius: 40px;
-            padding: 5px;
+            background: #1f2d42;
+            border: 1px dashed #56759b;
+            border-radius: 30px;
+            padding: 6px;
             text-align: center;
-            margin: 4px 0;
-            color: #aac9ff;
+            margin: 8px 0;
             cursor: pointer;
             font-size: 0.7rem;
+            font-weight: 500;
         }
         .save-all {
-            background: linear-gradient(135deg, #00ffaa, #00b8a9);
+            background: var(--accent-corporate);
             border: none;
-            border-radius: 50px;
-            padding: 8px;
-            font-weight: 700;
-            width: 100%;
-            margin-top: 8px;
-            font-size: 0.8rem;
-        }
-
-        /* COMPACT POPUP - perfectly fits iPhone */
-        .today-popup {
-            position: fixed;
-            top: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1e3a5f;
-            border-left: 4px solid #ffaa33;
-            color: white;
-            padding: 8px 16px;
             border-radius: 40px;
-            backdrop-filter: blur(16px);
-            z-index: 12000;
-            display: none;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 8px 20px black;
-            font-size: 0.8rem;
-            line-height: 1.3;
-            border: 1px solid #ffaa3366;
-            width: auto;
-            max-width: 280px;
-            white-space: normal;
-            word-wrap: break-word;
-            text-align: left;
+            padding: 10px;
+            font-weight: 600;
+            margin-top: 12px;
+            width: 100%;
         }
-        .today-popup i {
-            font-size: 1.2rem;
-            flex-shrink: 0;
-            color: #ffaa33;
-        }
-        .today-popup span {
-            flex: 1;
-        }
-
-        .security-toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: rgba(248,81,73,0.2);
-            border: 1px solid #f85149aa;
-            color: #faa;
-            padding: 6px 16px;
-            border-radius: 60px;
-            backdrop-filter: blur(16px);
-            z-index: 9999;
-            opacity: 0;
-            transition: 0.4s;
-            white-space: nowrap;
-            font-size: 0.8rem;
-        }
-        .security-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
-        .particle { position:absolute; width:3px; height:3px; border-radius:50%; opacity:0; animation:floatParticle 8s infinite; }
-        @keyframes floatParticle { 0%{opacity:0; transform:translateY(100vh) scale(0);} 20%{opacity:0.8;} 100%{opacity:0; transform:translateY(-20vh) scale(1.5);} }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-5px)} 40%,80%{transform:translateX(5px)} }
+        .shake-animation { animation: shake 0.4s ease-in-out; }
+        .particle-container { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1; }
+        .particle { position:absolute; width:3px; height:3px; border-radius:50%; opacity:0; animation:floatParticle 12s infinite; background: #3b82f6; }
+        @keyframes floatParticle { 0%{opacity:0; transform:translateY(100vh) scale(0);} 20%{opacity:0.5;} 100%{opacity:0; transform:translateY(-20vh) scale(1.2);} }
     </style>
 </head>
 <body>
-    <div class="bg-overlay" style="background: url('https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/c4b92c1a-6407-44af-8a12-abe877bd321c.png') center/cover no-repeat; opacity: 0.15;"></div>
-    <div class="particle-container" id="particles"></div>
+<div class="particle-container" id="particles"></div>
 
-    <div class="iphone-frame">
-        <img src="https://ghostkmr.github.io/2026/sadwapbg.jpeg" class="phone-wallpaper" alt="wall">
-
-        <div class="phone-screen">
-            <!-- status bar -->
-            <div class="status-bar">
-                <div class="time-status" id="liveTime">9:41</div>
-                <div class="right-status">
-                    <div class="signal-bars" id="signalBars"><div class="bar bar1 active"></div><div class="bar bar2 active"></div><div class="bar bar3 active"></div><div class="bar bar4 active"></div></div>
-                    <i class="bi bi-wifi" style="font-size:0.85rem;"></i>
-                    <div class="battery-indicator" id="batteryInfo"><span class="battery-level" id="batteryPercent">86%</span><i class="bi bi-battery-full" id="batteryIcon"></i></div>
+<div class="corporate-container">
+    <div class="app-main">
+        <!-- Status bar professional -->
+        <div class="status-bar-corporate">
+            <div class="time-status" id="liveTime">9:41 AM</div>
+            <div class="right-status">
+                <div class="signal-bars" id="signalBars">
+                    <div class="bar bar1 active"></div><div class="bar bar2 active"></div><div class="bar bar3 active"></div><div class="bar bar4 active"></div>
                 </div>
+                <i class="bi bi-wifi" style="font-size:0.8rem;"></i>
+                <div class="battery-indicator" id="batteryInfo"><span id="batteryPercent">94%</span><i class="bi bi-battery-full ms-1"></i></div>
             </div>
-
-            <!-- logo area with SMALL NOTIFICATION ICON -->
-            <div class="logo-area">
-                <div style="display: flex; align-items: center; gap: 6px;">
-                    <!-- Notification icon: single tap = today's tasks, double tap = edit -->
-                    <div class="notif-icon-badge" id="notifIcon">
-                        <div class="notif-bell-small">
-                            <i class="bi bi-bell-fill"></i>
-                        </div>
-                        <span class="notif-count" id="notifCount">3</span>
-                    </div>
-                    <!-- Logo and title -->
-                    <div class="logo-wrap">
-                        <img src="https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/ccda845a-d9f3-4c25-b110-99647e3f934a.png" class="login-logo">
-                        <span class="app-title">SADWAP</span>
-                    </div>
-                </div>
-                <!-- Developer avatar -->
-                <a href="https://ghostkmr.github.io/2026/aboutdeveloper.html" target="_self" class="dev-avatar-small">
-                    <img src="https://ghostkmr.github.io/2026/mueen.jpeg" alt="Developer">
-                </a>
-            </div>
-
-            <!-- LOGIN CARD -->
-            <div class="login-card">
-                <h2 class="login-heading text-center"><i class="bi bi-shield-lock-fill me-2"></i>ENTER PIN</h2>
-                <form id="loginForm">
-                    <div class="form-floating mb-2 position-relative">
-                        <input type="password" class="form-control custom-input" id="password" placeholder="PIN" required autocomplete="off" inputmode="numeric">
-                        <label><i class="bi bi-key-fill me-2"></i>PIN / Password</label>
-                        <button type="button" class="btn toggle-password" id="togglePassword" tabindex="-1"><i class="bi bi-eye-fill"></i></button>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="rememberMe" style="background-color:#333; border-color:#555;">
-                            <label class="form-check-label" style="color:#aaa; font-size:0.65rem;">Remember</label>
-                        </div>
-                        <a href="#" class="forgot-link" style="color:#00ffaa; font-size:0.6rem;">Forgot?</a>
-                    </div>
-                    <button type="submit" class="btn btn-login w-100" id="loginBtn">
-                        <span class="btn-text"><i class="bi bi-box-arrow-in-right me-2"></i>UNLOCK</span>
-                        <span class="btn-loader d-none"><span class="spinner-border spinner-border-sm me-2"></span>verifying...</span>
-                    </button>
-                </form>
-            </div>
-
-            <!-- CAMPAIGN VIDEO -->
-            <div class="campaign-section">
-                <div class="campaign-header">
-                    <i class="bi bi-camera-reels-fill"></i>
-                    <span>🔥 ONGOING CAMPAIGN</span>
-                </div>
-                <div class="campaign-video">
-                    <video id="promoVideo" autoplay loop muted playsinline>
-                        <source src="https://ghostkmr.github.io/2026/shabab.mp4" type="video/mp4">
-                    </video>
-                </div>
-                <!-- FOOTER NOTE ADDED HERE -->
-                <div class="footer-note">
-                    <i class="bi bi-c-circle"></i> All rights reserved copyright Mueen Ul Islam
-                </div>
-            </div>
-            <div class="home-bar"><div class="home-indicator"></div></div>
         </div>
-    </div>
 
-    <!-- MODAL: Full Schedule Editor (opens on double-tap) -->
-    <div class="iframe-modal" id="schedulerModal">
-        <div class="iframe-card">
-            <div class="iframe-header">
-                <h4><i class="bi bi-calendar-week me-2"></i>edit schedule</h4>
-                <button class="close-iframe" id="closeIframeBtn"><i class="bi bi-x-lg"></i></button>
+        <!-- header with notification / brand / dev -->
+        <div class="header-area">
+            <div class="brand">
+                <div class="notif-icon-badge" id="notifIcon">
+                    <div class="notif-bell-small"><i class="bi bi-bell-fill"></i></div>
+                    <span class="notif-count" id="notifCount">3</span>
+                </div>
+                <div>
+                    <div class="brand-icon"><img src="https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/ccda845a-d9f3-4c25-b110-99647e3f934a.png" alt="logo"></div>
+                </div>
+                <div>
+                    <div class="app-title">SADWAP <span class="badge-manager">IT CONSOLE</span></div>
+                </div>
             </div>
-            <div class="iframe-content" id="iframeContent">
-                <!-- injected via js -->
+            <a href="https://ghostkmr.github.io/2026/aboutdeveloper.html" target="_self" class="dev-avatar-small">
+                <img src="https://ghostkmr.github.io/2026/mueen.jpeg" alt="Developer">
+            </a>
+        </div>
+
+        <!-- secure login card -->
+        <div class="login-card">
+            <div class="login-heading text-center"><i class="bi bi-keyboard me-2"></i>SECURE ACCESS • PIN REQUIRED</div>
+            <form id="loginForm">
+                <div class="form-floating mb-3 position-relative">
+                    <input type="password" class="form-control custom-input" id="password" placeholder="PIN" autocomplete="off" inputmode="numeric">
+                    <label><i class="bi bi-shield-lock me-2"></i>Enterprise PIN</label>
+                    <button type="button" class="btn toggle-password" id="togglePassword" tabindex="-1" style="position: absolute; right: 12px; top: 14px; background: none; border: none; color: #9ca3af;"><i class="bi bi-eye-fill"></i></button>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe" style="background:#1f2c3e; border-color:#4b6a8a;">
+                        <label class="form-check-label" style="color:#a0afc0; font-size:0.7rem;">Remember device</label>
+                    </div>
+                    <a href="#" class="forgot-link">Reset credentials</a>
+                </div>
+                <button type="submit" class="btn btn-login w-100" id="loginBtn">
+                    <span class="btn-text"><i class="bi bi-unlock me-2"></i>AUTHENTICATE</span>
+                    <span class="btn-loader d-none"><span class="spinner-border spinner-border-sm me-2"></span>verifying...</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Campaign / corporate brief -->
+        <div class="campaign-section">
+            <div class="campaign-header">
+                <i class="bi bi-play-circle-fill"></i>
+                <span>current initiative · Q2 roadmap</span>
+            </div>
+            <div class="campaign-video">
+                <video id="promoVideo" autoplay loop muted playsinline>
+                    <source src="https://ghostkmr.github.io/2026/shabab.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="footer-note">
+                <i class="bi bi-c-circle"></i> All rights reserved · Mueen Ul Islam · IT Asset Management
             </div>
         </div>
     </div>
+</div>
 
-    <!-- COMPACT POPUP - perfect for iPhone -->
-    <div class="today-popup" id="todayPopup">
-        <i class="bi bi-calendar-day"></i>
-        <span id="popupMessage"></span>
+<!-- MODAL: schedule editor (double tap) -->
+<div class="iframe-modal" id="schedulerModal">
+    <div class="iframe-card">
+        <div class="iframe-header"><h4><i class="bi bi-calendar-check me-2"></i>Ordering schedule editor</h4><button class="close-iframe" id="closeIframeBtn"><i class="bi bi-x-lg"></i></button></div>
+        <div class="iframe-content" id="iframeContent"></div>
     </div>
+</div>
 
-    <div class="security-toast" id="securityToast"><i class="bi bi-shield-exclamation me-2"></i>Access Denied</div>
+<!-- compact popup -->
+<div class="today-popup" id="todayPopup"><i class="bi bi-info-circle-fill"></i><span id="popupMessage"></span></div>
+<div class="security-toast" id="securityToast"><i class="bi bi-shield-slash me-2"></i>Access Denied</div>
 
-    <script>
-        (function() {
-            // ---------- real time clock & battery ----------
-            function updateTime() {
-                const now = new Date(); let hours = now.getHours(); const minutes = now.getMinutes().toString().padStart(2,'0'); const ampm = hours>=12?'PM':'AM'; hours = hours%12||12;
-                document.getElementById('liveTime').textContent = `${hours}:${minutes} ${ampm}`;
+<script>
+    (function(){
+        // clock & battery
+        function updateTime(){ let n=new Date(); let h=n.getHours()%12||12, m=n.getMinutes().toString().padStart(2,'0'), ap=n.getHours()>=12?'PM':'AM'; document.getElementById('liveTime').innerText=`${h}:${m} ${ap}`; }
+        updateTime(); setInterval(updateTime,1000);
+        if('getBattery' in navigator){ navigator.getBattery().then(b=>{ function u(){ let p=Math.round(b.level*100); document.getElementById('batteryPercent').innerText=p+'%'; } u(); b.addEventListener('levelchange',u); }); } 
+        else{ setInterval(()=>{ let r=Math.floor(Math.random()*30)+60; document.getElementById('batteryPercent').innerText=r+'%';},45000); }
+        setInterval(()=>{ let bars=document.querySelectorAll('.bar'); let r=Math.random()>0.2?4:3; bars.forEach((b,i)=> i<r?b.classList.add('active'):b.classList.remove('active')); },7000);
+        
+        // video unmute attempt
+        const video = document.getElementById('promoVideo'); if(video){ video.muted=false; video.play().catch(e=>{ const enable=()=>{video.muted=false; video.play(); document.removeEventListener('touchstart',enable); document.removeEventListener('click',enable);}; document.addEventListener('touchstart',enable); document.addEventListener('click',enable); }); }
+        
+        // particles mild
+        let pCont=document.getElementById('particles'); for(let i=0;i<18;i++){ let p=document.createElement('div'); p.className='particle'; p.style.left=Math.random()*100+'%'; p.style.animationDelay=Math.random()*12+'s'; p.style.animationDuration=(7+Math.random()*8)+'s'; p.style.background=Math.random()>0.6?'#2b6cb0':'#4299e1'; pCont.appendChild(p); }
+        
+        function showSecurityToast(msg){ let t=document.getElementById('securityToast'); t.innerHTML=`<i class="bi bi-shield-exclamation me-2"></i>${msg}`; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2100); }
+        document.addEventListener('contextmenu',e=>{ e.preventDefault(); showSecurityToast('Context menu blocked'); });
+        document.addEventListener('keydown',e=>{ if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&e.key==='I')||(e.ctrlKey&&e.key==='U')){ e.preventDefault(); showSecurityToast('DevTools restricted'); } });
+        
+        // login: PIN = 12345
+        const CORRECT_PIN = "12345";
+        const loginForm = document.getElementById('loginForm');
+        const pwdField = document.getElementById('password');
+        const toggleBtn = document.getElementById('togglePassword');
+        toggleBtn.addEventListener('click',()=>{ let type=pwdField.type==='password'?'text':'password'; pwdField.type=type; toggleBtn.querySelector('i').classList.toggle('bi-eye-fill'); toggleBtn.querySelector('i').classList.toggle('bi-eye-slash-fill'); });
+        
+        loginForm.addEventListener('submit', function(e){
+            e.preventDefault();
+            let val = pwdField.value.trim();
+            if(!val){ loginForm.classList.add('shake-animation'); setTimeout(()=>loginForm.classList.remove('shake-animation'),500); return; }
+            if(val !== CORRECT_PIN){ showSecurityToast('Invalid PIN · access revoked'); pwdField.style.borderColor='#f05252'; loginForm.classList.add('shake-animation'); setTimeout(()=>{pwdField.style.borderColor=''; loginForm.classList.remove('shake-animation');},600); return; }
+            let btn=document.getElementById('loginBtn');
+            btn.querySelector('.btn-text').classList.add('d-none');
+            btn.querySelector('.btn-loader').classList.remove('d-none'); btn.disabled=true;
+            setTimeout(()=>{
+                btn.querySelector('.btn-text').classList.remove('d-none');
+                btn.querySelector('.btn-loader').classList.add('d-none'); btn.disabled=false;
+                btn.innerHTML='<i class="bi bi-check-circle-fill me-2"></i>ACCESS GRANTED';
+                btn.style.background='linear-gradient(95deg, #1e6b4c, #2a9d6e)';
+                setTimeout(()=>{ window.location.href='welcome.html'; },1100);
+            },1300);
+        });
+        
+        // ---------------- SCHEDULER LOGIC (dual tap) -----------------
+        const modal = document.getElementById('schedulerModal');
+        const notifIcon = document.getElementById('notifIcon');
+        const closeBtn = document.getElementById('closeIframeBtn');
+        const iframeContent = document.getElementById('iframeContent');
+        const notifCountSpan = document.getElementById('notifCount');
+        const todayPopup = document.getElementById('todayPopup');
+        const popupMsgSpan = document.getElementById('popupMessage');
+        
+        const defaultData = {
+            "BREAD": [{ order: "SATURDAY", receive: "TUESDAY" },{ order: "MONDAY", receive: "THURSDAY" },{ order: "WEDNESDAY", receive: "SUNDAY" }],
+            "VEGETABLES": [{ order: "SATURDAY", receive: "TUESDAY" },{ order: "MONDAY", receive: "THURSDAY" },{ order: "WEDNESDAY", receive: "SUNDAY" }],
+            "FROZEN": [{ order: "MONDAY", receive: "WEDNESDAY" },{ order: "WEDNESDAY", receive: "SATURDAY" }],
+            "ACC": [{ order: "SATURDAY", receive: "MONDAY" },{ order: "TUESDAY", receive: "THURSDAY" }]
+        };
+        let scheduleData = JSON.parse(localStorage.getItem('ordering_schedule_ghost')) || defaultData;
+        const daysOfWeek = ["MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY","SUNDAY"];
+        
+        function saveToLocal(){ localStorage.setItem('ordering_schedule_ghost', JSON.stringify(scheduleData)); updateBadge(); }
+        function updateBadge(){ let total=0; for(let c in scheduleData) total+=scheduleData[c].length; notifCountSpan.innerText=total; if(total===0) notifCountSpan.style.display='none'; else notifCountSpan.style.display='inline-block'; }
+        
+        function renderSchedulerEditor(){
+            let html='';
+            for(let category in scheduleData){
+                html+=`<div class="category-row"><i class="bi bi-folder-symlink me-2"></i>${category}</div>`;
+                scheduleData[category].forEach((item, idx)=>{
+                    html+=`<div style="display:flex; gap:6px; align-items:center; margin-bottom:8px; background:#13212e; padding:6px 10px; border-radius:40px;">`;
+                    html+=`<select class="day-select" data-cat="${category}" data-index="${idx}" data-field="order">`;
+                    daysOfWeek.forEach(d=>html+=`<option value="${d}" ${item.order===d?'selected':''}>${d.slice(0,3)}</option>`);
+                    html+=`</select><span style="color:#6c8eae;">→</span>`;
+                    html+=`<select class="day-select" data-cat="${category}" data-index="${idx}" data-field="receive">`;
+                    daysOfWeek.forEach(d=>html+=`<option value="${d}" ${item.receive===d?'selected':''}>${d.slice(0,3)}</option>`);
+                    html+=`</select><span class="remove-btn" data-cat="${category}" data-index="${idx}"><i class="bi bi-trash3-fill"></i></span></div>`;
+                });
+                html+=`<div class="add-row" data-cat="${category}"><i class="bi bi-plus-circle me-2"></i>Add row (${category})</div>`;
             }
-            updateTime(); setInterval(updateTime,1000);
-            if ('getBattery' in navigator) {
-                navigator.getBattery().then(b=>{ function u(){ const p=Math.round(b.level*100); document.getElementById('batteryPercent').textContent=p+'%'; document.getElementById('batteryIcon').className = b.charging ? 'bi bi-battery-charging' : (p>=90?'bi bi-battery-full':p>=60?'bi bi-battery-three-quarters':p>=40?'bi bi-battery-half':p>=15?'bi bi-battery-low':'bi bi-battery'); } u(); b.addEventListener('levelchange',u); b.addEventListener('chargingchange',u); });
-            } else { setInterval(()=>{ let r=Math.floor(Math.random()*25)+65; document.getElementById('batteryPercent').textContent=r+'%';},30000); }
-            setInterval(()=>{let b=document.querySelectorAll('.bar');let a=Math.random()>0.2?4:3;b.forEach((e,i)=>i<a?e.classList.add('active'):e.classList.remove('active'));},8000);
-
-            // video sound
-            const video = document.getElementById('promoVideo'); if(video){ video.muted=false; video.play().catch(e=>{ const enable=()=>{video.muted=false; video.play(); document.removeEventListener('touchstart',enable); document.removeEventListener('click',enable);}; document.addEventListener('touchstart',enable); document.addEventListener('click',enable); }); }
-
-            // particles
-            function initParticles(){ let c=document.getElementById('particles'); if(!c) return; for(let i=0;i<20;i++){ let p=document.createElement('div'); p.className='particle'; p.style.left=Math.random()*100+'%'; p.style.animationDelay=Math.random()*8+'s'; p.style.animationDuration=(6+Math.random()*6)+'s'; p.style.background=Math.random()>0.5?'#00ff88':'#7c3aed'; c.appendChild(p); } } initParticles();
-
-            // security toast
-            function showSecurityToast(msg) { let t = document.getElementById('securityToast'); t.innerHTML = '<i class="bi bi-shield-exclamation me-2"></i>'+msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
-            document.addEventListener('contextmenu', e => { e.preventDefault(); showSecurityToast('Context menu disabled'); });
-            document.addEventListener('keydown', e => { if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key==='I') || (e.ctrlKey && e.key==='U')) { e.preventDefault(); showSecurityToast('Dev tools blocked'); } });
-
-            // LOGIN (password = "12345")
-            const CORRECT_PASSWORD = "12345";
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                let pwd = document.getElementById('password').value.trim();
-                if (!pwd) { this.style.animation='shake 0.5s'; setTimeout(()=>this.style.animation='',500); return; }
-                if (pwd !== CORRECT_PASSWORD) {
-                    showSecurityToast('Invalid PIN');
-                    this.style.animation='shake 0.5s'; setTimeout(()=>this.style.animation='',500);
-                    document.getElementById('password').style.borderColor = '#f85149';
-                    setTimeout(() => document.getElementById('password').style.borderColor = '', 500);
-                    return;
-                }
-                let btn = document.getElementById('loginBtn');
-                btn.querySelector('.btn-text').classList.add('d-none');
-                btn.querySelector('.btn-loader').classList.remove('d-none'); btn.disabled = true;
-                setTimeout(() => {
-                    btn.querySelector('.btn-text').classList.remove('d-none');
-                    btn.querySelector('.btn-loader').classList.add('d-none'); btn.disabled = false;
-                    btn.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>ACCESS GRANTED';
-                    btn.style.background = 'linear-gradient(135deg, #00ff88, #00cc6a)';
-                    setTimeout(() => { window.location.href = 'welcome.html'; }, 1200);
-                }, 1500);
-            });
-            document.getElementById('togglePassword').addEventListener('click', function() {
-                let pwd = document.getElementById('password'); let icon = this.querySelector('i');
-                if (pwd.type === 'password') { pwd.type = 'text'; icon.classList.replace('bi-eye-fill','bi-eye-slash-fill'); } else { pwd.type = 'password'; icon.classList.replace('bi-eye-slash-fill','bi-eye-fill'); }
-            });
-
-            // ---------- SCHEDULER WITH DUAL FUNCTION ----------
-            const modal = document.getElementById('schedulerModal');
-            const notifIcon = document.getElementById('notifIcon');
-            const closeBtn = document.getElementById('closeIframeBtn');
-            const iframeContent = document.getElementById('iframeContent');
-            const notifCount = document.getElementById('notifCount');
-            const todayPopup = document.getElementById('todayPopup');
-            const popupMessage = document.getElementById('popupMessage');
-
-            // Default schedule
-            const defaultData = {
-                "BREAD": [
-                    { order: "SATURDAY", receive: "TUESDAY" },
-                    { order: "MONDAY", receive: "THURSDAY" },
-                    { order: "WEDNESDAY", receive: "SUNDAY" }
-                ],
-                "VEGETABLES": [
-                    { order: "SATURDAY", receive: "TUESDAY" },
-                    { order: "MONDAY", receive: "THURSDAY" },
-                    { order: "WEDNESDAY", receive: "SUNDAY" }
-                ],
-                "FROZEN": [
-                    { order: "MONDAY", receive: "WEDNESDAY" },
-                    { order: "WEDNESDAY", receive: "SATURDAY" }
-                ],
-                "ACC": [
-                    { order: "SATURDAY", receive: "MONDAY" },
-                    { order: "TUESDAY", receive: "THURSDAY" }
-                ]
-            };
-
-            let scheduleData = JSON.parse(localStorage.getItem('ordering_schedule_ghost')) || defaultData;
-            const daysOfWeek = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-
-            function saveToLocal() {
-                localStorage.setItem('ordering_schedule_ghost', JSON.stringify(scheduleData));
-                updateNotifBadge();
-            }
-
-            // Update the small badge with total rows
-            function updateNotifBadge() {
-                let total = 0;
-                for (let cat in scheduleData) total += scheduleData[cat].length;
-                notifCount.innerText = total;
-                if (total === 0) notifCount.style.display = 'none';
-                else notifCount.style.display = 'inline-block';
-            }
-
-            // Render full scheduler inside modal (for editing)
-            function renderScheduler() {
-                let html = '';
-                for (let category in scheduleData) {
-                    html += `<div class="category-row" style="padding:5px; margin-top:6px;"><i class="bi bi-tag-fill me-2"></i>${category}</div>`;
-                    scheduleData[category].forEach((item, idx) => {
-                        html += `<div style="display:flex; gap:4px; align-items:center; margin-bottom:5px; background:#1a2a3a; padding:5px; border-radius:40px;">`;
-                        // ordering select (abbreviated days)
-                        html += `<select class="day-select" data-cat="${category}" data-index="${idx}" data-field="order">`;
-                        daysOfWeek.forEach(d => html += `<option value="${d}" ${item.order===d?'selected':''}>${d.substring(0,3)}</option>`);
-                        html += `</select>`;
-                        // receiving select
-                        html += `<select class="day-select" data-cat="${category}" data-index="${idx}" data-field="receive">`;
-                        daysOfWeek.forEach(d => html += `<option value="${d}" ${item.receive===d?'selected':''}>${d.substring(0,3)}</option>`);
-                        html += `</select>`;
-                        // remove btn
-                        html += `<span class="remove-btn" data-cat="${category}" data-index="${idx}"><i class="bi bi-x-circle-fill"></i></span>`;
-                        html += `</div>`;
-                    });
-                    // add row for this category
-                    html += `<div class="add-row" data-cat="${category}"><i class="bi bi-plus-circle me-2"></i>Add row</div>`;
-                }
-                // add new category button
-                html += `<div class="add-row" id="addNewCategory" style="margin-top:10px;"><i class="bi bi-folder-plus me-2"></i>Add category</div>`;
-                html += `<button class="save-all" id="modalSaveBtn"><i class="bi bi-check2-circle me-2"></i>SAVE</button>`;
-
-                iframeContent.innerHTML = html;
-
-                // attach events
-                document.querySelectorAll('.day-select').forEach(sel => {
-                    sel.addEventListener('change', function() {
-                        const cat = this.dataset.cat;
-                        const idx = this.dataset.index;
-                        const field = this.dataset.field;
-                        scheduleData[cat][idx][field] = this.value;
-                        saveToLocal();
-                    });
-                });
-
-                document.querySelectorAll('.remove-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const cat = this.dataset.cat;
-                        const idx = this.dataset.index;
-                        scheduleData[cat].splice(idx, 1);
-                        if (scheduleData[cat].length === 0) delete scheduleData[cat];
-                        saveToLocal();
-                        renderScheduler();
-                    });
-                });
-
-                document.querySelectorAll('.add-row[data-cat]').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const cat = this.dataset.cat;
-                        if (!scheduleData[cat]) scheduleData[cat] = [];
-                        scheduleData[cat].push({ order: "MONDAY", receive: "WEDNESDAY" });
-                        saveToLocal();
-                        renderScheduler();
-                    });
-                });
-
-                document.getElementById('addNewCategory').addEventListener('click', function() {
-                    const newCat = prompt("Category name:", "DAIRY");
-                    if (newCat && newCat.trim()) {
-                        const key = newCat.trim().toUpperCase();
-                        if (!scheduleData[key]) {
-                            scheduleData[key] = [{ order: "MONDAY", receive: "WEDNESDAY" }];
-                            saveToLocal();
-                            renderScheduler();
-                        } else alert("Exists");
-                    }
-                });
-
-                document.getElementById('modalSaveBtn').addEventListener('click', function() {
+            html+=`<div class="add-row" id="addNewCategory"><i class="bi bi-folder-plus me-2"></i>Add new category</div>`;
+            html+=`<button class="save-all" id="modalSaveBtn"><i class="bi bi-save2 me-2"></i>Commit changes</button>`;
+            iframeContent.innerHTML=html;
+            
+            document.querySelectorAll('.day-select').forEach(sel=>{
+                sel.addEventListener('change',function(){
+                    let cat=this.dataset.cat, idx=this.dataset.index, field=this.dataset.field;
+                    scheduleData[cat][idx][field]=this.value;
                     saveToLocal();
-                    this.innerHTML = '<i class="bi bi-check2-circle me-2"></i>SAVED';
-                    setTimeout(() => this.innerHTML = '<i class="bi bi-check2-circle me-2"></i>SAVE', 1000);
+                });
+            });
+            document.querySelectorAll('.remove-btn').forEach(btn=>{
+                btn.addEventListener('click',function(){
+                    let cat=this.dataset.cat, idx=this.dataset.index;
+                    scheduleData[cat].splice(idx,1);
+                    if(scheduleData[cat].length===0) delete scheduleData[cat];
+                    saveToLocal();
+                    renderSchedulerEditor();
+                });
+            });
+            document.querySelectorAll('.add-row[data-cat]').forEach(btn=>{
+                btn.addEventListener('click',function(){
+                    let cat=this.dataset.cat;
+                    if(!scheduleData[cat]) scheduleData[cat]=[];
+                    scheduleData[cat].push({order:"MONDAY", receive:"WEDNESDAY"});
+                    saveToLocal();
+                    renderSchedulerEditor();
+                });
+            });
+            document.getElementById('addNewCategory')?.addEventListener('click',()=>{
+                let newCat=prompt("Category name (e.g., DAIRY, MEAT):","SUPPLIES");
+                if(newCat && newCat.trim()){
+                    let key=newCat.trim().toUpperCase();
+                    if(!scheduleData[key]){ scheduleData[key]=[{order:"MONDAY", receive:"WEDNESDAY"}]; saveToLocal(); renderSchedulerEditor(); }
+                    else alert("Category exists");
+                }
+            });
+            document.getElementById('modalSaveBtn')?.addEventListener('click',()=>{ saveToLocal(); let btnM=document.getElementById('modalSaveBtn'); btnM.innerHTML='<i class="bi bi-check2-circle me-2"></i>SAVED'; setTimeout(()=>btnM.innerHTML='<i class="bi bi-save2 me-2"></i>Commit changes',1200); });
+        }
+        
+        function getTodayTasksMessage(){
+            const today = new Date().toLocaleDateString('en-US',{weekday:'long'}).toUpperCase();
+            let orderSet=[], receiveSet=[];
+            for(let cat in scheduleData){
+                scheduleData[cat].forEach(item=>{
+                    if(item.order===today) orderSet.push(cat);
+                    if(item.receive===today) receiveSet.push(cat);
                 });
             }
-
-            // Get today's day and tasks (compact message)
-            function getTodayMessage() {
-                const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
-                let orderItems = [];
-                let receiveItems = [];
-
-                for (let cat in scheduleData) {
-                    scheduleData[cat].forEach(item => {
-                        if (item.order === today) orderItems.push(cat);
-                        if (item.receive === today) receiveItems.push(cat);
-                    });
-                }
-
-                orderItems = [...new Set(orderItems)];
-                receiveItems = [...new Set(receiveItems)];
-
-                let msg = `${today}. `;
-                if (orderItems.length > 0) msg += `🛒:${orderItems.join(',')} `;
-                if (receiveItems.length > 0) msg += `📦:${receiveItems.join(',')}`;
-                if (orderItems.length === 0 && receiveItems.length === 0) msg += '✨ No tasks';
-                return msg;
-            }
-
-            // Single tap: show compact popup
-            notifIcon.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const msg = getTodayMessage();
-                popupMessage.innerText = msg;
-                todayPopup.style.display = 'flex';
-                setTimeout(() => {
-                    todayPopup.style.display = 'none';
-                }, 3500);
-            });
-
-            // Double tap: open full scheduler for editing
-            notifIcon.addEventListener('dblclick', function() {
-                renderScheduler();
-                modal.style.display = 'flex';
-            });
-
-            closeBtn.addEventListener('click', () => modal.style.display = 'none');
-            modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
-
-            // initial updates
-            updateNotifBadge();
-        })();
-    </script>
-    <style>.particle-container { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1; }</style>
+            let msg=`${today} · `;
+            if(orderSet.length) msg+=`📦 ORDER: ${orderSet.join(', ')} `;
+            if(receiveSet.length) msg+=`📎 RECEIVE: ${receiveSet.join(', ')}`;
+            if(!orderSet.length && !receiveSet.length) msg+=`No pending actions`;
+            return msg;
+        }
+        
+        // single tap => compact popup
+        notifIcon.addEventListener('click', (e)=>{
+            e.stopPropagation();
+            popupMsgSpan.innerText = getTodayTasksMessage();
+            todayPopup.style.display = 'flex';
+            setTimeout(()=>{ todayPopup.style.display = 'none'; }, 3800);
+        });
+        // double tap => full editor
+        notifIcon.addEventListener('dblclick', ()=>{
+            renderSchedulerEditor();
+            modal.style.display = 'flex';
+        });
+        closeBtn.addEventListener('click',()=>modal.style.display='none');
+        modal.addEventListener('click',(e)=>{ if(e.target===modal) modal.style.display='none'; });
+        
+        updateBadge();
+    })();
+</script>
 </body>
 </html>
-
-
-
-
