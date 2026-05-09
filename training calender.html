@@ -1,21 +1,18 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
-    <title>Restaurant KS22 · Smart Training Planner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>SADWAP | Training Plan Manager</title>
     
-    <!-- Bootstrap 5.3 CSS with RTL support for better mobile -->
+    <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
     <!-- SheetJS for Excel export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    
-    <!-- Animate.css for smooth animations -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     
     <style>
         * {
@@ -26,2450 +23,707 @@
         }
 
         :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --success: #4cc9f0;
-            --warning: #f72585;
-            --danger: #e63946;
-            --info: #4895ef;
-            --dark: #1e1e2f;
-            --light: #f8f9fa;
-            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            --hover-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --primary: #2c5f8a;
+            --primary-dark: #1e405e;
+            --primary-soft: #eef2f8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --card-bg: #ffffff;
+            --border: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --radius-card: 20px;
+            --radius-element: 12px;
+            --touch-target: 44px;
+        }
+
+        body.dark {
+            --primary: #3b82f6;
+            --primary-soft: #1e293b;
+            --gray-50: #0f172a;
+            --gray-100: #1e293b;
+            --gray-200: #334155;
+            --gray-500: #94a3b8;
+            --gray-600: #cbd5e1;
+            --gray-700: #e2e8f0;
+            --gray-800: #f1f5f9;
+            --card-bg: #1e293b;
+            --border: #334155;
         }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(145deg, #f3f4f6 0%, #e5e7eb 100%);
+            background: var(--gray-100);
+            color: var(--gray-800);
+            transition: background 0.2s, color 0.2s;
+            padding: 16px;
             min-height: 100vh;
-            padding: clamp(8px, 2vw, 20px);
-            position: relative;
         }
 
-        /* Floating Background Animation */
-        .floating-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
+        .container { max-width: 1600px; margin: 0 auto; }
 
-        .floating-bg::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, #667eea15, #764ba215, #667eea15);
-            animation: rotate 20s linear infinite;
+        /* Header */
+        .header-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
         }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* Main Container */
-        .main-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: clamp(20px, 5vw, 40px);
-            box-shadow: var(--card-shadow);
-            overflow: hidden;
-            max-width: min(1600px, 100%);
-            margin: 0 auto;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        /* Animated Header */
-        .app-header {
-            background: var(--gradient-1);
-            color: white;
-            padding: clamp(1rem, 4vw, 2.5rem);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .app-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
-            animation: pulseGlow 4s ease-in-out infinite;
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.1); }
-        }
-
-        .app-header h1 {
-            font-weight: 800;
-            font-size: clamp(1.5rem, 5vw, 2.5rem);
-            margin-bottom: 0.5rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-            animation: slideInDown 0.8s ease-out;
-        }
+        .logo-area h1 { font-size: 1.4rem; font-weight: 700; margin: 0; color: var(--primary); }
+        .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .lang-switch { display: flex; gap: 6px; background: var(--gray-200); padding: 4px; border-radius: 40px; }
+        .lang-btn { background: transparent; border: none; padding: 6px 18px; border-radius: 32px; font-weight: 600; font-size: 0.7rem; cursor: pointer; color: var(--gray-600); }
+        .lang-btn.active { background: var(--primary); color: white; }
+        .theme-toggle { background: var(--gray-200); border: none; border-radius: 40px; padding: 6px 18px; display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 500; color: var(--gray-700); }
 
         /* Stats Cards */
-        .stats-card {
-            background: white;
-            border-radius: clamp(15px, 3vw, 25px);
-            padding: clamp(1rem, 3vw, 2rem);
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            height: 100%;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            position: relative;
-            overflow: hidden;
-            animation: fadeInUp 0.6s ease-out;
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        @media (max-width: 640px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 16px;
+            border: 1px solid var(--border);
+            text-align: center;
         }
+        .stat-value { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 0.7rem; text-transform: uppercase; color: var(--gray-500); letter-spacing: 0.5px; }
 
-        .stats-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: var(--hover-shadow);
+        /* Form Cards */
+        .form-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
         }
-
-        .stats-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--gradient-1);
-            transform: scaleX(0);
-            transition: var(--transition);
+        .form-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: var(--primary); }
+        .form-control, .form-select {
+            background: var(--gray-50);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 10px 16px;
+            font-size: 0.85rem;
+            color: var(--gray-800);
+            min-height: var(--touch-target);
         }
-
-        .stats-card:hover::after {
-            transform: scaleX(1);
-        }
-
-        .stats-icon {
-            width: clamp(50px, 8vw, 70px);
-            height: clamp(50px, 8vw, 70px);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: clamp(1.2rem, 3vw, 2rem);
-            margin-bottom: 1rem;
-            background: var(--gradient-1);
-            color: white;
-            animation: bounceIn 0.8s ease-out;
-        }
-
-        .stats-value {
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
-            font-weight: 700;
-            color: var(--dark);
-            line-height: 1.2;
-            margin-bottom: 0.25rem;
-        }
-
-        .stats-label {
-            color: #6c757d;
-            font-size: clamp(0.7rem, 2vw, 0.9rem);
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Management Cards */
-        .management-card {
-            background: white;
-            border-radius: clamp(15px, 3vw, 25px);
-            box-shadow: var(--card-shadow);
-            overflow: hidden;
-            height: 100%;
-            transition: var(--transition);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            animation: fadeInLeft 0.6s ease-out;
-        }
-
-        .management-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--hover-shadow);
-        }
-
-        .management-card .card-header {
-            background: var(--gradient-2);
-            color: white;
-            border-bottom: none;
-            padding: clamp(1rem, 3vw, 1.5rem);
-            font-weight: 600;
-            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-        }
-
-        .management-card .card-body {
-            padding: clamp(1rem, 3vw, 1.5rem);
-        }
-
-        /* Station Tags */
-        .stations-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 0.25rem;
-        }
-
-        .station-tag {
-            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            border-radius: 50px;
-            padding: 0.5rem 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: var(--transition);
-            animation: fadeIn 0.5s ease-out;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-
-        .station-tag:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .station-tag .badge {
-            background: var(--gradient-3);
-            color: white;
-            font-weight: 600;
-        }
-
-        /* Training Table */
-        .table-responsive-container {
-            border-radius: clamp(15px, 3vw, 25px);
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            background: white;
-            margin-top: 2rem;
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        .training-table {
-            margin: 0;
-            width: 100%;
-            font-size: clamp(0.7rem, 2vw, 0.85rem);
-        }
-
-        .training-table th {
-            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
-            color: var(--dark);
-            font-weight: 600;
-            padding: clamp(0.5rem, 2vw, 1rem);
-            border-color: #dee2e6;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            white-space: nowrap;
-            vertical-align: middle;
-        }
-
-        .training-table td {
-            padding: clamp(0.3rem, 1.5vw, 0.75rem);
-            border-color: #dee2e6;
-            vertical-align: middle;
-            min-width: 120px;
-            transition: var(--transition);
-        }
-
-        .employee-name-cell {
-            position: sticky;
-            left: 0;
-            background: white;
-            z-index: 5;
-            min-width: 150px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
-        }
-
-        .employee-id-cell {
-            position: sticky;
-            left: 150px;
-            background: white;
-            z-index: 5;
-            min-width: 100px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
-        }
-
-        /* Station Cell Status */
-        .station-cell {
-            background: #f8f9fa;
-            transition: var(--transition);
-        }
-
-        .station-cell.completed {
-            background: linear-gradient(145deg, #d4edda, #c3e6cb) !important;
-            animation: pulseSuccess 2s infinite;
-        }
-
-        .station-cell.in-progress {
-            background: linear-gradient(145deg, #fff3cd, #ffeeba) !important;
-        }
-
-        .station-cell.pending {
-            background: linear-gradient(145deg, #f8d7da, #f5c6cb) !important;
-        }
-
-        .station-cell.deadline-today {
-            background: linear-gradient(145deg, #ffd700, #ffc107) !important;
-            border: 2px solid #ff8c00 !important;
-            animation: pulseWarning 1.5s infinite;
-        }
-
-        .station-cell.deadline-passed {
-            background: linear-gradient(145deg, #ff6b6b, #ff4757) !important;
-            border: 2px solid #ff0000 !important;
-            animation: shake 0.5s ease-in-out;
-        }
-
-        @keyframes pulseWarning {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        @keyframes pulseSuccess {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
-            20%, 40%, 60%, 80% { transform: translateX(2px); }
-        }
-
-        /* Station Inputs */
-        .station-inputs {
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-        }
-
-        .station-inputs select,
-        .station-inputs input {
-            font-size: clamp(0.65rem, 1.8vw, 0.8rem);
-            padding: 0.4rem;
-            border: 1px solid #dee2e6;
-            border-radius: 12px;
-            background: white;
-            transition: var(--transition);
-        }
-
-        .station-inputs select:hover,
-        .station-inputs input:hover {
+        .form-control:focus, .form-select:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-        }
-
-        .station-inputs select:focus,
-        .station-inputs input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
+            box-shadow: 0 0 0 3px rgba(44,95,138,0.1);
             outline: none;
         }
+        .btn {
+            border-radius: 40px;
+            padding: 10px 20px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            border: none;
+            transition: opacity 0.2s;
+            min-height: var(--touch-target);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-outline { background: var(--gray-100); border: 1px solid var(--border); color: var(--gray-700); }
+
+        /* Stations Tags */
+        .stations-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; max-height: 200px; overflow-y: auto; padding: 4px; }
+        .station-tag {
+            background: var(--gray-100);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 6px 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+        .station-tag .badge { background: var(--primary); color: white; padding: 2px 8px; border-radius: 40px; font-size: 0.65rem; }
+
+        /* Training Table */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            margin-bottom: 24px;
+        }
+        .training-table { width: 100%; border-collapse: collapse; min-width: 800px; font-size: 0.75rem; }
+        .training-table th { 
+            background: var(--gray-50); 
+            padding: 12px 8px; 
+            text-align: center; 
+            border-bottom: 1px solid var(--border);
+            color: var(--gray-600);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        .training-table td { padding: 8px; text-align: center; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        .employee-name-cell, .employee-id-cell { background: var(--card-bg); position: sticky; background: var(--card-bg); }
+        .employee-name-cell { left: 0; min-width: 140px; }
+        .employee-id-cell { left: 140px; min-width: 100px; }
+
+        /* Station Cell Status */
+        .station-cell.completed { background: rgba(16,185,129,0.1); border-left: 3px solid var(--success); }
+        .station-cell.in-progress { background: rgba(245,158,11,0.1); border-left: 3px solid var(--warning); }
+        .station-cell.deadline-today { background: rgba(245,158,11,0.2); border-left: 3px solid #f59e0b; animation: pulse 1s infinite; }
+        .station-cell.deadline-passed { background: rgba(239,68,68,0.15); border-left: 3px solid var(--danger); }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
 
         /* Date Range Inputs */
-        .date-range-inputs {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            min-width: 200px;
-        }
-
-        .date-range-inputs input {
-            flex: 1;
-            min-width: 80px;
-            padding: 0.5rem;
-            border-radius: 15px;
-            border: 1px solid #dee2e6;
-            transition: var(--transition);
-        }
-
-        .date-range-inputs input:hover {
-            border-color: var(--primary);
-        }
-
-        .date-range-separator {
-            color: #6c757d;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
+        .date-range-inputs { display: flex; gap: 6px; align-items: center; min-width: 180px; }
+        .date-range-inputs input { flex: 1; min-width: 80px; padding: 6px 8px; font-size: 0.7rem; border-radius: 30px; border: 1px solid var(--border); background: var(--gray-50); }
 
         /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 0.4rem;
-            justify-content: center;
-            min-width: 120px;
-        }
+        .action-buttons { display: flex; gap: 6px; justify-content: center; min-width: 100px; }
+        .btn-action { background: var(--gray-100); border: 1px solid var(--border); border-radius: 30px; padding: 6px 10px; font-size: 0.7rem; transition: all 0.2s; }
+        .btn-action.delete:hover { background: var(--danger); color: white; }
+        .btn-action.copy:hover { background: var(--info); color: white; }
 
-        .btn-action {
-            padding: 0.4rem;
-            font-size: 0.75rem;
-            border-radius: 12px;
-            transition: var(--transition);
-            border: none;
-            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
-        }
-
-        .btn-action:hover {
-            transform: translateY(-2px) scale(1.05);
-        }
-
-        .btn-action.delete:hover {
-            background: linear-gradient(145deg, #ff6b6b, #ff4757);
-            color: white;
-        }
-
-        .btn-action.copy:hover {
-            background: linear-gradient(145deg, #4cc9f0, #4895ef);
-            color: white;
-        }
-
-        .btn-action.complete:hover {
-            background: linear-gradient(145deg, #4cc9f0, #00b4d8);
-            color: white;
-        }
-
-        /* Floating Action Buttons */
-        .fab-container {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .fab {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: var(--gradient-1);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-            transition: var(--transition);
-            animation: bounceIn 0.5s ease-out;
-        }
-
-        .fab:hover {
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .fab.secondary {
-            background: var(--gradient-2);
-        }
-
-        /* Notification Panel */
-        .notification-panel {
-            position: fixed;
-            top: 100px;
-            right: 30px;
-            width: min(400px, 90%);
-            max-width: 90%;
-            z-index: 1050;
-            animation: slideInRight 0.5s ease-out;
-        }
-
-        .notification-card {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            overflow: hidden;
-        }
-
-        .notification-header {
-            background: var(--gradient-2);
-            color: white;
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .notification-body {
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.95);
-        }
-
-        .notification-item {
-            padding: 1rem;
-            margin-bottom: 0.5rem;
-            border-radius: 12px;
-            background: white;
-            border-left: 4px solid var(--warning);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            transition: var(--transition);
-            animation: slideInLeft 0.3s ease-out;
-        }
-
-        .notification-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .notification-item.critical {
-            border-left-color: var(--danger);
-            background: #fff5f5;
-        }
-
-        .notification-item.today {
-            border-left-color: var(--warning);
-            background: #fff9e6;
-        }
-
-        .notification-item.upcoming {
-            border-left-color: var(--info);
-            background: #e8f4fd;
-        }
-
+        /* Notification Badge */
         .notification-badge {
             position: fixed;
-            top: 20px;
+            bottom: 20px;
             right: 20px;
-            background: linear-gradient(135deg, var(--danger), #ff6b6b);
+            background: var(--danger);
             color: white;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 1060;
-            box-shadow: 0 2px 20px rgba(231, 76, 60, 0.5);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(231, 76, 60, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
-        }
-
-        /* Toast Container */
-        .toast-container {
-            z-index: 1070;
-        }
-
-        .toast {
-            border-radius: 15px;
-            border: none;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-            animation: slideInUp 0.3s ease-out;
-        }
-
-        /* Progress Bar */
-        .progress {
-            height: 8px;
-            border-radius: 10px;
-            background: rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            background: var(--gradient-1);
-            transition: width 1s ease-in-out;
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(0, 0, 0, 0.1);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .employee-name-cell {
-                min-width: 120px;
-            }
-            
-            .employee-id-cell {
-                min-width: 80px;
-                left: 120px;
-            }
-            
-            .action-buttons {
-                min-width: 80px;
-            }
-            
-            .btn-action {
-                padding: 0.2rem;
-            }
-            
-            .fab-container {
-                bottom: 20px;
-                right: 20px;
-            }
-            
-            .fab {
-                width: 48px;
-                height: 48px;
-                font-size: 1.2rem;
-            }
-            
-            .notification-panel {
-                top: 80px;
-                right: 15px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .employee-name-cell {
-                min-width: 100px;
-            }
-            
-            .employee-id-cell {
-                min-width: 60px;
-                left: 100px;
-            }
-            
-            .date-range-inputs {
-                min-width: 150px;
-                flex-direction: column;
-                gap: 0.2rem;
-            }
-            
-            .date-range-inputs input {
-                width: 100%;
-            }
-            
-            .station-inputs select,
-            .station-inputs input {
-                font-size: 0.6rem;
-            }
-            
-            .fab-container {
-                bottom: 15px;
-                right: 15px;
-            }
-            
-            .fab {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-            }
-        }
-
-        /* Dark Mode Support */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
-            }
-
-            .main-container {
-                background: rgba(30, 30, 47, 0.95);
-                backdrop-filter: blur(10px);
-            }
-
-            .stats-card,
-            .management-card,
-            .training-table th,
-            .training-table td {
-                background: #1e1e2f;
-                color: #f8f9fa;
-                border-color: #333;
-            }
-
-            .stats-value {
-                color: #f8f9fa;
-            }
-
-            .station-tag {
-                background: #2d2d44;
-                color: #f8f9fa;
-            }
-
-            .station-inputs select,
-            .station-inputs input {
-                background: #2d2d44;
-                color: #f8f9fa;
-                border-color: #444;
-            }
-
-            .employee-name-cell,
-            .employee-id-cell {
-                background: #1e1e2f;
-            }
-
-            .notification-card {
-                background: rgba(30, 30, 47, 0.98);
-            }
-
-            .notification-body {
-                background: #1e1e2f;
-            }
-
-            .notification-item {
-                background: #2d2d44;
-                color: #f8f9fa;
-            }
-        }
-
-        /* Print Styles */
-        @media print {
-            .no-print,
-            .fab-container,
-            .notification-panel,
-            .notification-badge,
-            .btn-container {
-                display: none !important;
-            }
-
-            .main-container {
-                box-shadow: none;
-                background: white;
-            }
-
-            .training-table th,
-            .training-table td {
-                border: 1px solid #000 !important;
-            }
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, var(--secondary), var(--primary));
-        }
-
-        /* Loading Overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(5px);
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
-            animation: fadeIn 0.3s ease-out;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+        /* Toast */
+        .toast-notify {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border-left: 4px solid var(--success);
+            padding: 12px 16px;
+            border-radius: 12px;
+            z-index: 1100;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
-        .loading-overlay.active {
-            display: flex;
+        /* Modal */
+        .modal-content { background: var(--card-bg); border-radius: var(--radius-card); border: 1px solid var(--border); }
+
+        @media (max-width: 640px) {
+            body { padding: 12px; }
+            .employee-name-cell { min-width: 120px; }
+            .employee-id-cell { left: 120px; min-width: 80px; }
         }
 
-        /* Quick Stats Panel */
-        .quick-stats-panel {
-            background: white;
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-top: 1rem;
-            box-shadow: var(--card-shadow);
-            animation: fadeInUp 0.7s ease-out;
-        }
-
-        .stat-progress-item {
-            margin-bottom: 1rem;
-        }
-
-        .stat-progress-item .label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.3rem;
-            font-size: 0.85rem;
-        }
-
-        /* Responsive Grid */
-        .responsive-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        /* Touch Optimizations */
-        @media (hover: none) and (pointer: coarse) {
-            .btn-action:hover,
-            .stats-card:hover,
-            .management-card:hover {
-                transform: none;
-            }
-            
-            .station-tag:hover {
-                transform: none;
-            }
-            
-            .station-inputs select,
-            .station-inputs input {
-                font-size: 16px; /* Prevents zoom on iOS */
-                padding: 10px;
-            }
-        }
+        [dir="rtl"] .employee-name-cell { left: auto; right: 0; }
+        [dir="rtl"] .employee-id-cell { left: auto; right: 140px; }
     </style>
 </head>
 <body>
-    <!-- Floating Background -->
-    <div class="floating-bg"></div>
-
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner"></div>
-    </div>
-
-    <!-- Notification Badge -->
-    <div id="notificationBadge" class="notification-badge" onclick="toggleNotifications()" style="display: none;">
-        <span id="notificationCount">0</span>
-    </div>
-
-    <!-- Notification Panel -->
-    <div id="notificationPanel" class="notification-panel" style="display: none;">
-        <div class="notification-card">
-            <div class="notification-header">
-                <i class="bi bi-bell-fill"></i>
-                <strong>Training Deadlines</strong>
-                <button class="btn btn-sm btn-light ms-auto" onclick="closeAllNotifications()">
-                    <i class="bi bi-x-lg"></i>
-                </button>
-            </div>
-            <div class="notification-body" id="notificationsList">
-                <!-- Notifications will be inserted here -->
-            </div>
+<div class="container">
+    <!-- Header -->
+    <div class="header-card">
+        <div class="logo-area"><h1><i class="bi bi-journal-bookmark-fill me-2"></i><span id="titleMain">Training Plan Manager</span></h1></div>
+        <div class="controls">
+            <div class="lang-switch"><button class="lang-btn active" id="langEn">EN</button><button class="lang-btn" id="langAr">AR</button></div>
+            <button class="theme-toggle" id="themeToggle"><i class="bi bi-moon"></i> <span id="themeText">Dark</span></button>
         </div>
     </div>
 
-    <!-- Floating Action Buttons -->
-    <div class="fab-container no-print">
-        <div class="fab" onclick="quickAddEmployee()" title="Quick Add Employee">
-            <i class="bi bi-person-plus-fill"></i>
-        </div>
-        <div class="fab secondary" onclick="scrollToTop()" title="Scroll to Top">
-            <i class="bi bi-arrow-up"></i>
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-value" id="totalEmployees">0</div><div class="stat-label" data-key="totalEmployees">EMPLOYEES</div></div>
+        <div class="stat-card"><div class="stat-value" id="completionRate">0%</div><div class="stat-label" data-key="completion">COMPLETION</div></div>
+        <div class="stat-card"><div class="stat-value" id="totalStations">0</div><div class="stat-label" data-key="stations">STATIONS</div></div>
+        <div class="stat-card"><div class="stat-value" id="activeTrainers">0</div><div class="stat-label" data-key="trainers">TRAINERS</div></div>
+    </div>
+
+    <!-- Store & Month Info -->
+    <div class="form-card">
+        <div class="row g-3">
+            <div class="col-md-6"><label class="form-label" data-key="storeLabel">Store Name</label><input type="text" class="form-control" id="storeName" value="KS-22"></div>
+            <div class="col-md-6"><label class="form-label" data-key="monthLabel">Month</label><input type="month" class="form-control" id="monthPicker" value="2026-01"></div>
         </div>
     </div>
 
-    <!-- Main Container -->
-    <div class="main-container animate__animated animate__fadeIn">
-        <!-- App Header -->
-        <div class="app-header">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <h1><i class="bi bi-journal-check me-2"></i>Restaurant KUDU</h1>
-                    <p class="mb-0 opacity-75">Smart Training Plan Management System</p>
-                </div>
-                <div class="col-lg-6">
-                    <div class="header-inputs">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control form-control-lg bg-white bg-opacity-20 border-0 text-white" id="store" placeholder="Store Name" value="KS-22">
-                            </div>
-                            <div class="col-md-6">
-                                <input type="month" class="form-control form-control-lg bg-white bg-opacity-20 border-0 text-white" id="month" value="2026-01">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="container-fluid px-3 px-md-4 pb-4">
-            <!-- Stats Cards -->
-            <div class="row g-3 g-md-4 mb-4">
-                <div class="col-xl-3 col-md-6">
-                    <div class="stats-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
-                        <div class="stats-icon employees">
-                            <i class="bi bi-people-fill"></i>
-                        </div>
-                        <div class="stats-value" id="totalEmployees">0</div>
-                        <div class="stats-label">Total Employees</div>
-                        <div class="progress mt-3">
-                            <div class="progress-bar" id="employeeProgress" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <div class="stats-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
-                        <div class="stats-icon completion">
-                            <i class="bi bi-check-circle-fill"></i>
-                        </div>
-                        <div class="stats-value" id="trainingCompletion">0%</div>
-                        <div class="stats-label">Training Completion</div>
-                        <div class="progress mt-3">
-                            <div class="progress-bar" id="completionProgress" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <div class="stats-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
-                        <div class="stats-icon stations">
-                            <i class="bi bi-building-fill"></i>
-                        </div>
-                        <div class="stats-value" id="totalStations">0</div>
-                        <div class="stats-label">Total Stations</div>
-                        <div class="progress mt-3">
-                            <div class="progress-bar" id="stationsProgress" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <div class="stats-card animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
-                        <div class="stats-icon trainers">
-                            <i class="bi bi-person-badge-fill"></i>
-                        </div>
-                        <div class="stats-value" id="activeTrainers">0</div>
-                        <div class="stats-label">Active Trainers</div>
-                        <div class="progress mt-3">
-                            <div class="progress-bar" id="trainersProgress" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Stats Panel -->
-            <div class="quick-stats-panel animate__animated animate__fadeInUp" style="animation-delay: 0.5s">
-                <h5 class="mb-3"><i class="bi bi-graph-up me-2"></i>Training Progress Overview</h5>
-                <div class="responsive-grid">
-                    <div class="stat-progress-item">
-                        <div class="label">
-                            <span>Station Coverage</span>
-                            <span id="stationCoverage">0%</span>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar" id="coverageProgress" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="stat-progress-item">
-                        <div class="label">
-                            <span>Trainer Utilization</span>
-                            <span id="trainerUtilization">0%</span>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar" id="utilizationProgress" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="stat-progress-item">
-                        <div class="label">
-                            <span>Pending Tasks</span>
-                            <span id="pendingTasks">0</span>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar bg-warning" id="pendingProgress" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Management Cards -->
-            <div class="row g-3 g-md-4 mb-4 mt-2">
-                <!-- Stations Management -->
-                <div class="col-xl-6">
-                    <div class="management-card animate__animated animate__fadeInLeft" style="animation-delay: 0.6s">
-                        <div class="card-header">
-                            <i class="bi bi-building me-2"></i>Manage Training Stations
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <div class="stations-list mb-3" id="stationsList">
-                                    <!-- Stations will be listed here -->
-                                </div>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="newStationName" placeholder="Enter new station name">
-                                    <button class="btn btn-success" onclick="addNewStation()" id="addStationBtn">
-                                        <i class="bi bi-plus-lg"></i> Add
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="d-flex gap-2 flex-wrap">
-                                <button class="btn btn-outline-primary flex-fill" onclick="resetToDefaultStations()">
-                                    <i class="bi bi-arrow-clockwise me-1"></i> Reset Stations
-                                </button>
-                                <button class="btn btn-outline-secondary flex-fill" onclick="exportStationsList()">
-                                    <i class="bi bi-download me-1"></i> Export List
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Trainers & Employees Management -->
-                <div class="col-xl-6">
-                    <div class="management-card animate__animated animate__fadeInRight" style="animation-delay: 0.7s">
-                        <div class="card-header">
-                            <i class="bi bi-person-badge me-2"></i>Manage Trainers & Employees
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-12">
-                                    <label class="form-label">Trainers List</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="trainerList" placeholder="Trainers (comma separated)" value="Odin, Mueen, Sarah, Alex, Maria">
-                                        <button class="btn btn-primary" onclick="updateTrainers()">
-                                            <i class="bi bi-check-lg"></i> Update
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <label class="form-label">Employee ID Format</label>
-                                    <input type="text" class="form-control" id="employeeId" placeholder="Default Employee ID Format" value="EMP-">
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="d-flex gap-2 flex-wrap">
-                                        <button class="btn btn-success flex-fill" onclick="addEmployee()">
-                                            <i class="bi bi-person-plus me-1"></i> Add Employee
-                                        </button>
-                                        <button class="btn btn-warning flex-fill" onclick="addMultipleRows()">
-                                            <i class="bi bi-people-fill me-1"></i> Add 5
-                                        </button>
-                                        <button class="btn btn-info flex-fill" onclick="generateReport()">
-                                            <i class="bi bi-file-text me-1"></i> Report
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="enableNotifications" checked>
-                                        <label class="form-check-label" for="enableNotifications">
-                                            Enable Smart Notifications
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Training Table -->
-            <div class="table-responsive-container animate__animated animate__fadeInUp" style="animation-delay: 0.8s">
-                <div class="table-responsive">
-                    <table class="table table-bordered training-table">
-                        <thead id="tableHead">
-                            <!-- Table headers will be generated here -->
-                        </thead>
-                        <tbody id="tableBody">
-                            <!-- Table data will be generated here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="row mt-4 no-print">
-                <div class="col-12">
-                    <div class="d-flex flex-wrap gap-2 justify-content-center">
-                        <button class="btn btn-primary btn-lg flex-fill" onclick="exportExcel()">
-                            <i class="bi bi-file-earmark-excel me-2"></i>Export Excel
-                        </button>
-                        <button class="btn btn-success btn-lg flex-fill" onclick="exportPDF()">
-                            <i class="bi bi-file-earmark-pdf me-2"></i>Export PDF
-                        </button>
-                        <button class="btn btn-warning btn-lg flex-fill" onclick="printTable()">
-                            <i class="bi bi-printer me-2"></i>Print
-                        </button>
-                        <button class="btn btn-info btn-lg flex-fill" onclick="checkDeadlinesNow()">
-                            <i class="bi bi-bell-fill me-2"></i>Check Deadlines
-                        </button>
-                        <button class="btn btn-danger btn-lg flex-fill" onclick="clearAll()">
-                            <i class="bi bi-trash3 me-2"></i>Clear All
-                        </button>
-                    </div>
-                </div>
-            </div>
+    <!-- Stations Management -->
+    <div class="form-card">
+        <h3><i class="bi bi-building me-2"></i><span data-key="stationsManagement">Stations Management</span></h3>
+        <div class="stations-list" id="stationsList"></div>
+        <div class="row g-2">
+            <div class="col"><input type="text" class="form-control" id="newStationName" placeholder="New station name"></div>
+            <div class="col-auto"><button class="btn btn-primary" id="addStationBtn"><i class="bi bi-plus"></i> <span data-key="add">Add</span></button></div>
+            <div class="col-auto"><button class="btn btn-outline" id="resetStationsBtn"><i class="bi bi-arrow-repeat"></i> <span data-key="reset">Reset</span></button></div>
         </div>
     </div>
 
-    <!-- Edit Station Modal -->
-    <div class="modal fade" id="editStationModal" tabindex="-1" data-bs-backdrop="static">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>Edit Station</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="editStationName" class="form-label">Station Name</label>
-                        <input type="text" class="form-control form-control-lg" id="editStationName" placeholder="Enter station name">
-                    </div>
-                    <div class="mb-3">
-                        <label for="editStationCode" class="form-label">Station Code (3 letters)</label>
-                        <input type="text" class="form-control form-control-lg" id="editStationCode" placeholder="e.g., ESS" maxlength="3">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="saveStationEdit()">Save Changes</button>
-                </div>
-            </div>
+    <!-- Trainers Management -->
+    <div class="form-card">
+        <h3><i class="bi bi-person-badge me-2"></i><span data-key="trainersManagement">Trainers Management</span></h3>
+        <div class="row g-2">
+            <div class="col"><input type="text" class="form-control" id="trainersInput" placeholder="Trainers (comma separated)" value="Odin, Mueen, Sarah, Alex"></div>
+            <div class="col-auto"><button class="btn btn-primary" id="updateTrainersBtn"><i class="bi bi-check-lg"></i> <span data-key="update">Update</span></button></div>
         </div>
     </div>
 
-    <!-- Quick Add Employee Modal -->
-    <div class="modal fade" id="quickAddModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title"><i class="bi bi-person-plus-fill me-2"></i>Quick Add Employee</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="quickName" class="form-label">Employee Name</label>
-                        <input type="text" class="form-control form-control-lg" id="quickName" placeholder="Full Name">
-                    </div>
-                    <div class="mb-3">
-                        <label for="quickEmployeeId" class="form-label">Employee ID</label>
-                        <input type="text" class="form-control form-control-lg" id="quickEmployeeId" placeholder="ID">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Quick Assignment</label>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <select class="form-select" id="quickTrainer">
-                                    <option value="">Select Trainer</option>
-                                </select>
-                            </div>
-                            <div class="col-6">
-                                <select class="form-select" id="quickStation">
-                                    <option value="">Select Station</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" onclick="saveQuickAdd()">Add Employee</button>
-                </div>
-            </div>
+    <!-- Add Employee -->
+    <div class="form-card">
+        <h3><i class="bi bi-person-plus me-2"></i><span data-key="addEmployee">Add Employee</span></h3>
+        <div class="row g-2">
+            <div class="col-md-4"><input type="text" class="form-control" id="empName" placeholder="Employee Name"></div>
+            <div class="col-md-4"><input type="text" class="form-control" id="empId" placeholder="Employee ID"></div>
+            <div class="col-md-4"><button class="btn btn-success w-100" id="addEmployeeBtn"><i class="bi bi-plus-circle"></i> <span data-key="addEmp">Add Employee</span></button></div>
+        </div>
+        <div class="row g-2 mt-2">
+            <div class="col-md-6"><button class="btn btn-outline w-100" id="addMultipleBtn"><i class="bi bi-people"></i> <span data-key="add5">Add 5 Employees</span></button></div>
+            <div class="col-md-6"><button class="btn btn-info w-100" id="exportExcelBtn"><i class="bi bi-file-earmark-excel"></i> <span data-key="exportExcel">Export Excel</span></button></div>
         </div>
     </div>
 
-    <!-- Toast Container -->
-    <div class="toast-container position-fixed top-0 end-0 p-3">
-        <div id="statusToast" class="toast" role="alert">
-            <div class="toast-header">
-                <i class="bi bi-info-circle me-2"></i>
-                <strong class="me-auto">Notification</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-            </div>
-            <div class="toast-body" id="toastMessage">
-                <!-- Message will appear here -->
-            </div>
-        </div>
+    <!-- Training Table -->
+    <div class="table-container">
+        <table class="training-table" id="trainingTable">
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+        </table>
     </div>
 
-    <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // DOM Elements
-        const tbody = document.getElementById("tableBody");
-        const thead = document.getElementById("tableHead");
-        const storeInput = document.getElementById("store");
-        const monthInput = document.getElementById("month");
-        const trainerListInput = document.getElementById("trainerList");
-        const employeeIdInput = document.getElementById("employeeId");
-        const newStationNameInput = document.getElementById("newStationName");
-        const stationsList = document.getElementById("stationsList");
-        const notificationBadge = document.getElementById("notificationBadge");
-        const notificationPanel = document.getElementById("notificationPanel");
-        const notificationCount = document.getElementById("notificationCount");
-        const notificationsList = document.getElementById("notificationsList");
-        const enableNotifications = document.getElementById("enableNotifications");
-        const loadingOverlay = document.getElementById("loadingOverlay");
-        
-        // Modals
-        const editStationModal = new bootstrap.Modal(document.getElementById('editStationModal'));
-        const quickAddModal = new bootstrap.Modal(document.getElementById('quickAddModal'));
-        const editStationNameInput = document.getElementById("editStationName");
-        const editStationCodeInput = document.getElementById("editStationCode");
-        
-        // Toast
-        const statusToast = new bootstrap.Toast(document.getElementById('statusToast'));
-        const toastMessage = document.getElementById('toastMessage');
-        
-        // Stats elements
-        const totalEmployeesEl = document.getElementById("totalEmployees");
-        const trainingCompletionEl = document.getElementById("trainingCompletion");
-        const totalStationsEl = document.getElementById("totalStations");
-        const activeTrainersEl = document.getElementById("activeTrainers");
-        
-        // Progress bars
-        const employeeProgress = document.getElementById("employeeProgress");
-        const completionProgress = document.getElementById("completionProgress");
-        const stationsProgress = document.getElementById("stationsProgress");
-        const trainersProgress = document.getElementById("trainersProgress");
-        const coverageProgress = document.getElementById("coverageProgress");
-        const utilizationProgress = document.getElementById("utilizationProgress");
-        const pendingProgress = document.getElementById("pendingProgress");
-        
-        // Default restaurant stations
-        const DEFAULT_STATIONS = [
-            { id: "ess", name: "Essentials", code: "ESS" },
-            { id: "prep", name: "Preparations", code: "PREP" },
-            { id: "brk", name: "Breakfast", code: "BRK" },
-            { id: "burg", name: "Burger Station", code: "BURG" },
-            { id: "steak", name: "Steak Station", code: "STEAK" },
-            { id: "side", name: "Side Items", code: "SIDE" },
-            { id: "dess", name: "Desserts", code: "DESS" },
-            { id: "equip", name: "Equipment", code: "EQUIP" },
-            { id: "gs", name: "Guest Service", code: "GS" }
-        ];
+    <!-- Action Buttons -->
+    <div class="d-flex flex-wrap gap-2 justify-content-center mb-4">
+        <button class="btn btn-warning" id="checkDeadlinesBtn"><i class="bi bi-bell-fill"></i> <span data-key="checkDeadlines">Check Deadlines</span></button>
+        <button class="btn btn-danger" id="clearAllBtn"><i class="bi bi-trash3"></i> <span data-key="clearAll">Clear All</span></button>
+    </div>
+</div>
 
-        // Configuration
-        let stations = [];
-        let trainers = [];
-        let employees = [];
-        let nextEmployeeId = 1001;
-        let editingStationId = null;
-        let notifications = [];
-        let notificationCheckInterval;
+<!-- Notification Badge -->
+<div class="notification-badge" id="notificationBadge"><span id="notificationCount">0</span></div>
 
-        // Initialize
-        function init() {
-            showLoading();
-            loadConfig();
-            renderStationsList();
-            renderTable();
-            updateProgressSummary();
-            setupEventListeners();
-            startNotificationChecker();
-            updateQuickSelects();
-            showToast("Training Plan Manager Loaded", "success");
-            
-            // Initial check for deadlines
-            checkTrainingDeadlines();
-            
-            setTimeout(hideLoading, 500);
+<!-- Toast -->
+<div id="toastMsg" class="toast-notify"><i class="bi bi-check-circle-fill"></i> <span id="toastText"></span></div>
+
+<!-- Edit Station Modal -->
+<div class="modal fade" id="editStationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Edit Station</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="editStationId"><div class="mb-3"><label class="form-label">Station Name</label><input type="text" class="form-control" id="editStationName"></div><div class="mb-3"><label class="form-label">Station Code</label><input type="text" class="form-control" id="editStationCode" maxlength="3"></div></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveStationEditBtn">Save</button></div></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // ======================== TRANSLATIONS ========================
+    const translations = {
+        en: { titleMain: "Training Plan Manager", totalEmployees: "EMPLOYEES", completion: "COMPLETION", stations: "STATIONS", trainers: "TRAINERS", storeLabel: "Store Name", monthLabel: "Month", stationsManagement: "Stations Management", add: "Add", reset: "Reset", trainersManagement: "Trainers Management", update: "Update", addEmployee: "Add Employee", addEmp: "Add Employee", add5: "Add 5 Employees", exportExcel: "Export Excel", checkDeadlines: "Check Deadlines", clearAll: "Clear All" },
+        ar: { titleMain: "مدير خطة التدريب", totalEmployees: "الموظفين", completion: "الإنجاز", stations: "المحطات", trainers: "المدربين", storeLabel: "اسم المتجر", monthLabel: "الشهر", stationsManagement: "إدارة المحطات", add: "إضافة", reset: "إعادة تعيين", trainersManagement: "إدارة المدربين", update: "تحديث", addEmployee: "إضافة موظف", addEmp: "إضافة موظف", add5: "إضافة 5 موظفين", exportExcel: "تصدير إكسيل", checkDeadlines: "فحص المواعيد", clearAll: "مسح الكل" }
+    };
+    let currentLang = "en";
+
+    // Default stations
+    const DEFAULT_STATIONS = [
+        { id: "ess", name: "Essentials", code: "ESS" },
+        { id: "prep", name: "Preparations", code: "PREP" },
+        { id: "brk", name: "Breakfast", code: "BRK" },
+        { id: "burg", name: "Burger Station", code: "BURG" },
+        { id: "side", name: "Side Items", code: "SIDE" },
+        { id: "dess", name: "Desserts", code: "DESS" },
+        { id: "gs", name: "Guest Service", code: "GS" }
+    ];
+
+    let stations = [], trainers = [], employees = [], nextId = 1001;
+    let editingStationId = null;
+
+    // Load data
+    function loadData() {
+        const saved = localStorage.getItem('training_plan_manager');
+        if (saved) {
+            const data = JSON.parse(saved);
+            stations = data.stations || DEFAULT_STATIONS;
+            trainers = data.trainers || ["Odin", "Mueen", "Sarah", "Alex"];
+            employees = data.employees || [];
+            nextId = data.nextId || 1001;
+            document.getElementById('storeName').value = data.storeName || "KS-22";
+            document.getElementById('monthPicker').value = data.month || "2026-01";
+        } else {
+            stations = [...DEFAULT_STATIONS];
+            trainers = ["Odin", "Mueen", "Sarah", "Alex"];
+            employees = [];
         }
+        document.getElementById('trainersInput').value = trainers.join(", ");
+        renderStationsList();
+        renderTable();
+        updateStats();
+    }
 
-        // Show loading overlay
-        function showLoading() {
-            loadingOverlay.classList.add('active');
+    function saveData() {
+        localStorage.setItem('training_plan_manager', JSON.stringify({
+            stations, trainers, employees, nextId,
+            storeName: document.getElementById('storeName').value,
+            month: document.getElementById('monthPicker').value
+        }));
+    }
+
+    function renderStationsList() {
+        const container = document.getElementById('stationsList');
+        container.innerHTML = stations.map(s => `
+            <div class="station-tag">
+                <span class="badge">${s.code}</span>
+                <span>${s.name}</span>
+                <button class="btn btn-sm btn-outline-primary rounded-circle" onclick="editStation('${s.id}')" style="width:28px;height:28px;padding:0;"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-sm btn-outline-danger rounded-circle" onclick="removeStation('${s.id}')" style="width:28px;height:28px;padding:0;"><i class="bi bi-x"></i></button>
+            </div>
+        `).join('');
+        document.getElementById('totalStations').innerText = stations.length;
+    }
+
+    window.editStation = function(id) {
+        const station = stations.find(s => s.id === id);
+        if (station) {
+            editingStationId = id;
+            document.getElementById('editStationId').value = id;
+            document.getElementById('editStationName').value = station.name;
+            document.getElementById('editStationCode').value = station.code;
+            new bootstrap.Modal(document.getElementById('editStationModal')).show();
         }
+    };
 
-        // Hide loading overlay
-        function hideLoading() {
-            loadingOverlay.classList.remove('active');
-        }
-
-        // Load configuration
-        function loadConfig() {
-            const config = JSON.parse(localStorage.getItem("restaurantTrainingConfig")) || {
-                stations: DEFAULT_STATIONS,
-                trainers: ["Odin", "Mueen", "Sarah", "Alex", "Maria"],
-                employees: [],
-                nextEmployeeId: 1001,
-                notificationsEnabled: true
-            };
-            
-            stations = config.stations || DEFAULT_STATIONS;
-            trainers = config.trainers;
-            employees = config.employees || [];
-            nextEmployeeId = config.nextEmployeeId || 1001;
-            enableNotifications.checked = config.notificationsEnabled !== false;
-            
-            trainerListInput.value = trainers.join(", ");
-            
-            // Set current month if empty
-            if (!monthInput.value) {
-                const now = new Date();
-                monthInput.value = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
-            }
-        }
-
-        // Save configuration
-        function saveConfig() {
-            const config = {
-                stations: stations,
-                trainers: trainers,
-                employees: employees,
-                nextEmployeeId: nextEmployeeId,
-                notificationsEnabled: enableNotifications.checked
-            };
-            localStorage.setItem("restaurantTrainingConfig", JSON.stringify(config));
-        }
-
-        // Update quick select dropdowns
-        function updateQuickSelects() {
-            const trainerSelect = document.getElementById('quickTrainer');
-            const stationSelect = document.getElementById('quickStation');
-            
-            if (trainerSelect) {
-                trainerSelect.innerHTML = '<option value="">Select Trainer</option>' + 
-                    trainers.map(t => `<option value="${t}">${t}</option>`).join('');
-            }
-            
-            if (stationSelect) {
-                stationSelect.innerHTML = '<option value="">Select Station</option>' + 
-                    stations.map(s => `<option value="${s.id}">${s.name} (${s.code})</option>`).join('');
-            }
-        }
-
-        // Start notification checker
-        function startNotificationChecker() {
-            if (notificationCheckInterval) {
-                clearInterval(notificationCheckInterval);
-            }
-            
-            // Check every 30 minutes
-            notificationCheckInterval = setInterval(() => {
-                if (enableNotifications.checked) {
-                    checkTrainingDeadlines();
-                }
-            }, 30 * 60 * 1000);
-            
-            // Check when page becomes visible
-            document.addEventListener('visibilitychange', () => {
-                if (!document.hidden && enableNotifications.checked) {
-                    checkTrainingDeadlines();
-                }
-            });
-        }
-
-        // Check training deadlines
-        function checkTrainingDeadlines() {
-            if (!enableNotifications.checked) return;
-            
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            notifications = [];
-            
-            employees.forEach(employee => {
-                if (!employee.stations) return;
-                
-                stations.forEach(station => {
-                    const stationData = employee.stations[station.id];
-                    if (!stationData || !stationData.completionDate) return;
-                    
-                    const completionDate = new Date(stationData.completionDate);
-                    completionDate.setHours(0, 0, 0, 0);
-                    
-                    const daysDifference = Math.ceil((completionDate - today) / (1000 * 60 * 60 * 24));
-                    
-                    if (daysDifference === 0) {
-                        // Due today
-                        notifications.push({
-                            type: 'today',
-                            message: `TODAY: ${employee.name} has final assessment for ${station.name}`,
-                            employee: employee.name,
-                            station: station.name,
-                            date: stationData.completionDate,
-                            days: 0,
-                            critical: true
-                        });
-                    } else if (daysDifference < 0) {
-                        // Past due
-                        const daysOverdue = Math.abs(daysDifference);
-                        notifications.push({
-                            type: 'overdue',
-                            message: `OVERDUE by ${daysOverdue} day${daysOverdue > 1 ? 's' : ''}: ${employee.name}'s ${station.name} assessment`,
-                            employee: employee.name,
-                            station: station.name,
-                            date: stationData.completionDate,
-                            days: daysOverdue,
-                            critical: true
-                        });
-                    } else if (daysDifference === 1) {
-                        // Due tomorrow
-                        notifications.push({
-                            type: 'tomorrow',
-                            message: `TOMORROW: ${employee.name}'s ${station.name} final assessment`,
-                            employee: employee.name,
-                            station: station.name,
-                            date: stationData.completionDate,
-                            days: 1
-                        });
-                    } else if (daysDifference <= 3) {
-                        // Due in 3 days
-                        notifications.push({
-                            type: 'upcoming',
-                            message: `In ${daysDifference} days: ${employee.name}'s ${station.name} assessment`,
-                            employee: employee.name,
-                            station: station.name,
-                            date: stationData.completionDate,
-                            days: daysDifference
-                        });
-                    }
-                });
-            });
-            
-            updateNotificationDisplay();
-            highlightDeadlineCells();
-            
-            // Show toast for today's deadlines
-            const todayDeadlines = notifications.filter(n => n.days === 0);
-            if (todayDeadlines.length > 0) {
-                showDeadlineToast(todayDeadlines);
-            }
-        }
-
-        // Update notification display
-        function updateNotificationDisplay() {
-            notificationCount.textContent = notifications.length;
-            
-            if (notifications.length > 0) {
-                notificationBadge.style.display = 'flex';
-                notificationBadge.classList.add('animate__animated', 'animate__bounceIn');
-            } else {
-                notificationBadge.style.display = 'none';
-                notificationPanel.style.display = 'none';
-            }
-            
-            notificationsList.innerHTML = '';
-            
-            // Sort notifications: overdue -> today -> tomorrow -> upcoming
-            const sortedNotifications = [...notifications].sort((a, b) => {
-                if (a.type === 'overdue' && b.type !== 'overdue') return -1;
-                if (a.type !== 'overdue' && b.type === 'overdue') return 1;
-                if (a.type === 'today' && b.type !== 'today') return -1;
-                if (a.type !== 'today' && b.type === 'today') return 1;
-                if (a.type === 'tomorrow' && b.type !== 'tomorrow') return -1;
-                if (a.type !== 'tomorrow' && b.type === 'tomorrow') return 1;
-                return a.days - b.days;
-            });
-            
-            sortedNotifications.forEach(notification => {
-                const item = document.createElement('div');
-                item.className = `notification-item ${notification.type} animate__animated animate__fadeInLeft`;
-                
-                const icon = notification.type === 'overdue' ? 'bi-exclamation-triangle-fill' :
-                            notification.type === 'today' ? 'bi-calendar-check-fill' :
-                            notification.type === 'tomorrow' ? 'bi-calendar2-day-fill' : 'bi-calendar-week-fill';
-                
-                const badgeColor = notification.type === 'overdue' ? 'danger' :
-                                 notification.type === 'today' ? 'warning' :
-                                 notification.type === 'tomorrow' ? 'info' : 'primary';
-                
-                item.innerHTML = `
-                    <div class="d-flex align-items-start">
-                        <i class="bi ${icon} text-${badgeColor} me-2 mt-1 fs-5"></i>
-                        <div class="flex-grow-1">
-                            <div class="fw-bold">${notification.message}</div>
-                            <small class="text-muted">
-                                ${notification.employee} | ${notification.station} | Due: ${formatDate(notification.date)}
-                            </small>
-                        </div>
-                        ${notification.critical ? 
-                            '<span class="badge bg-danger ms-2 animate__animated animate__pulse animate__infinite">URGENT</span>' : 
-                            `<span class="badge bg-${badgeColor} ms-2">${notification.days === 0 ? 'TODAY' : `${notification.days}D`}</span>`
-                        }
-                    </div>
-                `;
-                notificationsList.appendChild(item);
-            });
-        }
-
-        // Highlight deadline cells in table
-        function highlightDeadlineCells() {
-            // Remove previous highlights
-            document.querySelectorAll('.station-cell').forEach(cell => {
-                cell.classList.remove('deadline-today', 'deadline-passed');
-            });
-            
-            if (!enableNotifications.checked) return;
-            
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            employees.forEach((employee, empIndex) => {
-                if (!employee.stations) return;
-                
-                stations.forEach((station, stationIndex) => {
-                    const stationData = employee.stations[station.id];
-                    if (!stationData || !stationData.completionDate) return;
-                    
-                    const completionDate = new Date(stationData.completionDate);
-                    completionDate.setHours(0, 0, 0, 0);
-                    
-                    const daysDifference = Math.ceil((completionDate - today) / (1000 * 60 * 60 * 24));
-                    
-                    const row = tbody.querySelector(`tr[data-employee-id="${employee.id}"]`);
-                    if (row) {
-                        const cell = row.querySelector(`td:nth-child(${stationIndex + 4})`);
-                        if (cell) {
-                            if (daysDifference === 0) {
-                                cell.classList.add('deadline-today');
-                            } else if (daysDifference < 0) {
-                                cell.classList.add('deadline-passed');
-                            }
-                        }
-                    }
-                });
-            });
-        }
-
-        // Show deadline toast
-        function showDeadlineToast(todayDeadlines) {
-            const count = todayDeadlines.length;
-            const stationNames = [...new Set(todayDeadlines.map(n => n.station))].join(', ');
-            
-            toastMessage.innerHTML = `
-                <strong>${count} assessment${count > 1 ? 's' : ''} due today!</strong><br>
-                <small>${stationNames}</small>
-            `;
-            
-            const toastElement = document.getElementById('statusToast');
-            toastElement.querySelector('.toast-header').style.backgroundColor = '#f39c12';
-            toastElement.querySelector('.toast-header').style.color = 'white';
-            toastElement.querySelector('.toast-header').innerHTML = `
-                <i class="bi bi-alarm-fill me-2"></i>
-                <strong class="me-auto">Deadline Alert</strong>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-            `;
-            
-            statusToast.show();
-            
-            // Play notification sound
-            playNotificationSound();
-        }
-
-        // Play notification sound
-        function playNotificationSound() {
-            try {
-                const audio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ');
-                audio.play().catch(() => {});
-            } catch (e) {
-                // Fallback: Use browser notification if available
-                if ('Notification' in window && Notification.permission === 'granted') {
-                    new Notification('Training Deadlines', {
-                        body: 'Assessments due today! Check the notifications.',
-                        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23f39c12"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>'
-                    });
-                }
-            }
-        }
-
-        // Toggle notifications panel
-        function toggleNotifications() {
-            if (notificationPanel.style.display === 'none') {
-                notificationPanel.style.display = 'block';
-                notificationPanel.classList.add('animate__animated', 'animate__slideInRight');
-            } else {
-                notificationPanel.style.display = 'none';
-            }
-        }
-
-        // Close all notifications
-        function closeAllNotifications() {
-            notificationPanel.style.display = 'none';
-        }
-
-        // Manually check deadlines
-        function checkDeadlinesNow() {
-            showLoading();
-            setTimeout(() => {
-                checkTrainingDeadlines();
-                showToast("Deadlines checked", "success");
-                hideLoading();
-            }, 300);
-        }
-
-        // Format date for display
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', {
-                weekday: 'short',
-                month: 'short',
-                day: 'numeric'
-            });
-        }
-
-        // Render stations list
-        function renderStationsList() {
-            stationsList.innerHTML = '';
-            stations.forEach((station, index) => {
-                const stationTag = document.createElement('div');
-                stationTag.className = 'station-tag animate__animated animate__fadeIn';
-                stationTag.style.animationDelay = `${index * 0.05}s`;
-                stationTag.innerHTML = `
-                    <span class="badge bg-primary">${station.code}</span>
-                    <span class="flex-grow-1">${station.name}</span>
-                    <button class="btn btn-sm btn-outline-primary rounded-circle" onclick="editStation('${station.id}')" title="Edit" style="width: 30px; height: 30px; padding: 0;">
-                        <i class="bi bi-pencil"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger rounded-circle" onclick="removeStation('${station.id}')" title="Remove" style="width: 30px; height: 30px; padding: 0;">
-                        <i class="bi bi-x"></i>
-                    </button>
-                `;
-                stationsList.appendChild(stationTag);
-            });
-            totalStationsEl.textContent = stations.length;
-            stationsProgress.style.width = '100%';
-        }
-
-        // Add new station
-        function addNewStation() {
-            const name = newStationNameInput.value.trim();
-            if (!name) {
-                showToast("Please enter a station name", "warning");
-                newStationNameInput.focus();
-                return;
-            }
-            
-            if (stations.some(s => s.name.toLowerCase() === name.toLowerCase())) {
-                showToast("Station already exists", "warning");
-                return;
-            }
-            
-            const id = name.toLowerCase().replace(/\s+/g, '-');
-            const code = name.substring(0, 3).toUpperCase();
-            
-            stations.push({ id, name, code });
-            saveConfig();
-            renderStationsList();
-            renderTable();
-            updateQuickSelects();
-            newStationNameInput.value = '';
-            showToast(`Station "${name}" added`, "success");
-            
-            // Focus back to input
-            newStationNameInput.focus();
-        }
-
-        // Edit station
-        function editStation(stationId) {
-            const station = stations.find(s => s.id === stationId);
-            if (station) {
-                editingStationId = stationId;
-                editStationNameInput.value = station.name;
-                editStationCodeInput.value = station.code;
-                editStationModal.show();
-            }
-        }
-
-        // Save station edit
-        function saveStationEdit() {
-            if (!editingStationId) return;
-            
-            const newName = editStationNameInput.value.trim();
-            const newCode = editStationCodeInput.value.trim().toUpperCase();
-            
-            if (!newName || !newCode) {
-                showToast("Name and code are required", "warning");
-                return;
-            }
-            
-            const stationIndex = stations.findIndex(s => s.id === editingStationId);
-            if (stationIndex !== -1) {
-                const oldName = stations[stationIndex].name;
-                stations[stationIndex].name = newName;
-                stations[stationIndex].code = newCode;
-                
-                saveConfig();
+    document.getElementById('saveStationEditBtn').addEventListener('click', () => {
+        const name = document.getElementById('editStationName').value.trim();
+        const code = document.getElementById('editStationCode').value.trim().toUpperCase();
+        if (name && code) {
+            const idx = stations.findIndex(s => s.id === editingStationId);
+            if (idx !== -1) {
+                stations[idx].name = name;
+                stations[idx].code = code;
+                saveData();
                 renderStationsList();
                 renderTable();
-                updateQuickSelects();
-                editStationModal.hide();
-                showToast(`Station renamed from "${oldName}" to "${newName}"`, "success");
+                showToast('Station updated', 'success');
             }
         }
+        bootstrap.Modal.getInstance(document.getElementById('editStationModal')).hide();
+    });
 
-        // Remove station
-        function removeStation(stationId) {
-            if (stations.length <= 1) {
-                showToast("Cannot remove all stations", "warning");
-                return;
-            }
-            
-            const station = stations.find(s => s.id === stationId);
-            if (!station) return;
-            
-            if (confirm(`Remove station "${station.name}"? This will delete training data for this station.`)) {
-                showLoading();
-                setTimeout(() => {
-                    stations = stations.filter(s => s.id !== stationId);
-                    
-                    employees.forEach(employee => {
-                        if (employee.stations && employee.stations[stationId]) {
-                            delete employee.stations[stationId];
-                        }
-                    });
-                    
-                    saveConfig();
-                    renderStationsList();
-                    renderTable();
-                    updateProgressSummary();
-                    updateQuickSelects();
-                    showToast(`Station "${station.name}" removed`, "success");
-                    hideLoading();
-                }, 300);
-            }
-        }
-
-        // Reset to default stations
-        function resetToDefaultStations() {
-            if (confirm("Reset to default restaurant stations? Custom stations will be lost.")) {
-                showLoading();
-                setTimeout(() => {
-                    stations = [...DEFAULT_STATIONS];
-                    
-                    employees.forEach(employee => {
-                        if (employee.stations) {
-                            const newStations = {};
-                            stations.forEach(station => {
-                                if (employee.stations[station.id]) {
-                                    newStations[station.id] = employee.stations[station.id];
-                                }
-                            });
-                            employee.stations = newStations;
-                        }
-                    });
-                    
-                    saveConfig();
-                    renderStationsList();
-                    renderTable();
-                    updateProgressSummary();
-                    updateQuickSelects();
-                    showToast("Reset to default restaurant stations", "success");
-                    hideLoading();
-                }, 300);
-            }
-        }
-
-        // Export stations list
-        function exportStationsList() {
-            const stationData = stations.map(s => `${s.code} - ${s.name}`);
-            const blob = new Blob([stationData.join('\n')], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `stations_list_${new Date().toISOString().split('T')[0]}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showToast("Stations list exported", "success");
-        }
-
-        // Render table
-        function renderTable() {
-            thead.innerHTML = '';
-            tbody.innerHTML = '';
-            
-            const headerRow = document.createElement('tr');
-            
-            // Employee Name
-            const thEmployee = document.createElement('th');
-            thEmployee.className = 'employee-name-cell';
-            thEmployee.innerHTML = '<i class="bi bi-person me-1"></i>Employee';
-            headerRow.appendChild(thEmployee);
-            
-            // Employee ID
-            const thEmployeeId = document.createElement('th');
-            thEmployeeId.className = 'employee-id-cell';
-            thEmployeeId.innerHTML = '<i class="bi bi-id-card me-1"></i>ID';
-            headerRow.appendChild(thEmployeeId);
-            
-            // Date Range
-            const thDate = document.createElement('th');
-            thDate.innerHTML = '<i class="bi bi-calendar-range me-1"></i>Date Range';
-            thDate.style.minWidth = '200px';
-            headerRow.appendChild(thDate);
-            
-            // Station headers
-            stations.forEach((station, index) => {
-                const th = document.createElement('th');
-                th.className = 'station-header';
-                th.innerHTML = `
-                    <div class="station-header-content">
-                        <div class="station-name">${station.name}</div>
-                        <div class="station-code">${station.code}</div>
-                        <button class="btn btn-sm edit-btn" onclick="editStation('${station.id}')" title="Edit Station">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                    </div>
-                `;
-                headerRow.appendChild(th);
-            });
-            
-            // Actions
-            const thActions = document.createElement('th');
-            thActions.innerHTML = '<i class="bi bi-gear me-1"></i>Actions';
-            thActions.style.minWidth = '120px';
-            headerRow.appendChild(thActions);
-            
-            thead.appendChild(headerRow);
-            
-            // Load data rows
-            loadDataRows();
-            highlightDeadlineCells();
-        }
-
-        // Load data rows
-        function loadDataRows() {
-            if (employees.length > 0) {
-                employees.forEach(employee => addEmployeeRow(employee));
-            }
-        }
-
-        // Add employee
-        function addEmployee(employeeData = {}) {
-            const employeeId = employeeData.id || `${employeeIdInput.value || "EMP-"}${nextEmployeeId++}`;
-            
-            const newEmployee = {
-                id: employeeId,
-                name: employeeData.name || "",
-                employeeId: employeeData.employeeId || employeeId,
-                dateFrom: employeeData.dateFrom || "",
-                dateTo: employeeData.dateTo || "",
-                stations: employeeData.stations || {}
-            };
-            
-            employees.push(newEmployee);
-            saveConfig();
-            addEmployeeRow(newEmployee);
-            updateProgressSummary();
-            updateQuickSelects();
-            showToast("Employee added successfully", "success");
-            
-            return employeeId;
-        }
-
-        // Add employee row
-        function addEmployeeRow(employee) {
-            const tr = document.createElement("tr");
-            tr.dataset.employeeId = employee.id;
-            tr.className = 'animate__animated animate__fadeIn';
-            
-            // Employee Name
-            const tdName = document.createElement("td");
-            tdName.className = 'employee-name-cell';
-            const inputName = document.createElement("input");
-            inputName.type = "text";
-            inputName.className = "form-control form-control-sm";
-            inputName.placeholder = "Full Name";
-            inputName.value = employee.name || "";
-            inputName.oninput = () => {
-                saveEmployeeField(employee.id, 'name', inputName.value);
-                updateProgressSummary();
-            };
-            tdName.appendChild(inputName);
-            tr.appendChild(tdName);
-            
-            // Employee ID
-            const tdEmployeeId = document.createElement("td");
-            tdEmployeeId.className = 'employee-id-cell';
-            const inputEmployeeId = document.createElement("input");
-            inputEmployeeId.type = "text";
-            inputEmployeeId.className = "form-control form-control-sm";
-            inputEmployeeId.placeholder = "ID";
-            inputEmployeeId.value = employee.employeeId || employee.id;
-            inputEmployeeId.oninput = () => saveEmployeeField(employee.id, 'employeeId', inputEmployeeId.value);
-            tdEmployeeId.appendChild(inputEmployeeId);
-            tr.appendChild(tdEmployeeId);
-            
-            // Date Range
-            const tdDate = document.createElement("td");
-            tdDate.innerHTML = `
-                <div class="date-range-inputs">
-                    <input type="date" class="form-control form-control-sm" 
-                           value="${employee.dateFrom || ''}" 
-                           onchange="saveEmployeeField('${employee.id}', 'dateFrom', this.value)">
-                    <span class="date-range-separator">to</span>
-                    <input type="date" class="form-control form-control-sm" 
-                           value="${employee.dateTo || ''}" 
-                           onchange="saveEmployeeField('${employee.id}', 'dateTo', this.value)">
-                </div>
-            `;
-            tr.appendChild(tdDate);
-            
-            // Station cells
-            stations.forEach(station => {
-                const stationData = employee.stations && employee.stations[station.id] 
-                    ? employee.stations[station.id] 
-                    : { status: "", trainer: "", completionDate: "" };
-                
-                const td = document.createElement("td");
-                td.className = 'station-cell';
-                
-                if (stationData.status === "Completed") td.classList.add("completed");
-                else if (stationData.status === "In Progress") td.classList.add("in-progress");
-                else if (stationData.status === "Pending") td.classList.add("pending");
-                
-                td.innerHTML = `
-                    <div class="station-inputs">
-                        <select class="form-select form-select-sm station-status-select" 
-                                onchange="saveEmployeeStation('${employee.id}', '${station.id}', 'status', this.value); checkTrainingDeadlines();">
-                            <option value="">Status</option>
-                            <option value="Not Started" ${stationData.status === "Not Started" ? "selected" : ""}>Not Started</option>
-                            <option value="In Progress" ${stationData.status === "In Progress" ? "selected" : ""}>In Progress</option>
-                            <option value="Pending" ${stationData.status === "Pending" ? "selected" : ""}>Pending</option>
-                            <option value="Completed" ${stationData.status === "Completed" ? "selected" : ""}>Completed</option>
-                        </select>
-                        <select class="form-select form-select-sm station-trainer-select" 
-                                onchange="saveEmployeeStation('${employee.id}', '${station.id}', 'trainer', this.value)">
-                            <option value="">Trainer</option>
-                            ${trainers.map(trainer => 
-                                `<option value="${trainer}" ${stationData.trainer === trainer ? "selected" : ""}>${trainer}</option>`
-                            ).join('')}
-                        </select>
-                        <input type="date" class="form-control form-control-sm station-date-input" 
-                               value="${stationData.completionDate || ''}"
-                               onchange="saveEmployeeStation('${employee.id}', '${station.id}', 'completionDate', this.value); checkTrainingDeadlines();">
-                    </div>
-                `;
-                tr.appendChild(td);
-            });
-            
-            // Actions
-            const tdActions = document.createElement("td");
-            tdActions.className = 'action-buttons';
-            tdActions.innerHTML = `
-                <button class="btn btn-action delete" onclick="deleteEmployee('${employee.id}', this)" title="Delete">
-                    <i class="bi bi-trash"></i>
-                </button>
-                <button class="btn btn-action copy" onclick="duplicateEmployee('${employee.id}')" title="Duplicate">
-                    <i class="bi bi-copy"></i>
-                </button>
-                <button class="btn btn-action complete" onclick="markAllCompleted('${employee.id}')" title="Mark All Complete">
-                    <i class="bi bi-check-all"></i>
-                </button>
-            `;
-            tr.appendChild(tdActions);
-            
-            tbody.appendChild(tr);
-        }
-
-        // Save employee field
-        function saveEmployeeField(employeeId, field, value) {
-            const employee = employees.find(e => e.id === employeeId);
-            if (employee) {
-                employee[field] = value;
-                saveConfig();
-                updateProgressSummary();
-            }
-        }
-
-        // Save employee station data
-        function saveEmployeeStation(employeeId, stationId, field, value) {
-            const employee = employees.find(e => e.id === employeeId);
-            if (employee) {
-                if (!employee.stations) employee.stations = {};
-                if (!employee.stations[stationId]) employee.stations[stationId] = {};
-                employee.stations[stationId][field] = value;
-                
-                // Update cell styling
-                if (field === 'status') {
-                    const row = document.querySelector(`tr[data-employee-id="${employeeId}"]`);
-                    if (row) {
-                        const stationIndex = stations.findIndex(s => s.id === stationId);
-                        if (stationIndex !== -1) {
-                            const cell = row.querySelector(`td:nth-child(${stationIndex + 4})`);
-                            if (cell) {
-                                cell.classList.remove("completed", "in-progress", "pending");
-                                if (value === "Completed") cell.classList.add("completed");
-                                else if (value === "In Progress") cell.classList.add("in-progress");
-                                else if (value === "Pending") cell.classList.add("pending");
-                            }
-                        }
-                    }
-                }
-                
-                saveConfig();
-                updateProgressSummary();
-                
-                // Check deadlines when completion date changes
-                if (field === 'completionDate' && enableNotifications.checked) {
-                    setTimeout(() => checkTrainingDeadlines(), 100);
-                }
-            }
-        }
-
-        // Delete employee
-        function deleteEmployee(employeeId, button) {
-            if (confirm("Delete this employee and all training records?")) {
-                showLoading();
-                setTimeout(() => {
-                    employees = employees.filter(e => e.id !== employeeId);
-                    const row = button.closest("tr");
-                    row.classList.add('animate__animated', 'animate__fadeOut');
-                    setTimeout(() => {
-                        row.remove();
-                        saveConfig();
-                        updateProgressSummary();
-                        checkTrainingDeadlines();
-                        updateQuickSelects();
-                        hideLoading();
-                        showToast("Employee deleted", "success");
-                    }, 300);
-                }, 200);
-            }
-        }
-
-        // Duplicate employee
-        function duplicateEmployee(employeeId) {
-            const employee = employees.find(e => e.id === employeeId);
-            if (employee) {
-                const newEmployee = {
-                    ...employee,
-                    id: `${employee.employeeId}-copy-${Date.now()}`,
-                    name: `${employee.name} (Copy)`,
-                    employeeId: `${employee.employeeId}-COPY`
-                };
-                addEmployee(newEmployee);
-            }
-        }
-
-        // Mark all stations completed for employee
-        function markAllCompleted(employeeId) {
-            if (confirm("Mark all stations as completed for this employee?")) {
-                showLoading();
-                setTimeout(() => {
-                    const employee = employees.find(e => e.id === employeeId);
-                    if (employee) {
-                        if (!employee.stations) employee.stations = {};
-                        stations.forEach(station => {
-                            if (!employee.stations[station.id]) {
-                                employee.stations[station.id] = {};
-                            }
-                            employee.stations[station.id].status = "Completed";
-                            employee.stations[station.id].completionDate = new Date().toISOString().split('T')[0];
-                        });
-                        saveConfig();
-                        renderTable();
-                        updateProgressSummary();
-                        checkTrainingDeadlines();
-                        hideLoading();
-                        showToast("All stations marked as completed", "success");
-                    }
-                }, 300);
-            }
-        }
-
-        // Update trainers
-        function updateTrainers() {
-            const trainerText = trainerListInput.value;
-            trainers = trainerText.split(",").map(t => t.trim()).filter(t => t);
-            
-            if (trainers.length === 0) {
-                trainers = ["Odin", "Mueen", "Sarah"];
-                trainerListInput.value = trainers.join(", ");
-            }
-            
-            saveConfig();
+    window.removeStation = function(id) {
+        if (stations.length <= 1) { showToast('Cannot remove all stations', 'error'); return; }
+        if (confirm('Remove this station?')) {
+            stations = stations.filter(s => s.id !== id);
+            employees.forEach(emp => { if (emp.stations) delete emp.stations[id]; });
+            saveData();
+            renderStationsList();
             renderTable();
-            updateProgressSummary();
-            updateQuickSelects();
-            showToast("Trainers updated", "success");
+            updateStats();
+            showToast('Station removed', 'success');
         }
+    };
 
-        // Add multiple employees
-        function addMultipleRows() {
-            showLoading();
-            setTimeout(() => {
-                const baseId = employeeIdInput.value.trim() || "EMP-";
-                for (let i = 0; i < 5; i++) {
-                    const employeeId = `${baseId}${nextEmployeeId++}`;
-                    addEmployee({
-                        id: employeeId,
-                        employeeId: employeeId,
-                        name: `Employee ${nextEmployeeId}`
-                    });
-                }
-                hideLoading();
-            }, 300);
-        }
+    document.getElementById('addStationBtn').addEventListener('click', () => {
+        const name = document.getElementById('newStationName').value.trim();
+        if (!name) { showToast('Enter station name', 'error'); return; }
+        const id = name.toLowerCase().replace(/\s+/g, '-');
+        const code = name.substring(0, 3).toUpperCase();
+        if (stations.some(s => s.id === id)) { showToast('Station exists', 'error'); return; }
+        stations.push({ id, name, code });
+        saveData();
+        renderStationsList();
+        renderTable();
+        document.getElementById('newStationName').value = '';
+        showToast('Station added', 'success');
+    });
 
-        // Quick add employee
-        function quickAddEmployee() {
-            document.getElementById('quickName').value = '';
-            document.getElementById('quickEmployeeId').value = '';
-            quickAddModal.show();
-        }
-
-        // Save quick add
-        function saveQuickAdd() {
-            const name = document.getElementById('quickName').value.trim();
-            const employeeId = document.getElementById('quickEmployeeId').value.trim() || `${employeeIdInput.value || "EMP-"}${nextEmployeeId}`;
-            const trainer = document.getElementById('quickTrainer').value;
-            const stationId = document.getElementById('quickStation').value;
-            
-            if (!name) {
-                showToast("Employee name is required", "warning");
-                return;
-            }
-            
-            const stations = {};
-            if (trainer && stationId) {
-                stations[stationId] = {
-                    status: "In Progress",
-                    trainer: trainer,
-                    completionDate: ""
-                };
-            }
-            
-            addEmployee({
-                id: employeeId,
-                name: name,
-                employeeId: employeeId,
-                stations: stations
+    document.getElementById('resetStationsBtn').addEventListener('click', () => {
+        if (confirm('Reset to default stations?')) {
+            stations = [...DEFAULT_STATIONS];
+            employees.forEach(emp => {
+                const newStations = {};
+                stations.forEach(s => { if (emp.stations && emp.stations[s.id]) newStations[s.id] = emp.stations[s.id]; });
+                emp.stations = newStations;
             });
-            
-            quickAddModal.hide();
+            saveData();
+            renderStationsList();
+            renderTable();
+            updateStats();
+            showToast('Reset to default stations', 'success');
         }
+    });
 
-        // Scroll to top
-        function scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('updateTrainersBtn').addEventListener('click', () => {
+        const text = document.getElementById('trainersInput').value;
+        trainers = text.split(",").map(t => t.trim()).filter(t => t);
+        if (trainers.length === 0) trainers = ["Odin", "Mueen", "Sarah", "Alex"];
+        saveData();
+        renderTable();
+        showToast('Trainers updated', 'success');
+    });
+
+    function saveEmployeeField(empId, field, value) {
+        const emp = employees.find(e => e.id === empId);
+        if (emp) { emp[field] = value; saveData(); updateStats(); }
+    }
+
+    function saveStationData(empId, stationId, field, value) {
+        const emp = employees.find(e => e.id === empId);
+        if (emp) {
+            if (!emp.stations) emp.stations = {};
+            if (!emp.stations[stationId]) emp.stations[stationId] = {};
+            emp.stations[stationId][field] = value;
+            saveData();
+            updateStats();
+            if (field === 'completionDate') checkDeadlines();
         }
+    }
 
-        // Update progress summary
-        function updateProgressSummary() {
-            const totalEmployees = employees.length;
-            totalEmployeesEl.textContent = totalEmployees;
-            
-            let totalStationsCompleted = 0;
-            let totalPossibleStations = totalEmployees * stations.length;
-            let stationCoverage = 0;
-            
-            const activeTrainersSet = new Set();
-            let totalPendingTasks = 0;
-            
-            employees.forEach(employee => {
-                let employeeCompleted = 0;
-                if (employee.stations) {
-                    stations.forEach(station => {
-                        const stationData = employee.stations[station.id];
-                        if (stationData) {
-                            if (stationData.status === "Completed") {
-                                totalStationsCompleted++;
-                                employeeCompleted++;
-                            } else if (stationData.status === "Pending") {
-                                totalPendingTasks++;
-                            }
-                            if (stationData.trainer) {
-                                activeTrainersSet.add(stationData.trainer);
-                            }
-                        }
-                    });
-                }
-                if (employeeCompleted > 0) {
-                    stationCoverage++;
-                }
+    function deleteEmployee(empId) {
+        if (confirm('Delete this employee?')) {
+            employees = employees.filter(e => e.id !== empId);
+            saveData();
+            renderTable();
+            updateStats();
+            showToast('Employee deleted', 'success');
+        }
+    }
+
+    function duplicateEmployee(empId) {
+        const emp = employees.find(e => e.id === empId);
+        if (emp) {
+            const newEmp = { ...emp, id: `${empId}_copy`, name: `${emp.name} (Copy)`, stations: JSON.parse(JSON.stringify(emp.stations || {})) };
+            employees.push(newEmp);
+            saveData();
+            renderTable();
+            updateStats();
+            showToast('Employee duplicated', 'success');
+        }
+    }
+
+    function markAllCompleted(empId) {
+        const emp = employees.find(e => e.id === empId);
+        if (emp) {
+            if (!emp.stations) emp.stations = {};
+            stations.forEach(s => {
+                if (!emp.stations[s.id]) emp.stations[s.id] = {};
+                emp.stations[s.id].status = "Completed";
+                emp.stations[s.id].completionDate = new Date().toISOString().split('T')[0];
             });
-            
-            const completionPercentage = totalPossibleStations > 0 
-                ? Math.round((totalStationsCompleted / totalPossibleStations) * 100)
-                : 0;
-            
-            const coveragePercentage = totalEmployees > 0
-                ? Math.round((stationCoverage / totalEmployees) * 100)
-                : 0;
-            
-            const trainerUtilization = totalEmployees > 0
-                ? Math.round((activeTrainersSet.size / trainers.length) * 100)
-                : 0;
-            
-            trainingCompletionEl.textContent = `${completionPercentage}%`;
-            activeTrainersEl.textContent = activeTrainersSet.size;
-            
-            // Update progress bars
-            completionProgress.style.width = `${completionPercentage}%`;
-            trainersProgress.style.width = `${(activeTrainersSet.size / trainers.length) * 100}%`;
-            coverageProgress.style.width = `${coveragePercentage}%`;
-            utilizationProgress.style.width = `${trainerUtilization}%`;
-            pendingProgress.style.width = `${(totalPendingTasks / (totalPossibleStations || 1)) * 100}%`;
-            
-            // Update text values
-            document.getElementById('stationCoverage').textContent = `${coveragePercentage}%`;
-            document.getElementById('trainerUtilization').textContent = `${trainerUtilization}%`;
-            document.getElementById('pendingTasks').textContent = totalPendingTasks;
+            saveData();
+            renderTable();
+            updateStats();
+            checkDeadlines();
+            showToast('All stations marked completed', 'success');
         }
+    }
 
-        // Export to Excel
-        function exportExcel() {
-            showLoading();
-            setTimeout(() => {
-                const excelData = [
-                    ["Restaurant KS22 - Training Plan"],
-                    ["Store:", storeInput.value],
-                    ["Month:", monthInput.value],
-                    ["Generated:", new Date().toLocaleString()],
-                    [],
-                    ["Employee Details", "", "", ...stations.map(s => `${s.name} (${s.code})`)],
-                    ["", "", "", ...stations.map(() => ""), ...stations.map(() => ""), ...stations.map(() => "")],
-                    []
-                ];
-                
-                const headerRow = ["Employee Name", "Employee ID", "Date Range"];
-                stations.forEach(() => {
-                    headerRow.push("Status", "Trainer", "Completion Date");
-                });
-                excelData.push(headerRow);
-                
-                employees.forEach(employee => {
-                    const row = [
-                        employee.name || "",
-                        employee.employeeId || "",
-                        `${employee.dateFrom || ""} to ${employee.dateTo || ""}`
-                    ];
-                    
-                    stations.forEach(station => {
-                        const stationData = employee.stations && employee.stations[station.id];
-                        row.push(
-                            stationData?.status || "",
-                            stationData?.trainer || "",
-                            stationData?.completionDate || ""
-                        );
-                    });
-                    
-                    excelData.push(row);
-                });
-                
-                const ws = XLSX.utils.aoa_to_sheet(excelData);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Training Plan");
-                
-                // Auto-size columns
-                const maxWidth = 25;
-                const colWidths = [];
-                for (let i = 0; i < excelData[0].length; i++) {
-                    let maxLength = 0;
-                    for (let j = 0; j < excelData.length; j++) {
-                        maxLength = Math.max(maxLength, (excelData[j][i] || "").toString().length);
-                    }
-                    colWidths.push({ wch: Math.min(maxLength + 2, maxWidth) });
-                }
-                ws['!cols'] = colWidths;
-                
-                XLSX.writeFile(wb, `KS22_Training_Plan_${storeInput.value}_${monthInput.value.replace('-', '_')}.xlsx`);
-                hideLoading();
-                showToast("Excel file exported successfully", "success");
-            }, 500);
-        }
-
-        // Export to PDF (simulated)
-        function exportPDF() {
-            showLoading();
-            setTimeout(() => {
-                showToast("PDF export feature coming soon!", "info");
-                hideLoading();
-            }, 500);
-        }
-
-        // Print table
-        function printTable() {
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Restaurant KS22 - Training Plan</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; }
-                        h1 { color: #333; text-align: center; }
-                        h2 { color: #666; text-align: center; margin-bottom: 30px; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 11px; }
-                        th, td { border: 1px solid #333; padding: 6px; text-align: center; }
-                        th { background-color: #f0f0f0; font-weight: bold; }
-                        .completed { background-color: #d4edda; }
-                        .in-progress { background-color: #fff3cd; }
-                        .pending { background-color: #f8d7da; }
-                        @page { size: landscape; margin: 0.5cm; }
-                    </style>
-                </head>
-                <body>
-                    <h1>Restaurant KS22 - Training Plan</h1>
-                    <h2>${storeInput.value} - ${monthInput.value}</h2>
-                    <h3>Generated: ${new Date().toLocaleString()}</h3>
-                    ${document.querySelector('.training-table').outerHTML}
-                    <div style="margin-top: 30px; font-size: 10px; color: #666;">
-                        <p><strong>Legend:</strong> Completed (Green) | In Progress (Yellow) | Pending (Red)</p>
+    function renderTable() {
+        const thead = document.getElementById('tableHead');
+        const tbody = document.getElementById('tableBody');
+        
+        // Header
+        let headerHtml = `<tr><th class="employee-name-cell" data-key="employee">Employee</th><th class="employee-id-cell" data-key="id">ID</th><th data-key="dateRange">Date Range</th>`;
+        stations.forEach(s => headerHtml += `<th>${s.name}<br><small>${s.code}</small></th>`);
+        headerHtml += `<th data-key="actions">Actions</th></tr>`;
+        thead.innerHTML = headerHtml;
+        
+        // Body
+        if (employees.length === 0) { tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:40px;">No employees added</td></tr>'; return; }
+        
+        tbody.innerHTML = employees.map(emp => {
+            let row = `<tr data-id="${emp.id}">
+                <td class="employee-name-cell"><input type="text" class="form-control form-control-sm" value="${escapeHtml(emp.name || '')}" onchange="saveEmployeeField('${emp.id}', 'name', this.value)"></td>
+                <td class="employee-id-cell"><input type="text" class="form-control form-control-sm" value="${escapeHtml(emp.employeeId || emp.id)}" onchange="saveEmployeeField('${emp.id}', 'employeeId', this.value)"></td>
+                <td><div class="date-range-inputs"><input type="date" value="${emp.dateFrom || ''}" onchange="saveEmployeeField('${emp.id}', 'dateFrom', this.value)"><span>to</span><input type="date" value="${emp.dateTo || ''}" onchange="saveEmployeeField('${emp.id}', 'dateTo', this.value)"></div></td>`;
+            
+            stations.forEach(s => {
+                const data = (emp.stations && emp.stations[s.id]) || {};
+                const statusClass = data.status === 'Completed' ? 'completed' : (data.status === 'In Progress' ? 'in-progress' : '');
+                row += `<td class="station-cell ${statusClass}">
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <select class="form-select form-select-sm" onchange="saveStationData('${emp.id}', '${s.id}', 'status', this.value)">
+                            <option value="">Status</option>
+                            <option value="Not Started" ${data.status === 'Not Started' ? 'selected' : ''}>Not Started</option>
+                            <option value="In Progress" ${data.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                            <option value="Completed" ${data.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                        </select>
+                        <select class="form-select form-select-sm" onchange="saveStationData('${emp.id}', '${s.id}', 'trainer', this.value)">
+                            <option value="">Trainer</option>
+                            ${trainers.map(t => `<option value="${t}" ${data.trainer === t ? 'selected' : ''}>${t}</option>`).join('')}
+                        </select>
+                        <input type="date" class="form-control form-control-sm" value="${data.completionDate || ''}" onchange="saveStationData('${emp.id}', '${s.id}', 'completionDate', this.value)">
                     </div>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
-        }
-
-        // Generate report
-        function generateReport() {
-            if (employees.length === 0) {
-                showToast("No data to generate report", "warning");
-                return;
-            }
-            
-            showLoading();
-            setTimeout(() => {
-                const completion = trainingCompletionEl.textContent;
-                const totalEmp = totalEmployeesEl.textContent;
-                const totalStat = totalStationsEl.textContent;
-                const activeTrain = activeTrainersEl.textContent;
-                
-                const report = `
-                    RESTAURANT KS22 TRAINING REPORT
-                    ================================
-                    
-                    Store: ${storeInput.value}
-                    Period: ${monthInput.value}
-                    Generated: ${new Date().toLocaleString()}
-                    
-                    SUMMARY STATISTICS:
-                    • Total Employees: ${totalEmp}
-                    • Training Completion: ${completion}
-                    • Total Stations: ${totalStat}
-                    • Active Trainers: ${activeTrain}
-                    
-                    STATIONS LIST:
-                    ${stations.map(s => `• ${s.code}: ${s.name}`).join('\n')}
-                    
-                    EMPLOYEE TRAINING STATUS:
-                    ${employees.map(emp => {
-                        const completed = stations.filter(s => emp.stations?.[s.id]?.status === "Completed").length;
-                        return `• ${emp.name} (${emp.employeeId}): ${completed}/${stations.length} stations completed`;
-                    }).join('\n')}
-                    
-                    DEADLINE NOTIFICATIONS:
-                    ${notifications.map(n => `• ${n.message}`).join('\n') || 'No pending deadlines'}
-                `;
-                
-                const blob = new Blob([report], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `training_report_${new Date().toISOString().split('T')[0]}.txt`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                hideLoading();
-                showToast("Report generated successfully", "success");
-            }, 500);
-        }
-
-        // Clear all data
-        function clearAll() {
-            if (confirm("Clear all training data? This cannot be undone.")) {
-                showLoading();
-                setTimeout(() => {
-                    employees = [];
-                    nextEmployeeId = 1001;
-                    localStorage.removeItem("restaurantTrainingConfig");
-                    tbody.innerHTML = "";
-                    storeInput.value = "KS-22";
-                    monthInput.value = `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}`;
-                    updateProgressSummary();
-                    checkTrainingDeadlines();
-                    hideLoading();
-                    showToast("All data cleared", "warning");
-                }, 500);
-            }
-        }
-
-        // Show toast notification
-        function showToast(message, type = "info") {
-            const colors = {
-                success: "#28a745",
-                error: "#dc3545",
-                warning: "#ffc107",
-                info: "#17a2b8"
-            };
-            
-            const toastElement = document.getElementById('statusToast');
-            toastElement.querySelector('.toast-header').style.backgroundColor = colors[type] || colors.info;
-            toastElement.querySelector('.toast-header').style.color = "white";
-            toastMessage.textContent = message;
-            statusToast.show();
-        }
-
-        // Setup event listeners
-        function setupEventListeners() {
-            // Auto-save on input changes
-            storeInput.addEventListener('input', () => {
-                saveConfig();
-                updateProgressSummary();
+                </td>`;
             });
             
-            monthInput.addEventListener('input', () => {
-                saveConfig();
-                updateProgressSummary();
+            row += `<td class="action-buttons">
+                <button class="btn-action delete" onclick="deleteEmployee('${emp.id}')"><i class="bi bi-trash"></i></button>
+                <button class="btn-action copy" onclick="duplicateEmployee('${emp.id}')"><i class="bi bi-copy"></i></button>
+                <button class="btn-action" onclick="markAllCompleted('${emp.id}')"><i class="bi bi-check-all"></i></button>
+            </td></tr>`;
+            return row;
+        }).join('');
+        
+        // Apply translations
+        document.querySelectorAll('[data-key]').forEach(el => { const key = el.getAttribute('data-key'); if (translations[currentLang][key]) el.innerText = translations[currentLang][key]; });
+    }
+
+    document.getElementById('addEmployeeBtn').addEventListener('click', () => {
+        const name = document.getElementById('empName').value.trim();
+        const empId = document.getElementById('empId').value.trim() || `EMP-${nextId}`;
+        if (!name) { showToast('Enter employee name', 'error'); return; }
+        employees.push({ id: `emp-${nextId++}`, name, employeeId: empId, stations: {} });
+        saveData();
+        renderTable();
+        updateStats();
+        document.getElementById('empName').value = '';
+        document.getElementById('empId').value = '';
+        showToast('Employee added', 'success');
+    });
+
+    document.getElementById('addMultipleBtn').addEventListener('click', () => {
+        for (let i = 0; i < 5; i++) {
+            employees.push({ id: `emp-${nextId++}`, name: `Employee ${nextId}`, employeeId: `EMP-${nextId}`, stations: {} });
+        }
+        saveData();
+        renderTable();
+        updateStats();
+        showToast('5 employees added', 'success');
+    });
+
+    function updateStats() {
+        document.getElementById('totalEmployees').innerText = employees.length;
+        let completed = 0, total = employees.length * stations.length;
+        employees.forEach(emp => {
+            if (emp.stations) stations.forEach(s => { if (emp.stations[s.id]?.status === 'Completed') completed++; });
+        });
+        const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+        document.getElementById('completionRate').innerText = `${rate}%`;
+        
+        const activeTrainers = new Set();
+        employees.forEach(emp => { if (emp.stations) stations.forEach(s => { if (emp.stations[s.id]?.trainer) activeTrainers.add(emp.stations[s.id].trainer); }); });
+        document.getElementById('activeTrainers').innerText = activeTrainers.size;
+    }
+
+    function checkDeadlines() {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const notifications = [];
+        employees.forEach(emp => {
+            if (emp.stations) stations.forEach(s => {
+                const date = emp.stations[s.id]?.completionDate;
+                if (date) {
+                    const due = new Date(date); due.setHours(0,0,0,0);
+                    const diff = Math.ceil((due - today) / (1000*60*60*24));
+                    if (diff === 0) notifications.push(`${emp.name}: ${s.name} due TODAY`);
+                    else if (diff < 0) notifications.push(`${emp.name}: ${s.name} OVERDUE by ${Math.abs(diff)} days`);
+                    else if (diff <= 3) notifications.push(`${emp.name}: ${s.name} due in ${diff} days`);
+                }
             });
-            
-            // Add station on Enter key
-            newStationNameInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') addNewStation();
-            });
-            
-            // Add employee on Enter in trainer list
-            trainerListInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') updateTrainers();
-            });
-            
-            // Enable/disable notifications
-            enableNotifications.addEventListener('change', () => {
-                saveConfig();
-                if (enableNotifications.checked) {
-                    startNotificationChecker();
-                    checkTrainingDeadlines();
-                    showToast("Notifications enabled", "success");
-                } else {
-                    if (notificationCheckInterval) {
-                        clearInterval(notificationCheckInterval);
+        });
+        const badge = document.getElementById('notificationBadge');
+        const countSpan = document.getElementById('notificationCount');
+        if (notifications.length > 0) {
+            countSpan.innerText = notifications.length;
+            badge.style.display = 'flex';
+            badge.onclick = () => alert(notifications.join('\n'));
+        } else {
+            badge.style.display = 'none';
+        }
+        highlightDeadlineCells();
+    }
+
+    function highlightDeadlineCells() {
+        const today = new Date(); today.setHours(0,0,0,0);
+        document.querySelectorAll('.station-cell').forEach(cell => cell.classList.remove('deadline-today', 'deadline-passed'));
+        employees.forEach(emp => {
+            stations.forEach((s, idx) => {
+                const date = emp.stations?.[s.id]?.completionDate;
+                if (date) {
+                    const due = new Date(date); due.setHours(0,0,0,0);
+                    const diff = Math.ceil((due - today) / (1000*60*60*24));
+                    const row = document.querySelector(`tr[data-id="${emp.id}"]`);
+                    if (row) {
+                        const cell = row.querySelector(`td:nth-child(${idx + 4})`);
+                        if (cell) {
+                            if (diff === 0) cell.classList.add('deadline-today');
+                            else if (diff < 0) cell.classList.add('deadline-passed');
+                        }
                     }
-                    showToast("Notifications disabled", "info");
                 }
             });
-            
-            // Close notification panel when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!notificationPanel.contains(e.target) && 
-                    !notificationBadge.contains(e.target) && 
-                    notificationPanel.style.display === 'block') {
-                    notificationPanel.style.display = 'none';
-                }
-            });
-        }
+        });
+    }
 
-        // Initialize on load
-        window.addEventListener('DOMContentLoaded', init);
-    </script>
+    document.getElementById('checkDeadlinesBtn').addEventListener('click', () => { checkDeadlines(); showToast('Deadlines checked', 'success'); });
+    document.getElementById('clearAllBtn').addEventListener('click', () => { if (confirm('Clear all data?')) { employees = []; nextId = 1001; saveData(); renderTable(); updateStats(); showToast('All data cleared', 'warning'); } });
+    document.getElementById('exportExcelBtn').addEventListener('click', () => {
+        const wsData = [['Store', document.getElementById('storeName').value], ['Month', document.getElementById('monthPicker').value], [], ['Employee', 'ID', 'Date Range', ...stations.flatMap(s => [`${s.name} Status`, `${s.name} Trainer`, `${s.name} Date`])]];
+        employees.forEach(emp => {
+            wsData.push([emp.name || '', emp.employeeId || emp.id, `${emp.dateFrom || ''} to ${emp.dateTo || ''}`, ...stations.flatMap(s => {
+                const d = emp.stations?.[s.id] || {};
+                return [d.status || '', d.trainer || '', d.completionDate || ''];
+            })]);
+        });
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Training Plan');
+        XLSX.writeFile(wb, `Training_Plan_${document.getElementById('storeName').value}.xlsx`);
+        showToast('Exported to Excel', 'success');
+    });
+
+    function showToast(msg, type = 'success') {
+        const toast = document.getElementById('toastMsg');
+        document.getElementById('toastText').innerText = msg;
+        toast.style.display = 'flex';
+        toast.style.borderLeftColor = type === 'error' ? '#ef4444' : '#10b981';
+        setTimeout(() => toast.style.display = 'none', 2500);
+    }
+
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
+
+    // Language & Theme
+    function updateLanguage() {
+        const t = translations[currentLang];
+        document.getElementById('titleMain').innerText = t.titleMain;
+        document.querySelectorAll('[data-key]').forEach(el => { const key = el.getAttribute('data-key'); if (t[key]) el.innerText = t[key]; });
+        document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+        renderTable();
+    }
+    document.getElementById('langEn').addEventListener('click', () => { currentLang = 'en'; document.getElementById('langEn').classList.add('active'); document.getElementById('langAr').classList.remove('active'); updateLanguage(); });
+    document.getElementById('langAr').addEventListener('click', () => { currentLang = 'ar'; document.getElementById('langAr').classList.add('active'); document.getElementById('langEn').classList.remove('active'); updateLanguage(); });
+    
+    let darkMode = localStorage.getItem('trainingDark') === 'true';
+    function applyDarkMode() { if (darkMode) document.body.classList.add('dark'); else document.body.classList.remove('dark'); document.getElementById('themeText').innerText = darkMode ? 'Light' : 'Dark'; }
+    document.getElementById('themeToggle').addEventListener('click', () => { darkMode = !darkMode; localStorage.setItem('trainingDark', darkMode); applyDarkMode(); });
+    
+    applyDarkMode(); updateLanguage(); loadData(); 
+    setInterval(() => { if (new Date().getHours() === 9) checkDeadlines(); }, 3600000);
+    window.saveEmployeeField = saveEmployeeField;
+    window.saveStationData = saveStationData;
+    window.deleteEmployee = deleteEmployee;
+    window.duplicateEmployee = duplicateEmployee;
+    window.markAllCompleted = markAllCompleted;
+</script>
 </body>
 </html>
