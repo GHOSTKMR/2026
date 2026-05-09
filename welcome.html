@@ -1,517 +1,700 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SADWAP · Mobile</title>
-    <!-- Bootstrap 5 CSS (lightweight) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Google Fonts (Inter + Orbitron for headings) -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SADWAP | Enterprise Operations Dashboard</title>
+    <!-- Google Fonts + Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Chart.js CDN for analytics placeholders -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Light Mode (default) */
+        :root {
+            --bg-page: #f5f7fb;
+            --card-white: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #5b6e8c;
+            --border-light: #e9edf2;
+            --sidebar-bg: #ffffff;
+            --header-bg: #ffffff;
+            --accent-blue: #1e4a76;
+            --accent-blue-hover: #0f3b5c;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --critical-red: #ef4444;
+            --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 5px 10px -5px rgba(0, 0, 0, 0.02);
+            --sidebar-width: 260px;
+            --header-height: 68px;
+            --hover-bg: #eef2ff;
+            --module-bg: #f8fafc;
+            --toast-bg: #ffffff;
+        }
+
+        /* Dark Mode */
+        body.dark {
+            --bg-page: #0f172a;
+            --card-white: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-light: #334155;
+            --sidebar-bg: #0f172a;
+            --header-bg: #1e293b;
+            --accent-blue: #38bdf8;
+            --accent-blue-hover: #7dd3fc;
+            --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            --hover-bg: #334155;
+            --module-bg: #0f172a;
+            --toast-bg: #1e293b;
         }
 
         body {
-            background-color: #000000;
             font-family: 'Inter', sans-serif;
+            background: var(--bg-page);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        /* Layout Grid */
+        .dashboard-container {
+            display: flex;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8px;
         }
 
-        /* ---- main mobile card (looks like a phone screen) ---- */
-        .mobile-frame {
-            width: 100%;
-            max-width: 380px;
-            background: #0b0f15;
-            border-radius: 42px;
-            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.9), 0 0 0 8px #1e2632, 0 0 0 12px #0a0c12;
-            overflow: hidden;
-            position: relative;
-            backdrop-filter: blur(2px);
-            aspect-ratio: 9 / 19;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Video background – with sound (muted removed) */
-        .bg-video {
-            position: absolute;
+        /* SIDEBAR (collapsible) */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-light);
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        /* everything on top of video */
-        .screen-content {
-            position: relative;
-            z-index: 2;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 16px 12px 12px 12px;
-            background: rgba(0, 0, 0, 0.25); /* semi-transparent overlay to make icons pop */
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
+            bottom: 0;
+            z-index: 20;
+            transition: transform 0.25s ease;
             overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #00ff8844 #1a1f2a;
+            box-shadow: var(--shadow-sm);
+        }
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+        .sidebar-header {
+            padding: 1.5rem 1.25rem;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 1rem;
+        }
+        .sidebar-header h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), #2b6a9f);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 1rem;
+        }
+        .sidebar-menu li {
+            margin-bottom: 0.4rem;
+        }
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.7rem 1rem;
+            border-radius: 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .sidebar-menu a:hover, .sidebar-menu .active a {
+            background: var(--hover-bg);
+            color: var(--accent-blue);
+        }
+        .sidebar-menu i {
+            width: 1.4rem;
+            font-size: 1.1rem;
         }
 
-        .screen-content::-webkit-scrollbar {
-            width: 4px;
+        /* Main content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin 0.25s;
+            min-width: 0;
         }
-        .screen-content::-webkit-scrollbar-track {
-            background: #1a1f2a;
-        }
-        .screen-content::-webkit-scrollbar-thumb {
-            background: #00ff88;
-            border-radius: 20px;
+        .main-content.full-width {
+            margin-left: 0;
         }
 
-        /* ---- top bar with logo and slide hint ---- */
-        .top-bar {
+        /* Top navbar */
+        .top-navbar {
+            background: var(--header-bg);
+            padding: 0 1.8rem;
+            height: var(--header-height);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 30px;
-            padding: 0 4px;
-        }
-        .logo-mini {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .top-logo-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 16px;
-            border: 2px solid #00ff88;
-            object-fit: cover;
-            box-shadow: 0 0 18px #00ff8844;
-        }
-        .logo-text {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            font-size: 1.0rem;
-            letter-spacing: 1.5px;
-            background: linear-gradient(130deg, #00ffcc, #aa88ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 6px #00ffaa88;
-        }
-        .slide-indicator {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid #ffffff26;
-            border-radius: 40px;
-            padding: 6px 14px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            color: #ccddee;
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .slide-indicator i {
-            color: #00ffaa;
-            font-size: 0.9rem;
-            animation: bounceDown 1.8s infinite ease;
-        }
-        @keyframes bounceDown {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(4px); }
-        }
-
-        /* ---- grid of apps – three tiles per row, centered nicely ---- */
-        .app-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px 15px;
-            margin: 20px 0 20px;
-            padding: 4px 8px;
-            justify-items: center;
-        }
-
-        .app-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            transition: transform 0.15s ease;
-            width: 100%;
-        }
-        .app-item:active {
-            transform: scale(0.94);
-        }
-
-        .app-icon {
-            width: 72px;
-            height: 72px;
-            border-radius: 24px;
-            background: rgba(31, 41, 55, 0.7);
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 12px 24px -8px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.15);
-            overflow: hidden;
-            margin-bottom: 8px;
-            border: 1.5px solid rgba(255, 255, 255, 0.2);
-        }
-        .app-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .app-name {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: #ffffff;
-            text-shadow: 0 2px 8px black;
-            max-width: 80px;
-            text-align: center;
-            line-height: 1.3;
-            letter-spacing: 0.3px;
-            background: rgba(0, 10, 10, 0.5);
-            padding: 4px 8px;
-            border-radius: 20px;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            z-index: 15;
+            background: var(--header-bg);
             backdrop-filter: blur(4px);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        }
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .lang-switch {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--border-light);
+            padding: 0.25rem;
+            border-radius: 2rem;
+        }
+        .lang-btn {
+            background: transparent;
+            border: none;
+            padding: 0.3rem 0.9rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        .lang-btn.active {
+            background: var(--accent-blue);
+            color: white;
+        }
+        .theme-toggle-btn {
+            background: var(--border-light);
+            border: none;
+            border-radius: 2rem;
+            padding: 0.3rem 0.9rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--card-white);
+            padding: 0.3rem 0.9rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border-light);
         }
 
-        /* optional subtitle */
-        .more-hint {
-            display: flex;
-            justify-content: center;
-            margin: 10px 0 20px;
+        /* Dashboard content */
+        .dashboard-inner {
+            padding: 1.8rem;
         }
-        .more-chip {
-            background: rgba(30, 40, 60, 0.7);
-            backdrop-filter: blur(10px);
-            border-radius: 60px;
-            padding: 10px 30px;
+
+        /* Welcome row */
+        .welcome-header {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        .greeting h1 {
+            font-size: 1.6rem;
+            font-weight: 600;
+        }
+        .info-badge {
+            display: flex;
+            gap: 1rem;
+            background: var(--card-white);
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.85rem;
+        }
+
+        /* KPI Cards Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .kpi-card {
+            background: var(--card-white);
+            padding: 1.2rem;
+            border-radius: 1.2rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            transition: transform 0.1s;
+            cursor: pointer;
+        }
+        .kpi-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+        .kpi-value {
+            font-size: 1.9rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+        .trend {
+            font-size: 0.7rem;
+        }
+
+        /* Two column layout for alerts and quick access */
+        .two-col-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+        .alert-section, .quick-modules {
+            background: var(--card-white);
+            border-radius: 1.2rem;
+            padding: 1.2rem;
+            border: 1px solid var(--border-light);
+        }
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .alert-item {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .priority-critical { color: var(--critical-red); }
+        .priority-warning { color: var(--warning-orange); }
+        .priority-low { color: var(--success-green); }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 0.8rem;
+        }
+        .module-btn {
+            background: var(--module-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 1rem;
+            padding: 0.7rem 0.2rem;
+            text-align: center;
             font-size: 0.8rem;
             font-weight: 500;
-            color: #ccddee;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            border: 1px solid #00ff8833;
-            box-shadow: 0 0 15px #00ff8822;
+            cursor: pointer;
+            transition: 0.15s;
+            color: var(--text-primary);
+        }
+        .module-btn:hover {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
         }
 
-        /* home bar */
-        .home-bar {
-            margin-top: auto;
-            display: flex;
-            justify-content: center;
-            padding: 16px 0 8px;
+        /* Charts + Activity Row */
+        .charts-activity-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+            margin-bottom: 1.5rem;
         }
-        .home-indicator {
-            width: 130px;
-            height: 5px;
-            background: #d9e2ef;
-            border-radius: 30px;
-            opacity: 0.7;
+        .chart-card, .activity-feed {
+            background: var(--card-white);
+            border-radius: 1.2rem;
+            padding: 1rem;
+            border: 1px solid var(--border-light);
         }
-
-        /* security toast */
-        .security-toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: rgba(248, 81, 73, 0.2);
-            border: 1px solid #f85149aa;
-            color: #faa;
-            padding: 10px 22px;
-            border-radius: 60px;
+        canvas { max-height: 200px; width: 100%; }
+        .activity-item {
             font-size: 0.8rem;
-            font-weight: 600;
-            z-index: 9999;
-            opacity: 0;
-            transition: 0.3s;
-            backdrop-filter: blur(12px);
-            white-space: nowrap;
-            pointer-events: none;
-        }
-        .security-toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
         }
 
-        @media (max-width: 360px) {
-            .app-icon { width: 65px; height: 65px; }
-            .app-name { font-size: 0.6rem; }
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .two-col-grid, .charts-activity-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80%;
+                max-width: 280px;
+            }
+            .dashboard-inner {
+                padding: 1rem;
+            }
+            .kpi-grid {
+                gap: 0.8rem;
+            }
+        }
+        [dir="rtl"] .sidebar {
+            left: auto;
+            right: 0;
+        }
+        [dir="rtl"] .main-content {
+            margin-left: 0;
+            margin-right: var(--sidebar-width);
+        }
+        [dir="rtl"] .main-content.full-width {
+            margin-right: 0;
+        }
+        @media (max-width: 768px) {
+            [dir="rtl"] .main-content {
+                margin-right: 0;
+            }
+        }
+        .notification-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--toast-bg);
+            border-left: 4px solid #10b981;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            padding: 0.8rem 1.2rem;
+            border-radius: 0.8rem;
+            z-index: 1000;
+            font-size: 0.85rem;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-primary);
         }
     </style>
 </head>
 <body>
+<div class="dashboard-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>SADWAP</h2>
+            <p style="font-size: 0.7rem; color:var(--text-secondary); margin-top: 4px;">Ops Platform</p>
+        </div>
+        <ul class="sidebar-menu" id="sidebarMenu">
+            <li class="active"><a href="#" data-key="dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+            <li><a href="#" data-key="inventory"><i class="fas fa-boxes"></i> <span>Inventory</span></a></li>
+            <li><a href="#" data-key="expiry"><i class="fas fa-calendar-times"></i> <span>Expiry Tracker</span></a></li>
+            <li><a href="#" data-key="sales"><i class="fas fa-chart-line"></i> <span>Sales</span></a></li>
+            <li><a href="#" data-key="waste"><i class="fas fa-trash-alt"></i> <span>Waste Tracking</span></a></li>
+            <li><a href="#" data-key="transfers"><i class="fas fa-exchange-alt"></i> <span>Transfers</span></a></li>
+            <li><a href="#" data-key="reports"><i class="fas fa-file-alt"></i> <span>Reports</span></a></li>
+            <li><a href="#" data-key="audit"><i class="fas fa-shield-alt"></i> <span>Audit Tools</span></a></li>
+        </ul>
+    </aside>
 
-<!-- floating security toast -->
-<div class="security-toast" id="securityToast">
-    <i class="bi bi-shield-exclamation me-2"></i>
-    <span>Access Denied: Security active</span>
+    <!-- MAIN CONTENT -->
+    <div class="main-content" id="mainContent">
+        <div class="top-navbar">
+            <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+            <div class="nav-actions">
+                <button class="theme-toggle-btn" id="themeToggleBtn">
+                    <i class="fas fa-moon"></i> <span id="themeText">Dark</span>
+                </button>
+                <div class="lang-switch">
+                    <button class="lang-btn active" id="langEn">EN</button>
+                    <button class="lang-btn" id="langAr">AR</button>
+                </div>
+                <div class="user-badge"><i class="fas fa-user-circle"></i> <span id="userName">Guest</span></div>
+            </div>
+        </div>
+
+        <div class="dashboard-inner" id="dashboardInner">
+            <!-- Welcome Header -->
+            <div class="welcome-header">
+                <div class="greeting">
+                    <h1 id="welcomeMsg">Welcome back, Guest!</h1>
+                    <p id="branchInfo" style="color:var(--text-secondary);">Main Branch · Shift: Morning (08:00 - 16:00)</p>
+                </div>
+                <div class="info-badge">
+                    <span id="currentDate"></span> 
+                    <span id="currentTime"></span>
+                </div>
+            </div>
+
+            <!-- KPI Grid -->
+            <div class="kpi-grid" id="kpiContainer">
+                <div class="kpi-card"><div class="kpi-title" data-key="todaySales">Today Sales</div><div class="kpi-value">$12,480</div><span class="trend">+8% vs yesterday</span></div>
+                <div class="kpi-card"><div class="kpi-title" data-key="totalOrders">Total Orders</div><div class="kpi-value">342</div><span class="trend">+12 orders</span></div>
+                <div class="kpi-card"><div class="kpi-title" data-key="expiringItems">Expiring Items</div><div class="kpi-value">14</div><span class="trend" style="color:#f59e0b;">⚠️ 6 within 2 days</span></div>
+                <div class="kpi-card"><div class="kpi-title" data-key="criticalAlerts">Critical Alerts</div><div class="kpi-value" style="color:#ef4444;">3</div><span class="trend">Action required</span></div>
+                <div class="kpi-card"><div class="kpi-title" data-key="wasteEntries">Waste Entries</div><div class="kpi-value">$230</div><span class="trend">-5% vs prior</span></div>
+                <div class="kpi-card"><div class="kpi-title" data-key="inventoryStatus">Inventory Status</div><div class="kpi-value">87%</div><span class="trend">Optimal</span></div>
+            </div>
+
+            <!-- Alerts + Quick Access -->
+            <div class="two-col-grid">
+                <div class="alert-section">
+                    <div class="section-title"><i class="fas fa-bell"></i> <span data-key="alertsTitle">Operational Alerts</span></div>
+                    <div id="alertsList">
+                        <div class="alert-item"><i class="fas fa-exclamation-circle priority-critical"></i> <span><strong>Dairy products</strong> expire in 1 day (25 units)</span></div>
+                        <div class="alert-item"><i class="fas fa-boxes priority-warning"></i> <span><strong>Low stock:</strong> Chicken breast below threshold</span></div>
+                        <div class="alert-item"><i class="fas fa-clipboard-list priority-low"></i> <span>Inventory audit reminder - tomorrow 9AM</span></div>
+                        <div class="alert-item"><i class="fas fa-thermometer-half priority-critical"></i> <span>Cooler #3 temperature fluctuation</span></div>
+                    </div>
+                </div>
+                <div class="quick-modules">
+                    <div class="section-title"><i class="fas fa-th-large"></i> <span data-key="quickAccess">Quick Access Modules</span></div>
+                    <div class="modules-grid" id="modulesGrid">
+                        <div class="module-btn" data-module="inventory">📦 Inventory Mgmt</div>
+                        <div class="module-btn" data-module="expiry">⏳ Expiry Tracker</div>
+                        <div class="module-btn" data-module="sales">📊 Sales Dashboard</div>
+                        <div class="module-btn" data-module="chatbot">🤖 SOP Chatbot</div>
+                        <div class="module-btn" data-module="waste">🗑️ Waste Tracking</div>
+                        <div class="module-btn" data-module="transfer">🔄 Transfer Mgmt</div>
+                        <div class="module-btn" data-module="reports">📑 Reports</div>
+                        <div class="module-btn" data-module="audit">🔍 Audit Tools</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts + Activity Feed -->
+            <div class="charts-activity-grid">
+                <div class="chart-card">
+                    <div class="section-title"><i class="fas fa-chart-simple"></i> <span data-key="salesTrend">Sales Trend (Last 7 days)</span></div>
+                    <canvas id="salesChart" width="400" height="180" style="max-width:100%; height:auto;"></canvas>
+                </div>
+                <div class="activity-feed">
+                    <div class="section-title"><i class="fas fa-history"></i> <span data-key="recentActivity">Recent Activity</span></div>
+                    <div id="activityList">
+                        <div class="activity-item"><i class="fas fa-plus-circle" style="color: #10b981;"></i> <span>Inventory added: 120kg potatoes</span><small style="margin-left:auto;">2m ago</small></div>
+                        <div class="activity-item"><i class="fas fa-exchange-alt"></i> <span>Transfer #T342 approved</span><small style="margin-left:auto;">15m ago</small></div>
+                        <div class="activity-item"><i class="fas fa-trash-alt"></i> <span>Waste entry recorded (expired dairy)</span><small style="margin-left:auto;">1h ago</small></div>
+                        <div class="activity-item"><i class="fas fa-chart-line"></i> <span>Sales target exceeded by 12%</span><small style="margin-left:auto;">3h ago</small></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<div id="toastMessage" class="notification-toast"><i class="fas fa-check-circle"></i> <span></span></div>
 
-<!-- Main mobile screen -->
-<div class="mobile-frame">
-
-    <!-- VIDEO BACKGROUND (with sound – no muted attribute) -->
-    <video class="bg-video" autoplay loop playsinline>
-        <!-- Source file with audio -->
-        <source src="https://ghostkmr.github.io/2026/bgv.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-
-    <!-- screen content -->
-    <div class="screen-content" id="screenContent">
-
-        <!-- top section: logo + slide hint -->
-        <div class="top-bar">
-            <div class="logo-mini">
-                <img src="https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/ccda845a-d9f3-4c25-b110-99647e3f934a.png" 
-                     alt="logo" 
-                     class="top-logo-img"
-                     onerror="this.src='https://via.placeholder.com/40x40?text=SAD'; this.style.borderRadius='16px';">
-                <span class="logo-text">SADWAP</span>
-            </div>
-            <div class="slide-indicator">
-                <i class="bi bi-arrow-down-short"></i> <span>tools</span> <i class="bi bi-arrow-down-short"></i>
-            </div>
-        </div>
-
-        <!-- =====  APPS IN A PROPER GRID ===== -->
-        <div class="app-grid">
-
-             <!-- 00. Pannel  -->
- <div class="app-item" title="OPS BOT">
-                <a href="https://ghostkmr.github.io/2026/secure.html" target="_self" rel="noopener noreferrer">
-                    <div class="app-icon">
-                        <img src="https://ghostkmr.github.io/2026/pannel.jpeg" alt="OPS. assistant">
-                    </div>
-                </a>
-                <span class="app-name">Pannel</span>
-            </div>
-
-
-                 <!-- 00..oo1 new launch  -->
- <div class="app-item" title="OPS BOT">
-                <a href="https://ghostkmr.github.io/2026/newlaunch.html" target="_self" rel="noopener noreferrer">
-                    <div class="app-icon">
-                        <img src="https://ghostkmr.github.io/2026/newlaunch.jpeg" alt="OPS. assistant">
-                    </div>
-                </a>
-                <span class="app-name">NEW!!</span>
-            </div>
-            
-            
-            
-            <!-- 1. Kudu Assistant (chatbot) -->
-            <div class="app-item" title="OPS BOT">
-                <a href="https://ghostkmr.github.io/2026/chatbotformobile.html" target="_self" rel="noopener noreferrer">
-                    <div class="app-icon">
-                        <img src="https://ghostkmr.github.io/2026/chat.jpeg" alt="OPS. assistant">
-                    </div>
-                </a>
-                <span class="app-name">OPS BOT</span>
-            </div>
-
-
-
-              <!-- 1. Managers portal (chatbot) -->
-            <div class="app-item" title="OPS BOT">
-                <a href="https://ghostkmr.github.io/2026/portal.html" target="_self" rel="noopener noreferrer">
-                    <div class="app-icon">
-                        <img src="https://ghostkmr.github.io/2026/portal.jpeg" alt="OPS. assistant">
-                    </div>
-                </a>
-                <span class="app-name">MNG BOT</span>
-            </div>
-
-                <!-- 1. inventory forecast -->
-            <div class="app-item" title="OPS BOT">
-                <a href="https://ghostkmr.github.io/2026/inventory.html" target="_self" rel="noopener noreferrer">
-                    <div class="app-icon">
-                        <img src="https://ghostkmr.github.io/2026/inventory.jpeg" alt="OPS. assistant">
-                    </div>
-                </a>
-                <span class="app-name">Quantity forecast</span>
-            </div>
-
-            <!-- 2. Expiration Tracker -->
-            <div class="app-item" title="Expiration Tracker">
-                <a href="https://ghostkmr.github.io/2026/expiration tracker.html" target="_self" rel="noopener noreferrer">
-                    <div class="app-icon">
-                        <img src="https://ghostkmr.github.io/2026/exp.jpeg" alt="expiration tracker">
-                    </div>
-                </a>
-                <span class="app-name">Expiration Tracker</span>
-            </div>
-            
-            <!-- 3. Sales Tracker -->
-            <div class="app-item" title="Sales Tracker">
-                <a href="https://ghostkmr.github.io/2026/salestracker.html" target="_self" rel="noopener noreferrer">
-                    <div class="app-icon">
-                        <img src="https://ghostkmr.github.io/2026/sales.jpeg" alt="sales tracker">
-                    </div>
-                </a>
-                <span class="app-name">Sales Tracker</span>
-            </div>
-
-            <!-- 4. Transfer Records -->
-            <div class="app-item" title="Transfer Records">
-                <a href="https://ghostkmr.github.io/2026/transferrecords.html" target="_self" rel="noopener noreferrer">
-                    <div class="app-icon">
-                        <img src="https://ghostkmr.github.io/2026/transferrecord.jpeg" alt="transfer records">
-                    </div>
-                </a>
-                <span class="app-name">Transfer Records</span>
-            </div>
-
-            <!-- 5. Void and Refund -->
-            <div class="app-item" title="Void and Refund">
-                <a href="https://ghostkmr.github.io/2026/void and refunds.html" target="_self" rel="noopener noreferrer">
-                    <div class="app-icon">
-                        <img src="https://ghostkmr.github.io/2026/voidandrefund.jpeg" alt="void and refund">
-                    </div>
-                </a>
-                <span class="app-name">Void & Refund</span>
-            </div>
-            
-            <!-- 6.srv -->
-            <div class="app-item" title="Void and Refund">
-                <a href="https://ghostkmr.github.io/2026/srv.html" target="_self" rel="noopener noreferrer">
-                    <div class="app-icon">
-                        <img src="https://ghostkmr.github.io/2026/srv.jpeg" alt="void and refund">
-                    </div>
-                </a>
-                <span class="app-name">RVR</span>
-            </div>
-
-              <!-- 7.Training calender -->
-            <div class="app-item" title="Void and Refund">
-                <a href="https://ghostkmr.github.io/2026/training calender.html" target="_self" rel="noopener noreferrer">
-                    <div class="app-icon">
-                        <img src="https://ghostkmr.github.io/2026/training.jpeg" alt="void and refund">
-                    </div>
-                </a>
-                <span class="app-name">Training Calender</span>
-            </div>
-        </div>
-
-         <!-- 7.Training calender -->
-            <div class="app-item" title="Void and Refund">
-                <a href="https://ghostkmr.github.io/2026/audit.html" target="_self" rel="noopener noreferrer">
-                    <div class="app-icon">
-                        <img src="https://ghostkmr.github.io/2026/.jpeg" alt="void and refund">
-                    </div>
-                </a>
-                <span class="app-name">Test</span>
-            </div>
-        </div>
-        <!-- subtle hint -->
-        <div class="more-hint" id="moreAppsHint">
-            <div class="more-chip">
-                <i class="bi bi-grid"></i> business tools <i class="bi bi-grid"></i>
-            </div>
-        </div>
-
-        <!-- home bar -->
-        <div class="home-bar">
-            <div class="home-indicator"></div>
-        </div>
-    </div> <!-- /.screen-content -->
-</div> <!-- /.mobile-frame -->
-
-<!-- Bootstrap JS (optional) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- simple security & scroll hint + video audio unblock helper -->
 <script>
-    (function() {
-        const toast = document.getElementById('securityToast');
-        function showToast() {
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
+    // ---------- Bilingual Dictionary ----------
+    const translations = {
+        en: {
+            dashboard: "Dashboard", inventory: "Inventory", expiry: "Expiry Tracker", sales: "Sales", waste: "Waste Tracking",
+            transfers: "Transfers", reports: "Reports", audit: "Audit Tools",
+            todaySales: "Today Sales", totalOrders: "Total Orders", expiringItems: "Expiring Items", criticalAlerts: "Critical Alerts",
+            wasteEntries: "Waste Entries", inventoryStatus: "Inventory Status", alertsTitle: "Operational Alerts",
+            quickAccess: "Quick Access Modules", salesTrend: "Sales Trend (Last 7 days)", recentActivity: "Recent Activity",
+            welcomeMsg: "Welcome back, Guest!", branchInfo: "Main Branch · Shift: Morning (08:00 - 16:00)"
+        },
+        ar: {
+            dashboard: "لوحة القيادة", inventory: "إدارة المخزون", expiry: "متتبع انتهاء الصلاحية", sales: "المبيعات", waste: "تتبع الهدر",
+            transfers: "التحويلات", reports: "التقارير", audit: "أدوات التدقيق",
+            todaySales: "مبيعات اليوم", totalOrders: "إجمالي الطلبات", expiringItems: "عناصر منتهية الصلاحية", criticalAlerts: "تنبيهات حرجة",
+            wasteEntries: "مدخلات الهدر", inventoryStatus: "حالة المخزون", alertsTitle: "تنبيهات تشغيلية",
+            quickAccess: "الوصول السريع", salesTrend: "اتجاه المبيعات (آخر 7 أيام)", recentActivity: "النشاط الأخير",
+            welcomeMsg: "مرحباً بعودتك، ضيف!", branchInfo: "الفرع الرئيسي · الفترة: صباحية (08:00 - 16:00)"
         }
-        document.addEventListener('contextmenu', (e) => { e.preventDefault(); showToast(); });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'U')) {
-                e.preventDefault(); showToast();
-            }
+    };
+    let currentLang = "en";
+    let chartInstance = null;
+
+    // Dark Mode State
+    let isDarkMode = localStorage.getItem('sadwap_theme') === 'dark';
+    
+    function applyTheme() {
+        if (isDarkMode) {
+            document.body.classList.add('dark');
+            document.getElementById('themeText').innerHTML = '<i class="fas fa-sun"></i> Light';
+            document.getElementById('themeToggleBtn').innerHTML = '<i class="fas fa-sun"></i> <span id="themeText">Light</span>';
+        } else {
+            document.body.classList.remove('dark');
+            document.getElementById('themeText').innerHTML = '<i class="fas fa-moon"></i> Dark';
+            document.getElementById('themeToggleBtn').innerHTML = '<i class="fas fa-moon"></i> <span id="themeText">Dark</span>';
+        }
+        localStorage.setItem('sadwap_theme', isDarkMode ? 'dark' : 'light');
+    }
+    
+    function toggleTheme() {
+        isDarkMode = !isDarkMode;
+        applyTheme();
+        showToast(isDarkMode ? "Dark mode enabled" : "Light mode enabled", "success");
+        // Refresh chart for proper dark mode colors (optional)
+        if (chartInstance) { chartInstance.destroy(); initSalesChart(); }
+    }
+
+    // Helper: update UI language & RTL
+    function setLanguage(lang) {
+        currentLang = lang;
+        const t = translations[lang];
+        document.getElementById("welcomeMsg").innerText = t.welcomeMsg;
+        document.getElementById("branchInfo").innerText = t.branchInfo;
+        document.querySelectorAll("[data-key]").forEach(el => {
+            const key = el.getAttribute("data-key");
+            if (t[key]) el.innerText = t[key];
         });
-
-        // scroll hint fade (just for aesthetics)
-        const screen = document.getElementById('screenContent');
-        const moreHint = document.getElementById('moreAppsHint');
-        if (screen && moreHint) {
-            screen.addEventListener('scroll', function() {
-                if (screen.scrollTop > 15) {
-                    moreHint.style.opacity = '0.3';
-                    moreHint.style.transition = '0.3s';
-                } else {
-                    moreHint.style.opacity = '1';
-                }
-            });
+        // Sidebar texts
+        const menuItems = document.querySelectorAll("#sidebarMenu li a");
+        const menuKeys = ["dashboard", "inventory", "expiry", "sales", "waste", "transfers", "reports", "audit"];
+        menuItems.forEach((item, idx) => {
+            if (menuKeys[idx]) item.querySelector("span").innerText = t[menuKeys[idx]];
+        });
+        // change RTL attribute
+        if (lang === "ar") {
+            document.documentElement.setAttribute("dir", "rtl");
+            document.body.style.textAlign = "right";
+            document.querySelector(".dashboard-container").style.flexDirection = "row-reverse";
+        } else {
+            document.documentElement.setAttribute("dir", "ltr");
+            document.body.style.textAlign = "left";
+            document.querySelector(".dashboard-container").style.flexDirection = "row";
         }
+        // adjust layout margins after language
+        const sidebar = document.getElementById("sidebar");
+        const main = document.getElementById("mainContent");
+        if (lang === "ar" && !sidebar.classList.contains("collapsed")) main.style.marginRight = "260px";
+        else if (lang === "ar" && sidebar.classList.contains("collapsed")) main.style.marginRight = "0";
+        else if (lang !== "ar" && !sidebar.classList.contains("collapsed")) main.style.marginLeft = "260px";
+        else main.style.marginLeft = "0";
+    }
 
-        // Attempt to ensure video plays with sound (browsers may block autoplay with audio)
-        const video = document.querySelector('.bg-video');
-        if (video) {
-            // Browsers often block autoplay with sound; we try to play and if fails,
-            // we wait for any user interaction to enable sound.
-            const playPromise = video.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(() => {
-                    // Autoplay with sound was blocked.
-                    // Add a one-time event listener to play on first interaction
-                    const enableAudio = () => {
-                        video.play();
-                        document.removeEventListener('touchstart', enableAudio);
-                        document.removeEventListener('click', enableAudio);
-                    };
-                    document.addEventListener('touchstart', enableAudio);
-                    document.addEventListener('click', enableAudio);
-                    
-                    // Also show a subtle hint? not necessary but can be added.
-                });
-            }
+    // Sidebar collapse & responsive
+    const sidebar = document.getElementById("sidebar");
+    const mainContent = document.getElementById("mainContent");
+    const menuToggle = document.getElementById("menuToggle");
+    function toggleSidebar() {
+        sidebar.classList.toggle("collapsed");
+        if (currentLang === "ar") {
+            mainContent.classList.toggle("full-width");
+            mainContent.style.marginRight = sidebar.classList.contains("collapsed") ? "0" : "260px";
+            mainContent.style.marginLeft = "0";
+        } else {
+            mainContent.classList.toggle("full-width");
+            mainContent.style.marginLeft = sidebar.classList.contains("collapsed") ? "0" : "260px";
+            mainContent.style.marginRight = "0";
         }
-    })();
+    }
+    menuToggle.addEventListener("click", toggleSidebar);
+    if (window.innerWidth < 768) toggleSidebar();
+
+    // Live time & date
+    function updateDateTime() {
+        const now = new Date();
+        const dateOpt = { year: 'numeric', month: 'short', day: 'numeric' };
+        document.getElementById("currentDate").innerText = now.toLocaleDateString(undefined, dateOpt);
+        document.getElementById("currentTime").innerText = now.toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' });
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    // Chart.js implementation
+    function initSalesChart() {
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        if (chartInstance) chartInstance.destroy();
+        const textColor = isDarkMode ? '#f1f5f9' : '#1e293b';
+        chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{ label: currentLang === 'en' ? 'Sales ($)' : 'المبيعات ($)', data: [8450, 8900, 10200, 9800, 11500, 12480, 13100], borderColor: '#38bdf8', tension: 0.2, fill: false, pointBackgroundColor: '#38bdf8' }]
+            },
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: textColor } } } }
+        });
+    }
+
+    function showToast(message, type = "success") {
+        const toast = document.getElementById("toastMessage");
+        toast.style.display = "flex";
+        toast.querySelector("span").innerText = message;
+        if (type === "error") toast.style.borderLeftColor = "#ef4444";
+        else toast.style.borderLeftColor = "#10b981";
+        setTimeout(() => { toast.style.display = "none"; }, 2500);
+    }
+
+    // Quick module interactions
+    document.querySelectorAll(".module-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const module = btn.getAttribute("data-module");
+            showToast(`🔧 Opening ${module} module (demo placeholder)`, "success");
+        });
+    });
+
+    // Language switcher
+    document.getElementById("langEn").addEventListener("click", () => {
+        document.getElementById("langEn").classList.add("active");
+        document.getElementById("langAr").classList.remove("active");
+        setLanguage("en");
+        if (chartInstance) { chartInstance.destroy(); initSalesChart(); }
+        else initSalesChart();
+    });
+    document.getElementById("langAr").addEventListener("click", () => {
+        document.getElementById("langAr").classList.add("active");
+        document.getElementById("langEn").classList.remove("active");
+        setLanguage("ar");
+        if (chartInstance) { chartInstance.destroy(); initSalesChart(); }
+        else initSalesChart();
+    });
+    
+    // Theme toggle event
+    document.getElementById("themeToggleBtn").addEventListener("click", toggleTheme);
+
+    // Activity feed simulation
+    function addActivityLog(message) {
+        const activityDiv = document.getElementById("activityList");
+        const newItem = document.createElement("div");
+        newItem.className = "activity-item";
+        newItem.innerHTML = `<i class="fas fa-bell"></i> <span>${message}</span><small style="margin-left:auto;">just now</small>`;
+        activityDiv.prepend(newItem);
+        if (activityDiv.children.length > 6) activityDiv.removeChild(activityDiv.lastChild);
+    }
+    setTimeout(() => {
+        addActivityLog("⏰ Expiry alert: Yogurt batch due tomorrow");
+        showToast("New operational alert: Low stock on produce", "warning");
+    }, 3000);
+
+    // initialization
+    initSalesChart();
+    setLanguage("en");
+    applyTheme();   // apply saved dark mode preference
+    document.getElementById("langEn").classList.add("active");
+    
+    // KPI click toast
+    const kpis = document.querySelectorAll(".kpi-card");
+    kpis.forEach(k => k.addEventListener("click", () => showToast(`View detailed analytics (demo)`, "info")));
+    
+    console.log("Enterprise Dashboard ready — bilingual, dark mode, guest user");
 </script>
-
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
