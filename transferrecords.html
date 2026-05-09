@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>SADWAP | Inventory Transfer</title>
-    <!-- Bootstrap 5 CSS (lightweight) -->
+    <title>SADWAP | Inventory Transfer · Responsive</title>
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <!-- SheetJS for Excel export (optimized CDN) -->
+    <!-- SheetJS for Excel export -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <style>
         * {
@@ -19,7 +19,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Professional Corporate Theme - Optimized */
+        /* Professional Corporate Theme - Fully Responsive */
         :root {
             --primary: #2c5f8a;
             --primary-dark: #1e405e;
@@ -59,219 +59,626 @@
             background: var(--gray-100);
             color: var(--gray-800);
             transition: background 0.2s, color 0.2s;
-            padding: 16px;
+            padding: 0;
+            margin: 0;
             min-height: 100vh;
+            width: 100%;
         }
 
-        .container {
-            max-width: 500px;
+        /* MAIN WRAPPER - FULL WIDTH RESPONSIVE */
+        .responsive-wrapper {
+            width: 100%;
+            max-width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Dynamic container - expands on larger screens */
+        .fluid-container {
+            width: 100%;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 20px 24px;
         }
 
-        /* Header */
+        /* On smaller screens reduce padding */
+        @media (max-width: 768px) {
+            .fluid-container {
+                padding: 12px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .fluid-container {
+                padding: 10px 12px;
+            }
+        }
+
+        /* Header - fully responsive */
         .header-card {
             background: var(--card-bg);
             border-radius: var(--radius-card);
-            padding: 16px 20px;
-            margin-bottom: 20px;
+            padding: 16px 24px;
+            margin-bottom: 24px;
             border: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 16px;
         }
-        .logo-area h1 { font-size: 1.25rem; font-weight: 700; margin: 0; color: var(--primary); }
-        .controls { display: flex; gap: 10px; align-items: center; }
-        .lang-switch { display: flex; gap: 4px; background: var(--gray-200); padding: 4px; border-radius: 40px; }
-        .lang-btn { background: transparent; border: none; padding: 6px 16px; border-radius: 32px; font-weight: 600; font-size: 0.7rem; cursor: pointer; color: var(--gray-600); transition: 0.2s; }
-        .lang-btn.active { background: var(--primary); color: white; }
-        .theme-toggle { background: var(--gray-200); border: none; border-radius: 40px; padding: 6px 16px; display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 500; color: var(--gray-700); }
 
-        /* Stats Grid - Optimized */
+        .logo-area h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .lang-switch {
+            display: flex;
+            gap: 4px;
+            background: var(--gray-200);
+            padding: 4px;
+            border-radius: 40px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 18px;
+            border-radius: 32px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: var(--gray-600);
+            transition: 0.2s;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .theme-toggle {
+            background: var(--gray-200);
+            border: none;
+            border-radius: 40px;
+            padding: 6px 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            cursor: pointer;
+        }
+
+        /* Stats Grid - Responsive breakpoints */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
+
         .stat-card {
             background: var(--card-bg);
-            border-radius: 16px;
-            padding: 12px 8px;
+            border-radius: 18px;
+            padding: 16px 12px;
             border: 1px solid var(--border);
             text-align: center;
+            transition: transform 0.2s;
         }
-        .stat-title { font-size: 0.6rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.3px; }
-        .stat-value { font-size: 1.2rem; font-weight: 700; margin: 4px 0; }
-        .stat-icon { font-size: 0.85rem; }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 8px 0;
+            color: var(--gray-800);
+        }
+
+        .stat-icon {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Tablet and mobile adjustments */
+        @media (max-width: 992px) {
+            .stats-grid {
+                gap: 12px;
+            }
+            .stat-value {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stat-value {
+                font-size: 1.1rem;
+            }
+            .stat-title {
+                font-size: 0.6rem;
+            }
+            .stat-card {
+                padding: 12px 8px;
+            }
+        }
 
         /* Form Card */
         .form-card {
             background: var(--card-bg);
             border-radius: var(--radius-card);
-            padding: 18px;
-            margin-bottom: 20px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
             border: 1px solid var(--border);
         }
-        .form-card h5 { font-size: 0.95rem; font-weight: 600; margin-bottom: 14px; color: var(--primary); }
-        .form-label { font-size: 0.7rem; font-weight: 500; margin-bottom: 4px; color: var(--gray-600); }
+
+        .form-card h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--gray-600);
+        }
+
         .form-control, .form-select {
             background: var(--gray-50);
             border: 1px solid var(--border);
             border-radius: 40px;
-            padding: 10px 14px;
-            font-size: 0.8rem;
+            padding: 10px 16px;
+            font-size: 0.85rem;
             color: var(--gray-800);
             min-height: var(--touch-target);
         }
+
         .form-control:focus, .form-select:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 2px rgba(44,95,138,0.1);
             outline: none;
         }
+
+        /* Two column layout on larger screens */
+        .form-row-responsive {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 640px) {
+            .form-row-responsive {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .form-card {
+                padding: 16px;
+            }
+        }
+
         .btn {
             border-radius: 40px;
-            padding: 10px 16px;
+            padding: 10px 20px;
             font-weight: 600;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             border: none;
-            transition: opacity 0.2s;
+            transition: all 0.2s;
             min-height: var(--touch-target);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
         }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:active { opacity: 0.8; transform: scale(0.98); }
-        .btn-outline { background: var(--gray-100); border: 1px solid var(--border); color: var(--gray-700); }
 
-        /* Transfer List */
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .btn-outline {
+            background: var(--gray-100);
+            border: 1px solid var(--border);
+            color: var(--gray-700);
+        }
+
+        /* Transfer List - Full Width */
         .transfer-list {
             background: var(--card-bg);
             border-radius: var(--radius-card);
             border: 1px solid var(--border);
             overflow: hidden;
         }
+
         .list-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 18px;
+            padding: 16px 24px;
             border-bottom: 1px solid var(--border);
             background: var(--gray-50);
+            flex-wrap: wrap;
+            gap: 12px;
         }
-        .list-header h5 { font-size: 0.85rem; font-weight: 600; margin: 0; }
-        .btn-excel { background: var(--success); color: white; border: none; border-radius: 40px; padding: 6px 16px; font-size: 0.7rem; font-weight: 600; transition: opacity 0.2s; }
-        .btn-excel:active { opacity: 0.8; }
 
-        /* Transfer Items - Optimized */
+        .list-header h5 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-excel {
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 8px 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-excel:active {
+            opacity: 0.8;
+        }
+
+        /* Transfer Items Grid - Better on larger screens */
+        .transfer-items-container {
+            width: 100%;
+        }
+
         .transfer-item {
             display: flex;
             align-items: center;
-            padding: 12px 18px;
+            padding: 14px 24px;
             border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
         }
-        .transfer-badge { width: 4px; height: 36px; border-radius: 6px; margin-right: 12px; }
-        .badge-in { background: var(--success); }
-        .badge-out { background: var(--danger); }
-        .transfer-info { flex: 1; }
-        .transfer-title { font-weight: 600; font-size: 0.8rem; margin-bottom: 3px; }
-        .transfer-meta { display: flex; gap: 6px; font-size: 0.6rem; color: var(--gray-500); }
-        .transfer-qty { font-weight: 700; font-size: 0.9rem; margin-right: 12px; color: var(--primary); }
-        .delete-btn { background: none; border: none; color: var(--danger); font-size: 1rem; cursor: pointer; padding: 6px; transition: opacity 0.2s; }
-        .delete-btn:active { opacity: 0.6; }
 
-        .empty-state { text-align: center; padding: 40px 20px; color: var(--gray-500); }
-        .empty-state i { font-size: 2.5rem; margin-bottom: 8px; opacity: 0.5; }
+        .transfer-item:hover {
+            background: var(--gray-50);
+        }
 
-        /* Toast - Optimized */
+        .transfer-badge {
+            width: 4px;
+            height: 40px;
+            border-radius: 6px;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+
+        .badge-in {
+            background: var(--success);
+        }
+
+        .badge-out {
+            background: var(--danger);
+        }
+
+        .transfer-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .transfer-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .transfer-meta {
+            display: flex;
+            gap: 8px;
+            font-size: 0.65rem;
+            color: var(--gray-500);
+            flex-wrap: wrap;
+        }
+
+        .transfer-qty {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-right: 16px;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 8px;
+            transition: opacity 0.2s;
+            flex-shrink: 0;
+        }
+
+        .delete-btn:active {
+            opacity: 0.6;
+            transform: scale(0.95);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--gray-500);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* Responsive adjustments for transfer items */
+        @media (max-width: 640px) {
+            .transfer-item {
+                padding: 12px 16px;
+                flex-wrap: wrap;
+            }
+            .transfer-badge {
+                margin-right: 12px;
+            }
+            .transfer-qty {
+                font-size: 0.9rem;
+                margin-right: 12px;
+            }
+            .list-header {
+                padding: 12px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .transfer-title {
+                font-size: 0.75rem;
+                white-space: normal;
+            }
+            .transfer-meta {
+                font-size: 0.6rem;
+            }
+            .delete-btn {
+                padding: 4px;
+            }
+        }
+
+        /* Toast Notification */
         .toast-notify {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
             background: var(--card-bg);
             border-left: 3px solid var(--success);
-            padding: 10px 14px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 12px 20px;
+            border-radius: 50px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
             z-index: 1100;
             display: none;
             align-items: center;
-            gap: 8px;
-            font-size: 0.75rem;
-            max-width: 380px;
-            margin: 0 auto;
+            gap: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            width: auto;
+            max-width: 90%;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 480px) {
+            .toast-notify {
+                white-space: normal;
+                text-align: center;
+                padding: 10px 16px;
+                font-size: 0.75rem;
+            }
         }
 
         /* RTL Support */
-        [dir="rtl"] .transfer-badge { margin-right: 0; margin-left: 12px; }
-        [dir="rtl"] .transfer-qty { margin-right: 0; margin-left: 12px; }
+        [dir="rtl"] .transfer-badge {
+            margin-right: 0;
+            margin-left: 16px;
+        }
 
-        @media (max-width: 480px) {
-            body { padding: 12px; }
-            .stat-value { font-size: 1rem; }
-            .stat-title { font-size: 0.55rem; }
-            .transfer-title { font-size: 0.75rem; }
+        [dir="rtl"] .transfer-qty {
+            margin-right: 0;
+            margin-left: 16px;
+        }
+
+        [dir="rtl"] .stat-icon {
+            transform: scaleX(-1);
+            display: inline-block;
+        }
+
+        /* Large Screens Enhancement */
+        @media (min-width: 1200px) {
+            .fluid-container {
+                padding: 30px 40px;
+            }
+            .stat-value {
+                font-size: 1.7rem;
+            }
+            .transfer-title {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <!-- Header -->
-    <div class="header-card">
-        <div class="logo-area"><h1><i class="bi bi-box-seam me-2"></i><span id="titleMain">Inventory Transfer</span></h1></div>
-        <div class="controls">
-            <div class="lang-switch"><button class="lang-btn active" id="langEn">EN</button><button class="lang-btn" id="langAr">AR</button></div>
-            <button class="theme-toggle" id="themeToggle"><i class="bi bi-moon"></i> <span id="themeText">Dark</span></button>
-        </div>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="stats-grid">
-        <div class="stat-card"><div class="stat-title" data-key="total">TOTAL</div><div class="stat-value" id="totalTransfers">0</div><div class="stat-icon text-primary"><i class="bi bi-arrow-left-right"></i></div></div>
-        <div class="stat-card"><div class="stat-title" data-key="transfersIn">IN</div><div class="stat-value" id="transfersIn">0</div><div class="stat-icon text-success"><i class="bi bi-arrow-down-circle"></i></div></div>
-        <div class="stat-card"><div class="stat-title" data-key="transfersOut">OUT</div><div class="stat-value" id="transfersOut">0</div><div class="stat-icon text-danger"><i class="bi bi-arrow-up-circle"></i></div></div>
-        <div class="stat-card"><div class="stat-title" data-key="itemsTracked">ITEMS</div><div class="stat-value" id="itemsTracked">0</div><div class="stat-icon text-info"><i class="bi bi-box"></i></div></div>
-    </div>
-
-    <!-- Add Transfer Form -->
-    <div class="form-card">
-        <h5><i class="bi bi-plus-circle me-2"></i><span data-key="newTransfer">New Transfer</span></h5>
-        <form id="transferForm">
-            <div class="mb-2"><label class="form-label" data-key="storeLabel">Store</label><input type="text" class="form-control" id="storeName" placeholder="e.g. Main Street" required></div>
-            <div class="mb-2"><label class="form-label" data-key="itemLabel">Item</label><input type="text" class="form-control" id="itemName" placeholder="e.g. Apples" required></div>
-            <div class="row g-2 mb-2">
-                <div class="col-6"><label class="form-label" data-key="unitLabel">Unit</label><select class="form-select" id="unitOfMeasure" required><option value="">Select</option><option value="Piece">Piece</option><option value="Kilogram">Kg</option><option value="Liter">Liter</option><option value="Box">Box</option></select></div>
-                <div class="col-6"><label class="form-label" data-key="quantityLabel">Qty</label><input type="number" class="form-control" id="quantity" min="1" required></div>
+<div class="responsive-wrapper">
+    <div class="fluid-container">
+        <!-- Header -->
+        <div class="header-card">
+            <div class="logo-area">
+                <h1><i class="bi bi-box-seam"></i> <span id="titleMain">Inventory Transfer</span></h1>
             </div>
-            <div class="mb-3"><label class="form-label" data-key="typeLabel">Type</label><select class="form-select" id="transferType" required><option value="">Select</option><option value="in">Transfer In</option><option value="out">Transfer Out</option></select></div>
-            <div class="d-flex gap-2"><button type="submit" class="btn btn-primary flex-grow-1"><i class="bi bi-check2-circle me-1"></i><span data-key="addBtn">Add</span></button><button type="button" class="btn btn-outline" id="clearForm"><i class="bi bi-arrow-clockwise"></i></button></div>
-        </form>
-    </div>
+            <div class="controls">
+                <div class="lang-switch">
+                    <button class="lang-btn active" id="langEn">EN</button>
+                    <button class="lang-btn" id="langAr">AR</button>
+                </div>
+                <button class="theme-toggle" id="themeToggle"><i class="bi bi-moon"></i> <span id="themeText">Dark</span></button>
+            </div>
+        </div>
 
-    <!-- Transfer History -->
-    <div class="transfer-list">
-        <div class="list-header"><h5><i class="bi bi-clock-history me-2"></i><span data-key="history">History</span></h5><button class="btn-excel" id="exportExcel"><i class="bi bi-file-earmark-excel me-1"></i><span data-key="export">Export</span></button></div>
-        <div id="transfersContainer"></div>
-        <div id="emptyState" class="empty-state"><i class="bi bi-inbox"></i><p data-key="noRecords">No transfers yet</p></div>
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title" data-key="total">TOTAL</div>
+                <div class="stat-value" id="totalTransfers">0</div>
+                <div class="stat-icon text-primary"><i class="bi bi-arrow-left-right"></i></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title" data-key="transfersIn">IN</div>
+                <div class="stat-value" id="transfersIn">0</div>
+                <div class="stat-icon text-success"><i class="bi bi-arrow-down-circle"></i></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title" data-key="transfersOut">OUT</div>
+                <div class="stat-value" id="transfersOut">0</div>
+                <div class="stat-icon text-danger"><i class="bi bi-arrow-up-circle"></i></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title" data-key="itemsTracked">ITEMS</div>
+                <div class="stat-value" id="itemsTracked">0</div>
+                <div class="stat-icon text-info"><i class="bi bi-box"></i></div>
+            </div>
+        </div>
+
+        <!-- Add Transfer Form -->
+        <div class="form-card">
+            <h5><i class="bi bi-plus-circle"></i> <span data-key="newTransfer">New Transfer</span></h5>
+            <form id="transferForm">
+                <div class="mb-3">
+                    <label class="form-label" data-key="storeLabel">Store</label>
+                    <input type="text" class="form-control" id="storeName" placeholder="e.g. Main Street / Warehouse A" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" data-key="itemLabel">Item</label>
+                    <input type="text" class="form-control" id="itemName" placeholder="e.g. Apples, Chicken, Oil" required>
+                </div>
+                <div class="form-row-responsive">
+                    <div class="mb-3">
+                        <label class="form-label" data-key="unitLabel">Unit</label>
+                        <select class="form-select" id="unitOfMeasure" required>
+                            <option value="">Select</option>
+                            <option value="Piece">Piece</option>
+                            <option value="Kilogram">Kilogram (kg)</option>
+                            <option value="Liter">Liter (L)</option>
+                            <option value="Box">Box</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" data-key="quantityLabel">Quantity</label>
+                        <input type="number" class="form-control" id="quantity" min="1" placeholder="0" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label" data-key="typeLabel">Transfer Type</label>
+                    <select class="form-select" id="transferType" required>
+                        <option value="">Select type</option>
+                        <option value="in">Transfer In (Receive)</option>
+                        <option value="out">Transfer Out (Dispatch)</option>
+                    </select>
+                </div>
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-primary flex-grow-1"><i class="bi bi-check2-circle"></i> <span data-key="addBtn">Add Transfer</span></button>
+                    <button type="button" class="btn btn-outline" id="clearForm"><i class="bi bi-arrow-repeat"></i></button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Transfer History -->
+        <div class="transfer-list">
+            <div class="list-header">
+                <h5><i class="bi bi-clock-history"></i> <span data-key="history">Transfer History</span></h5>
+                <button class="btn-excel" id="exportExcel"><i class="bi bi-file-earmark-excel"></i> <span data-key="export">Export Excel</span></button>
+            </div>
+            <div class="transfer-items-container" id="transfersContainer"></div>
+            <div id="emptyState" class="empty-state">
+                <i class="bi bi-inbox"></i>
+                <p data-key="noRecords">No transfers recorded yet</p>
+                <small>Click "Add Transfer" to get started</small>
+            </div>
+        </div>
     </div>
 </div>
 
 <div id="toastMsg" class="toast-notify"><i class="bi bi-check-circle-fill"></i> <span id="toastText"></span></div>
 
 <script>
-    // ======================== OPTIMIZED TRANSLATIONS ========================
+    // ======================== TRANSLATIONS ========================
     const translations = {
-        en: { titleMain: "Inventory Transfer", total: "TOTAL", transfersIn: "IN", transfersOut: "OUT", itemsTracked: "ITEMS", newTransfer: "New Transfer", storeLabel: "Store", itemLabel: "Item", unitLabel: "Unit", quantityLabel: "Qty", typeLabel: "Type", addBtn: "Add", history: "History", export: "Export", noRecords: "No transfers yet" },
-        ar: { titleMain: "نقل المخزون", total: "الإجمالي", transfersIn: "وارد", transfersOut: "صادر", itemsTracked: "العناصر", newTransfer: "تحويل جديد", storeLabel: "المتجر", itemLabel: "المنتج", unitLabel: "الوحدة", quantityLabel: "الكمية", typeLabel: "النوع", addBtn: "إضافة", history: "السجل", export: "تصدير", noRecords: "لا توجد تحويلات" }
+        en: { 
+            titleMain: "Inventory Transfer", total: "TOTAL", transfersIn: "IN", transfersOut: "OUT", 
+            itemsTracked: "ITEMS", newTransfer: "New Transfer", storeLabel: "Store", itemLabel: "Item", 
+            unitLabel: "Unit", quantityLabel: "Quantity", typeLabel: "Transfer Type", 
+            addBtn: "Add Transfer", history: "Transfer History", export: "Export Excel", 
+            noRecords: "No transfers recorded yet" 
+        },
+        ar: { 
+            titleMain: "نقل المخزون", total: "الإجمالي", transfersIn: "وارد", transfersOut: "صادر", 
+            itemsTracked: "العناصر", newTransfer: "تحويل جديد", storeLabel: "المتجر", itemLabel: "المنتج", 
+            unitLabel: "الوحدة", quantityLabel: "الكمية", typeLabel: "نوع التحويل", 
+            addBtn: "إضافة تحويل", history: "سجل التحويلات", export: "تصدير إكسيل", 
+            noRecords: "لا توجد تحويلات مسجلة" 
+        }
     };
+    
     let currentLang = "en";
-    let transfers = JSON.parse(localStorage.getItem('transfers_mobile')) || [];
+    let transfers = JSON.parse(localStorage.getItem('transfers_mobile_responsive')) || [];
 
-    // DOM Elements
     const container = document.getElementById('transfersContainer');
     const emptyState = document.getElementById('emptyState');
     const totalSpan = document.getElementById('totalTransfers');
@@ -292,14 +699,30 @@
         toastText.innerText = msg;
         toast.style.display = 'flex';
         toast.style.borderLeftColor = type === 'error' ? '#ef4444' : '#10b981';
-        setTimeout(() => toast.style.display = 'none', 2000);
+        setTimeout(() => toast.style.display = 'none', 2500);
     }
 
     function updateStats() {
         totalSpan.innerText = transfers.length;
         inSpan.innerText = transfers.filter(t => t.transferType === 'in').length;
         outSpan.innerText = transfers.filter(t => t.transferType === 'out').length;
-        itemsSpan.innerText = new Set(transfers.map(t => t.itemName)).size;
+        const uniqueItems = new Set(transfers.map(t => t.itemName?.toLowerCase()));
+        itemsSpan.innerText = uniqueItems.size;
+    }
+
+    function formatDate() {
+        const now = new Date();
+        return now.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
     }
 
     function renderTransfers() {
@@ -314,7 +737,11 @@
                 <div class="transfer-badge ${t.transferType === 'in' ? 'badge-in' : 'badge-out'}"></div>
                 <div class="transfer-info">
                     <div class="transfer-title">${escapeHtml(t.itemName)} · ${escapeHtml(t.storeName)}</div>
-                    <div class="transfer-meta"><span>${t.unitOfMeasure}</span><span>•</span><span>${t.date || 'just now'}</span></div>
+                    <div class="transfer-meta">
+                        <span><i class="bi bi-box"></i> ${escapeHtml(t.unitOfMeasure)}</span>
+                        <span>•</span>
+                        <span><i class="bi bi-calendar"></i> ${t.date || 'just now'}</span>
+                    </div>
                 </div>
                 <div class="transfer-qty">${t.quantity}</div>
                 <button class="delete-btn" onclick="deleteTransfer(${t.id})"><i class="bi bi-trash3"></i></button>
@@ -323,9 +750,10 @@
     }
 
     window.deleteTransfer = function(id) {
-        if (confirm(currentLang === 'en' ? 'Delete this transfer?' : 'حذف هذا التحويل؟')) {
+        const confirmMsg = currentLang === 'en' ? 'Delete this transfer record?' : 'حذف هذا السجل؟';
+        if (confirm(confirmMsg)) {
             transfers = transfers.filter(t => t.id !== id);
-            localStorage.setItem('transfers_mobile', JSON.stringify(transfers));
+            localStorage.setItem('transfers_mobile_responsive', JSON.stringify(transfers));
             renderTransfers();
             updateStats();
             showToast(currentLang === 'en' ? 'Transfer deleted' : 'تم حذف التحويل', 'success');
@@ -339,25 +767,28 @@
         const unit = unitSelect.value;
         const qty = parseInt(qtyInput.value);
         const type = typeSelect.value;
+        
         if (!store || !item || !unit || !qty || !type) {
             showToast(currentLang === 'en' ? 'Please fill all fields' : 'الرجاء ملء جميع الحقول', 'error');
             return;
         }
+        
         const newTransfer = {
             id: Date.now(),
-            date: new Date().toLocaleString('en-US', { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' }),
+            date: formatDate(),
             storeName: store,
             itemName: item,
             unitOfMeasure: unit,
             quantity: qty,
             transferType: type
         };
+        
         transfers.push(newTransfer);
-        localStorage.setItem('transfers_mobile', JSON.stringify(transfers));
+        localStorage.setItem('transfers_mobile_responsive', JSON.stringify(transfers));
         renderTransfers();
         updateStats();
         form.reset();
-        showToast(currentLang === 'en' ? 'Transfer added' : 'تم إضافة التحويل');
+        showToast(currentLang === 'en' ? 'Transfer added successfully' : 'تم إضافة التحويل بنجاح');
     });
 
     clearBtn.addEventListener('click', () => form.reset());
@@ -373,7 +804,7 @@
             Item: t.itemName,
             Unit: t.unitOfMeasure,
             Quantity: t.quantity,
-            Type: t.transferType === 'in' ? 'In' : 'Out'
+            Type: t.transferType === 'in' ? 'Transfer In' : 'Transfer Out'
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
@@ -382,7 +813,7 @@
         showToast(currentLang === 'en' ? 'Exported to Excel' : 'تم التصدير إلى إكسيل');
     });
 
-    // Language & Theme
+    // Language Support
     function updateLanguage() {
         const t = translations[currentLang];
         document.getElementById('titleMain').innerText = t.titleMain;
@@ -394,12 +825,14 @@
         renderTransfers();
         updateStats();
     }
+    
     document.getElementById('langEn').addEventListener('click', () => {
         currentLang = 'en';
         document.getElementById('langEn').classList.add('active');
         document.getElementById('langAr').classList.remove('active');
         updateLanguage();
     });
+    
     document.getElementById('langAr').addEventListener('click', () => {
         currentLang = 'ar';
         document.getElementById('langAr').classList.add('active');
@@ -407,33 +840,37 @@
         updateLanguage();
     });
     
-    let darkMode = localStorage.getItem('transferDark') === 'true';
+    // Dark Mode
+    let darkMode = localStorage.getItem('transferDarkResponsive') === 'true';
     function applyDarkMode() {
         if (darkMode) document.body.classList.add('dark');
         else document.body.classList.remove('dark');
         document.getElementById('themeText').innerText = darkMode ? 'Light' : 'Dark';
-        document.getElementById('themeToggle').innerHTML = darkMode ? '<i class="bi bi-sun"></i> Light' : '<i class="bi bi-moon"></i> Dark';
     }
     document.getElementById('themeToggle').addEventListener('click', () => {
         darkMode = !darkMode;
-        localStorage.setItem('transferDark', darkMode);
+        localStorage.setItem('transferDarkResponsive', darkMode);
         applyDarkMode();
     });
     
-    function escapeHtml(str) {
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
     // Initialize
     applyDarkMode();
     updateLanguage();
     renderTransfers();
     updateStats();
+    
+    // Add sample data if empty for demo
+    if (transfers.length === 0 && localStorage.getItem('transfers_mobile_responsive') === null) {
+        const sampleTransfers = [
+            { id: Date.now() + 1, date: formatDate(), storeName: "Riyadh Branch", itemName: "Chicken Breast", unitOfMeasure: "Kilogram", quantity: 50, transferType: "in" },
+            { id: Date.now() + 2, date: formatDate(), storeName: "Jeddah Warehouse", itemName: "Basmati Rice", unitOfMeasure: "Kilogram", quantity: 100, transferType: "out" },
+            { id: Date.now() + 3, date: formatDate(), storeName: "Dammam Store", itemName: "Olive Oil", unitOfMeasure: "Liter", quantity: 30, transferType: "in" }
+        ];
+        transfers = sampleTransfers;
+        localStorage.setItem('transfers_mobile_responsive', JSON.stringify(transfers));
+        renderTransfers();
+        updateStats();
+    }
 </script>
 </body>
 </html>
