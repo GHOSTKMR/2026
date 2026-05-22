@@ -322,7 +322,7 @@
 
         <!-- Secure Login Card -->
         <div class="login-card">
-            <div class="login-heading" id="loginHeading"><i class="bi bi-shield-lock-fill me-2"></i>AUTHORIZED ACCESS · PIN PROTECTED</div>
+             <div class="login-heading" id="loginHeading"><i class="bi bi-shield-lock-fill me-2"></i>AUTHORIZED ACCESS · PIN PROTECTED</div>
             <form id="loginForm">
                 <div class="form-floating mb-4 position-relative">
                     <input type="password" class="form-control custom-input" id="password" placeholder="SECURE PIN" autocomplete="off" inputmode="numeric">
@@ -529,9 +529,9 @@
         }
         initRotatingBackground();
 
-        // ----- AUTHENTICATION - PIN: 12345 redirects to https://ghostkmr.github.io/2026/index.html -----
+        // ----- AUTHENTICATION - PIN: 12345 redirects to https://ghostkmr.github.io/2026/welcome.html -----
         const CORRECT_PIN = "12345";
-        const REDIRECT_URL = "https://ghostkmr.github.io/2026/index.html";
+        const REDIRECT_URL = "https://ghostkmr.github.io/2026/welcome.html";
         
         const loginForm = document.getElementById('loginForm');
         const pwdField = document.getElementById('password');
@@ -573,7 +573,7 @@
             setTimeout(() => { window.location.href = REDIRECT_URL; }, 1300);
         });
 
-        // S Logo Dashboard redirect - same as login success: goes to https://ghostkmr.github.io/2026/index.html
+        // S Logo Dashboard redirect - same as login success: goes to https://ghostkmr.github.io/2026/welcome.html
         document.getElementById('sLogoDashboard').addEventListener('click', () => {
             if (confirm(currentLang === 'ar' ? "⚡ الانتقال إلى لوحة تحكم SADWAP؟" : "⚡ Jump to SADWAP IT Manager Dashboard?")) {
                 window.location.href = REDIRECT_URL;
