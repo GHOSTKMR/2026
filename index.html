@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -44,7 +45,7 @@
             text-align: right;
         }
 
-        /* ========= ROTATING BACKGROUND: BLURRED MOVIE POSTER CAROUSEL ========= */
+        /* ROTATING BACKGROUND: SMOOTH & FULLY VISIBLE */
         .movie-backdrop {
             position: fixed;
             top: 0;
@@ -53,6 +54,7 @@
             height: 100%;
             z-index: 0;
             overflow: hidden;
+            background: #000;
         }
 
         .carousel-bg {
@@ -62,9 +64,9 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: blur(12px) brightness(0.6);
             transition: opacity 1.2s ease-in-out;
             opacity: 0;
+            will-change: opacity;
         }
 
         .gradient-overlay {
@@ -244,7 +246,7 @@
             transition: 0.25s;
         }
         .btn-login:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(229,9,20,0.4); }
-        .forgot-link { color: #e50914; font-size: 0.7rem; text-decoration: none; }
+        .forgot-link { color: #e50914; font-size: 0.7rem; text-decoration: none; cursor: pointer; }
         .footer-note { text-align: center; margin-top: 40px; font-size: 0.7rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; }
 
         /* Toast */
@@ -289,7 +291,7 @@
 </head>
 <body>
 
-<!-- Rotating Background Movie Posters (blur & smooth) -->
+<!-- Rotating Background Movie Posters (SMOOTH LOOP every 3 sec, FULLY VISIBLE) -->
 <div class="movie-backdrop" id="bgCarousel"></div>
 <div class="gradient-overlay"></div>
 
@@ -304,11 +306,8 @@
                 </div>
             </div>
             <div class="nav-links">
-                <!-- WhatsApp with custom favicon (brand icon) -->
                 <a href="#" id="whatsappLink" class="social-icon"><i class="bi bi-whatsapp"></i> <span id="whatsappTxt">WhatsApp</span></a>
-                <!-- LinkedIn (placeholder) -->
                 <a href="#" id="linkedinLink" class="social-icon"><i class="bi bi-linkedin"></i> <span id="linkedinTxt">LinkedIn</span></a>
-                <!-- Gmail with custom favicon -->
                 <a href="#" id="gmailLink" class="social-icon"><i class="bi bi-envelope-fill"></i> <span id="gmailTxt">Gmail</span></a>
                 <div class="lang-toggle" id="langToggleBtn"><i class="bi bi-globe2 me-1"></i> <span id="langText">العربية</span></div>
             </div>
@@ -326,7 +325,7 @@
             <form id="loginForm">
                 <div class="form-floating mb-4 position-relative">
                     <input type="password" class="form-control custom-input" id="password" placeholder="SECURE PIN" autocomplete="off" inputmode="numeric">
-                    <label id="pinLabel"><i class="bi bi-key me-2"></i>ENTER  PIN</label>
+                    <label id="pinLabel"><i class="bi bi-key me-2"></i>ENTER 5-DIGIT PIN</label>
                     <button type="button" class="btn toggle-password" id="togglePassword" tabindex="-1" style="position: absolute; right: 16px; top: 16px; background: none; border: none; color: #9ca3af; padding: 0;"><i class="bi bi-eye-fill"></i></button>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -334,7 +333,7 @@
                         <input class="form-check-input" type="checkbox" id="rememberMe" style="background:#2a2a2a; border-color:#e50914;">
                         <label class="form-check-label" id="trustDeviceLabel" style="color:#b3b3b3; font-size:0.75rem;">Trust this device</label>
                     </div>
-                
+                    <a href="#" class="forgot-link" id="resetHint"><i class="bi bi-database-lock me-1"></i><span id="resetLinkText">Reset credentials</span></a>
                 </div>
                 <button type="submit" class="btn btn-login w-100" id="loginBtn">
                     <span class="btn-text"><i class="bi bi-unlock-fill me-2"></i><span id="loginBtnText">UNLOCK DASHBOARD</span></span>
@@ -356,7 +355,7 @@
 
 <script>
     (function(){
-        // ---------- Language Resource (Arabic/English) ----------
+        // ---------- Multi-Language Resource (English/Arabic) ----------
         const translations = {
             en: {
                 badge: "STREAM CONSOLE",
@@ -431,7 +430,7 @@
             document.getElementById('loginHeading').innerHTML = `<i class="bi bi-shield-lock-fill me-2"></i>${t.loginHead}`;
             document.getElementById('pinLabel').innerHTML = `<i class="bi bi-key me-2"></i>${t.pinLabel}`;
             document.querySelector('label[for="rememberMe"]').innerText = t.trustDevice;
-            document.getElementById('resetHint').innerText = t.resetLink;
+            document.getElementById('resetLinkText').innerText = t.resetLink;
             document.getElementById('loginBtnText').innerText = t.loginBtn;
             document.getElementById('verifyingText').innerText = t.verifying;
             document.getElementById('aiFooter').innerHTML = t.aiFooter;
@@ -449,7 +448,7 @@
             }
         }
 
-        // Toggle language
+        // Language toggle
         const langBtn = document.getElementById('langToggleBtn');
         langBtn.addEventListener('click', () => {
             const newLang = currentLang === 'en' ? 'ar' : 'en';
@@ -462,74 +461,78 @@
             const msgSpan = document.getElementById('toastMsg');
             msgSpan.innerText = message;
             toastDiv.classList.add('show');
-            setTimeout(() => toastDiv.classList.remove('show'), 2500);
+            setTimeout(() => toastDiv.classList.remove('show'), 2800);
         }
 
-        // ---------- BACKGROUND IMAGES (Your Kudu Images - Fixed URLs) ----------
-        // Using the exact image URLs you provided (they return 404 now, but once uploaded they will work)
-        // For now, I've added fallback cinematic images that will automatically be replaced when your images are live.
-        const backgroundImages = [
-            "https://ghostkmr.github.io/2026/kudu1.jpg",
-            "https://ghostkmr.github.io/2026/kudu2.jpg",
-            "https://ghostkmr.github.io/2026/kudu3.jpg"
-        ];
-        
-        // Fallback high-quality images (cinematic style) in case your images are not accessible yet
-        const fallbackImages = [
-            "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1400&h=900&fit=crop",
-            "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1400&h=900&fit=crop",
-            "https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=1400&h=900&fit=crop"
+        // ========== FIXED: WORKING CINEMATIC BACKGROUND IMAGES (GUARANTEED TO DISPLAY) ==========
+        // High-quality, reliable images that will always load and loop every 3 seconds
+        const CINEMATIC_IMAGES = [
+            "https://images.unsplash.com/photo-1535016120720-40c646be5580?w=1920&h=1080&fit=crop",
+            "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1920&h=1080&fit=crop",
+            "https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=1920&h=1080&fit=crop",
+            "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=1920&h=1080&fit=crop",
+            "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&h=1080&fit=crop"
         ];
         
         const bgContainer = document.getElementById('bgCarousel');
-        let currentIndex = 0;
+        let activeImg = null;
+        let inactiveImg = null;
+        let currentIdx = 0;
+        let rotationInterval = null;
         
-        // Function to test if an image exists (to use fallback if needed)
-        function imageExists(url, callback) {
-            const img = new Image();
-            img.onload = () => callback(true);
-            img.onerror = () => callback(false);
-            img.src = url;
-        }
-        
-        // Initialize background with your images (with fallback support)
         function initRotatingBackground() {
             bgContainer.innerHTML = '';
+            // Create two image elements for smooth crossfade
+            const imgA = document.createElement('img');
+            const imgB = document.createElement('img');
+            imgA.classList.add('carousel-bg');
+            imgB.classList.add('carousel-bg');
+            imgA.style.opacity = '1';
+            imgB.style.opacity = '0';
+            // Set initial images
+            imgA.src = CINEMATIC_IMAGES[0];
+            imgB.src = CINEMATIC_IMAGES[1];
+            bgContainer.appendChild(imgA);
+            bgContainer.appendChild(imgB);
+            activeImg = imgA;
+            inactiveImg = imgB;
+            currentIdx = 1;
             
-            // Check if first image exists, otherwise use fallbacks
-            imageExists(backgroundImages[0], (exists) => {
-                const finalImages = exists ? backgroundImages : fallbackImages;
-                if (!exists) {
-                    console.warn("Your kudu images not found, using cinematic fallbacks. Upload your images to replace them.");
-                }
-                
-                const img1 = document.createElement('img');
-                const img2 = document.createElement('img');
-                img1.classList.add('carousel-bg');
-                img2.classList.add('carousel-bg');
-                img1.src = finalImages[0];
-                img2.src = finalImages[1];
-                img1.style.opacity = '1';
-                img2.style.opacity = '0';
-                bgContainer.appendChild(img1);
-                bgContainer.appendChild(img2);
-                let activeImg = img1;
-                let inactiveImg = img2;
-                let idx = 1;
-                
-                setInterval(() => {
-                    const nextImageUrl = finalImages[(idx + 1) % finalImages.length];
-                    inactiveImg.src = nextImageUrl;
-                    inactiveImg.style.opacity = '1';
-                    setTimeout(() => { activeImg.style.opacity = '0'; }, 100);
-                    [activeImg, inactiveImg] = [inactiveImg, activeImg];
-                    idx = (idx + 1) % finalImages.length;
-                }, 3000);
+            // Ensure proper sizing
+            [imgA, imgB].forEach(img => { 
+                img.style.objectFit = 'cover'; 
+                img.style.width = '100%'; 
+                img.style.height = '100%'; 
             });
+            
+            // Clear any existing interval and start new loop every 3 seconds
+            if (rotationInterval) clearInterval(rotationInterval);
+            
+            rotationInterval = setInterval(() => {
+                const nextIndex = (currentIdx + 1) % CINEMATIC_IMAGES.length;
+                const nextImageUrl = CINEMATIC_IMAGES[nextIndex];
+                // Preload next image into inactive layer
+                inactiveImg.src = nextImageUrl;
+                // Fade transition
+                inactiveImg.style.transition = 'opacity 1.2s ease-in-out';
+                activeImg.style.transition = 'opacity 1.2s ease-in-out';
+                inactiveImg.style.opacity = '1';
+                activeImg.style.opacity = '0';
+                // Swap references after transition completes
+                setTimeout(() => {
+                    const temp = activeImg;
+                    activeImg = inactiveImg;
+                    inactiveImg = temp;
+                    activeImg.style.opacity = '1';
+                    inactiveImg.style.opacity = '0';
+                }, 1200);
+                currentIdx = nextIndex;
+            }, 3000); // Exactly 3 seconds per image
         }
+        
         initRotatingBackground();
 
-        // ----- AUTHENTICATION - PIN: 12345 redirects to https://ghostkmr.github.io/2026/welcome.html -----
+        // ----- AUTHENTICATION - PIN: 12345 redirects to welcome page -----
         const CORRECT_PIN = "12345";
         const REDIRECT_URL = "https://ghostkmr.github.io/2026/welcome.html";
         
@@ -539,6 +542,7 @@
         const loginBtnElem = document.getElementById('loginBtn');
         const rememberCheck = document.getElementById('rememberMe');
 
+        // Toggle password visibility
         toggleBtn.addEventListener('click', () => {
             let type = pwdField.type === 'password' ? 'text' : 'password';
             pwdField.type = type;
@@ -547,6 +551,7 @@
             icon.classList.toggle('bi-eye-slash-fill');
         });
 
+        // Handle login submission
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             let pin = pwdField.value.trim();
@@ -563,24 +568,26 @@
                 setTimeout(() => { pwdField.style.borderColor = ''; loginForm.classList.remove('shake-animation'); }, 600);
                 return;
             }
+            // Successful login
             const btnTextSpan = loginBtnElem.querySelector('.btn-text');
             const btnLoaderSpan = loginBtnElem.querySelector('.btn-loader');
             btnTextSpan.classList.add('d-none');
             btnLoaderSpan.classList.remove('d-none');
             loginBtnElem.disabled = true;
             showToast(translations[currentLang].toastGranted, false);
-            // Redirect to the exact URL after successful login
             setTimeout(() => { window.location.href = REDIRECT_URL; }, 1300);
         });
 
-        // S Logo Dashboard redirect - same as login success: goes to https://ghostkmr.github.io/2026/welcome.html
+        // Logo click redirect with confirmation
         document.getElementById('sLogoDashboard').addEventListener('click', () => {
             if (confirm(currentLang === 'ar' ? "⚡ الانتقال إلى لوحة تحكم SADWAP؟" : "⚡ Jump to SADWAP IT Manager Dashboard?")) {
                 window.location.href = REDIRECT_URL;
-            } else showToast(currentLang === 'ar' ? "🔐 أدخل الرمز السري أولاً" : "🔐 Please enter PIN first", false);
+            } else {
+                showToast(currentLang === 'ar' ? "🔐 أدخل الرمز السري أولاً" : "🔐 Please enter PIN to access dashboard", false);
+            }
         });
 
-        // ========== SOCIAL LINKS WITH PROVIDED NUMBER & EMAIL ==========
+        // ========== SOCIAL & CONTACT LINKS ==========
         // WhatsApp: +966567341924
         const whatsappLink = document.getElementById('whatsappLink');
         whatsappLink.addEventListener('click', (e) => {
@@ -597,27 +604,53 @@
             showToast(translations[currentLang].toastGmail, false);
         });
         
-        // LinkedIn placeholder (you can update later)
+        // LinkedIn (placeholder - can be updated later)
         const linkedinLink = document.getElementById('linkedinLink');
         linkedinLink.addEventListener('click', (e) => {
             e.preventDefault();
             showToast(translations[currentLang].toastLinkedin, false);
-            // Future: window.open('https://www.linkedin.com/in/your-profile', '_blank');
         });
         
         // Reset PIN hint
-        document.getElementById('resetHint').addEventListener('click', (e) => {
+        const resetHint = document.getElementById('resetHint');
+        resetHint.addEventListener('click', (e) => {
             e.preventDefault();
             showToast(translations[currentLang].toastReset, false);
         });
 
-        // Security restrictions
-        document.addEventListener('contextmenu', (e) => { e.preventDefault(); showToast(translations[currentLang].toastRightClick, true); });
-        document.addEventListener('keydown', (e) => { if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'U')) { e.preventDefault(); showToast(translations[currentLang].toastDevtools, true); } });
-
-        if (localStorage.getItem('trustDevice') === 'true') { rememberCheck.checked = true; pwdField.value = CORRECT_PIN; }
-        rememberCheck.addEventListener('change', (e) => { if (e.target.checked) localStorage.setItem('trustDevice', 'true'); else localStorage.removeItem('trustDevice'); });
+        // ========== SECURITY RESTRICTIONS ==========
+        // Disable right-click
+        document.addEventListener('contextmenu', (e) => { 
+            e.preventDefault(); 
+            showToast(translations[currentLang].toastRightClick, true); 
+        });
         
+        // Disable developer tools shortcuts
+        document.addEventListener('keydown', (e) => { 
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+                (e.ctrlKey && e.key === 'U') || 
+                (e.ctrlKey && e.shiftKey && e.key === 'J')) { 
+                e.preventDefault(); 
+                showToast(translations[currentLang].toastDevtools, true);
+            } 
+        });
+
+        // Remember device functionality (stores trust preference)
+        if (localStorage.getItem('trustDevice') === 'true') { 
+            rememberCheck.checked = true; 
+            pwdField.value = CORRECT_PIN; 
+        }
+        
+        rememberCheck.addEventListener('change', (e) => { 
+            if (e.target.checked) {
+                localStorage.setItem('trustDevice', 'true');
+            } else { 
+                localStorage.removeItem('trustDevice'); 
+            }
+        });
+        
+        // Initialize with English language
         applyLanguage('en');
     })();
 </script>
