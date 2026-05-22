@@ -4,636 +4,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>SADWAP | Expiry Tracking Dashboard</title>
-    <!-- Bootstrap 5 + Icons -->
+    <title>نظام تتبع الصلاحية | Inventory Guard ERP - مع إنذار صوتي</title>
+    <!-- Bootstrap 5 + Icons + Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- XLSX for export -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Libraries -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --bg-page: #f1f5f9;
+            --bg-main: #f0f4f8;
             --card-bg: #ffffff;
+            --sidebar-bg: #0f172a;
             --text-primary: #0f172a;
             --text-secondary: #475569;
-            --border-light: #e2e8f0;
-            --accent: #2563eb;
-            --accent-hover: #1d4ed8;
-            --critical-red: #dc2626;
-            --critical-bg: #fee2e2;
-            --warning-orange: #f59e0b;
-            --warning-bg: #fffbeb;
-            --expired-bg: #fef2f2;
-            --today-bg: #fef3c7;
-            --success-green: #10b981;
-            --sidebar-width: 260px;
+            --border: #e2e8f0;
+            --accent: #3b82f6;
+            --critical: #dc2626;
+            --warning: #f97316;
+            --safe: #10b981;
         }
-
         body.dark {
-            --bg-page: #0f172a;
+            --bg-main: #0b1120;
             --card-bg: #1e293b;
             --text-primary: #f1f5f9;
             --text-secondary: #94a3b8;
-            --border-light: #334155;
-            --accent: #3b82f6;
-            --accent-hover: #60a5fa;
-            --critical-red: #f87171;
-            --critical-bg: #450a0a;
-            --warning-orange: #fbbf24;
-            --warning-bg: #422006;
-            --expired-bg: #7f1a1a;
-            --today-bg: #78350f;
+            --border: #334155;
         }
-
-        body {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-page);
-            color: var(--text-primary);
-            transition: background 0.2s, color 0.2s;
-            padding: 16px;
+        body { 
+            background: var(--bg-main); 
+            color: var(--text-primary); 
+            transition: all 0.2s; 
+            font-family: 'Inter', 'Tajawal', sans-serif;
         }
-
-        .dashboard-container {
-            max-width: 1600px;
-            margin: 0 auto;
+        body.arabic { font-family: 'Tajawal', 'Inter', sans-serif; }
+        /* Sidebar */
+        .sidebar {
+            position: fixed; top: 0; left: 0; height: 100vh; width: 280px;
+            background: var(--sidebar-bg); z-index: 1050;
+            transition: 0.3s; box-shadow: 4px 0 20px rgba(0,0,0,0.1);
         }
-
-        /* Header */
-        .header-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-bottom: 24px;
-            background: var(--card-bg);
-            padding: 12px 24px;
-            border-radius: 28px;
-            border: 1px solid var(--border-light);
+        body.arabic .sidebar { left: auto; right: 0; }
+        body.arabic .main-content { margin-left: 0; margin-right: 280px; }
+        @media (max-width: 992px) { 
+            .sidebar { transform: translateX(-100%); left: 0; }
+            body.arabic .sidebar { transform: translateX(100%); right: 0; left: auto; }
+            .sidebar.show { transform: translateX(0) !important; }
+            body.arabic .main-content { margin-right: 0; }
+            .main-content { margin-left: 0; }
         }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .sidebar .logo-area { padding: 28px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar .logo-area h2 { color: white; font-weight: 700; }
+        .sidebar .nav-link { color: #cbd5e1; padding: 12px 24px; margin: 6px 12px; border-radius: 14px; transition: 0.2s; font-weight: 500; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background: var(--accent); color: white; }
+        .main-content { margin-left: 280px; padding: 24px 28px; transition: 0.3s; }
+        /* Cards */
+        .stat-card { background: var(--card-bg); border-radius: 28px; border: 1px solid var(--border); padding: 1.2rem; transition: all 0.2s; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px -12px rgba(0,0,0,0.2); }
+        /* BLINK CRITICAL ROW */
+        @keyframes blinkRed { 0% { background-color: rgba(220,38,38,0.1); } 50% { background-color: rgba(220,38,38,0.6); } 100% { background-color: rgba(220,38,38,0.1); } }
+        .blink-critical { animation: blinkRed 0.6s infinite; border-left: 4px solid #dc2626; }
+        /* Sound wave animation */
+        .critical-sound-wave { display: inline-flex; align-items: center; gap: 4px; margin-left: 8px; }
+        .critical-sound-wave span { width: 4px; height: 12px; background: #dc2626; display: inline-block; animation: soundWave 0.4s infinite alternate; }
+        .critical-sound-wave span:nth-child(2) { animation-delay: 0.15s; height: 18px; }
+        .critical-sound-wave span:nth-child(3) { animation-delay: 0.3s; height: 14px; }
+        @keyframes soundWave { from { height: 6px; } to { height: 22px; } }
+        .status-badge { display: inline-block; padding: 5px 14px; border-radius: 40px; font-size: 0.7rem; font-weight: 700; }
+        .badge-critical { background: #dc2626; color: white; animation: pulse 0.8s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; transform: scale(0.98); } 100% { opacity: 1; } }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-orange { background: #f59e0b; color: #1e293b; }
+        .badge-green { background: #10b981; color: white; }
+        .filter-chip { background: var(--bg-main); border: 1px solid var(--border); border-radius: 40px; padding: 8px 20px; cursor: pointer; font-weight: 500; transition: 0.1s; }
+        .filter-chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .toast-custom { position: fixed; bottom: 30px; right: 30px; background: var(--card-bg); border-left: 5px solid var(--accent); border-radius: 20px; padding: 12px 24px; z-index: 1200; display: none; align-items: center; gap: 12px; box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
+        /* ALERT POPUP - ENHANCED */
+        .alert-popup { 
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 90%; max-width: 550px; background: var(--card-bg); border-radius: 40px; 
+            z-index: 2000; padding: 28px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); 
+            text-align: center; border-top: 8px solid #dc2626; display: none; 
+            animation: modalPop 0.3s ease-out;
         }
-        .logo-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, #2563eb, #8b5cf6);
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: white;
-        }
-        .controls-group {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .theme-lang {
-            display: flex;
-            gap: 8px;
-            background: var(--border-light);
-            padding: 6px;
-            border-radius: 40px;
-        }
-        .btn-icon {
-            background: transparent;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 32px;
-            font-weight: 600;
-            cursor: pointer;
-            color: var(--text-secondary);
-        }
-        .btn-icon.active {
-            background: var(--accent);
-            color: white;
-        }
-
-        /* Summary Cards */
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 28px;
-        }
-        .stat-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 20px 16px;
-            border: 1px solid var(--border-light);
-            transition: transform 0.1s;
-        }
-        .stat-title {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-        .stat-number {
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin: 8px 0;
-        }
-        .stat-sub {
-            font-size: 0.7rem;
-        }
-
-        /* Filters */
-        .filter-bar {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 16px 20px;
-            margin-bottom: 24px;
-            border: 1px solid var(--border-light);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .filter-group {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .filter-chip {
-            background: var(--bg-page);
-            border: 1px solid var(--border-light);
-            border-radius: 40px;
-            padding: 8px 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.15s;
-        }
-        .filter-chip.active {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
-        .search-input {
-            background: var(--bg-page);
-            border: 1px solid var(--border-light);
-            border-radius: 40px;
-            padding: 8px 20px;
-            width: 240px;
-            color: var(--text-primary);
-        }
-
-        /* Table / Cards (mobile optimized) */
-        .products-container {
-            background: var(--card-bg);
-            border-radius: 24px;
-            border: 1px solid var(--border-light);
-            overflow-x: auto;
-        }
-        .product-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-        }
-        .product-table th {
-            text-align: left;
-            padding: 16px 16px;
-            border-bottom: 2px solid var(--border-light);
-            color: var(--text-secondary);
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-        .product-table td {
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border-light);
-            vertical-align: middle;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-        .badge-critical { background: var(--critical-red); color: white; }
-        .badge-warning { background: var(--warning-orange); color: #1e293b; }
-        .badge-expired { background: #6b7280; color: white; }
-        .badge-today { background: var(--warning-orange); color: #422006; }
-
-        .row-critical { background-color: var(--critical-bg); border-left: 4px solid var(--critical-red); }
-        .row-warning { background-color: var(--warning-bg); border-left: 4px solid var(--warning-orange); }
-        .row-expired { background-color: var(--expired-bg); opacity: 0.8; }
-        .row-today { background-color: var(--today-bg); }
-
-        /* Loading overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            visibility: hidden;
-            opacity: 0;
-            transition: 0.2s;
-        }
-        .loading-overlay.active {
-            visibility: visible;
-            opacity: 1;
-        }
-        .spinner-large {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #cbd5e1;
-            border-top: 4px solid var(--accent);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Toast */
-        .toast-notify {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: var(--card-bg);
-            border-left: 5px solid var(--accent);
-            padding: 12px 20px;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            z-index: 1100;
-            display: none;
-            align-items: center;
-            gap: 12px;
-        }
-
-        @media (max-width: 768px) {
-            body { padding: 12px; }
-            .stat-number { font-size: 1.6rem; }
-            .filter-chip { padding: 6px 14px; font-size: 0.75rem; }
-        }
-
-        [dir="rtl"] .product-table th, [dir="rtl"] .product-table td {
-            text-align: right;
-        }
-        .action-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            margin: 0 4px;
-            cursor: pointer;
-        }
-        .btn-export {
-            background: var(--accent);
-            border: none;
-            border-radius: 40px;
-            padding: 8px 20px;
-            color: white;
-        }
+        @keyframes modalPop { from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+        .alert-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); z-index: 1999; display: none; animation: fadeIn 0.2s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .training-card { background: linear-gradient(145deg, var(--card-bg), var(--bg-main)); border-radius: 28px; padding: 20px; border: 1px solid var(--border); }
+        .table-responsive-custom { overflow-x: auto; border-radius: 24px; background: var(--card-bg); border: 1px solid var(--border); }
+        .product-table { width: 100%; min-width: 650px; }
+        .product-table th, .product-table td { padding: 16px 14px; vertical-align: middle; border-bottom: 1px solid var(--border); }
+        .alarm-badge { background: #dc2626; border-radius: 30px; padding: 3px 8px; font-size: 0.7rem; margin-left: 6px; animation: blinkText 0.8s infinite; }
+        @keyframes blinkText { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
-<div class="dashboard-container">
-    <!-- Header -->
-    <div class="header-bar">
-        <div class="logo-area">
-            <div class="logo-icon"><i class="fas fa-hourglass-half"></i></div>
-            <div><h2 style="font-weight: 700; margin:0;">Expiry Tracker</h2><small style="color: var(--text-secondary);">SADWAP Operations</small></div>
-        </div>
-        <div class="controls-group">
-            <div class="theme-lang">
-                <button class="btn-icon" id="darkModeToggle"><i class="fas fa-moon"></i> <span id="themeText">Dark</span></button>
-                <button class="btn-icon active" id="langEn">EN</button>
-                <button class="btn-icon" id="langAr">AR</button>
-            </div>
-            <button class="btn-export" id="exportExcelBtn"><i class="fas fa-file-excel"></i> Export</button>
-        </div>
-    </div>
-
-    <!-- Summary Cards -->
-    <div class="summary-grid" id="summaryGrid">
-        <div class="stat-card"><div class="stat-title" data-key="totalItems">Total Items</div><div class="stat-number" id="totalItems">0</div><div class="stat-sub">active products</div></div>
-        <div class="stat-card"><div class="stat-title" data-key="expiringToday">Expiring Today</div><div class="stat-number" id="expiringToday" style="color: #f59e0b;">0</div><div class="stat-sub">needs action</div></div>
-        <div class="stat-card"><div class="stat-title" data-key="criticalItems">Critical (≤7 days)</div><div class="stat-number" id="criticalItems" style="color: #dc2626;">0</div><div class="stat-sub">warning zone</div></div>
-        <div class="stat-card"><div class="stat-title" data-key="expiredItems">Expired Items</div><div class="stat-number" id="expiredItems" style="color: #6b7280;">0</div><div class="stat-sub">dispose required</div></div>
-    </div>
-
-    <!-- Filter Bar -->
-    <div class="filter-bar">
-        <div class="filter-group" id="filterGroup">
-            <button class="filter-chip active" data-filter="all" data-key="allFilter">All</button>
-            <button class="filter-chip" data-filter="critical" data-key="criticalFilter">Critical (≤7d)</button>
-            <button class="filter-chip" data-filter="today" data-key="todayFilter">Expiring Today</button>
-            <button class="filter-chip" data-filter="expired" data-key="expiredFilter">Expired</button>
-        </div>
-        <div>
-            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search product..." autocomplete="off">
-        </div>
-    </div>
-
-    <!-- Products Table / Responsive -->
-    <div class="products-container">
-        <table class="product-table" id="productTable">
-            <thead>
-                <tr><th data-key="productName">Product Name</th><th data-key="expiryDate">Expiry Date</th><th data-key="status">Status</th><th data-key="daysLeft">Days Left</th><th data-key="actions">Actions</th></tr>
-            </thead>
-            <tbody id="tableBody">
-                <tr><td colspan="5" style="text-align:center; padding: 40px;"><i class="fas fa-spinner fa-pulse"></i> Loading...</td></tr>
-            </tbody>
-        </table>
-    </div>
+<div class="alert-overlay" id="alertOverlay"></div>
+<div id="warningPopup" class="alert-popup">
+    <i class="fas fa-bell" style="font-size: 3.5rem; color: #dc2626; animation: ring 1s infinite;"></i>
+    <i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; color: #f59e0b; margin-left: 10px;"></i>
+    <h3 class="mt-3 fw-bold" id="popupTitle">⚠️ تنبيه انتهاء صلاحية حرج ⚠️</h3>
+    <p id="popupMsg" class="lead mt-2" style="font-weight: 600;">توجد منتجات تنتهي خلال 5 أيام!</p>
+    <div class="alert alert-danger mt-2" id="criticalCountDisplay"></div>
+    <div id="criticalListPopup" style="max-height: 220px; overflow-y: auto; text-align: left; background: var(--bg-main); border-radius: 20px; padding: 15px; margin: 16px 0; font-size: 0.9rem;"></div>
+    <button class="btn btn-danger btn-lg px-5 py-2" id="closeAlertBtn" style="font-weight: bold; border-radius: 50px;">
+        <i class="fas fa-stop-circle"></i> <span id="closeBtnText">إغلاق وإيقاف الإنذار الصوتي</span>
+    </button>
+    <div class="mt-3 text-muted small"><i class="fas fa-volume-up"></i> <span id="soundAlertMsg">الإنذار الصوتي مستمر حتى إغلاق النافذة</span></div>
 </div>
 
-<!-- Loading Overlay -->
-<div id="loadingOverlay" class="loading-overlay"><div class="spinner-large"></div></div>
-<div id="toastMsg" class="toast-notify"><i class="fas fa-check-circle"></i> <span id="toastText"></span></div>
+<div class="sidebar" id="sidebar">
+    <div class="logo-area"><h2><i class="fas fa-boxes me-2"></i><span id="sidebarTitle">InventoryGuard</span></h2><p class="text-white-50 small" id="sidebarSub">نظام تتبع الصلاحية مع إنذار</p></div>
+    <div class="nav flex-column mt-3">
+        <a href="#" class="nav-link active" data-section="dashboard"><i class="fas fa-tachometer-alt me-2"></i> <span data-i18n="navDashboard">لوحة التحكم</span></a>
+        <a href="#" class="nav-link" data-section="inventory"><i class="fas fa-clipboard-list me-2"></i> <span data-i18n="navInventory">المخزون</span></a>
+        <a href="#" class="nav-link" data-section="training"><i class="fas fa-video me-2"></i> <span data-i18n="navTraining">التدريب والسلامة</span></a>
+        <a href="#" class="nav-link" id="darkSidebarToggle"><i class="fas fa-moon me-2"></i> <span data-i18n="darkMode">الوضع المظلم</span></a>
+    </div>
+</div>
+<div class="main-content">
+    <nav class="navbar navbar-expand-lg mb-4">
+        <div class="container-fluid p-0">
+            <button class="btn btn-outline-secondary rounded-3" id="menuToggle"><i class="fas fa-bars"></i></button>
+            <div class="ms-auto d-flex gap-2">
+                <button class="btn btn-outline-danger rounded-3" id="muteSoundBtn" style="position: relative;">
+                    <i class="fas fa-bell"></i> <span id="muteText">كتم الصوت</span>
+                    <span id="soundWaveIndicator" style="display: none; position: absolute; top: -8px; right: -8px; background: red; border-radius: 50%; width: 14px; height: 14px; animation: pulse 0.8s infinite;"></span>
+                </button>
+                <button class="btn btn-outline-primary rounded-3" id="langToggleBtn"><i class="fas fa-globe"></i> <span id="langText">EN</span></button>
+                <button class="btn btn-primary rounded-3" data-bs-toggle="modal" data-bs-target="#addProductModal"><i class="fas fa-plus-circle"></i> <span data-i18n="addProductBtn">إضافة منتج</span></button>
+            </div>
+        </div>
+    </nav>
+    <div id="dashboardSection">
+        <div class="row g-4 mb-5">
+            <div class="col-md-3"><div class="stat-card"><div class="d-flex justify-content-between"><span data-i18n="totalProducts">إجمالي المنتجات</span><i class="fas fa-boxes fa-2x opacity-25"></i></div><h2 class="mt-2" id="totalCountStat">0</h2><small data-i18n="activeItems">عناصر نشطة</small></div></div>
+            <div class="col-md-3"><div class="stat-card"><span data-i18n="safeProducts">منتجات آمنة</span><i class="fas fa-check-circle float-end"></i><h2 class="mt-2" id="safeCount">0</h2></div></div>
+            <div class="col-md-3"><div class="stat-card"><span data-i18n="nearExpiry">منتجات قاربت الانتهاء</span><h2 class="mt-2" id="nearExpiryCount">0</h2></div></div>
+            <div class="col-md-3"><div class="stat-card"><span data-i18n="expiredProducts">منتهية الصلاحية</span><h2 class="mt-2" id="expiredCountStat">0</h2></div></div>
+        </div>
+        <div class="row g-4"><div class="col-12"><div class="stat-card"><h5><i class="fas fa-chart-line"></i> <span data-i18n="quickStats">إحصائيات سريعة</span></h5><p><span data-i18n="criticalCount">حرج (≤5 أيام):</span> <strong id="criticalStatBadge" class="text-danger">0</strong> | <span data-i18n="warningCount">تنتهي قريباً 6-10 أيام:</span> <strong id="warningStat">0</strong></p></div></div></div>
+    </div>
+    <div id="inventorySection" style="display: none;">
+        <div class="d-flex flex-wrap gap-3 mb-4 align-items-center justify-content-between">
+            <div class="d-flex gap-2 flex-wrap" id="filterContainer">
+                <button class="filter-chip active" data-filter="all" data-i18n="allFilter">الكل</button>
+                <button class="filter-chip" data-filter="safe" data-i18n="safeFilter">آمن</button>
+                <button class="filter-chip" data-filter="warning" data-i18n="warningFilter">تحذير (10-15)</button>
+                <button class="filter-chip" data-filter="critical" data-i18n="criticalFilter">حرج (≤5)</button>
+                <button class="filter-chip" data-filter="expired" data-i18n="expiredFilter">منتهي</button>
+            </div>
+            <input type="text" id="searchInput" class="form-control w-25" placeholder="بحث..." data-i18n-placeholder="searchPlaceholder">
+            <div class="btn-group">
+                <button id="exportExcelBtn" class="btn btn-success"><i class="fas fa-file-excel"></i> <span data-i18n="excelBtn">Excel</span></button>
+                <button id="exportPdfBtn" class="btn btn-danger"><i class="fas fa-file-pdf"></i> <span data-i18n="pdfBtn">PDF</span></button>
+                <button id="printBtn" class="btn btn-secondary"><i class="fas fa-print"></i> <span data-i18n="printBtn">طباعة</span></button>
+            </div>
+        </div>
+        <div class="table-responsive-custom">
+            <table class="product-table">
+                <thead><tr><th data-i18n="productName">اسم المنتج</th><th data-i18n="category">الفئة</th><th data-i18n="batch">رقم الدفعة</th><th data-i18n="expiryDate">تاريخ الانتهاء</th><th data-i18n="daysLeft">الأيام المتبقية</th><th data-i18n="statusCol">الحالة</th><th data-i18n="notesCol">ملاحظات</th><th data-i18n="actionsCol">إجراءات</th></tr></thead>
+                <tbody id="inventoryTableBody"></tbody>
+            </table>
+        </div>
+        <div class="mt-3 text-end"><button class="btn btn-danger" id="deleteAllBtn"><i class="fas fa-trash-alt"></i> <span data-i18n="deleteAllBtn">حذف الكل</span></button></div>
+    </div>
+    <div id="trainingSection" style="display: none;">
+        <div class="row g-4"><div class="col-md-6"><div class="training-card"><h4><i class="fas fa-chalkboard-user"></i> <span data-i18n="fifoTitle">FIFO / LIFO</span></h4><p data-i18n="fifoDesc">FIFO (First In, First Out): استخدام أقدم المخزون أولاً. LIFO غير مناسب للمواد القابلة للتلف. قم بالتدوير بناءً على تاريخ الصلاحية.</p><div class="alert alert-info">✅ <span data-i18n="fifoTip">FIFO يقلل الهدر</span></div></div></div>
+        <div class="col-md-6"><div class="training-card"><h4><i class="fas fa-database"></i> <span data-i18n="haccpTitle">مبادئ الهاسب</span></h4><p data-i18n="haccpDesc">تحليل المخاطر ونقاط التحكم الحرجة – مراقبة درجة الحرارة، التخزين، تواريخ الصلاحية لمنع مخاطر سلامة الغذاء.</p></div></div>
+        <div class="col-md-12"><div class="training-card"><h4><i class="fas fa-play-circle"></i> <span data-i18n="safetyTitle">أساسيات سلامة الغذاء</span></h4><div class="ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/8PmjJbLNu_U?rel=0" title="Food Safety Training" allowfullscreen></iframe></div><p class="mt-2" data-i18n="safetyDesc">احترم تواريخ الانتهاء، وتجنب التلوث المتبادل، ونفذ دوران المخزون.</p></div></div></div>
+    </div>
+</div>
+<div id="toastMsg" class="toast-custom"><i class="fas fa-bell"></i> <span id="toastText"></span></div>
 
+<!-- Modals -->
+<div class="modal fade" id="addProductModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-glass"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="fas fa-plus"></i> <span data-i18n="addProductTitle">إضافة منتج جديد</span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="text" id="prodName" class="form-control mb-2" placeholder="اسم المنتج"><select id="prodCategory" class="form-control mb-2"><option>ألبان</option><option>لحوم</option><option>خضروات</option><option>مخبوزات</option><option>أخرى</option></select><input type="text" id="prodBatch" class="form-control mb-2" placeholder="رقم الدفعة"><label>تاريخ الانتهاء (DD/MM/YYYY)</label><input type="text" id="prodExpiry" class="form-control mb-2" placeholder="DD/MM/YYYY"><textarea id="prodNotes" class="form-control" rows="2" placeholder="ملاحظات..."></textarea></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal"><span data-i18n="cancelBtn">إلغاء</span></button><button class="btn btn-primary" id="saveProductBtn"><span data-i18n="saveBtn">حفظ</span></button></div></div></div></div>
+<div class="modal fade" id="editModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5><span data-i18n="editTitle">تعديل المنتج</span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input id="editId" type="hidden"><input id="editName" class="form-control mb-2"><input id="editBatch" class="form-control mb-2"><input id="editExpiry" class="form-control mb-2" placeholder="DD/MM/YYYY"><textarea id="editNotes" class="form-control"></textarea></div><div class="modal-footer"><button class="btn btn-primary" id="confirmEditBtn"><span data-i18n="updateBtn">تحديث</span></button></div></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // ========== translations ==========
+    // ---------- FULL SYSTEM WITH LOUD LOOPING ALARM SOUND ----------
+    let inventory = [];
+    let currentLang = 'en';
+    let soundMuted = false;
+    let alertActive = false;
+    let soundLoopInterval = null;
+    let currentFilter = 'all', searchQuery = '';
+    let currentSection = 'dashboard';
+    let audioCtx = null;
+    
+    // Translations
     const translations = {
-        en: {
-            totalItems: "Total Items", expiringToday: "Expiring Today", criticalItems: "Critical (≤7 days)", expiredItems: "Expired Items",
-            allFilter: "All", criticalFilter: "Critical (≤7d)", todayFilter: "Expiring Today", expiredFilter: "Expired",
-            productName: "Product Name", expiryDate: "Expiry Date", status: "Status", daysLeft: "Days Left", actions: "Actions",
-            criticalStatus: "Critical", warningStatus: "Warning", expiredStatus: "Expired", todayStatus: "Today"
-        },
-        ar: {
-            totalItems: "إجمالي العناصر", expiringToday: "تنتهي اليوم", criticalItems: "حرج (≤7 أيام)", expiredItems: "منتهي الصلاحية",
-            allFilter: "الكل", criticalFilter: "حرج (≤7د)", todayFilter: "تنتهي اليوم", expiredFilter: "منتهي",
-            productName: "اسم المنتج", expiryDate: "تاريخ الانتهاء", status: "الحالة", daysLeft: "الأيام المتبقية", actions: "إجراءات",
-            criticalStatus: "حرج", warningStatus: "تحذير", expiredStatus: "منتهي", todayStatus: "اليوم"
-        }
+        en: { navDashboard: "Dashboard", navInventory: "Inventory", navTraining: "Training & Safety", darkMode: "Dark/Light Mode", addProductBtn: "Add Product", totalProducts: "Total Products", activeItems: "active items", safeProducts: "Safe Products", nearExpiry: "Near Expiry", expiredProducts: "Expired Products", quickStats: "Quick Stats", criticalCount: "Critical (≤5 days)", warningCount: "Expiring soon 6-10 days", allFilter: "All", safeFilter: "Safe", warningFilter: "Warning (10-15d)", criticalFilter: "Critical (≤5d)", expiredFilter: "Expired", searchPlaceholder: "Search product...", excelBtn: "Excel", pdfBtn: "PDF", printBtn: "Print", productName: "Product Name", category: "Category", batch: "Batch No", expiryDate: "Expiry Date", daysLeft: "Days Left", statusCol: "Status", notesCol: "Notes", actionsCol: "Actions", deleteAllBtn: "Delete All", addProductTitle: "Add New Product", cancelBtn: "Cancel", saveBtn: "Save", editTitle: "Edit Product", updateBtn: "Update", fifoTitle: "FIFO / LIFO", fifoDesc: "FIFO (First In, First Out): Oldest stock used first. Always rotate based on expiry.", fifoTip: "FIFO ensures minimal waste", haccpTitle: "HACCP Principles", haccpDesc: "Hazard Analysis Critical Control Points – monitor temperature, storage, expiry dates.", safetyTitle: "Food Safety Basics", safetyDesc: "Always respect expiry dates, avoid cross-contamination." },
+        ar: { navDashboard: "لوحة التحكم", navInventory: "المخزون", navTraining: "التدريب والسلامة", darkMode: "الوضع المظلم/الفاتح", addProductBtn: "إضافة منتج", totalProducts: "إجمالي المنتجات", activeItems: "عناصر نشطة", safeProducts: "منتجات آمنة", nearExpiry: "قاربت الانتهاء", expiredProducts: "منتهية الصلاحية", quickStats: "إحصائيات سريعة", criticalCount: "حرج (≤5 أيام)", warningCount: "تنتهي قريباً 6-10 أيام", allFilter: "الكل", safeFilter: "آمن", warningFilter: "تحذير (10-15ي)", criticalFilter: "حرج (≤5ي)", expiredFilter: "منتهي", searchPlaceholder: "بحث عن منتج...", excelBtn: "إكسل", pdfBtn: "PDF", printBtn: "طباعة", productName: "اسم المنتج", category: "الفئة", batch: "رقم الدفعة", expiryDate: "تاريخ الانتهاء", daysLeft: "الأيام المتبقية", statusCol: "الحالة", notesCol: "ملاحظات", actionsCol: "إجراءات", deleteAllBtn: "حذف الكل", addProductTitle: "إضافة منتج جديد", cancelBtn: "إلغاء", saveBtn: "حفظ", editTitle: "تعديل المنتج", updateBtn: "تحديث", fifoTitle: "FIFO / LIFO", fifoDesc: "الوارد أولاً يصرف أولاً: استخدام أقدم مخزون أولاً. قم بالتدوير حسب تاريخ الصلاحية.", fifoTip: "FIFO يقلل الهدر", haccpTitle: "مبادئ الهاسب", haccpDesc: "تحليل المخاطر ونقاط التحكم الحرجة – مراقبة درجة الحرارة، التخزين، تواريخ الصلاحية.", safetyTitle: "أساسيات سلامة الغذاء", safetyDesc: "احترم تواريخ الانتهاء، وتجنب التلوث المتبادل." }
     };
-    let currentLang = "en";
-    let currentFilter = "all";
-    let currentSearch = "";
-    let products = [];
-
-    // Helper date functions
-    function getDaysRemaining(expiryDateStr) {
-        const today = new Date(); today.setHours(0,0,0,0);
-        const expiry = new Date(expiryDateStr); expiry.setHours(0,0,0,0);
-        return Math.ceil((expiry - today) / (1000*60*60*24));
+    
+    function applyLanguage() { 
+        document.body.classList.toggle('arabic', currentLang === 'ar');
+        document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+        document.getElementById('langText').innerText = currentLang === 'ar' ? 'AR' : 'EN';
+        document.getElementById('muteText').innerText = currentLang === 'ar' ? (soundMuted ? 'تشغيل الصوت' : 'كتم الصوت') : (soundMuted ? 'Unmute' : 'Mute');
+        document.getElementById('closeBtnText').innerText = currentLang === 'ar' ? 'إغلاق وإيقاف الإنذار الصوتي' : 'Close & Stop Alarm';
+        document.getElementById('soundAlertMsg').innerHTML = currentLang === 'ar' ? '<i class="fas fa-volume-up"></i> إنذار صوتي عالي المستمر حتى الإغلاق' : '<i class="fas fa-volume-up"></i> Loud continuous alarm until you close';
+        document.querySelectorAll('[data-i18n]').forEach(el => { let key = el.getAttribute('data-i18n'); if(translations[currentLang][key]) el.innerText = translations[currentLang][key]; });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { let key = el.getAttribute('data-i18n-placeholder'); if(translations[currentLang][key]) el.placeholder = translations[currentLang][key]; });
+        renderInventory(); updateDashboardStats(); 
+        if(alertActive) updatePopupContent();
     }
-
-    function getStatusInfo(days) {
-        if (days < 0) return { status: "expired", label: "Expired", class: "badge-expired", priority: 0 };
-        if (days === 0) return { status: "today", label: "Expires Today", class: "badge-today", priority: 1 };
-        if (days <= 7) return { status: "critical", label: "Critical", class: "badge-critical", priority: 2 };
-        return { status: "warning", label: "Warning", class: "badge-warning", priority: 3 };
+    
+    // Helper functions
+    function parseDateDMY(str) { let parts = str.split('/'); if(parts.length===3) return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`); return null; }
+    function formatDateDMY(date) { let d = new Date(date); return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`; }
+    function getDaysRemaining(expiryDMY) { let today = new Date(); today.setHours(0,0,0,0); let exp = parseDateDMY(expiryDMY); if(!exp) return 999; exp.setHours(0,0,0,0); return Math.ceil((exp - today) / (1000*60*60*24)); }
+    function getStatusAndClass(days) { if(days < 0) return { text: currentLang==='ar'?'منتهي':'Expired', class: 'badge-critical', key:'expired' }; if(days <= 5) return { text: currentLang==='ar'?'حرج ⚠️':'CRITICAL ⚠️', class: 'badge-critical blink-critical', key:'critical' }; if(days <= 10) return { text: currentLang==='ar'?'أحمر':'RED', class: 'badge-red', key:'red' }; if(days <= 15) return { text: currentLang==='ar'?'تحذير':'Warning', class: 'badge-orange', key:'warning' }; return { text: currentLang==='ar'?'آمن':'Safe', class: 'badge-green', key:'safe' }; }
+    function saveToLocal() { localStorage.setItem('inv_guard_data', JSON.stringify(inventory)); }
+    function loadMock() { let stored = localStorage.getItem('inv_guard_data'); if(stored) return JSON.parse(stored); return [
+        { id: '1', name: 'حليب طازج', category: 'ألبان', batch: 'B001', expiry: formatDateDMY(new Date(Date.now()+2*86400000)), notes: 'يحفظ مبرداً' },
+        { id: '2', name: 'صدر دجاج', category: 'لحوم', batch: 'C202', expiry: formatDateDMY(new Date(Date.now()+4*86400000)), notes: 'مجمد' },
+        { id: '3', name: 'زبادي يوناني', category: 'ألبان', batch: 'Y99', expiry: formatDateDMY(new Date(Date.now()+12*86400000)), notes: '' },
+        { id: '4', name: 'خس معبأ', category: 'خضروات', batch: 'L45', expiry: formatDateDMY(new Date(Date.now()+20*86400000)), notes: '' },
+        { id: '5', name: 'جبن موزاريلا', category: 'ألبان', batch: 'M880', expiry: formatDateDMY(new Date(Date.now()-2*86400000)), notes: 'منتهي' },
+        { id: '6', name: 'لحم مفروم', category: 'لحوم', batch: 'BMC12', expiry: formatDateDMY(new Date(Date.now()+8*86400000)), notes: '' }
+    ]; }
+    function initData() { inventory = loadMock(); saveToLocal(); }
+    
+    // ========== LOUD LOOPING SOUND (using Web Audio with high gain) ==========
+    function playLoudBeep() {
+        if(soundMuted || !alertActive) return;
+        try {
+            if(!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.value = 880; // High pitch loud alert
+            gain.gain.value = 0.45;    // LOUD volume
+            osc.type = 'sine';
+            osc.start();
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+            osc.stop(now + 0.9);
+        } catch(e) { console.warn(e); }
     }
-
-    // Load mock + localStorage
-    function loadMockData() {
-        const stored = localStorage.getItem("sadwap_expiry_items");
-        if (stored) return JSON.parse(stored);
-        // Default mock
-        const now = new Date();
-        const today = new Date(now); today.setHours(0,0,0,0);
-        const tomorrow = new Date(now); tomorrow.setDate(tomorrow.getDate()+1);
-        const in3days = new Date(now); in3days.setDate(in3days.getDate()+3);
-        const in10days = new Date(now); in10days.setDate(in10days.getDate()+10);
-        const expired = new Date(now); expired.setDate(expired.getDate()-5);
-        return [
-            { id: "1", name: "Fresh Milk", expiry: new Date(today).toISOString().split('T')[0] },
-            { id: "2", name: "Yogurt Drink", expiry: new Date(tomorrow).toISOString().split('T')[0] },
-            { id: "3", name: "Chicken Breast", expiry: new Date(in3days).toISOString().split('T')[0] },
-            { id: "4", name: "Lettuce Pack", expiry: new Date(in10days).toISOString().split('T')[0] },
-            { id: "5", name: "Cheese Slices", expiry: new Date(expired).toISOString().split('T')[0] },
-            { id: "6", name: "Beef Mince", expiry: new Date(in3days).toISOString().split('T')[0] }
-        ];
+    function startSoundLoop() {
+        if(soundLoopInterval) clearInterval(soundLoopInterval);
+        if(!alertActive || soundMuted) return;
+        playLoudBeep();
+        soundLoopInterval = setInterval(() => {
+            if(alertActive && !soundMuted) {
+                playLoudBeep();
+            } else if(!alertActive || soundMuted) {
+                if(soundLoopInterval) clearInterval(soundLoopInterval);
+                soundLoopInterval = null;
+            }
+        }, 1300); // aggressive repeating alarm
     }
-
-    function saveToLocal() { localStorage.setItem("sadwap_expiry_items", JSON.stringify(products)); }
-
-    // Render stats and table with filter & search
-    function renderDashboard() {
-        if (!products.length) { document.getElementById("tableBody").innerHTML = `<tr><td colspan="5" style="text-align:center; padding:40px;"><i class="fas fa-box-open"></i> No items</td></tr>`; updateStats(); return; }
-        let filtered = products.filter(p => {
-            const days = getDaysRemaining(p.expiry);
-            let matchesFilter = false;
-            if (currentFilter === "all") matchesFilter = true;
-            else if (currentFilter === "critical") matchesFilter = days <= 7 && days >= 0;
-            else if (currentFilter === "today") matchesFilter = days === 0;
-            else if (currentFilter === "expired") matchesFilter = days < 0;
-            else matchesFilter = true;
-            const search = currentSearch.trim().toLowerCase();
-            const matchesSearch = search === "" || p.name.toLowerCase().includes(search);
-            return matchesFilter && matchesSearch;
-        });
-        // sort by urgency
-        filtered.sort((a,b) => {
-            const da = getDaysRemaining(a.expiry);
-            const db = getDaysRemaining(b.expiry);
-            if (da < 0 && db >=0) return 1;
-            if (da >=0 && db <0) return -1;
-            return da - db;
-        });
-        renderTableRows(filtered);
-        updateStats();
+    function stopSoundLoop() { if(soundLoopInterval) { clearInterval(soundLoopInterval); soundLoopInterval = null; } if(audioCtx) { audioCtx.close(); audioCtx = null; } }
+    
+    function updatePopupContent() {
+        let criticalItems = inventory.filter(p => { let d = getDaysRemaining(p.expiry); return d >=0 && d <=5; });
+        let listHtml = '<ul class="mb-0 list-unstyled">'+criticalItems.map(i=>`<li class="mb-2"><i class="fas fa-exclamation-circle text-danger me-2"></i><strong>${i.name}</strong> (${currentLang==='ar'?'دفعة':'Batch'}: ${i.batch}) - ${currentLang==='ar'?'تنتهي':'expires'} ${i.expiry} - <span class="badge bg-danger">${currentLang==='ar'?'حرج':'CRITICAL'}</span></li>`).join('')+'</ul>';
+        document.getElementById('criticalListPopup').innerHTML = listHtml || `<p class="text-muted">${currentLang==='ar'?'لا توجد منتجات حرجة':'No critical products'}</p>`;
+        document.getElementById('criticalCountDisplay').innerHTML = `<i class="fas fa-bell"></i> ${currentLang==='ar'?`${criticalItems.length} منتج (منتجات) حرجة تحتاج تدخل فوري!`:`${criticalItems.length} CRITICAL product(s) require immediate action!`}`;
+        document.getElementById('popupMsg').innerHTML = criticalItems.length > 0 ? (currentLang==='ar'?`⚠️ ${criticalItems.length} منتج تنتهي صلاحيته خلال 5 أيام ⚠️`:`⚠️ ${criticalItems.length} product(s) expiring within 5 DAYS ⚠️`) : '';
     }
-
-    function renderTableRows(items) {
-        const tbody = document.getElementById("tableBody");
-        if (items.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:40px;"><i class="fas fa-filter"></i> No matching items</td></tr>`; return; }
-        tbody.innerHTML = items.map(item => {
-            const days = getDaysRemaining(item.expiry);
-            const statusObj = getStatusInfo(days);
-            let rowClass = "";
-            if (statusObj.status === "expired") rowClass = "row-expired";
-            else if (statusObj.status === "critical" && days > 0) rowClass = "row-critical";
-            else if (statusObj.status === "today") rowClass = "row-today";
-            else if (statusObj.status === "warning" && days <=7) rowClass = "row-warning";
-            const daysLeftText = days < 0 ? `Expired (${Math.abs(days)} days ago)` : days === 0 ? "Today" : `${days} days`;
-            const statusLabel = currentLang === "ar" ? 
-                (statusObj.status === "expired" ? "منتهي" : statusObj.status === "today" ? "اليوم" : statusObj.status === "critical" ? "حرج" : "تحذير") :
-                statusObj.label;
-            const badgeClass = statusObj.class;
-            return `<tr class="${rowClass}">
-                <td><i class="fas fa-box me-2" style="color:var(--accent);"></i>${escapeHtml(item.name)}</td>
-                <td>${item.expiry}</td>
-                <td><span class="status-badge ${badgeClass}">${statusLabel}</span></td>
-                <td>${daysLeftText}</td>
-                <td><button class="action-btn edit-product" data-id="${item.id}" title="Edit"><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete-product" data-id="${item.id}" title="Delete"><i class="fas fa-trash-alt"></i></button></td>
-            </tr>`;
-        }).join('');
-        // attach events
-        document.querySelectorAll('.edit-product').forEach(btn => btn.addEventListener('click', (e) => { const id = btn.getAttribute('data-id'); editProductById(id); }));
-        document.querySelectorAll('.delete-product').forEach(btn => btn.addEventListener('click', (e) => { const id = btn.getAttribute('data-id'); deleteProductById(id); }));
+    
+    function showCriticalPopup() { 
+        let criticalItems = inventory.filter(p => { let d = getDaysRemaining(p.expiry); return d >=0 && d <=5; }); 
+        if(criticalItems.length === 0 || alertActive) return; 
+        alertActive = true; 
+        document.getElementById('alertOverlay').style.display = 'block'; 
+        document.getElementById('warningPopup').style.display = 'block'; 
+        updatePopupContent();
+        if(!soundMuted) startSoundLoop(); 
+        document.getElementById('soundWaveIndicator').style.display = 'inline-block';
     }
-
-    function updateStats() {
-        const total = products.length;
-        let expiringToday = 0;
-        let criticalCount = 0;
-        let expiredCount = 0;
-        products.forEach(p => {
-            const days = getDaysRemaining(p.expiry);
-            if (days === 0) expiringToday++;
-            if (days <= 7 && days >= 0) criticalCount++;
-            if (days < 0) expiredCount++;
-        });
-        document.getElementById("totalItems").innerText = total;
-        document.getElementById("expiringToday").innerText = expiringToday;
-        document.getElementById("criticalItems").innerText = criticalCount;
-        document.getElementById("expiredItems").innerText = expiredCount;
+    
+    function closeAlertPopup() { 
+        alertActive = false; 
+        stopSoundLoop(); 
+        document.getElementById('alertOverlay').style.display = 'none'; 
+        document.getElementById('warningPopup').style.display = 'none'; 
+        document.getElementById('soundWaveIndicator').style.display = 'none'; 
+        renderInventory();
     }
-
-    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-
-    // Edit / Delete actions with toast
-    function editProductById(id) {
-        const product = products.find(p => p.id === id);
-        if (!product) return;
-        const newName = prompt("Edit product name:", product.name);
-        if (newName && newName.trim()) product.name = newName.trim();
-        const newDate = prompt("Edit expiry date (YYYY-MM-DD):", product.expiry);
-        if (newDate && newDate.match(/^\d{4}-\d{2}-\d{2}$/)) product.expiry = newDate;
-        saveToLocal();
-        renderDashboard();
-        showToast("Product updated", "success");
+    
+    // Render Inventory Table
+    function renderInventory() { 
+        let filtered = inventory.filter(p => { let days = getDaysRemaining(p.expiry); if(currentFilter==='safe' && !(days>15)) return false; if(currentFilter==='warning' && !(days>=10 && days<=15)) return false; if(currentFilter==='critical' && !(days>=0 && days<=5)) return false; if(currentFilter==='expired' && !(days<0)) return false; if(searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) return false; return true; }); 
+        filtered.sort((a,b)=> getDaysRemaining(a.expiry) - getDaysRemaining(b.expiry)); 
+        let tbody = document.getElementById('inventoryTableBody'); if(!tbody) return; 
+        if(filtered.length===0) { tbody.innerHTML='<tr><td colspan="8" class="text-center">'+(currentLang==='ar'?'لا توجد منتجات':'No products')+'</td></tr>'; updateDashboardStats(); return; } 
+        tbody.innerHTML = filtered.map(p => { let days = getDaysRemaining(p.expiry); let statusObj = getStatusAndClass(days); let rowCls = (statusObj.key==='critical' && days>=0) ? 'blink-critical' : ''; let soundIcon = (statusObj.key==='critical' && days>=0 && !soundMuted && alertActive) ? '<span class="critical-sound-wave ms-2"><span></span><span></span><span></span></span>' : (statusObj.key==='critical'?'<i class="fas fa-bell text-danger ms-1"></i>':''); return `<tr class="${rowCls}"><td><i class="fas fa-cube"></i> ${escapeHtml(p.name)} ${soundIcon}</td><td>${p.category}</td><td>${p.batch}</td><td>${p.expiry}</td><td class="fw-bold">${days<0?(currentLang==='ar'?'منتهي':'Expired'):days+' '+(currentLang==='ar'?'يوم':'days')}</td><td><span class="status-badge ${statusObj.class}">${statusObj.text}</span></td><td>${escapeHtml(p.notes||'')}</td><td><button class="btn btn-sm btn-outline-primary editItemBtn" data-id="${p.id}"><i class="fas fa-edit"></i></button> <button class="btn btn-sm btn-outline-danger deleteItemBtn" data-id="${p.id}"><i class="fas fa-trash"></i></button></td></tr>`; }).join('');
+        document.querySelectorAll('.editItemBtn').forEach(btn=>btn.addEventListener('click',()=>{ openEditModal(btn.getAttribute('data-id')); }));
+        document.querySelectorAll('.deleteItemBtn').forEach(btn=>btn.addEventListener('click',()=>{ if(confirm(currentLang==='ar'?'حذف المنتج؟':'Delete product?')){ inventory=inventory.filter(i=>i.id!=btn.getAttribute('data-id')); saveToLocal(); renderInventory(); updateDashboardStats(); showToast(currentLang==='ar'?'تم الحذف':'Deleted','info'); checkCriticalAndPopup(); } }));
+        updateDashboardStats(); 
     }
-    function deleteProductById(id) {
-        if (confirm("Delete this product?")) {
-            products = products.filter(p => p.id !== id);
-            saveToLocal();
-            renderDashboard();
-            showToast("Deleted", "info");
-        }
-    }
-    function showToast(msg, type="success") {
-        const toast = document.getElementById("toastMsg");
-        document.getElementById("toastText").innerText = msg;
-        toast.style.display = "flex";
-        setTimeout(() => toast.style.display = "none", 2500);
-    }
-
-    // Add new product form (inline quick add)
-    function initAddForm() {
-        const header = document.querySelector(".header-bar");
-        const addBtn = document.createElement("button");
-        addBtn.className = "btn-export";
-        addBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Add Product';
-        addBtn.style.background = "#10b981";
-        addBtn.style.marginLeft = "8px";
-        addBtn.onclick = () => {
-            const name = prompt("Product name:", "New Item");
-            if (!name) return;
-            const dateStr = prompt("Expiry date (YYYY-MM-DD):", new Date().toISOString().split('T')[0]);
-            if (!dateStr || !dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) return;
-            const newId = Date.now().toString();
-            products.push({ id: newId, name: name.trim(), expiry: dateStr });
-            saveToLocal();
-            renderDashboard();
-            showToast(`Added ${name}`, "success");
-        };
-        document.querySelector(".controls-group").appendChild(addBtn);
-    }
-
-    // Loading simulation (fast)
-    function showLoading(show) {
-        const overlay = document.getElementById("loadingOverlay");
-        if (show) overlay.classList.add("active");
-        else overlay.classList.remove("active");
-    }
-
-    // Language update & RTL
-    function updateLanguage() {
-        const t = translations[currentLang];
-        for (let key in t) {
-            const elems = document.querySelectorAll(`[data-key="${key}"]`);
-            elems.forEach(el => { if (el) el.innerText = t[key]; });
-        }
-        document.querySelectorAll("#filterGroup .filter-chip").forEach(btn => {
-            const filterKey = btn.getAttribute("data-filter");
-            if (filterKey === "all") btn.innerText = t.allFilter;
-            if (filterKey === "critical") btn.innerText = t.criticalFilter;
-            if (filterKey === "today") btn.innerText = t.todayFilter;
-            if (filterKey === "expired") btn.innerText = t.expiredFilter;
-        });
-        document.querySelectorAll("#summaryGrid .stat-card .stat-title").forEach((el, idx) => {
-            const keys = ["totalItems", "expiringToday", "criticalItems", "expiredItems"];
-            if (idx < keys.length) el.innerText = t[keys[idx]];
-        });
-        document.querySelectorAll("#productTable thead th").forEach((th, idx) => {
-            const keys = ["productName", "expiryDate", "status", "daysLeft", "actions"];
-            if (idx < keys.length) th.innerText = t[keys[idx]];
-        });
-        if (currentLang === "ar") document.documentElement.setAttribute("dir", "rtl");
-        else document.documentElement.setAttribute("dir", "ltr");
-        renderDashboard(); // refresh status labels
-    }
-
-    // Dark mode
-    let darkMode = localStorage.getItem("sadwap_dark") === "true";
-    function applyDarkMode() {
-        if (darkMode) document.body.classList.add("dark");
-        else document.body.classList.remove("dark");
-        document.getElementById("themeText").innerText = darkMode ? "Light" : "Dark";
-    }
-    document.getElementById("darkModeToggle").addEventListener("click", () => {
-        darkMode = !darkMode;
-        localStorage.setItem("sadwap_dark", darkMode);
-        applyDarkMode();
-    });
-
-    // filters & search
-    function bindFilters() {
-        document.querySelectorAll(".filter-chip").forEach(btn => {
-            btn.addEventListener("click", () => {
-                document.querySelectorAll(".filter-chip").forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
-                currentFilter = btn.getAttribute("data-filter");
-                renderDashboard();
-            });
-        });
-        const searchInput = document.getElementById("searchInput");
-        searchInput.addEventListener("input", (e) => { currentSearch = e.target.value; renderDashboard(); });
-    }
-
-    // Export to Excel
-    function exportToExcel() {
-        const data = products.map(p => ({ Name: p.name, "Expiry Date": p.expiry, "Days Left": getDaysRemaining(p.expiry) }));
-        const ws = XLSX.utils.json_to_sheet(data);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "ExpiryTracker");
-        XLSX.writeFile(wb, `expiry_export_${new Date().toISOString().slice(0,19)}.xlsx`);
-        showToast("Export complete", "success");
-    }
-
-    // Initialize real-time
-    async function init() {
-        showLoading(true);
-        await new Promise(r => setTimeout(r, 400));
-        products = loadMockData();
-        saveToLocal();
-        renderDashboard();
-        bindFilters();
-        initAddForm();
-        updateLanguage();
-        applyDarkMode();
-        document.getElementById("exportExcelBtn").addEventListener("click", exportToExcel);
-        document.getElementById("langEn").addEventListener("click", () => { currentLang = "en"; document.getElementById("langEn").classList.add("active"); document.getElementById("langAr").classList.remove("active"); updateLanguage(); });
-        document.getElementById("langAr").addEventListener("click", () => { currentLang = "ar"; document.getElementById("langAr").classList.add("active"); document.getElementById("langEn").classList.remove("active"); updateLanguage(); });
-        showLoading(false);
-        // play subtle alert if critical items
-        const criticalCount = products.filter(p => getDaysRemaining(p.expiry) <= 7 && getDaysRemaining(p.expiry) >= 0).length;
-        if (criticalCount > 0) showToast(`${criticalCount} critical items require attention`, "warning");
-    }
-    init();
+    
+    function updateDashboardStats() { let total=inventory.length; let safe=0, nearExpiry=0, expired=0, criticalCount=0, warningStat=0; inventory.forEach(p=>{ let d=getDaysRemaining(p.expiry); if(d<0) expired++; else if(d>15) safe++; else nearExpiry++; if(d>=0 && d<=5) criticalCount++; if(d>=6 && d<=10) warningStat++; }); document.getElementById('totalCountStat')&&(document.getElementById('totalCountStat').innerText=total); document.getElementById('safeCount')&&(document.getElementById('safeCount').innerText=safe); document.getElementById('nearExpiryCount')&&(document.getElementById('nearExpiryCount').innerText=nearExpiry); document.getElementById('expiredCountStat')&&(document.getElementById('expiredCountStat').innerText=expired); document.getElementById('criticalStatBadge')&&(document.getElementById('criticalStatBadge').innerText=criticalCount); document.getElementById('warningStat')&&(document.getElementById('warningStat').innerText=warningStat); }
+    
+    function checkCriticalAndPopup() { let hasCritical = inventory.some(p=>{ let d=getDaysRemaining(p.expiry); return d>=0 && d<=5; }); if(hasCritical && !alertActive) showCriticalPopup(); else if(!hasCritical && alertActive) closeAlertPopup(); }
+    
+    // CRUD Operations
+    document.getElementById('saveProductBtn')?.addEventListener('click',()=>{ let name=document.getElementById('prodName').value; if(!name) return; let cat=document.getElementById('prodCategory').value; let batch=document.getElementById('prodBatch').value; let expiryRaw=document.getElementById('prodExpiry').value; let notes=document.getElementById('prodNotes').value; if(!expiryRaw.match(/^\d{2}\/\d{2}\/\d{4}$/)){ showToast(currentLang==='ar'?'تاريخ غير صالح':'Invalid date','danger'); return; } let newId=Date.now().toString(); inventory.push({id:newId, name, category:cat, batch:batch||'N/A', expiry:expiryRaw, notes}); saveToLocal(); renderInventory(); bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide(); document.getElementById('prodName').value=''; document.getElementById('prodExpiry').value=''; showToast(currentLang==='ar'?'تمت الإضافة':'Product added','success'); checkCriticalAndPopup(); });
+    function openEditModal(id){ let p=inventory.find(i=>i.id===id); if(p){ document.getElementById('editId').value=p.id; document.getElementById('editName').value=p.name; document.getElementById('editBatch').value=p.batch; document.getElementById('editExpiry').value=p.expiry; document.getElementById('editNotes').value=p.notes||''; new bootstrap.Modal(document.getElementById('editModal')).show(); } }
+    document.getElementById('confirmEditBtn')?.addEventListener('click',()=>{ let id=document.getElementById('editId').value; let newName=document.getElementById('editName').value; let newBatch=document.getElementById('editBatch').value; let newExp=document.getElementById('editExpiry').value; let newNotes=document.getElementById('editNotes').value; let idx=inventory.findIndex(i=>i.id===id); if(idx!==-1){ inventory[idx].name=newName; inventory[idx].batch=newBatch; inventory[idx].expiry=newExp; inventory[idx].notes=newNotes; saveToLocal(); renderInventory(); bootstrap.Modal.getInstance(document.getElementById('editModal')).hide(); showToast(currentLang==='ar'?'تم التحديث':'Updated','success'); checkCriticalAndPopup(); } });
+    document.getElementById('deleteAllBtn')?.addEventListener('click',()=>{ if(confirm(currentLang==='ar'?'⚠️ حذف جميع المنتجات؟':'⚠️ DELETE ALL PRODUCTS?')){ inventory=[]; saveToLocal(); renderInventory(); updateDashboardStats(); showToast(currentLang==='ar'?'تم حذف الكل':'All deleted','warning'); if(alertActive) closeAlertPopup(); } });
+    
+    // Exports
+    function exportExcel(){ let wsData=inventory.map(p=>({Name:p.name,Category:p.category,Batch:p.batch,Expiry:p.expiry,DaysLeft:getDaysRemaining(p.expiry),Status:getStatusAndClass(getDaysRemaining(p.expiry)).text,Notes:p.notes})); let ws=XLSX.utils.json_to_sheet(wsData); let wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'ExpiryReport'); XLSX.writeFile(wb,`inventory_${new Date().toISOString().slice(0,19)}.xlsx`); showToast(currentLang==='ar'?'تم التصدير':'Exported','success'); }
+    async function exportPDF(){ const {jsPDF}=window.jspdf; const doc=new jsPDF(); doc.text(currentLang==='ar'?'تقرير صلاحية المخزون':'Expiry Inventory Report',20,10); let y=20; inventory.slice(0,30).forEach(p=>{ let days=getDaysRemaining(p.expiry); doc.text(`${p.name} | ${p.expiry} | ${days} ${currentLang==='ar'?'يوم':'days'}`,20,y); y+=8; if(y>280) doc.addPage(); }); doc.save('inventory.pdf'); showToast(currentLang==='ar'?'تم حفظ PDF':'PDF saved','success'); }
+    function printInventory(){ let printWindow=window.open('','_blank'); printWindow.document.write(`<html><head><title>Inventory</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"></head><body><div class="container mt-4"><h2>${currentLang==='ar'?'تقرير الصلاحية':'Expiry Report'}</h2><table class="table"><thead><tr><th>${currentLang==='ar'?'الاسم':'Name'}</th><th>${currentLang==='ar'?'التاريخ':'Expiry'}</th><th>${currentLang==='ar'?'الأيام':'Days Left'}</th><th>${currentLang==='ar'?'الحالة':'Status'}</th></tr></thead><tbody>${inventory.map(p=>`<tr><td>${p.name}</td><td>${p.expiry}</td><td>${getDaysRemaining(p.expiry)}</td><td>${getStatusAndClass(getDaysRemaining(p.expiry)).text}</td></tr>`).join('')}</tbody></table></div></body></html>`); printWindow.document.close(); printWindow.print(); }
+    function showToast(msg,type){ let toast=document.getElementById('toastMsg'); document.getElementById('toastText').innerText=msg; toast.style.display='flex'; setTimeout(()=>toast.style.display='none',2200); }
+    function escapeHtml(str){ return String(str).replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    
+    // Event Listeners
+    document.getElementById('exportExcelBtn')?.addEventListener('click',exportExcel); document.getElementById('exportPdfBtn')?.addEventListener('click',exportPDF); document.getElementById('printBtn')?.addEventListener('click',printInventory);
+    document.getElementById('searchInput')?.addEventListener('input',(e)=>{ searchQuery=e.target.value; renderInventory(); });
+    document.querySelectorAll('.filter-chip').forEach(btn=>{ btn.addEventListener('click',()=>{ document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); currentFilter=btn.getAttribute('data-filter'); renderInventory(); }); });
+    document.getElementById('closeAlertBtn')?.addEventListener('click',closeAlertPopup);
+    document.getElementById('muteSoundBtn')?.addEventListener('click',()=>{ soundMuted=!soundMuted; document.getElementById('muteText').innerText = currentLang === 'ar' ? (soundMuted ? 'تشغيل الصوت' : 'كتم الصوت') : (soundMuted ? 'Unmute' : 'Mute'); showToast(soundMuted?(currentLang==='ar'?'تم كتم الصوت':'Sound muted'):(currentLang==='ar'?'تم تشغيل الصوت (إنذار عالي)':'Sound ON (loud alarm)'),'info'); if(!soundMuted && alertActive) { stopSoundLoop(); startSoundLoop(); } else if(soundMuted && alertActive) stopSoundLoop(); });
+    document.getElementById('langToggleBtn')?.addEventListener('click',()=>{ currentLang=currentLang==='en'?'ar':'en'; applyLanguage(); renderInventory(); updateDashboardStats(); if(alertActive) updatePopupContent(); });
+    function showSection(section){ currentSection=section; document.getElementById('dashboardSection').style.display=section==='dashboard'?'block':'none'; document.getElementById('inventorySection').style.display=section==='inventory'?'block':'none'; document.getElementById('trainingSection').style.display=section==='training'?'block':'none'; document.querySelectorAll('.sidebar .nav-link').forEach(l=>l.classList.remove('active')); document.querySelector(`.sidebar .nav-link[data-section="${section}"]`)?.classList.add('active'); if(section==='inventory') renderInventory(); if(section==='dashboard') updateDashboardStats(); }
+    document.querySelectorAll('.sidebar .nav-link[data-section]').forEach(link=>{ link.addEventListener('click',(e)=>{ e.preventDefault(); showSection(link.getAttribute('data-section')); }); });
+    document.getElementById('menuToggle')?.addEventListener('click',()=>{ document.getElementById('sidebar').classList.toggle('show'); });
+    document.getElementById('darkSidebarToggle')?.addEventListener('click',(e)=>{ e.preventDefault(); document.body.classList.toggle('dark'); showToast(currentLang==='ar'?'تم تغيير المظهر':'Theme toggled','info'); });
+    
+    initData(); renderInventory(); updateDashboardStats(); applyLanguage(); showSection('dashboard'); checkCriticalAndPopup();
+    setInterval(()=>{ renderInventory(); updateDashboardStats(); if(!alertActive) checkCriticalAndPopup(); }, 60000);
+    window.addEventListener('load',()=>{ if(!soundMuted && inventory.some(p=>getDaysRemaining(p.expiry)>=0 && getDaysRemaining(p.expiry)<=5)) showCriticalPopup(); });
 </script>
 </body>
 </html>
+```
