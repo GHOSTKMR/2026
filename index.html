@@ -1,19 +1,21 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <link rel="manifest" href="https://progressier.app/DQsSHv2bggUIQ4zV72z0/progressier.json"/>
     <script defer src="https://progressier.app/DQsSHv2bggUIQ4zV72z0/script.js"></script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <link rel="icon" href="https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/ccda845a-d9f3-4c25-b110-99647e3f934a.png" type="image/png">
-    <title>SADWAP | IT Manager Console · Adaptive</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <!-- Favicons for WhatsApp, LinkedIn (placeholder), Gmail using custom emoji/icon fonts + custom SVG favicons for brand -->
+    <link rel="icon" type="image/png" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23e50914'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='white' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E">
+    <title>SADWAP | بث · تحكم · إدارة | STREAM · MANAGE · CONTROL</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Google Fonts: Corporate + Professional -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Google Fonts + Arabic font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -24,721 +26,580 @@
         }
 
         :root {
-            --bg-deep: #0a0e17;
-            --bg-elevated: #111827;
-            --bg-card: #1a2332;
-            --border-soft: #2d3a4f;
-            --accent-corporate: #2b6cb0;
-            --accent-glow: #4299e1;
-            --accent-approve: #2ecc71;
-            --text-primary: #f0f4fa;
-            --text-muted: #9ca3af;
-            --danger-light: #f05252;
+            --accent-red: #e50914;
+            --accent-red-glow: #ff0f1f;
+            --text-primary: #ffffff;
+            --text-muted: #b3b3b3;
             --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
+            --font-arabic: 'Cairo', 'Inter', sans-serif;
         }
 
         body {
             font-family: var(--font-sans);
-            background: radial-gradient(circle at 20% 30%, #0f1722, #03060c);
-            color: var(--text-primary);
+            background: #0a0a0a;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+            transition: all 0.2s;
         }
 
-        /* ----- FULLY RESPONSIVE CONTAINER: adapts to screen width ----- */
+        body.rtl {
+            font-family: var(--font-arabic);
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* ========= ROTATING BACKGROUND: BLURRED MOVIE POSTER CAROUSEL ========= */
+        .movie-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .carousel-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(12px) brightness(0.6);
+            transition: opacity 1.2s ease-in-out;
+            opacity: 0;
+        }
+
+        .gradient-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.85) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
         .corporate-container {
+            position: relative;
+            z-index: 2;
             width: 100%;
             max-width: 100%;
-            margin: 0 auto;
-            background: var(--bg-deep);
-            border-radius: 32px;
-            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(66, 153, 225, 0.15);
-            overflow: hidden;
-            backdrop-filter: blur(2px);
-            transition: all 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(1px);
         }
 
-        /* inner padding scales with screen */
         .app-main {
-            padding: 24px 24px 32px;
+            padding: 20px 40px 40px;
+            flex: 1;
         }
 
-        /* Responsive grid for laptop/tablet: two-column layout when width >= 900px */
-        @media (min-width: 900px) {
-            body {
-                padding: 32px;
-                align-items: center;
-            }
-            .corporate-container {
-                max-width: 1280px;
-                border-radius: 40px;
-            }
-            .app-main {
-                padding: 32px 36px 40px;
-            }
-            /* responsive two-column layout */
-            .dashboard-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 32px;
-                align-items: start;
-            }
-            .left-col {
-                grid-column: 1 / 2;
-            }
-            .right-col {
-                grid-column: 2 / 3;
-            }
-            /* adjust campaign and spacing */
-            .login-card {
-                margin-bottom: 0;
-                height: fit-content;
-            }
-            .campaign-section {
-                margin-top: 0;
-            }
-            .status-bar-corporate {
-                margin-bottom: 28px;
-            }
-            .footer-note {
-                margin-top: 20px;
-            }
-        }
-
-        /* For large desktops, give more breathing */
-        @media (min-width: 1400px) {
-            .app-main {
-                padding: 40px 48px;
-            }
-            .dashboard-grid {
-                gap: 48px;
-            }
-        }
-
-        /* For tablets portrait (between 600px and 899px) we keep single column but wider */
-        @media (min-width: 600px) and (max-width: 899px) {
-            .corporate-container {
-                max-width: 720px;
-            }
-            .app-main {
-                padding: 28px 32px;
-            }
-            .login-card, .campaign-section {
-                transition: all 0.2s;
-            }
-        }
-
-        /* Mobile first defaults (below 600px) - stays compact but fills width */
-        @media (max-width: 599px) {
-            body {
-                padding: 12px;
-            }
-            .corporate-container {
-                border-radius: 28px;
-            }
-            .app-main {
-                padding: 20px 18px 24px;
-            }
-            .header-area {
-                margin-bottom: 20px;
-            }
-        }
-
-        /* Status bar */
-        .status-bar-corporate {
+        /* Netflix Nav */
+        .netflix-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-soft);
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--text-muted);
+            padding: 20px 0;
+            margin-bottom: 30px;
             flex-wrap: wrap;
+            gap: 20px;
         }
-        .time-status {
-            font-family: var(--font-mono);
-            background: rgba(45, 58, 79, 0.4);
-            padding: 4px 14px;
-            border-radius: 40px;
-            letter-spacing: 0.5px;
-        }
-        .right-status {
-            display: flex;
-            gap: 14px;
-            align-items: center;
-        }
-        .signal-bars {
-            display: flex;
-            gap: 3px;
-            align-items: flex-end;
-        }
-        .bar {
-            width: 3px;
-            background: #7e8a98;
-            border-radius: 1px;
-        }
-        .bar1 { height: 6px; }
-        .bar2 { height: 9px; }
-        .bar3 { height: 12px; }
-        .bar4 { height: 14px; }
-        .bar.active { background: var(--accent-corporate); box-shadow: 0 0 2px var(--accent-glow); }
 
-        /* Header */
-        .header-area {
+        .logo-area {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 28px;
-            flex-wrap: wrap;
             gap: 12px;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            flex-wrap: wrap;
-        }
-        .brand-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--bg-card);
-            border-radius: 16px;
+        .logo-area:hover { transform: scale(1.02); }
+
+        .s-logo {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #e50914 0%, #b81d24 100%);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid var(--accent-corporate);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 8px 20px rgba(229, 9, 20, 0.4);
         }
-        .brand-icon img {
-            width: 38px;
-            height: 38px;
-            object-fit: contain;
-        }
-        .app-title {
+
+        .brand-text {
+            font-size: 1.5rem;
             font-weight: 700;
-            font-size: 1.6rem;
-            letter-spacing: -0.3px;
-            background: linear-gradient(135deg, #cbd5e6, #90cdf4);
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
+
         .badge-manager {
-            background: #2d3748;
+            background: rgba(229, 9, 20, 0.25);
             border-radius: 40px;
             padding: 4px 12px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            color: #a3b8e0;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #e50914;
+            border: 1px solid rgba(229, 9, 20, 0.4);
             margin-left: 8px;
         }
+        body.rtl .badge-manager { margin-left: 0; margin-right: 8px; }
 
-        .dev-avatar-small {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            border: 1.5px solid var(--accent-corporate);
-            overflow: hidden;
-            transition: 0.2s;
-            background: #0f1722;
-        }
-        .dev-avatar-small img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .dev-avatar-small:hover { border-color: var(--accent-glow); transform: scale(1.02); }
-
-        /* notification bell */
-        .notif-icon-badge {
-            position: relative;
-            cursor: pointer;
-            margin-right: 2px;
-        }
-        .notif-bell-small {
-            background: #1e2a3a;
-            width: 48px;
-            height: 48px;
-            border-radius: 16px;
+        .nav-links {
             display: flex;
+            gap: 28px;
             align-items: center;
-            justify-content: center;
-            color: var(--accent-glow);
-            font-size: 1.5rem;
-            border: 1px solid #2d4a6e;
-            transition: all 0.15s;
+            flex-wrap: wrap;
         }
-        .notif-bell-small:active { background: #2d3e54; transform: scale(0.96); }
-        .notif-count {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: var(--danger-light);
-            color: white;
-            border-radius: 30px;
-            padding: 2px 7px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            border: 2px solid var(--bg-deep);
-            min-width: 22px;
-            text-align: center;
-            font-family: monospace;
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
+        .nav-links a:hover { color: var(--text-primary); }
 
-        /* Login card professional */
-        .login-card {
-            background: var(--bg-elevated);
-            border-radius: 28px;
-            padding: 24px 24px 28px;
-            border: 1px solid var(--border-soft);
-            margin-bottom: 28px;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+        /* Custom social buttons with favicon-style icons */
+        .social-icon {
+            background: rgba(20,20,20,0.7);
+            border-radius: 48px;
+            padding: 8px 18px;
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255,255,255,0.15);
             transition: all 0.2s;
         }
-        .login-heading {
-            font-weight: 600;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            color: var(--accent-glow);
-            text-transform: uppercase;
-            margin-bottom: 20px;
+        .social-icon i, .social-icon img {
+            width: 18px;
+            height: 18px;
+            margin-right: 6px;
         }
+        body.rtl .social-icon i, body.rtl .social-icon img {
+            margin-left: 6px;
+            margin-right: 0;
+        }
+        .social-icon:hover {
+            background: rgba(229,9,20,0.35);
+            border-color: #e50914;
+            transform: translateY(-2px);
+        }
+
+        .lang-toggle {
+            background: rgba(229,9,20,0.2);
+            border: 1px solid rgba(229,9,20,0.5);
+            border-radius: 40px;
+            padding: 8px 18px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .lang-toggle:hover {
+            background: #e50914;
+            border-color: #e50914;
+        }
+
+        /* Hero */
+        .hero-section { margin-bottom: 30px; padding: 20px 0 10px; }
+        .hero-title { font-size: 2.6rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, #ffffff, #e0e0e0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .hero-subtitle { font-size: 1rem; color: var(--text-muted); max-width: 500px; margin-bottom: 20px; }
+
+        /* Login Card */
+        .login-card {
+            background: linear-gradient(135deg, rgba(20,20,20,0.85) 0%, rgba(10,10,10,0.9) 100%);
+            backdrop-filter: blur(14px);
+            border-radius: 28px;
+            padding: 36px 32px;
+            border: 1px solid rgba(229,9,20,0.4);
+            box-shadow: 0 25px 40px rgba(0,0,0,0.5);
+            margin: 20px 0 40px;
+        }
+        .login-heading { font-weight: 700; font-size: 0.85rem; letter-spacing: 2px; color: #e50914; text-transform: uppercase; margin-bottom: 28px; text-align: center; }
         .custom-input {
-            background: var(--bg-deep) !important;
-            border: 1px solid var(--border-soft) !important;
-            border-radius: 20px !important;
+            background: #1e1e1e !important;
+            border: 1px solid #3a3a3a !important;
+            border-radius: 16px !important;
             color: white !important;
-            padding: 12px 18px !important;
-            height: 54px;
-            font-size: 0.95rem;
-            font-family: var(--font-mono);
+            padding: 14px 18px !important;
+            height: 56px;
+            font-size: 1rem;
+            font-family: 'JetBrains Mono', monospace;
             text-align: center;
             letter-spacing: 2px;
         }
-        .custom-input:focus {
-            border-color: var(--accent-corporate) !important;
-            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.3) !important;
-        }
         .btn-login {
-            background: linear-gradient(95deg, #1e4b6e, #1f6392);
+            background: linear-gradient(95deg, #e50914, #b81d24);
             border: none;
-            border-radius: 32px;
-            padding: 12px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: 0.2s;
+            border-radius: 48px;
+            padding: 14px;
+            font-weight: 700;
+            transition: 0.25s;
         }
-        .btn-login:hover { background: linear-gradient(95deg, #22638d, #2c74a5); transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,0.2); }
-        .forgot-link { color: var(--accent-glow); font-size: 0.7rem; text-decoration: none; }
-        .forgot-link:hover { text-decoration: underline; }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(229,9,20,0.4); }
+        .forgot-link { color: #e50914; font-size: 0.7rem; text-decoration: none; }
+        .footer-note { text-align: center; margin-top: 40px; font-size: 0.7rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; }
 
-        /* Campaign section polished */
-        .campaign-section {
-            background: var(--bg-card);
-            border-radius: 26px;
-            padding: 16px 18px;
-            border-left: 4px solid var(--accent-corporate);
-            transition: all 0.2s;
-        }
-        .campaign-header {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 14px;
-        }
-        .campaign-header i { color: var(--accent-glow); font-size: 1.1rem; }
-        .campaign-header span { font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.6px; color: #bdd3ff; }
-        .campaign-video {
-            border-radius: 20px;
-            overflow: hidden;
-            aspect-ratio: 16/9;
-            background: #000;
-            border: 1px solid #2d4a6e;
-        }
-        .campaign-video video { width: 100%; height: 100%; object-fit: cover; }
-
-        .footer-note {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            border-top: 1px solid var(--border-soft);
-            padding-top: 16px;
-        }
-
-        /* Popups and modals remain same */
-        .today-popup {
-            position: fixed;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1f2d3c;
-            border-left: 4px solid var(--accent-corporate);
-            color: white;
-            padding: 10px 22px;
-            border-radius: 60px;
-            backdrop-filter: blur(14px);
-            z-index: 12000;
-            display: none;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
-            font-size: 0.85rem;
-            font-weight: 500;
-            max-width: 380px;
-            white-space: normal;
-            border: 1px solid rgba(66, 153, 225, 0.5);
-        }
+        /* Toast */
         .security-toast {
             position: fixed;
-            bottom: 28px;
+            bottom: 32px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: #251a1f;
-            border-left: 3px solid var(--danger-light);
-            color: #f8b4b4;
-            padding: 10px 24px;
-            border-radius: 50px;
-            backdrop-filter: blur(16px);
+            background: #1f1f1f;
+            border-left: 4px solid #e50914;
+            color: #ff8a8a;
+            padding: 12px 28px;
+            border-radius: 60px;
+            backdrop-filter: blur(18px);
             z-index: 9999;
             opacity: 0;
-            transition: 0.3s ease;
-            font-size: 0.8rem;
+            transition: 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            font-size: 0.85rem;
             font-weight: 500;
             white-space: nowrap;
+            pointer-events: none;
         }
         .security-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-        /* scheduler modal - responsive width */
-        .iframe-modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.88);
-            backdrop-filter: blur(12px);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .iframe-card {
-            width: 100%;
-            max-width: 520px;
-            background: #0f1729;
-            border-radius: 36px;
-            border: 1px solid #2e5a7e;
-            overflow: hidden;
-            box-shadow: 0 30px 45px rgba(0,0,0,0.6);
-        }
-        .iframe-header {
-            padding: 16px 22px;
-            background: #0b111e;
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #28415c;
-        }
-        .iframe-header h4 { font-size: 1.1rem; margin: 0; font-weight: 600; color: #90cdf4; }
-        .close-iframe { background: none; border: none; color: #b9c8e8; font-size: 1.3rem; }
-        .iframe-content { padding: 20px; max-height: 65vh; overflow-y: auto; }
-        .category-row {
-            background: #182433;
-            padding: 8px 15px;
-            border-radius: 34px;
-            margin: 12px 0 8px;
-            font-weight: 700;
-            color: #9ac2e0;
-        }
-        .day-select {
-            background: #0a111e;
-            border: 1px solid #2f5580;
-            color: white;
-            border-radius: 40px;
-            padding: 7px 10px;
-            font-size: 0.75rem;
-            width: 95px;
-        }
-        .remove-btn { color: #f68b8b; cursor: pointer; font-size: 1.3rem; margin-left: 5px; }
-        .add-row {
-            background: #1f2d42;
-            border: 1px dashed #6183ab;
-            border-radius: 40px;
-            padding: 8px;
-            text-align: center;
-            margin: 10px 0;
-            cursor: pointer;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-        .save-all {
-            background: var(--accent-corporate);
-            border: none;
-            border-radius: 44px;
-            padding: 12px;
-            font-weight: 600;
-            margin-top: 16px;
-            width: 100%;
-        }
-        @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-5px)} 40%,80%{transform:translateX(5px)} }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
         .shake-animation { animation: shake 0.4s ease-in-out; }
-        .particle-container { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1; }
-        .particle { position:absolute; width:3px; height:3px; border-radius:50%; opacity:0; animation:floatParticle 14s infinite; background: #3b82f6; }
-        @keyframes floatParticle { 0%{opacity:0; transform:translateY(100vh) scale(0);} 20%{opacity:0.6;} 100%{opacity:0; transform:translateY(-20vh) scale(1.3);} }
+
+        /* RTL adjustments */
+        body.rtl .hero-subtitle { margin-right: 0; text-align: right; }
+        body.rtl .nav-links a { direction: rtl; }
+        @media (max-width: 768px) {
+            .app-main { padding: 16px; }
+            .hero-title { font-size: 1.8rem; }
+            .login-card { padding: 28px 20px; }
+            .security-toast { white-space: normal; width: 90%; text-align: center; }
+        }
+        @media (max-width: 550px) {
+            .netflix-nav { flex-direction: column; align-items: flex-start; }
+            .nav-links { width: 100%; justify-content: space-between; gap: 12px; }
+            .social-icon { padding: 6px 12px; font-size: 0.75rem; }
+        }
     </style>
 </head>
 <body>
-<div class="particle-container" id="particles"></div>
+
+<!-- Rotating Background Movie Posters (blur & smooth) -->
+<div class="movie-backdrop" id="bgCarousel"></div>
+<div class="gradient-overlay"></div>
 
 <div class="corporate-container">
     <div class="app-main">
-        <!-- Status bar -->
-        <div class="status-bar-corporate">
-            <div class="time-status" id="liveTime">9:41 AM</div>
-            <div class="right-status">
-                <div class="signal-bars" id="signalBars">
-                    <div class="bar bar1 active"></div><div class="bar bar2 active"></div><div class="bar bar3 active"></div><div class="bar bar4 active"></div>
+        <!-- Netflix Nav + Language Toggle -->
+        <div class="netflix-nav">
+            <div class="logo-area" id="sLogoDashboard">
+                <div class="s-logo">S</div>
+                <div>
+                    <div class="brand-text">SADWAP <span class="badge-manager" id="badgeLabel">STREAM CONSOLE</span></div>
                 </div>
-                <i class="bi bi-wifi"></i>
-                <div class="battery-indicator" id="batteryInfo"><span id="batteryPercent">94%</span><i class="bi bi-battery-full ms-1"></i></div>
+            </div>
+            <div class="nav-links">
+                <!-- WhatsApp with custom favicon (brand icon) -->
+                <a href="#" id="whatsappLink" class="social-icon"><i class="bi bi-whatsapp"></i> <span id="whatsappTxt">WhatsApp</span></a>
+                <!-- LinkedIn (temporary placeholder, will be updated later) -->
+                <a href="#" id="linkedinLink" class="social-icon"><i class="bi bi-linkedin"></i> <span id="linkedinTxt">LinkedIn</span></a>
+                <!-- Gmail with custom favicon -->
+                <a href="#" id="gmailLink" class="social-icon"><i class="bi bi-envelope-fill"></i> <span id="gmailTxt">Gmail</span></a>
+                <div class="lang-toggle" id="langToggleBtn"><i class="bi bi-globe2 me-1"></i> <span id="langText">العربية</span></div>
             </div>
         </div>
 
-        <!-- Responsive Grid: on laptop it becomes 2 columns -->
-        <div class="dashboard-grid">
-            <div class="left-col">
-                <!-- header + notification (inside left column for symmetry) -->
-                <div class="header-area">
-                    <div class="brand">
-                        <div class="notif-icon-badge" id="notifIcon">
-                            <div class="notif-bell-small"><i class="bi bi-bell-fill"></i></div>
-                            <span class="notif-count" id="notifCount">3</span>
-                        </div>
-                        <div class="brand-icon"><img src="https://mgx-backend-cdn.metadl.com/generate/images/701809/2026-02-17/ccda845a-d9f3-4c25-b110-99647e3f934a.png" alt="logo"></div>
-                        <div>
-                            <div class="app-title">SADWAP <span class="badge-manager">IT CONSOLE</span></div>
-                        </div>
-                    </div>
-                    <a href="https://ghostkmr.github.io/2026/aboutdeveloper.html" target="_self" class="dev-avatar-small">
-                        <img src="https://ghostkmr.github.io/2026/mueen.jpeg" alt="Developer">
-                    </a>
-                </div> 
+        <!-- Hero section with dynamic text -->
+        <div class="hero-section">
+            <h1 class="hero-title" id="heroTitle">Reduce Human Effort.<br>Smart Stream Control.</h1>
+            <p class="hero-subtitle" id="heroSubtitle">Enterprise-grade IT asset management, scheduling automation, and intelligent alerts — all unified.</p>
+        </div>
 
-                <!-- Secure login card -->
-                <div class="login-card">
-                    <div class="login-heading text-center"><i class="bi bi-keyboard me-2"></i>SECURE ACCESS · PIN REQUIRED</div>
-                    <form id="loginForm">
-                        <div class="form-floating mb-3 position-relative">
-                            <input type="password" class="form-control custom-input" id="password" placeholder="PIN" autocomplete="off" inputmode="numeric">
-                            <label><i class="bi bi-shield-lock me-2"></i>Enterprise PIN</label>
-                            <button type="button" class="btn toggle-password" id="togglePassword" tabindex="-1" style="position: absolute; right: 14px; top: 14px; background: none; border: none; color: #9ca3af; padding: 0;"><i class="bi bi-eye-fill"></i></button>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="rememberMe" style="background:#1f2c3e; border-color:#4b6a8a;">
-                                <label class="form-check-label" style="color:#a0afc0; font-size:0.7rem;">Remember device</label>
-                            </div>
-                            <a href="#" class="forgot-link">Reset credentials</a>
-                        </div>
-                        <button type="submit" class="btn btn-login w-100" id="loginBtn">
-                            <span class="btn-text"><i class="bi bi-unlock me-2"></i>AUTHENTICATE</span>
-                            <span class="btn-loader d-none"><span class="spinner-border spinner-border-sm me-2"></span>verifying...</span>
-                        </button>
-                    </form>
+        <!-- Secure Login Card -->
+        <div class="login-card">
+            <div class="login-heading" id="loginHeading"><i class="bi bi-shield-lock-fill me-2"></i>AUTHORIZED ACCESS · PIN PROTECTED</div>
+            <form id="loginForm">
+                <div class="form-floating mb-4 position-relative">
+                    <input type="password" class="form-control custom-input" id="password" placeholder="SECURE PIN" autocomplete="off" inputmode="numeric">
+                    <label id="pinLabel"><i class="bi bi-key me-2"></i>ENTER 5-DIGIT PIN</label>
+                    <button type="button" class="btn toggle-password" id="togglePassword" tabindex="-1" style="position: absolute; right: 16px; top: 16px; background: none; border: none; color: #9ca3af; padding: 0;"><i class="bi bi-eye-fill"></i></button>
                 </div>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe" style="background:#2a2a2a; border-color:#e50914;">
+                        <label class="form-check-label" id="trustDeviceLabel" style="color:#b3b3b3; font-size:0.75rem;">Trust this device</label>
+                    </div>
+                    <a href="#" class="forgot-link" id="resetHint">Reset credentials</a>
+                </div>
+                <button type="submit" class="btn btn-login w-100" id="loginBtn">
+                    <span class="btn-text"><i class="bi bi-unlock-fill me-2"></i><span id="loginBtnText">UNLOCK DASHBOARD</span></span>
+                    <span class="btn-loader d-none"><span class="spinner-border spinner-border-sm me-2"></span><span id="verifyingText">VERIFYING...</span></span>
+                </button>
+            </form>
+            <div class="text-center mt-3">
+                <small class="text-muted" style="font-size: 0.65rem;" id="aiFooter"><i class="bi bi-robot"></i> AI-driven efficiency · reducing human effort across all modules</small>
             </div>
+        </div>
 
-            <div class="right-col">
-                <!-- Campaign / corporate brief -->
-                <div class="campaign-section">
-                    <div class="campaign-header">
-                        <i class="bi bi-play-circle-fill"></i>
-                        <span>current initiative · Q2 roadmap</span>
-                    </div>
-                    <div class="campaign-video">
-                        <video id="promoVideo" autoplay loop muted playsinline>
-                            <source src="https://ghostkmr.github.io/2026/indexvid.mp4" type="video/mp4">
-                        </video>
-                    </div>
-                    <div class="footer-note">
-                        <i class="bi bi-c-circle"></i> All rights reserved · Mueen Ul Islam · IT Asset Management
-                    </div>
-                </div>
-            </div>
+        <div class="footer-note" id="footerNote">
+            <i class="bi bi-c-circle"></i> 2026 SADWAP · Human Effort Reduction Program · Mueen Ul Islam
         </div>
     </div>
 </div>
 
-<!-- MODAL: schedule editor (double tap) -->
-<div class="iframe-modal" id="schedulerModal">
-    <div class="iframe-card">
-        <div class="iframe-header"><h4><i class="bi bi-calendar-check me-2"></i>Ordering schedule editor</h4><button class="close-iframe" id="closeIframeBtn"><i class="bi bi-x-lg"></i></button></div>
-        <div class="iframe-content" id="iframeContent"></div>
-    </div>
-</div>
-
-<!-- compact popup -->
-<div class="today-popup" id="todayPopup"><i class="bi bi-info-circle-fill"></i><span id="popupMessage"></span></div>
-<div class="security-toast" id="securityToast"><i class="bi bi-shield-slash me-2"></i>Access Denied</div>
+<div class="security-toast" id="securityToast"><i class="bi bi-shield-exclamation me-2"></i><span id="toastMsg">Access Denied</span></div>
 
 <script>
     (function(){
-        // Clock & battery
-        function updateTime(){ let n=new Date(); let h=n.getHours()%12||12, m=n.getMinutes().toString().padStart(2,'0'), ap=n.getHours()>=12?'PM':'AM'; document.getElementById('liveTime').innerText=`${h}:${m} ${ap}`; }
-        updateTime(); setInterval(updateTime,1000);
-        if('getBattery' in navigator){ navigator.getBattery().then(b=>{ function u(){ let p=Math.round(b.level*100); document.getElementById('batteryPercent').innerText=p+'%'; } u(); b.addEventListener('levelchange',u); }); } 
-        else{ setInterval(()=>{ let r=Math.floor(Math.random()*30)+60; document.getElementById('batteryPercent').innerText=r+'%';},45000); }
-        setInterval(()=>{ let bars=document.querySelectorAll('.bar'); let r=Math.random()>0.2?4:3; bars.forEach((b,i)=> i<r?b.classList.add('active'):b.classList.remove('active')); },7000);
+        // ---------- Language Resource (Arabic/English) ----------
+        const translations = {
+            en: {
+                badge: "STREAM CONSOLE",
+                whatsapp: "WhatsApp",
+                linkedin: "LinkedIn",
+                gmail: "Gmail",
+                langToggle: "العربية",
+                heroTitle: "Reduce Human Effort.<br>Smart Stream Control.",
+                heroSub: "Enterprise-grade IT asset management, scheduling automation, and intelligent alerts — all unified.",
+                loginHead: "AUTHORIZED ACCESS · PIN PROTECTED",
+                pinLabel: "ENTER 5-DIGIT PIN",
+                trustDevice: "Trust this device",
+                resetLink: "Reset credentials",
+                loginBtn: "UNLOCK DASHBOARD",
+                verifying: "VERIFYING...",
+                aiFooter: "🤖 AI-driven efficiency · reducing human effort across all modules",
+                footer: "© 2026 SADWAP · Human Effort Reduction Program · Mueen Ul Islam",
+                toastDenied: "Access Denied",
+                toastInvalid: "❌ Invalid PIN · Access denied",
+                toastEmpty: "❌ Please enter your secure PIN",
+                toastGranted: "✅ Access granted · Redirecting to dashboard",
+                toastWhatsapp: "📱 Opening WhatsApp support (+966567341924)",
+                toastLinkedin: "🔗 LinkedIn profile will be added soon",
+                toastGmail: "✉️ Compose email to moinranzao2@gmail.com",
+                toastReset: "🔑 Contact IT Admin: reset PIN via secure channel",
+                toastRightClick: "🛡️ Right-click disabled for security",
+                toastDevtools: "🚫 Developer tools restricted"
+            },
+            ar: {
+                badge: "وحدة التحكم السحابية",
+                whatsapp: "واتساب",
+                linkedin: "لينكد إن",
+                gmail: "جيميل",
+                langToggle: "English",
+                heroTitle: "تقليل الجهد البشري.<br>تحكم ذكي في البث.",
+                heroSub: "إدارة أصول تكنولوجيا المعلومات على مستوى المؤسسات، وجدولة آلية، وتنبيهات ذكية — كل ذلك في مكان واحد.",
+                loginHead: "وصول مصرح به · حماية برمز PIN",
+                pinLabel: "أدخل رمز PIN المكون من 5 أرقام",
+                trustDevice: "ثق بهذا الجهاز",
+                resetLink: "إعادة تعيين بيانات الدخول",
+                loginBtn: "فتح لوحة التحكم",
+                verifying: "جاري التحقق...",
+                aiFooter: "🤖 كفاءة تعمل بالذكاء الاصطناعي · تقليل الجهد البشري عبر جميع الوحدات",
+                footer: "© 2026 سادواب · برنامج تقليل الجهد البشري · مؤيد الإسلام",
+                toastDenied: "تم رفض الوصول",
+                toastInvalid: "❌ رمز PIN غير صحيح · تم الرفض",
+                toastEmpty: "❌ الرجاء إدخال رمز PIN الآمن",
+                toastGranted: "✅ تم منح الوصول · جاري التوجيه إلى لوحة التحكم",
+                toastWhatsapp: "📱 فتح واتساب للدعم (+966567341924)",
+                toastLinkedin: "🔗 سيتم إضافة رابط لينكد إن قريبًا",
+                toastGmail: "✉️ فتح البريد الإلكتروني: moinranzao2@gmail.com",
+                toastReset: "🔑 اتصل بمسؤول تكنولوجيا المعلومات: إعادة تعيين PIN عبر قناة آمنة",
+                toastRightClick: "🛡️ تم تعطيل النقر بزر الماوس الأيمن للأمان",
+                toastDevtools: "🚫 أدوات المطور مقيدة للأمان"
+            }
+        };
         
-        // video sound
-        const video = document.getElementById('promoVideo'); if(video){ video.muted=false; video.play().catch(e=>{ const enable=()=>{video.muted=false; video.play(); document.removeEventListener('touchstart',enable); document.removeEventListener('click',enable);}; document.addEventListener('touchstart',enable); document.addEventListener('click',enable); }); }
+        let currentLang = 'en';
+        const bodyElem = document.body;
+        const htmlElem = document.documentElement;
+
+        function applyLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+            document.getElementById('badgeLabel').innerText = t.badge;
+            document.getElementById('whatsappTxt').innerText = t.whatsapp;
+            document.getElementById('linkedinTxt').innerText = t.linkedin;
+            document.getElementById('gmailTxt').innerText = t.gmail;
+            document.getElementById('langText').innerText = t.langToggle;
+            document.getElementById('heroTitle').innerHTML = t.heroTitle;
+            document.getElementById('heroSubtitle').innerText = t.heroSub;
+            document.getElementById('loginHeading').innerHTML = `<i class="bi bi-shield-lock-fill me-2"></i>${t.loginHead}`;
+            document.getElementById('pinLabel').innerHTML = `<i class="bi bi-key me-2"></i>${t.pinLabel}`;
+            document.querySelector('label[for="rememberMe"]').innerText = t.trustDevice;
+            document.getElementById('resetHint').innerText = t.resetLink;
+            document.getElementById('loginBtnText').innerText = t.loginBtn;
+            document.getElementById('verifyingText').innerText = t.verifying;
+            document.getElementById('aiFooter').innerHTML = t.aiFooter;
+            document.getElementById('footerNote').innerHTML = `<i class="bi bi-c-circle"></i> ${t.footer}`;
+            if(lang === 'ar') {
+                bodyElem.classList.add('rtl');
+                bodyElem.style.fontFamily = "'Cairo', 'Inter', sans-serif";
+                htmlElem.setAttribute('dir', 'rtl');
+                htmlElem.setAttribute('lang', 'ar');
+            } else {
+                bodyElem.classList.remove('rtl');
+                bodyElem.style.fontFamily = "'Inter', system-ui, sans-serif";
+                htmlElem.setAttribute('dir', 'ltr');
+                htmlElem.setAttribute('lang', 'en');
+            }
+        }
+
+        // Toggle language
+        const langBtn = document.getElementById('langToggleBtn');
+        langBtn.addEventListener('click', () => {
+            const newLang = currentLang === 'en' ? 'ar' : 'en';
+            applyLanguage(newLang);
+            showToast(currentLang === 'en' ? "Language changed to العربية" : "Language changed to English", false);
+        });
+
+        function showToast(message, isError = true) {
+            const toastDiv = document.getElementById('securityToast');
+            const msgSpan = document.getElementById('toastMsg');
+            msgSpan.innerText = message;
+            toastDiv.classList.add('show');
+            setTimeout(() => toastDiv.classList.remove('show'), 2500);
+        }
+
+        // ---------- Rotating Background Images (every 3 seconds) HIGH-QUALITY CINEMATIC----------
+        const moviePosters = [
+            "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1400&h=900&fit=crop",
+            "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1400&h=900&fit=crop",
+            "https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=1400&h=900&fit=crop",
+            "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=1400&h=900&fit=crop",
+            "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1400&h=900&fit=crop",
+            "https://images.unsplash.com/photo-1518676590629-3dc2c1bc64c6?w=1400&h=900&fit=crop",
+            "https://images.unsplash.com/photo-1531259683007-016a7b628fc3?w=1400&h=900&fit=crop",
+            "https://images.unsplash.com/photo-1542204165-65bf2646b6d3?w=1400&h=900&fit=crop",
+            "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1400&h=900&fit=crop"
+        ];
         
-        // particles
-        let pCont=document.getElementById('particles'); for(let i=0;i<20;i++){ let p=document.createElement('div'); p.className='particle'; p.style.left=Math.random()*100+'%'; p.style.animationDelay=Math.random()*12+'s'; p.style.animationDuration=(8+Math.random()*8)+'s'; p.style.background=Math.random()>0.6?'#2b6cb0':'#4299e1'; pCont.appendChild(p); }
+        const bgContainer = document.getElementById('bgCarousel');
+        let currentIndex = 0;
         
-        function showSecurityToast(msg){ let t=document.getElementById('securityToast'); t.innerHTML=`<i class="bi bi-shield-exclamation me-2"></i>${msg}`; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2100); }
-        document.addEventListener('contextmenu',e=>{ e.preventDefault(); showSecurityToast('Context menu blocked'); });
-        document.addEventListener('keydown',e=>{ if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&e.key==='I')||(e.ctrlKey&&e.key==='U')){ e.preventDefault(); showSecurityToast('DevTools restricted'); } });
-        
-        // login PIN = 12345
+        function initRotatingBackground() {
+            bgContainer.innerHTML = '';
+            const img1 = document.createElement('img');
+            const img2 = document.createElement('img');
+            img1.classList.add('carousel-bg');
+            img2.classList.add('carousel-bg');
+            img1.src = moviePosters[0];
+            img2.src = moviePosters[1];
+            img1.style.opacity = '1';
+            img2.style.opacity = '0';
+            bgContainer.appendChild(img1);
+            bgContainer.appendChild(img2);
+            let activeImg = img1;
+            let inactiveImg = img2;
+            let idx = 1;
+            setInterval(() => {
+                const nextPoster = moviePosters[(idx + 1) % moviePosters.length];
+                inactiveImg.src = nextPoster;
+                inactiveImg.style.opacity = '1';
+                setTimeout(() => { activeImg.style.opacity = '0'; }, 100);
+                [activeImg, inactiveImg] = [inactiveImg, activeImg];
+                idx = (idx + 1) % moviePosters.length;
+            }, 3000);
+        }
+        initRotatingBackground();
+
+        // ----- AUTHENTICATION -----
         const CORRECT_PIN = "12345";
         const loginForm = document.getElementById('loginForm');
         const pwdField = document.getElementById('password');
         const toggleBtn = document.getElementById('togglePassword');
-        toggleBtn.addEventListener('click',()=>{ 
-            let type=pwdField.type==='password'?'text':'password'; 
-            pwdField.type=type; 
+        const loginBtnElem = document.getElementById('loginBtn');
+        const rememberCheck = document.getElementById('rememberMe');
+
+        toggleBtn.addEventListener('click', () => {
+            let type = pwdField.type === 'password' ? 'text' : 'password';
+            pwdField.type = type;
             let icon = toggleBtn.querySelector('i');
             icon.classList.toggle('bi-eye-fill');
             icon.classList.toggle('bi-eye-slash-fill');
         });
-        
-        loginForm.addEventListener('submit', function(e){
+
+        loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            let val = pwdField.value.trim();
-            if(!val){ loginForm.classList.add('shake-animation'); setTimeout(()=>loginForm.classList.remove('shake-animation'),500); return; }
-            if(val !== CORRECT_PIN){ showSecurityToast('Invalid PIN · access revoked'); pwdField.style.borderColor='#f05252'; loginForm.classList.add('shake-animation'); setTimeout(()=>{pwdField.style.borderColor=''; loginForm.classList.remove('shake-animation');},600); return; }
-            let btn=document.getElementById('loginBtn');
-            btn.querySelector('.btn-text').classList.add('d-none');
-            btn.querySelector('.btn-loader').classList.remove('d-none'); btn.disabled=true;
-            setTimeout(()=>{
-                btn.querySelector('.btn-text').classList.remove('d-none');
-                btn.querySelector('.btn-loader').classList.add('d-none'); btn.disabled=false;
-                btn.innerHTML='<i class="bi bi-check-circle-fill me-2"></i>ACCESS GRANTED';
-                btn.style.background='linear-gradient(95deg, #1e6b4c, #2a9d6e)';
-                setTimeout(()=>{ window.location.href='welcome.html'; },1100);
-            },1300);
-        });
-        
-        // SCHEDULER LOGIC (single tap = popup, double tap = editor)
-        const modal = document.getElementById('schedulerModal');
-        const notifIcon = document.getElementById('notifIcon');
-        const closeBtn = document.getElementById('closeIframeBtn');
-        const iframeContent = document.getElementById('iframeContent');
-        const notifCountSpan = document.getElementById('notifCount');
-        const todayPopup = document.getElementById('todayPopup');
-        const popupMsgSpan = document.getElementById('popupMessage');
-        
-        const defaultData = {
-            "BREAD": [{ order: "SATURDAY", receive: "TUESDAY" },{ order: "MONDAY", receive: "THURSDAY" },{ order: "WEDNESDAY", receive: "SUNDAY" }],
-            "VEGETABLES": [{ order: "SATURDAY", receive: "TUESDAY" },{ order: "MONDAY", receive: "THURSDAY" },{ order: "WEDNESDAY", receive: "SUNDAY" }],
-            "FROZEN": [{ order: "MONDAY", receive: "WEDNESDAY" },{ order: "WEDNESDAY", receive: "SATURDAY" }],
-            "ACC": [{ order: "SATURDAY", receive: "MONDAY" },{ order: "TUESDAY", receive: "THURSDAY" }]
-        };
-        let scheduleData = JSON.parse(localStorage.getItem('ordering_schedule_ghost')) || defaultData;
-        const daysOfWeek = ["MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY","SUNDAY"];
-        
-        function saveToLocal(){ localStorage.setItem('ordering_schedule_ghost', JSON.stringify(scheduleData)); updateBadge(); }
-        function updateBadge(){ let total=0; for(let c in scheduleData) total+=scheduleData[c].length; notifCountSpan.innerText=total; if(total===0) notifCountSpan.style.display='none'; else notifCountSpan.style.display='inline-block'; }
-        
-        function renderSchedulerEditor(){
-            let html='';
-            for(let category in scheduleData){
-                html+=`<div class="category-row"><i class="bi bi-folder-symlink me-2"></i>${category}</div>`;
-                scheduleData[category].forEach((item, idx)=>{
-                    html+=`<div style="display:flex; gap:8px; align-items:center; margin-bottom:10px; background:#13212e; padding:8px 12px; border-radius:48px; flex-wrap:wrap;">`;
-                    html+=`<select class="day-select" data-cat="${category}" data-index="${idx}" data-field="order">`;
-                    daysOfWeek.forEach(d=>html+=`<option value="${d}" ${item.order===d?'selected':''}>${d.slice(0,3)}</option>`);
-                    html+=`</select><span style="color:#7d9ec0;">→</span>`;
-                    html+=`<select class="day-select" data-cat="${category}" data-index="${idx}" data-field="receive">`;
-                    daysOfWeek.forEach(d=>html+=`<option value="${d}" ${item.receive===d?'selected':''}>${d.slice(0,3)}</option>`);
-                    html+=`</select><span class="remove-btn" data-cat="${category}" data-index="${idx}"><i class="bi bi-trash3-fill"></i></span></div>`;
-                });
-                html+=`<div class="add-row" data-cat="${category}"><i class="bi bi-plus-circle me-2"></i>Add row (${category})</div>`;
+            let pin = pwdField.value.trim();
+            if (!pin) {
+                loginForm.classList.add('shake-animation');
+                showToast(translations[currentLang].toastEmpty, true);
+                setTimeout(() => loginForm.classList.remove('shake-animation'), 500);
+                return;
             }
-            html+=`<div class="add-row" id="addNewCategory"><i class="bi bi-folder-plus me-2"></i>Add new category</div>`;
-            html+=`<button class="save-all" id="modalSaveBtn"><i class="bi bi-save2 me-2"></i>Commit changes</button>`;
-            iframeContent.innerHTML=html;
-            
-            document.querySelectorAll('.day-select').forEach(sel=>{
-                sel.addEventListener('change',function(){
-                    let cat=this.dataset.cat, idx=this.dataset.index, field=this.dataset.field;
-                    scheduleData[cat][idx][field]=this.value;
-                    saveToLocal();
-                });
-            });
-            document.querySelectorAll('.remove-btn').forEach(btn=>{
-                btn.addEventListener('click',function(){
-                    let cat=this.dataset.cat, idx=this.dataset.index;
-                    scheduleData[cat].splice(idx,1);
-                    if(scheduleData[cat].length===0) delete scheduleData[cat];
-                    saveToLocal();
-                    renderSchedulerEditor();
-                });
-            });
-            document.querySelectorAll('.add-row[data-cat]').forEach(btn=>{
-                btn.addEventListener('click',function(){
-                    let cat=this.dataset.cat;
-                    if(!scheduleData[cat]) scheduleData[cat]=[];
-                    scheduleData[cat].push({order:"MONDAY", receive:"WEDNESDAY"});
-                    saveToLocal();
-                    renderSchedulerEditor();
-                });
-            });
-            document.getElementById('addNewCategory')?.addEventListener('click',()=>{
-                let newCat=prompt("Category name (e.g., DAIRY, MEAT):","SUPPLIES");
-                if(newCat && newCat.trim()){
-                    let key=newCat.trim().toUpperCase();
-                    if(!scheduleData[key]){ scheduleData[key]=[{order:"MONDAY", receive:"WEDNESDAY"}]; saveToLocal(); renderSchedulerEditor(); }
-                    else alert("Category exists");
-                }
-            });
-            document.getElementById('modalSaveBtn')?.addEventListener('click',()=>{ saveToLocal(); let btnM=document.getElementById('modalSaveBtn'); btnM.innerHTML='<i class="bi bi-check2-circle me-2"></i>SAVED'; setTimeout(()=>btnM.innerHTML='<i class="bi bi-save2 me-2"></i>Commit changes',1200); });
-        }
-        
-        function getTodayTasksMessage(){
-            const today = new Date().toLocaleDateString('en-US',{weekday:'long'}).toUpperCase();
-            let orderSet=[], receiveSet=[];
-            for(let cat in scheduleData){
-                scheduleData[cat].forEach(item=>{
-                    if(item.order===today) orderSet.push(cat);
-                    if(item.receive===today) receiveSet.push(cat);
-                });
+            if (pin !== CORRECT_PIN) {
+                pwdField.style.borderColor = '#e50914';
+                loginForm.classList.add('shake-animation');
+                showToast(translations[currentLang].toastInvalid, true);
+                setTimeout(() => { pwdField.style.borderColor = ''; loginForm.classList.remove('shake-animation'); }, 600);
+                return;
             }
-            let msg=`${today} · `;
-            if(orderSet.length) msg+=`📦 ORDER: ${orderSet.join(', ')} `;
-            if(receiveSet.length) msg+=`📎 RECEIVE: ${receiveSet.join(', ')}`;
-            if(!orderSet.length && !receiveSet.length) msg+=`No pending actions`;
-            return msg;
-        }
-        
-        notifIcon.addEventListener('click', (e)=>{
-            e.stopPropagation();
-            popupMsgSpan.innerText = getTodayTasksMessage();
-            todayPopup.style.display = 'flex';
-            setTimeout(()=>{ todayPopup.style.display = 'none'; }, 3800);
+            const btnTextSpan = loginBtnElem.querySelector('.btn-text');
+            const btnLoaderSpan = loginBtnElem.querySelector('.btn-loader');
+            btnTextSpan.classList.add('d-none');
+            btnLoaderSpan.classList.remove('d-none');
+            loginBtnElem.disabled = true;
+            showToast(translations[currentLang].toastGranted, false);
+            setTimeout(() => { window.location.href = 'dashboard.html'; }, 1300);
         });
-        notifIcon.addEventListener('dblclick', ()=>{
-            renderSchedulerEditor();
-            modal.style.display = 'flex';
+
+        // S Logo Dashboard redirect
+        document.getElementById('sLogoDashboard').addEventListener('click', () => {
+            if (confirm(currentLang === 'ar' ? "⚡ الانتقال إلى لوحة تحكم المدير؟" : "⚡ Jump to SADWAP IT Manager Dashboard?")) {
+                window.location.href = 'dashboard.html';
+            } else showToast(currentLang === 'ar' ? "🔐 استخدم رمز PIN أو انقر على S" : "🔐 Use PIN or click S again", false);
         });
-        closeBtn.addEventListener('click',()=>modal.style.display='none');
-        modal.addEventListener('click',(e)=>{ if(e.target===modal) modal.style.display='none'; });
+
+        // ========== SOCIAL LINKS WITH PROVIDED NUMBER & EMAIL ==========
+        // WhatsApp: +966567341924
+        const whatsappLink = document.getElementById('whatsappLink');
+        whatsappLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.open('https://wa.me/966567341924?text=Hello%20SADWAP%20Support%20I%20need%20assistance', '_blank');
+            showToast(translations[currentLang].toastWhatsapp, false);
+        });
         
-        updateBadge();
+        // Gmail: moinranzao2@gmail.com
+        const gmailLink = document.getElementById('gmailLink');
+        gmailLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'mailto:moinranzao2@gmail.com?subject=SADWAP%20Console%20Inquiry&body=Hello%20Team%2C%20I%20would%20like%20to%20request%20support';
+            showToast(translations[currentLang].toastGmail, false);
+        });
+        
+        // LinkedIn placeholder (later will be updated)
+        const linkedinLink = document.getElementById('linkedinLink');
+        linkedinLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showToast(translations[currentLang].toastLinkedin, false);
+            // In future: window.open('https://www.linkedin.com/in/your-profile', '_blank');
+        });
+        
+        // Reset PIN hint
+        document.getElementById('resetHint').addEventListener('click', (e) => {
+            e.preventDefault();
+            showToast(translations[currentLang].toastReset, false);
+        });
+
+        // Security restrictions
+        document.addEventListener('contextmenu', (e) => { e.preventDefault(); showToast(translations[currentLang].toastRightClick, true); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'U')) { e.preventDefault(); showToast(translations[currentLang].toastDevtools, true); } });
+
+        if (localStorage.getItem('trustDevice') === 'true') { rememberCheck.checked = true; pwdField.value = CORRECT_PIN; }
+        rememberCheck.addEventListener('change', (e) => { if (e.target.checked) localStorage.setItem('trustDevice', 'true'); else localStorage.removeItem('trustDevice'); });
+        
+        applyLanguage('en');
     })();
 </script>
 </body>
