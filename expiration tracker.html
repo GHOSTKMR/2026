@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
@@ -8,348 +8,868 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Libraries -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --bg-main: #f0f4f8;
-            --card-bg: #ffffff;
+            --bg-main: #0b1120;
+            --card-bg: #1e293b;
             --sidebar-bg: #0f172a;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --border: #e2e8f0;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
             --accent: #3b82f6;
             --critical: #dc2626;
             --warning: #f97316;
             --safe: #10b981;
         }
-        body.dark {
-            --bg-main: #0b1120;
-            --card-bg: #1e293b;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --border: #334155;
-        }
         body { 
             background: var(--bg-main); 
             color: var(--text-primary); 
-            transition: all 0.2s; 
             font-family: 'Inter', 'Tajawal', sans-serif;
         }
         body.arabic { font-family: 'Tajawal', 'Inter', sans-serif; }
         
-        /* ========== FULLY RESPONSIVE SIDEBAR ========== */
         .sidebar {
             position: fixed; top: 0; left: 0; height: 100vh; width: 280px;
             background: var(--sidebar-bg); z-index: 1050;
             transition: transform 0.3s ease-in-out; 
-            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.3);
             overflow-y: auto;
+            border-right: 1px solid var(--border);
         }
-        body.arabic .sidebar { left: auto; right: 0; transform: translateX(100%); }
+        body.arabic .sidebar { left: auto; right: 0; transform: translateX(100%); border-right: none; border-left: 1px solid var(--border); }
         body.arabic .sidebar.show { transform: translateX(0) !important; }
         .sidebar { transform: translateX(-100%); }
         .sidebar.show { transform: translateX(0) !important; }
         
-        /* Main content responsive */
         .main-content { 
             margin-left: 0; 
             padding: 16px; 
             transition: 0.3s; 
             width: 100%;
+            min-height: 100vh;
         }
         @media (min-width: 992px) { 
             .sidebar { transform: translateX(0) !important; }
             body.arabic .sidebar { transform: translateX(0) !important; }
-            .main-content { margin-left: 280px; padding: 24px 28px; }
+            .main-content { margin-left: 280px; padding: 24px 32px; }
             body.arabic .main-content { margin-left: 0; margin-right: 280px; }
         }
         @media (max-width: 991px) {
             .main-content { margin-left: 0 !important; margin-right: 0 !important; }
         }
         
-        /* Sidebar nav */
-        .sidebar .logo-area { padding: 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sidebar .logo-area h2 { color: white; font-weight: 700; font-size: 1.3rem; }
-        .sidebar .nav-link { color: #cbd5e1; padding: 10px 20px; margin: 4px 10px; border-radius: 12px; transition: 0.2s; font-weight: 500; font-size: 0.9rem; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background: var(--accent); color: white; }
+        .sidebar .logo-area { 
+            padding: 24px 20px; 
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, transparent 100%);
+        }
+        .sidebar .logo-area h2 { 
+            color: white; font-weight: 700; font-size: 1.3rem;
+            background: linear-gradient(135deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .sidebar .nav-link { 
+            color: var(--text-secondary); padding: 12px 20px; margin: 6px 12px; 
+            border-radius: 12px; transition: all 0.2s; font-weight: 500; font-size: 0.9rem;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { 
+            background: var(--accent); color: white; transform: translateX(4px);
+        }
+        body.arabic .sidebar .nav-link:hover, body.arabic .sidebar .nav-link.active {
+            transform: translateX(-4px);
+        }
         
-        /* Responsive Cards */
-        .stat-card { background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border); padding: 1rem; transition: all 0.2s; height: 100%; }
-        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px -12px rgba(0,0,0,0.2); }
-        .stat-card h2 { font-size: 1.8rem; margin-top: 8px; }
-        @media (max-width: 576px) { .stat-card h2 { font-size: 1.4rem; } .stat-card { padding: 0.8rem; } }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.3);
+        }
+        .stat-card .stat-icon {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            font-size: 2rem;
+            opacity: 0.2;
+        }
+        body.arabic .stat-card .stat-icon { right: auto; left: 16px; }
+        .stat-card h2 { 
+            font-size: 2rem; margin-top: 8px; font-weight: 700;
+            background: linear-gradient(135deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .stat-card small { color: var(--text-secondary); font-size: 0.75rem; }
         
-        /* BLINK CRITICAL ROW */
-        @keyframes blinkRed { 0% { background-color: rgba(220,38,38,0.1); } 50% { background-color: rgba(220,38,38,0.6); } 100% { background-color: rgba(220,38,38,0.1); } }
-        .blink-critical { animation: blinkRed 0.6s infinite; border-left: 4px solid #dc2626; }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .stat-card { padding: 14px; }
+            .stat-card h2 { font-size: 1.5rem; }
+        }
         
-        /* Sound wave animation */
-        .critical-sound-wave { display: inline-flex; align-items: center; gap: 3px; margin-left: 6px; }
-        .critical-sound-wave span { width: 3px; height: 10px; background: #dc2626; display: inline-block; animation: soundWave 0.4s infinite alternate; }
-        .critical-sound-wave span:nth-child(2) { animation-delay: 0.15s; height: 16px; }
-        .critical-sound-wave span:nth-child(3) { animation-delay: 0.3s; height: 12px; }
-        @keyframes soundWave { from { height: 5px; } to { height: 18px; } }
+        .quick-stats-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        .quick-stats-card h5 { font-size: 0.9rem; margin-bottom: 16px; color: var(--text-secondary); }
+        .stat-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--bg-main);
+            border-radius: 40px;
+            margin-right: 12px;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+        }
         
-        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 40px; font-size: 0.65rem; font-weight: 700; white-space: nowrap; }
+        @keyframes blinkRed { 
+            0% { background-color: rgba(220,38,38,0.1); } 
+            50% { background-color: rgba(220,38,38,0.4); } 
+            100% { background-color: rgba(220,38,38,0.1); } 
+        }
+        .blink-critical { animation: blinkRed 0.8s infinite; border-left: 3px solid #dc2626; }
+        
+        .status-badge { 
+            display: inline-block; padding: 4px 12px; border-radius: 40px; 
+            font-size: 0.7rem; font-weight: 700; white-space: nowrap; 
+        }
         .badge-critical { background: #dc2626; color: white; animation: pulse 0.8s infinite; }
         .badge-red { background: #ef4444; color: white; }
         .badge-orange { background: #f59e0b; color: #1e293b; }
         .badge-green { background: #10b981; color: white; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; transform: scale(0.98); } 100% { opacity: 1; } }
         
-        /* Responsive Filters */
-        .filter-chip { background: var(--bg-main); border: 1px solid var(--border); border-radius: 40px; padding: 6px 14px; cursor: pointer; font-weight: 500; transition: 0.1s; font-size: 0.8rem; white-space: nowrap; }
+        .filter-chip { 
+            background: var(--bg-main); border: 1px solid var(--border); border-radius: 40px; 
+            padding: 6px 16px; cursor: pointer; font-weight: 500; transition: 0.1s; 
+            font-size: 0.75rem; white-space: nowrap; color: var(--text-secondary);
+        }
         .filter-chip.active { background: var(--accent); color: white; border-color: var(--accent); }
         
-        /* Responsive Table */
-        .table-responsive-custom { overflow-x: auto; border-radius: 20px; background: var(--card-bg); border: 1px solid var(--border); -webkit-overflow-scrolling: touch; }
-        .product-table { width: 100%; min-width: 600px; }
-        .product-table th, .product-table td { padding: 12px 10px; vertical-align: middle; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
-        @media (max-width: 768px) { .product-table th, .product-table td { padding: 8px 8px; font-size: 0.75rem; } }
+        .table-wrapper { 
+            overflow-x: auto; border-radius: 20px; background: var(--card-bg); border: 1px solid var(--border); 
+        }
+        .product-table { width: 100%; min-width: 650px; }
+        .product-table th, .product-table td { 
+            padding: 12px 12px; vertical-align: middle; border-bottom: 1px solid var(--border); font-size: 0.8rem; 
+        }
+        .product-table th { color: var(--text-secondary); font-weight: 600; background: rgba(0,0,0,0.2); }
+        @media (max-width: 768px) { .product-table th, .product-table td { padding: 8px 8px; font-size: 0.7rem; } }
         
-        /* Toast */
-        .toast-custom { position: fixed; bottom: 20px; right: 20px; background: var(--card-bg); border-left: 5px solid var(--accent); border-radius: 16px; padding: 10px 18px; z-index: 1200; display: none; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); font-size: 0.85rem; }
-        body.arabic .toast-custom { right: auto; left: 20px; border-left: none; border-right: 5px solid var(--accent); }
+        .toast-custom { 
+            position: fixed; bottom: 20px; right: 20px; background: var(--card-bg); 
+            border-left: 4px solid var(--accent); border-radius: 12px; padding: 12px 20px; 
+            z-index: 1200; display: none; align-items: center; gap: 10px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3); font-size: 0.8rem; 
+        }
+        body.arabic .toast-custom { right: auto; left: 20px; border-left: none; border-right: 4px solid var(--accent); }
         
-        /* ALERT POPUP - Responsive */
         .alert-popup { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 90%; max-width: 500px; background: var(--card-bg); border-radius: 28px; 
-            z-index: 2000; padding: 20px; box-shadow: 0 30px 50px rgba(0,0,0,0.5); 
-            text-align: center; border-top: 6px solid #dc2626; display: none; 
+            width: 90%; max-width: 480px; background: var(--card-bg); border-radius: 24px; 
+            z-index: 2000; padding: 24px; box-shadow: 0 30px 50px rgba(0,0,0,0.5); 
+            text-align: center; border-top: 5px solid #dc2626; display: none; 
             animation: modalPop 0.3s ease-out;
-            max-height: 90vh;
-            overflow-y: auto;
         }
-        @media (max-width: 480px) { .alert-popup { padding: 16px; width: 95%; } .alert-popup h3 { font-size: 1.2rem; } }
+        @media (max-width: 480px) { .alert-popup { padding: 16px; width: 95%; } .alert-popup h3 { font-size: 1.1rem; } }
         @keyframes modalPop { from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
-        .alert-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1999; display: none; animation: fadeIn 0.2s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .alert-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1999; display: none; }
         
-        /* Training Cards - Responsive */
-        .training-card { background: linear-gradient(145deg, var(--card-bg), var(--bg-main)); border-radius: 20px; padding: 16px; border: 1px solid var(--border); height: 100%; }
-        .training-card h4 { font-size: 1.1rem; margin-bottom: 12px; }
-        .training-card p { font-size: 0.85rem; }
-        .ratio-16x9 { aspect-ratio: 16/9; width: 100%; }
-        .ratio-16x9 iframe { width: 100%; height: 100%; border-radius: 12px; }
-        
-        /* Navbar responsive */
-        .navbar-brand-custom { display: flex; align-items: center; gap: 10px; }
-        @media (max-width: 576px) { .btn-group .btn { padding: 4px 8px; font-size: 0.7rem; } .search-input { width: 150px !important; } }
-        
-        /* Search input */
-        #searchInput { width: auto; min-width: 150px; max-width: 250px; }
-        @media (max-width: 768px) { #searchInput { width: 140px !important; } }
-        
-        /* Action buttons */
+        .btn-sm-custom { padding: 6px 14px; font-size: 0.75rem; border-radius: 10px; }
         .action-btn-group { display: flex; gap: 5px; flex-wrap: wrap; }
-        .btn-sm { padding: 4px 8px; font-size: 0.7rem; }
         
-        /* Modal responsive */
-        .modal-content { border-radius: 24px; }
-        @media (max-width: 576px) { .modal-body { padding: 16px; } }
+        .menu-toggle-btn { 
+            position: fixed; top: 16px; left: 16px; z-index: 1060; background: var(--accent); 
+            color: white; border: none; border-radius: 12px; width: 44px; height: 44px;
+            display: none; align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+        }
+        @media (max-width: 991px) { 
+            .menu-toggle-btn { display: flex; } 
+            body.arabic .menu-toggle-btn { left: auto; right: 16px; } 
+            .main-content { padding-top: 70px; } 
+        }
         
-        /* Menu toggle button */
-        .menu-toggle-btn { position: fixed; top: 12px; left: 12px; z-index: 1060; background: var(--accent); color: white; border: none; border-radius: 12px; padding: 8px 12px; display: none; }
-        @media (max-width: 991px) { .menu-toggle-btn { display: block; } body.arabic .menu-toggle-btn { left: auto; right: 12px; } .main-content { padding-top: 60px; } }
+        .form-control, .form-select {
+            background: var(--bg-main); border: 1px solid var(--border);
+            color: var(--text-primary); border-radius: 12px; padding: 10px 14px;
+        }
+        .form-control:focus, .form-select:focus {
+            background: var(--bg-main); border-color: var(--accent);
+            color: var(--text-primary); box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+        }
+        .modal-content { background: var(--card-bg); border-radius: 20px; }
+        .modal-header, .modal-footer { border-color: var(--border); }
+        .btn-close-white { filter: invert(1); }
         
-        /* Scrollbar */
+        #searchInput { width: auto; min-width: 200px; max-width: 250px; }
+        @media (max-width: 768px) { #searchInput { width: 160px !important; min-width: 120px; } }
+        
+        .no-results-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+        .no-results-message i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: var(--border); border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     </style>
 </head>
 <body>
-<button class="menu-toggle-btn" id="menuToggleBtn"><i class="fas fa-bars"></i> </button>
+<button class="menu-toggle-btn" id="menuToggleBtn"><i class="fas fa-bars"></i></button>
 
 <div class="alert-overlay" id="alertOverlay"></div>
 <div id="warningPopup" class="alert-popup">
-    <i class="fas fa-bell" style="font-size: 2.5rem; color: #dc2626;"></i>
-    <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: #f59e0b; margin-left: 8px;"></i>
-    <h3 class="mt-2 fw-bold" id="popupTitle" style="font-size: 1.3rem;">⚠️ تنبيه انتهاء صلاحية حرج ⚠️</h3>
-    <p id="popupMsg" class="mt-2" style="font-weight: 600;">توجد منتجات تنتهي خلال 5 أيام!</p>
-    <div class="alert alert-danger mt-2 py-2" id="criticalCountDisplay" style="font-size: 0.85rem;"></div>
-    <div id="criticalListPopup" style="max-height: 180px; overflow-y: auto; text-align: left; background: var(--bg-main); border-radius: 16px; padding: 12px; margin: 12px 0; font-size: 0.8rem;"></div>
-    <button class="btn btn-danger btn-lg px-4 py-2" id="closeAlertBtn" style="font-weight: bold; border-radius: 50px; font-size: 0.9rem;">
-        <i class="fas fa-stop-circle"></i> <span id="closeBtnText">إغلاق وإيقاف الإنذار الصوتي</span>
-    </button>
-    <div class="mt-2 text-muted small"><i class="fas fa-volume-up"></i> <span id="soundAlertMsg">الإنذار الصوتي مستمر حتى إغلاق النافذة</span></div>
+    <i class="fas fa-bell" style="font-size: 2rem; color: #dc2626;"></i>
+    <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; color: #f59e0b; margin-left: 8px;"></i>
+    <h3 class="mt-2 fw-bold" id="popupTitle">⚠️ تنبيه انتهاء صلاحية حرج ⚠️</h3>
+    <p id="popupMsg" class="mt-2">توجد منتجات تنتهي خلال 5 أيام!</p>
+    <div id="criticalListPopup" style="max-height: 200px; overflow-y: auto; margin: 16px 0; text-align: left;"></div>
+    <button class="btn btn-danger w-100 py-2" id="closeAlertBtn">إغلاق وإيقاف الإنذار الصوتي</button>
 </div>
 
 <div class="sidebar" id="sidebar">
-    <div class="logo-area text-center text-sm-start">
-        <h2><i class="fas fa-boxes me-2"></i><span id="sidebarTitle">InventoryGuard</span></h2>
-        <p class="text-white-50 small" id="sidebarSub">نظام تتبع الصلاحية مع إنذار</p>
+    <div class="logo-area text-center">
+        <h2><i class="fas fa-shield-alt me-2"></i>InventoryGuard</h2>
+        <p class="text-white-50 small mt-1" id="sidebarSub">نظام تتبع الصلاحية</p>
     </div>
     <div class="nav flex-column mt-2">
-        <a href="#" class="nav-link active" data-section="dashboard"><i class="fas fa-tachometer-alt me-2"></i> <span data-i18n="navDashboard">لوحة التحكم</span></a>
-        <a href="#" class="nav-link" data-section="inventory"><i class="fas fa-clipboard-list me-2"></i> <span data-i18n="navInventory">المخزون</span></a>
-        <a href="#" class="nav-link" data-section="training"><i class="fas fa-video me-2"></i> <span data-i18n="navTraining">التدريب والسلامة</span></a>
-        <a href="#" class="nav-link" id="darkSidebarToggle"><i class="fas fa-moon me-2"></i> <span data-i18n="darkMode">الوضع المظلم</span></a>
+        <a href="#" class="nav-link active" data-section="dashboard" id="navDashboard"><i class="fas fa-tachometer-alt me-2"></i> لوحة التحكم</a>
+        <a href="#" class="nav-link" data-section="inventory" id="navInventory"><i class="fas fa-clipboard-list me-2"></i> المخزون</a>
     </div>
 </div>
 
 <div class="main-content">
-    <nav class="navbar navbar-expand-lg mb-3 mb-md-4">
-        <div class="container-fluid p-0 flex-wrap gap-2">
-            <div class="d-flex ms-auto gap-2 flex-wrap justify-content-end">
-                <button class="btn btn-outline-danger rounded-3" id="muteSoundBtn" style="position: relative;">
-                    <i class="fas fa-bell"></i> <span id="muteText">كتم الصوت</span>
-                    <span id="soundWaveIndicator" style="display: none; position: absolute; top: -5px; right: -5px; background: red; border-radius: 50%; width: 10px; height: 10px;"></span>
-                </button>
-                <button class="btn btn-outline-primary rounded-3" id="langToggleBtn"><i class="fas fa-globe"></i> <span id="langText">EN</span></button>
-                <button class="btn btn-primary rounded-3" data-bs-toggle="modal" data-bs-target="#addProductModal"><i class="fas fa-plus-circle"></i> <span data-i18n="addProductBtn">إضافة منتج</span></button>
-            </div>
-        </div>
-    </nav>
+    <div class="d-flex justify-content-end gap-2 mb-4 flex-wrap">
+        <button class="btn btn-outline-danger btn-sm-custom" id="muteSoundBtn">
+            <i class="fas fa-bell-slash"></i> <span id="muteText">كتم الصوت</span>
+        </button>
+        <button class="btn btn-outline-primary btn-sm-custom" id="langToggleBtn">
+            <i class="fas fa-globe"></i> <span id="langText">EN</span>
+        </button>
+        <button class="btn btn-primary btn-sm-custom" data-bs-toggle="modal" data-bs-target="#addProductModal" id="addProductBtn">
+            <i class="fas fa-plus-circle"></i> <span id="addBtnText">إضافة منتج</span>
+        </button>
+    </div>
     
     <div id="dashboardSection">
-        <div class="row g-3 g-md-4 mb-4">
-            <div class="col-6 col-md-3"><div class="stat-card"><div class="d-flex justify-content-between"><span data-i18n="totalProducts">إجمالي المنتجات</span><i class="fas fa-boxes fa-1x opacity-25"></i></div><h2 class="mt-1" id="totalCountStat">0</h2><small data-i18n="activeItems">عناصر نشطة</small></div></div>
-            <div class="col-6 col-md-3"><div class="stat-card"><span data-i18n="safeProducts">منتجات آمنة</span><i class="fas fa-check-circle float-end"></i><h2 class="mt-1" id="safeCount">0</h2></div></div>
-            <div class="col-6 col-md-3"><div class="stat-card"><span data-i18n="nearExpiry">قاربت الانتهاء</span><h2 class="mt-1" id="nearExpiryCount">0</h2></div></div>
-            <div class="col-6 col-md-3"><div class="stat-card"><span data-i18n="expiredProducts">منتهية الصلاحية</span><h2 class="mt-1" id="expiredCountStat">0</h2></div></div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-boxes"></i></div><small id="totalLabel">إجمالي المنتجات</small><h2 id="totalCountStat">0</h2></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><small id="safeLabel">منتجات آمنة</small><h2 id="safeCount">0</h2></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-hourglass-half"></i></div><small id="nearExpiryLabel">قاربت الانتهاء</small><h2 id="nearExpiryCount">0</h2></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-skull"></i></div><small id="expiredLabel">منتهية الصلاحية</small><h2 id="expiredCountStat">0</h2></div>
         </div>
-        <div class="row g-3"><div class="col-12"><div class="stat-card"><h5><i class="fas fa-chart-line"></i> <span data-i18n="quickStats">إحصائيات سريعة</span></h5><p class="mb-0"><span data-i18n="criticalCount">حرج (≤5 أيام):</span> <strong id="criticalStatBadge" class="text-danger">0</strong> | <span data-i18n="warningCount">تنتهي قريباً 6-10 أيام:</span> <strong id="warningStat">0</strong></p></div></div></div>
+        <div class="quick-stats-card">
+            <h5><i class="fas fa-chart-line me-2"></i> <span id="quickStatsTitle">إحصائيات سريعة</span></h5>
+            <div>
+                <span class="stat-badge"><span id="criticalLabel">🔴 حرج (≤5 أيام):</span> <strong id="criticalStatBadge" class="text-danger">0</strong></span>
+                <span class="stat-badge"><span id="warningLabel">🟠 تحذير (6-10 أيام):</span> <strong id="warningStat">0</strong></span>
+            </div>
+        </div>
     </div>
     
     <div id="inventorySection" style="display: none;">
         <div class="d-flex flex-wrap gap-2 mb-3 align-items-center justify-content-between">
             <div class="d-flex gap-2 flex-wrap" id="filterContainer">
-                <button class="filter-chip active" data-filter="all" data-i18n="allFilter">الكل</button>
-                <button class="filter-chip" data-filter="safe" data-i18n="safeFilter">آمن</button>
-                <button class="filter-chip" data-filter="warning" data-i18n="warningFilter">تحذير</button>
-                <button class="filter-chip" data-filter="critical" data-i18n="criticalFilter">حرج</button>
-                <button class="filter-chip" data-filter="expired" data-i18n="expiredFilter">منتهي</button>
+                <button class="filter-chip active" data-filter="all" id="filterAll">الكل</button>
+                <button class="filter-chip" data-filter="safe" id="filterSafe">آمن</button>
+                <button class="filter-chip" data-filter="warning" id="filterWarning">تحذير</button>
+                <button class="filter-chip" data-filter="critical" id="filterCritical">حرج</button>
+                <button class="filter-chip" data-filter="expired" id="filterExpired">منتهي</button>
             </div>
-            <input type="text" id="searchInput" class="form-control" style="width: auto; min-width: 160px;" placeholder="بحث..." data-i18n-placeholder="searchPlaceholder">
-            <div class="btn-group btn-group-sm flex-wrap">
-                <button id="exportExcelBtn" class="btn btn-success"><i class="fas fa-file-excel"></i> <span data-i18n="excelBtn">Excel</span></button>
-                <button id="exportPdfBtn" class="btn btn-danger"><i class="fas fa-file-pdf"></i> <span data-i18n="pdfBtn">PDF</span></button>
-                <button id="printBtn" class="btn btn-secondary"><i class="fas fa-print"></i> <span data-i18n="printBtn">طباعة</span></button>
+            <input type="text" id="searchInput" class="form-control" placeholder="بحث...">
+            <div class="btn-group btn-group-sm">
+                <button id="exportExcelBtn" class="btn btn-success"><i class="fas fa-file-excel"></i> Excel</button>
+                <button id="exportPdfBtn" class="btn btn-danger"><i class="fas fa-file-pdf"></i> PDF</button>
+                <button id="printBtn" class="btn btn-secondary"><i class="fas fa-print"></i> طباعة</button>
             </div>
         </div>
-        <div class="table-responsive-custom">
+        <div class="table-wrapper">
             <table class="product-table">
-                <thead><tr><th data-i18n="productName">اسم المنتج</th><th data-i18n="category">الفئة</th><th data-i18n="batch">رقم الدفعة</th><th data-i18n="expiryDate">تاريخ الانتهاء</th><th data-i18n="daysLeft">الأيام</th><th data-i18n="statusCol">الحالة</th><th data-i18n="notesCol">ملاحظات</th><th data-i18n="actionsCol">إجراءات</th></thead>
+                <thead>
+                    <tr><th id="thProduct">المنتج</th><th id="thCategory">الفئة</th><th id="thBatch">رقم الدفعة</th><th id="thExpiry">تاريخ الانتهاء</th><th id="thDays">الأيام</th><th id="thStatus">الحالة</th><th id="thNotes">ملاحظات</th><th id="thActions">إجراءات</th></thead>
                 <tbody id="inventoryTableBody"></tbody>
-            }</table>
+            </table>
         </div>
-        <div class="mt-3 text-end"><button class="btn btn-danger btn-sm" id="deleteAllBtn"><i class="fas fa-trash-alt"></i> <span data-i18n="deleteAllBtn">حذف الكل</span></button></div>
-    </div>
-    
-    <div id="trainingSection" style="display: none;">
-        <div class="row g-3">
-            <div class="col-md-6"><div class="training-card"><h4><i class="fas fa-chalkboard-user"></i> <span data-i18n="fifoTitle">FIFO / LIFO</span></h4><p data-i18n="fifoDesc">FIFO (First In, First Out): استخدام أقدم المخزون أولاً. قم بالتدوير بناءً على تاريخ الصلاحية.</p><div class="alert alert-info py-2">✅ <span data-i18n="fifoTip">FIFO يقلل الهدر</span></div></div></div>
-            <div class="col-md-6"><div class="training-card"><h4><i class="fas fa-database"></i> <span data-i18n="haccpTitle">مبادئ الهاسب</span></h4><p data-i18n="haccpDesc">تحليل المخاطر ونقاط التحكم الحرجة – مراقبة درجة الحرارة، التخزين، تواريخ الصلاحية لمنع مخاطر سلامة الغذاء.</p></div></div>
-            <div class="col-12"><div class="training-card"><h4><i class="fas fa-play-circle"></i> <span data-i18n="safetyTitle">أساسيات سلامة الغذاء</span></h4><div class="ratio-16x9"><iframe src="https://ghostkmr.github.io/2026/expvideo.mp4" title="Food Safety Training" allowfullscreen style="width:100%; height:100%; border-radius:12px;"></iframe></div><p class="mt-2" data-i18n="safetyDesc">احترم تواريخ الانتهاء، وتجنب التلوث المتبادل، ونفذ دوران المخزون.</p></div></div>
+        <div class="mt-3 text-end">
+            <button class="btn btn-danger btn-sm" id="deleteAllBtn"><i class="fas fa-trash-alt"></i> <span id="deleteAllText">حذف الكل</span></button>
         </div>
     </div>
 </div>
 
-<div id="toastMsg" class="toast-custom"><i class="fas fa-bell"></i> <span id="toastText"></span></div>
+<div id="toastMsg" class="toast-custom"><i class="fas fa-bell me-2"></i> <span id="toastText"></span></div>
 
-<!-- Modals -->
-<div class="modal fade" id="addProductModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="fas fa-plus"></i> <span data-i18n="addProductTitle">إضافة منتج جديد</span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="text" id="prodName" class="form-control mb-2" placeholder="اسم المنتج"><select id="prodCategory" class="form-control mb-2"><option>ألبان</option><option>لحوم</option><option>خضروات</option><option>مخبوزات</option><option>أخرى</option></select><input type="text" id="prodBatch" class="form-control mb-2" placeholder="رقم الدفعة"><label>تاريخ الانتهاء (DD/MM/YYYY)</label><input type="text" id="prodExpiry" class="form-control mb-2" placeholder="DD/MM/YYYY"><textarea id="prodNotes" class="form-control" rows="2" placeholder="ملاحظات..."></textarea></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal"><span data-i18n="cancelBtn">إلغاء</span></button><button class="btn btn-primary" id="saveProductBtn"><span data-i18n="saveBtn">حفظ</span></button></div></div></div></div>
-<div class="modal fade" id="editModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5><span data-i18n="editTitle">تعديل المنتج</span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input id="editId" type="hidden"><input id="editName" class="form-control mb-2"><input id="editBatch" class="form-control mb-2"><input id="editExpiry" class="form-control mb-2" placeholder="DD/MM/YYYY"><textarea id="editNotes" class="form-control"></textarea></div><div class="modal-footer"><button class="btn btn-primary" id="confirmEditBtn"><span data-i18n="updateBtn">تحديث</span></button></div></div></div></div>
+<div class="modal fade" id="addProductModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="modalTitle"><i class="fas fa-plus-circle me-2"></i>إضافة منتج جديد</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="prodName" class="form-control mb-3" placeholder="اسم المنتج">
+                <select id="prodCategory" class="form-select mb-3"><option id="catDairy">ألبان</option><option id="catMeat">لحوم</option><option id="catVeg">خضروات</option><option id="catBakery">مخبوزات</option><option id="catOther">أخرى</option></select>
+                <input type="text" id="prodBatch" class="form-control mb-3" placeholder="رقم الدفعة">
+                <label class="small text-secondary mb-1" id="expiryLabelText">تاريخ الانتهاء (DD/MM/YYYY)</label>
+                <input type="text" id="prodExpiry" class="form-control mb-3" placeholder="مثال: 31/12/2024">
+                <textarea id="prodNotes" class="form-control" rows="2" placeholder="ملاحظات..."></textarea>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button class="btn btn-secondary" data-bs-dismiss="modal" id="cancelBtn">إلغاء</button>
+                <button class="btn btn-primary" id="saveProductBtn">حفظ المنتج</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-secondary">
+                <h5 id="editTitle">تعديل المنتج</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input id="editId" type="hidden">
+                <input id="editName" class="form-control mb-3">
+                <input id="editBatch" class="form-control mb-3">
+                <input id="editExpiry" class="form-control mb-3" placeholder="DD/MM/YYYY">
+                <textarea id="editNotes" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button class="btn btn-primary" id="confirmEditBtn">تحديث</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     let inventory = [];
-    let currentLang = 'en';
+    let currentLang = 'ar';
     let soundMuted = false;
     let alertActive = false;
     let soundLoopInterval = null;
-    let currentFilter = 'all', searchQuery = '';
+    let currentFilter = 'all';
+    let searchQuery = '';
     let currentSection = 'dashboard';
     let audioCtx = null;
     
     const translations = {
-        en: { navDashboard: "Dashboard", navInventory: "Inventory", navTraining: "Training", darkMode: "Dark Mode", addProductBtn: "Add", totalProducts: "Total", activeItems: "active", safeProducts: "Safe", nearExpiry: "Near Expiry", expiredProducts: "Expired", quickStats: "Quick Stats", criticalCount: "Critical (≤5d)", warningCount: "Expiring 6-10d", allFilter: "All", safeFilter: "Safe", warningFilter: "Warning", criticalFilter: "Critical", expiredFilter: "Expired", searchPlaceholder: "Search...", excelBtn: "Excel", pdfBtn: "PDF", printBtn: "Print", productName: "Product", category: "Category", batch: "Batch", expiryDate: "Expiry", daysLeft: "Days", statusCol: "Status", notesCol: "Notes", actionsCol: "Actions", deleteAllBtn: "Delete All", addProductTitle: "Add Product", cancelBtn: "Cancel", saveBtn: "Save", editTitle: "Edit", updateBtn: "Update", fifoTitle: "FIFO / LIFO", fifoDesc: "FIFO: First In First Out - use oldest stock first.", fifoTip: "FIFO reduces waste", haccpTitle: "HACCP", haccpDesc: "Hazard Analysis Critical Control Points.", safetyTitle: "Food Safety", safetyDesc: "Respect expiry dates, avoid cross-contamination." },
-        ar: { navDashboard: "لوحة التحكم", navInventory: "المخزون", navTraining: "التدريب", darkMode: "الوضع المظلم", addProductBtn: "إضافة", totalProducts: "الإجمالي", activeItems: "نشطة", safeProducts: "آمنة", nearExpiry: "قاربت", expiredProducts: "منتهية", quickStats: "إحصائيات", criticalCount: "حرج (≤5ي)", warningCount: "تنتهي 6-10ي", allFilter: "الكل", safeFilter: "آمن", warningFilter: "تحذير", criticalFilter: "حرج", expiredFilter: "منتهي", searchPlaceholder: "بحث...", excelBtn: "إكسل", pdfBtn: "PDF", printBtn: "طباعة", productName: "المنتج", category: "الفئة", batch: "الدفعة", expiryDate: "التاريخ", daysLeft: "الأيام", statusCol: "الحالة", notesCol: "ملاحظات", actionsCol: "إجراءات", deleteAllBtn: "حذف الكل", addProductTitle: "إضافة منتج", cancelBtn: "إلغاء", saveBtn: "حفظ", editTitle: "تعديل", updateBtn: "تحديث", fifoTitle: "FIFO / LIFO", fifoDesc: "FIFO: الوارد أولاً يصرف أولاً.", fifoTip: "FIFO يقلل الهدر", haccpTitle: "الهاسب", haccpDesc: "تحليل المخاطر ونقاط التحكم الحرجة.", safetyTitle: "سلامة الغذاء", safetyDesc: "احترم تواريخ الانتهاء، وتجنب التلوث." }
+        ar: {
+            sidebarSub: "نظام تتبع الصلاحية", navDashboard: "لوحة التحكم", navInventory: "المخزون",
+            muteText: "كتم الصوت", unmuteText: "تشغيل", addBtnText: "إضافة منتج",
+            totalLabel: "إجمالي المنتجات", safeLabel: "منتجات آمنة", nearExpiryLabel: "قاربت الانتهاء", expiredLabel: "منتهية الصلاحية",
+            quickStatsTitle: "إحصائيات سريعة", criticalLabel: "🔴 حرج (≤5 أيام):", warningLabel: "🟠 تحذير (6-10 أيام):",
+            filterAll: "الكل", filterSafe: "آمن", filterWarning: "تحذير", filterCritical: "حرج", filterExpired: "منتهي",
+            searchPlaceholder: "بحث...", thProduct: "المنتج", thCategory: "الفئة", thBatch: "رقم الدفعة",
+            thExpiry: "تاريخ الانتهاء", thDays: "الأيام", thStatus: "الحالة", thNotes: "ملاحظات", thActions: "إجراءات",
+            excelBtn: "Excel", pdfBtn: "PDF", printBtn: "طباعة", deleteAllText: "حذف الكل",
+            modalTitle: "إضافة منتج جديد", prodNamePlaceholder: "اسم المنتج", catDairy: "ألبان", catMeat: "لحوم",
+            catVeg: "خضروات", catBakery: "مخبوزات", catOther: "أخرى", batchPlaceholder: "رقم الدفعة",
+            expiryLabelText: "تاريخ الانتهاء (DD/MM/YYYY)", notesPlaceholder: "ملاحظات...",
+            cancelBtn: "إلغاء", saveBtn: "حفظ المنتج", editTitle: "تعديل المنتج", updateBtn: "تحديث",
+            statusExpired: "منتهي", statusCritical: "حرج", statusRed: "تحذير", statusWarning: "تنبيه", statusSafe: "آمن",
+            popupTitle: "⚠️ تنبيه انتهاء صلاحية حرج ⚠️", popupMsg: "توجد منتجات تنتهي خلال 5 أيام!", closeAlertBtn: "إغلاق وإيقاف الإنذار الصوتي",
+            toastAdded: "تمت الإضافة", toastDeleted: "تم الحذف", toastUpdated: "تم التحديث", toastDeletedAll: "تم حذف الكل",
+            toastExported: "تم التصدير", toastPDFSaved: "تم حفظ PDF", toastInvalidDate: "تاريخ غير صالح (DD/MM/YYYY)",
+            toastEnterName: "الرجاء إدخال اسم المنتج", confirmDelete: "حذف المنتج؟", confirmDeleteAll: "حذف جميع المنتجات؟",
+            noResultsTitle: "لا توجد نتائج", noResultsMessage: "لا يوجد منتج باسم \"{query}\" في القائمة", noResultsDefault: "لا توجد منتجات تطابق البحث"
+        },
+        en: {
+            sidebarSub: "Expiry Tracking System", navDashboard: "Dashboard", navInventory: "Inventory",
+            muteText: "Mute", unmuteText: "Unmute", addBtnText: "Add Product",
+            totalLabel: "Total Products", safeLabel: "Safe Products", nearExpiryLabel: "Near Expiry", expiredLabel: "Expired",
+            quickStatsTitle: "Quick Statistics", criticalLabel: "🔴 Critical (≤5 days):", warningLabel: "🟠 Warning (6-10 days):",
+            filterAll: "All", filterSafe: "Safe", filterWarning: "Warning", filterCritical: "Critical", filterExpired: "Expired",
+            searchPlaceholder: "Search...", thProduct: "Product", thCategory: "Category", thBatch: "Batch",
+            thExpiry: "Expiry Date", thDays: "Days", thStatus: "Status", thNotes: "Notes", thActions: "Actions",
+            excelBtn: "Excel", pdfBtn: "PDF", printBtn: "Print", deleteAllText: "Delete All",
+            modalTitle: "Add New Product", prodNamePlaceholder: "Product Name", catDairy: "Dairy", catMeat: "Meat",
+            catVeg: "Vegetables", catBakery: "Bakery", catOther: "Other", batchPlaceholder: "Batch Number",
+            expiryLabelText: "Expiry Date (DD/MM/YYYY)", notesPlaceholder: "Notes...",
+            cancelBtn: "Cancel", saveBtn: "Save Product", editTitle: "Edit Product", updateBtn: "Update",
+            statusExpired: "Expired", statusCritical: "CRITICAL", statusRed: "RED", statusWarning: "Warning", statusSafe: "Safe",
+            popupTitle: "⚠️ CRITICAL EXPIRY ALERT ⚠️", popupMsg: "Products expiring within 5 days!", closeAlertBtn: "Close & Stop Alarm",
+            toastAdded: "Added", toastDeleted: "Deleted", toastUpdated: "Updated", toastDeletedAll: "All deleted",
+            toastExported: "Exported", toastPDFSaved: "PDF saved", toastInvalidDate: "Invalid date (DD/MM/YYYY)",
+            toastEnterName: "Please enter product name", confirmDelete: "Delete product?", confirmDeleteAll: "Delete all products?",
+            noResultsTitle: "No Results Found", noResultsMessage: "No product named \"{query}\" in the list", noResultsDefault: "No matching products found"
+        }
     };
     
-    function applyLanguage() { 
-        document.body.classList.toggle('arabic', currentLang === 'ar');
-        document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
-        document.getElementById('langText').innerText = currentLang === 'ar' ? 'AR' : 'EN';
-        document.getElementById('muteText').innerText = currentLang === 'ar' ? (soundMuted ? 'تشغيل' : 'كتم') : (soundMuted ? 'Unmute' : 'Mute');
-        document.getElementById('closeBtnText').innerText = currentLang === 'ar' ? 'إغلاق وإيقاف الصوت' : 'Close & Stop';
-        document.querySelectorAll('[data-i18n]').forEach(el => { let key = el.getAttribute('data-i18n'); if(translations[currentLang][key]) el.innerText = translations[currentLang][key]; });
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { let key = el.getAttribute('data-i18n-placeholder'); if(translations[currentLang][key]) el.placeholder = translations[currentLang][key]; });
-        renderInventory(); updateDashboardStats(); if(alertActive) updatePopupContent();
+    function updateAllTexts() {
+        const t = translations[currentLang];
+        document.getElementById('sidebarSub').innerText = t.sidebarSub;
+        document.getElementById('navDashboard').innerHTML = `<i class="fas fa-tachometer-alt me-2"></i> ${t.navDashboard}`;
+        document.getElementById('navInventory').innerHTML = `<i class="fas fa-clipboard-list me-2"></i> ${t.navInventory}`;
+        document.getElementById('muteText').innerText = soundMuted ? t.unmuteText : t.muteText;
+        document.getElementById('langText').innerText = currentLang === 'ar' ? 'EN' : 'AR';
+        document.getElementById('addBtnText').innerText = t.addBtnText;
+        document.getElementById('totalLabel').innerText = t.totalLabel;
+        document.getElementById('safeLabel').innerText = t.safeLabel;
+        document.getElementById('nearExpiryLabel').innerText = t.nearExpiryLabel;
+        document.getElementById('expiredLabel').innerText = t.expiredLabel;
+        document.getElementById('quickStatsTitle').innerHTML = `<i class="fas fa-chart-line me-2"></i> ${t.quickStatsTitle}`;
+        document.getElementById('criticalLabel').innerHTML = t.criticalLabel;
+        document.getElementById('warningLabel').innerHTML = t.warningLabel;
+        document.getElementById('filterAll').innerText = t.filterAll;
+        document.getElementById('filterSafe').innerText = t.filterSafe;
+        document.getElementById('filterWarning').innerText = t.filterWarning;
+        document.getElementById('filterCritical').innerText = t.filterCritical;
+        document.getElementById('filterExpired').innerText = t.filterExpired;
+        document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+        document.getElementById('thProduct').innerText = t.thProduct;
+        document.getElementById('thCategory').innerText = t.thCategory;
+        document.getElementById('thBatch').innerText = t.thBatch;
+        document.getElementById('thExpiry').innerText = t.thExpiry;
+        document.getElementById('thDays').innerText = t.thDays;
+        document.getElementById('thStatus').innerText = t.thStatus;
+        document.getElementById('thNotes').innerText = t.thNotes;
+        document.getElementById('thActions').innerText = t.thActions;
+        document.getElementById('excelBtn').innerHTML = `<i class="fas fa-file-excel"></i> ${t.excelBtn}`;
+        document.getElementById('pdfBtn').innerHTML = `<i class="fas fa-file-pdf"></i> ${t.pdfBtn}`;
+        document.getElementById('printBtn').innerHTML = `<i class="fas fa-print"></i> ${t.printBtn}`;
+        document.getElementById('deleteAllText').innerText = t.deleteAllText;
+        document.getElementById('modalTitle').innerHTML = `<i class="fas fa-plus-circle me-2"></i>${t.modalTitle}`;
+        document.getElementById('prodName').placeholder = t.prodNamePlaceholder;
+        document.getElementById('catDairy').innerText = t.catDairy;
+        document.getElementById('catMeat').innerText = t.catMeat;
+        document.getElementById('catVeg').innerText = t.catVeg;
+        document.getElementById('catBakery').innerText = t.catBakery;
+        document.getElementById('catOther').innerText = t.catOther;
+        document.getElementById('prodBatch').placeholder = t.batchPlaceholder;
+        document.getElementById('expiryLabelText').innerText = t.expiryLabelText;
+        document.getElementById('prodNotes').placeholder = t.notesPlaceholder;
+        document.getElementById('cancelBtn').innerText = t.cancelBtn;
+        document.getElementById('saveBtn').innerText = t.saveBtn;
+        document.getElementById('editTitle').innerText = t.editTitle;
+        document.getElementById('updateBtn').innerText = t.updateBtn;
+        document.getElementById('popupTitle').innerHTML = t.popupTitle;
+        document.getElementById('popupMsg').innerHTML = t.popupMsg;
+        document.getElementById('closeAlertBtn').innerHTML = t.closeAlertBtn;
     }
     
-    function parseDateDMY(str) { let parts = str.split('/'); if(parts.length===3) return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`); return null; }
-    function formatDateDMY(date) { let d = new Date(date); return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`; }
-    function getDaysRemaining(expiryDMY) { let today = new Date(); today.setHours(0,0,0,0); let exp = parseDateDMY(expiryDMY); if(!exp) return 999; exp.setHours(0,0,0,0); return Math.ceil((exp - today) / (1000*60*60*24)); }
-    function getStatusAndClass(days) { if(days < 0) return { text: currentLang==='ar'?'منتهي':'Expired', class: 'badge-critical', key:'expired' }; if(days <= 5) return { text: currentLang==='ar'?'حرج':'CRITICAL', class: 'badge-critical blink-critical', key:'critical' }; if(days <= 10) return { text: currentLang==='ar'?'أحمر':'RED', class: 'badge-red', key:'red' }; if(days <= 15) return { text: currentLang==='ar'?'تحذير':'Warning', class: 'badge-orange', key:'warning' }; return { text: currentLang==='ar'?'آمن':'Safe', class: 'badge-green', key:'safe' }; }
+    function applyLanguage() {
+        const isRTL = currentLang === 'ar';
+        document.body.classList.toggle('arabic', isRTL);
+        document.documentElement.setAttribute('dir', isRTL ? 'rtl' : 'ltr');
+        document.documentElement.lang = currentLang;
+        updateAllTexts();
+        renderInventory();
+        updateDashboardStats();
+        if(alertActive) updatePopupContent();
+    }
+    
+    function parseDateDMY(str) { 
+        if(!str) return null;
+        let parts = str.split('/'); 
+        if(parts.length===3) return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`); 
+        return null; 
+    }
+    
+    function formatDateDMY(date) { 
+        let d = new Date(date); 
+        return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`; 
+    }
+    
+    function getDaysRemaining(expiryDMY) { 
+        let today = new Date(); 
+        today.setHours(0,0,0,0); 
+        let exp = parseDateDMY(expiryDMY); 
+        if(!exp) return 999; 
+        exp.setHours(0,0,0,0); 
+        return Math.ceil((exp - today) / (1000*60*60*24)); 
+    }
+    
+    function getStatusText(days) { 
+        const t = translations[currentLang];
+        if(days < 0) return t.statusExpired;
+        if(days <= 5) return t.statusCritical;
+        if(days <= 10) return t.statusRed;
+        if(days <= 15) return t.statusWarning;
+        return t.statusSafe;
+    }
+    
+    function getStatusClass(days) { 
+        if(days < 0) return 'badge-critical';
+        if(days <= 5) return 'badge-critical blink-critical';
+        if(days <= 10) return 'badge-red';
+        if(days <= 15) return 'badge-orange';
+        return 'badge-green';
+    }
+    
     function saveToLocal() { localStorage.setItem('inv_guard_data', JSON.stringify(inventory)); }
-    function loadMock() { let stored = localStorage.getItem('inv_guard_data'); if(stored) return JSON.parse(stored); return [
-        { id: '1', name: 'حليب طازج', category: 'ألبان', batch: 'B001', expiry: formatDateDMY(new Date(Date.now()+2*86400000)), notes: 'يحفظ مبرداً' },
-        { id: '2', name: 'صدر دجاج', category: 'لحوم', batch: 'C202', expiry: formatDateDMY(new Date(Date.now()+4*86400000)), notes: 'مجمد' },
-        { id: '3', name: 'زبادي يوناني', category: 'ألبان', batch: 'Y99', expiry: formatDateDMY(new Date(Date.now()+12*86400000)), notes: '' },
-        { id: '4', name: 'خس معبأ', category: 'خضروات', batch: 'L45', expiry: formatDateDMY(new Date(Date.now()+20*86400000)), notes: '' },
-        { id: '5', name: 'جبن موزاريلا', category: 'ألبان', batch: 'M880', expiry: formatDateDMY(new Date(Date.now()-2*86400000)), notes: 'منتهي' },
-        { id: '6', name: 'لحم مفروم', category: 'لحوم', batch: 'BMC12', expiry: formatDateDMY(new Date(Date.now()+8*86400000)), notes: '' }
-    ]; }
+    
+    function loadMock() { 
+        let stored = localStorage.getItem('inv_guard_data'); 
+        if(stored) return JSON.parse(stored); 
+        return [
+            { id: '1', name: 'حليب طازج', category: 'ألبان', batch: 'B001', expiry: formatDateDMY(new Date(Date.now()+2*86400000)), notes: 'يحفظ مبرداً' },
+            { id: '2', name: 'صدر دجاج', category: 'لحوم', batch: 'C202', expiry: formatDateDMY(new Date(Date.now()+4*86400000)), notes: 'مجمد' },
+            { id: '3', name: 'زبادي يوناني', category: 'ألبان', batch: 'Y99', expiry: formatDateDMY(new Date(Date.now()+12*86400000)), notes: '' },
+            { id: '4', name: 'خس معبأ', category: 'خضروات', batch: 'L45', expiry: formatDateDMY(new Date(Date.now()+20*86400000)), notes: '' },
+            { id: '5', name: 'جبن موزاريلا', category: 'ألبان', batch: 'M880', expiry: formatDateDMY(new Date(Date.now()-2*86400000)), notes: 'منتهي' },
+            { id: '6', name: 'لحم مفروم', category: 'لحوم', batch: 'BMC12', expiry: formatDateDMY(new Date(Date.now()+8*86400000)), notes: '' }
+        ]; 
+    }
+    
     function initData() { inventory = loadMock(); saveToLocal(); }
     
-    function playLoudBeep() { if(soundMuted || !alertActive) return; try { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.frequency.value = 880; gain.gain.value = 0.4; osc.type = 'sine'; osc.start(); gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.9); osc.stop(audioCtx.currentTime + 0.9); } catch(e) {} }
-    function startSoundLoop() { if(soundLoopInterval) clearInterval(soundLoopInterval); if(!alertActive || soundMuted) return; playLoudBeep(); soundLoopInterval = setInterval(() => { if(alertActive && !soundMuted) playLoudBeep(); else if(!alertActive || soundMuted) { clearInterval(soundLoopInterval); soundLoopInterval = null; } }, 1300); }
-    function stopSoundLoop() { if(soundLoopInterval) { clearInterval(soundLoopInterval); soundLoopInterval = null; } if(audioCtx) { audioCtx.close(); audioCtx = null; } }
+    function playLoudBeep() { 
+        if(soundMuted || !alertActive) return; 
+        try { 
+            if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
+            const osc = audioCtx.createOscillator(); 
+            const gain = audioCtx.createGain(); 
+            osc.connect(gain); gain.connect(audioCtx.destination); 
+            osc.frequency.value = 880; gain.gain.value = 0.3; osc.type = 'sine'; 
+            osc.start(); gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.8); 
+            osc.stop(audioCtx.currentTime + 0.8); 
+        } catch(e) {} 
+    }
+    
+    function startSoundLoop() { 
+        if(soundLoopInterval) clearInterval(soundLoopInterval); 
+        if(!alertActive || soundMuted) return; 
+        playLoudBeep(); 
+        soundLoopInterval = setInterval(() => { 
+            if(alertActive && !soundMuted) playLoudBeep(); 
+            else if(!alertActive || soundMuted) { clearInterval(soundLoopInterval); soundLoopInterval = null; } 
+        }, 1500); 
+    }
+    
+    function stopSoundLoop() { 
+        if(soundLoopInterval) { clearInterval(soundLoopInterval); soundLoopInterval = null; } 
+        if(audioCtx) { audioCtx.close(); audioCtx = null; } 
+    }
     
     function updatePopupContent() {
-        let criticalItems = inventory.filter(p => { let d = getDaysRemaining(p.expiry); return d >=0 && d <=5; });
-        let listHtml = '<ul class="mb-0 list-unstyled">'+criticalItems.map(i=>`<li class="mb-2"><i class="fas fa-exclamation-circle text-danger me-2"></i><strong>${i.name}</strong> - ${i.expiry} <span class="badge bg-danger">${currentLang==='ar'?'حرج':'CRITICAL'}</span></li>`).join('')+'</ul>';
-        document.getElementById('criticalListPopup').innerHTML = listHtml || '<p class="text-muted">لا توجد</p>';
-        document.getElementById('criticalCountDisplay').innerHTML = `<i class="fas fa-bell"></i> ${currentLang==='ar'?`${criticalItems.length} منتج حرج`:`${criticalItems.length} CRITICAL products`}`;
-        document.getElementById('popupMsg').innerHTML = criticalItems.length > 0 ? (currentLang==='ar'?`⚠️ ${criticalItems.length} منتج تنتهي خلال 5 أيام ⚠️`:`⚠️ ${criticalItems.length} product(s) expiring within 5 DAYS ⚠️`) : '';
+        let criticalItems = inventory.filter(p => { let d = getDaysRemaining(p.expiry); return d >=0 && d <=5; }); 
+        let listHtml = criticalItems.map(i => `<div class="mb-2 p-2 bg-danger bg-opacity-10 rounded"><i class="fas fa-exclamation-circle text-danger me-2"></i><strong>${i.name}</strong> - ينتهي في ${i.expiry}</div>`).join('');
+        document.getElementById('criticalListPopup').innerHTML = listHtml || `<div class="text-muted">لا توجد منتجات حرجة</div>`;
     }
-    function showCriticalPopup() { let criticalItems = inventory.filter(p => { let d = getDaysRemaining(p.expiry); return d >=0 && d <=5; }); if(criticalItems.length === 0 || alertActive) return; alertActive = true; document.getElementById('alertOverlay').style.display = 'block'; document.getElementById('warningPopup').style.display = 'block'; updatePopupContent(); if(!soundMuted) startSoundLoop(); document.getElementById('soundWaveIndicator').style.display = 'inline-block'; }
-    function closeAlertPopup() { alertActive = false; stopSoundLoop(); document.getElementById('alertOverlay').style.display = 'none'; document.getElementById('warningPopup').style.display = 'none'; document.getElementById('soundWaveIndicator').style.display = 'none'; renderInventory(); }
     
+    function showCriticalPopup() { 
+        let criticalItems = inventory.filter(p => { let d = getDaysRemaining(p.expiry); return d >=0 && d <=5; }); 
+        if(criticalItems.length === 0 || alertActive) return; 
+        alertActive = true; 
+        document.getElementById('alertOverlay').style.display = 'block'; 
+        document.getElementById('warningPopup').style.display = 'block'; 
+        updatePopupContent();
+        if(!soundMuted) startSoundLoop(); 
+    }
+    
+    function closeAlertPopup() { 
+        alertActive = false; 
+        stopSoundLoop(); 
+        document.getElementById('alertOverlay').style.display = 'none'; 
+        document.getElementById('warningPopup').style.display = 'none'; 
+        renderInventory(); 
+    }
+    
+    // MAIN RENDER FUNCTION WITH PROPER SEARCH
     function renderInventory() { 
-        let filtered = inventory.filter(p => { let days = getDaysRemaining(p.expiry); if(currentFilter==='safe' && !(days>15)) return false; if(currentFilter==='warning' && !(days>=10 && days<=15)) return false; if(currentFilter==='critical' && !(days>=0 && days<=5)) return false; if(currentFilter==='expired' && !(days<0)) return false; if(searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase())) return false; return true; }); 
+        let filtered = inventory.filter(p => { 
+            let days = getDaysRemaining(p.expiry); 
+            
+            // Apply status filter
+            if(currentFilter === 'safe' && !(days > 15)) return false; 
+            if(currentFilter === 'warning' && !(days >= 10 && days <= 15)) return false; 
+            if(currentFilter === 'critical' && !(days >= 0 && days <= 5)) return false; 
+            if(currentFilter === 'expired' && !(days < 0)) return false; 
+            
+            // Apply search filter - ONLY show items that match exactly or partially
+            if(searchQuery && searchQuery.trim() !== '') {
+                const productName = p.name.toLowerCase();
+                const searchTerm = searchQuery.toLowerCase().trim();
+                if(!productName.includes(searchTerm)) return false;
+            }
+            
+            return true; 
+        }); 
+        
         filtered.sort((a,b)=> getDaysRemaining(a.expiry) - getDaysRemaining(b.expiry)); 
-        let tbody = document.getElementById('inventoryTableBody'); if(!tbody) return; 
-        if(filtered.length===0) { tbody.innerHTML='<tr><td colspan="8" class="text-center py-4">'+(currentLang==='ar'?'لا توجد منتجات':'No products')+'</td></tr>'; updateDashboardStats(); return; } 
-        tbody.innerHTML = filtered.map(p => { let days = getDaysRemaining(p.expiry); let statusObj = getStatusAndClass(days); let rowCls = (statusObj.key==='critical' && days>=0) ? 'blink-critical' : ''; return `<tr class="${rowCls}"><td><i class="fas fa-cube"></i> ${escapeHtml(p.name)} ${statusObj.key==='critical'?'<i class="fas fa-bell text-danger ms-1"></i>':''}</td><td>${p.category}</td><td>${p.batch}</td><td>${p.expiry}</td><td>${days<0?(currentLang==='ar'?'منتهي':'Expired'):days}${days>=0?'d':''}</td><td><span class="status-badge ${statusObj.class}">${statusObj.text}</span></td><td>${escapeHtml(p.notes||'-')}</td><td class="action-btn-group"><button class="btn btn-sm btn-outline-primary editItemBtn" data-id="${p.id}"><i class="fas fa-edit"></i></button> <button class="btn btn-sm btn-outline-danger deleteItemBtn" data-id="${p.id}"><i class="fas fa-trash"></i></button></td></tr>`; }).join('');
+        let tbody = document.getElementById('inventoryTableBody'); 
+        if(!tbody) return; 
+        
+        // Show "no results" message if filtered array is empty AND there is a search query
+        if(filtered.length === 0) { 
+            const t = translations[currentLang];
+            let noResultsMsg = '';
+            if(searchQuery && searchQuery.trim() !== '') {
+                noResultsMsg = t.noResultsMessage.replace('{query}', searchQuery);
+            } else {
+                noResultsMsg = t.noResultsDefault;
+            }
+            tbody.innerHTML = `<tr><td colspan="8" class="no-results-message">
+                <i class="fas fa-search"></i><br>
+                <strong>${t.noResultsTitle}</strong><br>
+                <small>${noResultsMsg}</small>
+            </td></tr>`; 
+            updateDashboardStats(); 
+            return; 
+        }
+        
+        tbody.innerHTML = filtered.map(p => { 
+            let days = getDaysRemaining(p.expiry); 
+            let statusText = getStatusText(days);
+            let statusClass = getStatusClass(days);
+            let rowCls = (days >=0 && days <=5) ? 'blink-critical' : ''; 
+            return `<tr class="${rowCls}">
+                <td><i class="fas fa-cube me-1"></i> ${escapeHtml(p.name)} ${(days >=0 && days <=5)?'<i class="fas fa-bell text-danger ms-1"></i>':''}</td>
+                <td>${p.category}</td>
+                <td>${p.batch}</td>
+                <td>${p.expiry}</td>
+                <td>${days<0?(currentLang==='ar'?'منتهي':'Expired'):days+' '+(currentLang==='ar'?'يوم':'d')}</td>
+                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                <td>${escapeHtml(p.notes||'-')}</td>
+                <td class="action-btn-group"><button class="btn btn-sm btn-outline-primary editItemBtn" data-id="${p.id}"><i class="fas fa-edit"></i></button> <button class="btn btn-sm btn-outline-danger deleteItemBtn" data-id="${p.id}"><i class="fas fa-trash"></i></button></td>
+            </table>`;
+        }).join('');
+        
         document.querySelectorAll('.editItemBtn').forEach(btn=>btn.addEventListener('click',()=>{ openEditModal(btn.getAttribute('data-id')); }));
-        document.querySelectorAll('.deleteItemBtn').forEach(btn=>btn.addEventListener('click',()=>{ if(confirm(currentLang==='ar'?'حذف المنتج؟':'Delete?')){ inventory=inventory.filter(i=>i.id!=btn.getAttribute('data-id')); saveToLocal(); renderInventory(); updateDashboardStats(); showToast(currentLang==='ar'?'تم الحذف':'Deleted'); checkCriticalAndPopup(); } }));
+        document.querySelectorAll('.deleteItemBtn').forEach(btn=>btn.addEventListener('click',()=>{ 
+            if(confirm(translations[currentLang].confirmDelete)){ 
+                inventory=inventory.filter(i=>i.id!=btn.getAttribute('data-id')); 
+                saveToLocal(); 
+                renderInventory(); 
+                updateDashboardStats(); 
+                showToast(translations[currentLang].toastDeleted); 
+                checkCriticalAndPopup(); 
+            } 
+        }));
         updateDashboardStats(); 
     }
-    function updateDashboardStats() { let total=inventory.length, safe=0, nearExpiry=0, expired=0, criticalCount=0, warningStat=0; inventory.forEach(p=>{ let d=getDaysRemaining(p.expiry); if(d<0) expired++; else if(d>15) safe++; else nearExpiry++; if(d>=0 && d<=5) criticalCount++; if(d>=6 && d<=10) warningStat++; }); document.getElementById('totalCountStat')&&(document.getElementById('totalCountStat').innerText=total); document.getElementById('safeCount')&&(document.getElementById('safeCount').innerText=safe); document.getElementById('nearExpiryCount')&&(document.getElementById('nearExpiryCount').innerText=nearExpiry); document.getElementById('expiredCountStat')&&(document.getElementById('expiredCountStat').innerText=expired); document.getElementById('criticalStatBadge')&&(document.getElementById('criticalStatBadge').innerText=criticalCount); document.getElementById('warningStat')&&(document.getElementById('warningStat').innerText=warningStat); }
-    function checkCriticalAndPopup() { let hasCritical = inventory.some(p=>{ let d=getDaysRemaining(p.expiry); return d>=0 && d<=5; }); if(hasCritical && !alertActive) showCriticalPopup(); else if(!hasCritical && alertActive) closeAlertPopup(); }
     
-    document.getElementById('saveProductBtn')?.addEventListener('click',()=>{ let name=document.getElementById('prodName').value; if(!name) return; let cat=document.getElementById('prodCategory').value; let batch=document.getElementById('prodBatch').value; let expiryRaw=document.getElementById('prodExpiry').value; let notes=document.getElementById('prodNotes').value; if(!expiryRaw.match(/^\d{2}\/\d{2}\/\d{4}$/)){ showToast('Invalid date'); return; } inventory.push({id:Date.now().toString(), name, category:cat, batch:batch||'N/A', expiry:expiryRaw, notes}); saveToLocal(); renderInventory(); bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide(); document.getElementById('prodName').value=''; document.getElementById('prodExpiry').value=''; showToast('Added'); checkCriticalAndPopup(); });
-    function openEditModal(id){ let p=inventory.find(i=>i.id===id); if(p){ document.getElementById('editId').value=p.id; document.getElementById('editName').value=p.name; document.getElementById('editBatch').value=p.batch; document.getElementById('editExpiry').value=p.expiry; document.getElementById('editNotes').value=p.notes||''; new bootstrap.Modal(document.getElementById('editModal')).show(); } }
-    document.getElementById('confirmEditBtn')?.addEventListener('click',()=>{ let id=document.getElementById('editId').value; let idx=inventory.findIndex(i=>i.id===id); if(idx!==-1){ inventory[idx].name=document.getElementById('editName').value; inventory[idx].batch=document.getElementById('editBatch').value; inventory[idx].expiry=document.getElementById('editExpiry').value; inventory[idx].notes=document.getElementById('editNotes').value; saveToLocal(); renderInventory(); bootstrap.Modal.getInstance(document.getElementById('editModal')).hide(); showToast('Updated'); checkCriticalAndPopup(); } });
-    document.getElementById('deleteAllBtn')?.addEventListener('click',()=>{ if(confirm('Delete all?')){ inventory=[]; saveToLocal(); renderInventory(); updateDashboardStats(); showToast('All deleted'); if(alertActive) closeAlertPopup(); } });
+    function updateDashboardStats() { 
+        let total=inventory.length, safe=0, nearExpiry=0, expired=0, criticalCount=0, warningStat=0; 
+        inventory.forEach(p=>{ 
+            let d=getDaysRemaining(p.expiry); 
+            if(d<0) expired++; 
+            else if(d>15) safe++; 
+            else nearExpiry++; 
+            if(d>=0 && d<=5) criticalCount++; 
+            if(d>=6 && d<=10) warningStat++; 
+        }); 
+        document.getElementById('totalCountStat')&&(document.getElementById('totalCountStat').innerText=total); 
+        document.getElementById('safeCount')&&(document.getElementById('safeCount').innerText=safe); 
+        document.getElementById('nearExpiryCount')&&(document.getElementById('nearExpiryCount').innerText=nearExpiry); 
+        document.getElementById('expiredCountStat')&&(document.getElementById('expiredCountStat').innerText=expired); 
+        document.getElementById('criticalStatBadge')&&(document.getElementById('criticalStatBadge').innerText=criticalCount); 
+        document.getElementById('warningStat')&&(document.getElementById('warningStat').innerText=warningStat); 
+    }
     
-    function exportExcel(){ let ws=XLSX.utils.json_to_sheet(inventory.map(p=>({Name:p.name,Category:p.category,Batch:p.batch,Expiry:p.expiry,DaysLeft:getDaysRemaining(p.expiry),Status:getStatusAndClass(getDaysRemaining(p.expiry)).text}))); let wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Expiry'); XLSX.writeFile(wb,`inventory_${Date.now()}.xlsx`); showToast('Exported'); }
-    async function exportPDF(){ const {jsPDF}=window.jspdf; const doc=new jsPDF(); doc.text('Expiry Report',20,10); let y=20; inventory.slice(0,25).forEach(p=>{ doc.text(`${p.name} | ${p.expiry} | ${getDaysRemaining(p.expiry)}d`,20,y); y+=8; if(y>270) doc.addPage(); }); doc.save('inventory.pdf'); showToast('PDF saved'); }
-    function printInventory(){ let w=window.open('','_blank'); w.document.write(`<html><head><title>Inventory</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"></head><body><div class="container mt-3"><h2>Expiry Report</h2><table class="table"><thead><tr><th>Name</th><th>Expiry</th><th>Days</th><th>Status</th></tr></thead><tbody>${inventory.map(p=>`<tr><td>${p.name}</td><td>${p.expiry}</td><td>${getDaysRemaining(p.expiry)}</td><td>${getStatusAndClass(getDaysRemaining(p.expiry)).text}</td></tr>`).join('')}</tbody></table></div></body></html>`); w.document.close(); w.print(); }
-    function showToast(msg){ let t=document.getElementById('toastMsg'); document.getElementById('toastText').innerText=msg; t.style.display='flex'; setTimeout(()=>t.style.display='none',2000); }
-    function escapeHtml(str){ return String(str).replace(/[&<>]/g, function(m){return m==='&'?'&amp;':m==='<'?'&lt;':'&gt;';}); }
+    function checkCriticalAndPopup() { 
+        let hasCritical = inventory.some(p=>{ let d=getDaysRemaining(p.expiry); return d>=0 && d<=5; }); 
+        if(hasCritical && !alertActive) showCriticalPopup(); 
+        else if(!hasCritical && alertActive) closeAlertPopup(); 
+    }
     
-    document.getElementById('exportExcelBtn')?.addEventListener('click',exportExcel); document.getElementById('exportPdfBtn')?.addEventListener('click',exportPDF); document.getElementById('printBtn')?.addEventListener('click',printInventory);
-    document.getElementById('searchInput')?.addEventListener('input',(e)=>{ searchQuery=e.target.value; renderInventory(); });
-    document.querySelectorAll('.filter-chip').forEach(btn=>{ btn.addEventListener('click',()=>{ document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); currentFilter=btn.getAttribute('data-filter'); renderInventory(); }); });
+    document.getElementById('saveProductBtn')?.addEventListener('click',()=>{ 
+        let name=document.getElementById('prodName').value; 
+        if(!name) { showToast(translations[currentLang].toastEnterName); return; } 
+        let cat=document.getElementById('prodCategory').value; 
+        let batch=document.getElementById('prodBatch').value; 
+        let expiryRaw=document.getElementById('prodExpiry').value; 
+        let notes=document.getElementById('prodNotes').value; 
+        if(!expiryRaw.match(/^\d{2}\/\d{2}\/\d{4}$/)){ showToast(translations[currentLang].toastInvalidDate); return; } 
+        inventory.push({id:Date.now().toString(), name, category:cat, batch:batch||'N/A', expiry:expiryRaw, notes}); 
+        saveToLocal(); 
+        renderInventory(); 
+        bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide(); 
+        document.getElementById('prodName').value=''; 
+        document.getElementById('prodExpiry').value=''; 
+        document.getElementById('prodBatch').value=''; 
+        document.getElementById('prodNotes').value=''; 
+        showToast(translations[currentLang].toastAdded); 
+        checkCriticalAndPopup(); 
+    });
+    
+    function openEditModal(id){ 
+        let p=inventory.find(i=>i.id===id); 
+        if(p){ 
+            document.getElementById('editId').value=p.id; 
+            document.getElementById('editName').value=p.name; 
+            document.getElementById('editBatch').value=p.batch; 
+            document.getElementById('editExpiry').value=p.expiry; 
+            document.getElementById('editNotes').value=p.notes||''; 
+            new bootstrap.Modal(document.getElementById('editModal')).show(); 
+        } 
+    }
+    
+    document.getElementById('confirmEditBtn')?.addEventListener('click',()=>{ 
+        let id=document.getElementById('editId').value; 
+        let idx=inventory.findIndex(i=>i.id===id); 
+        if(idx!==-1){ 
+            inventory[idx].name=document.getElementById('editName').value; 
+            inventory[idx].batch=document.getElementById('editBatch').value; 
+            inventory[idx].expiry=document.getElementById('editExpiry').value; 
+            inventory[idx].notes=document.getElementById('editNotes').value; 
+            saveToLocal(); 
+            renderInventory(); 
+            bootstrap.Modal.getInstance(document.getElementById('editModal')).hide(); 
+            showToast(translations[currentLang].toastUpdated); 
+            checkCriticalAndPopup(); 
+        } 
+    });
+    
+    document.getElementById('deleteAllBtn')?.addEventListener('click',()=>{ 
+        if(confirm(translations[currentLang].confirmDeleteAll)){ 
+            inventory=[]; 
+            saveToLocal(); 
+            renderInventory(); 
+            updateDashboardStats(); 
+            showToast(translations[currentLang].toastDeletedAll); 
+            if(alertActive) closeAlertPopup(); 
+        } 
+    });
+    
+    function exportExcel(){ 
+        let ws=XLSX.utils.json_to_sheet(inventory.map(p=>({
+            [translations[currentLang].thProduct]:p.name,
+            [translations[currentLang].thCategory]:p.category,
+            [translations[currentLang].thBatch]:p.batch,
+            [translations[currentLang].thExpiry]:p.expiry,
+            [translations[currentLang].thDays]:getDaysRemaining(p.expiry),
+            [translations[currentLang].thStatus]:getStatusText(getDaysRemaining(p.expiry))
+        }))); 
+        let wb=XLSX.utils.book_new(); 
+        XLSX.utils.book_append_sheet(wb,ws,'Expiry'); 
+        XLSX.writeFile(wb,`inventory_${Date.now()}.xlsx`); 
+        showToast(translations[currentLang].toastExported); 
+    }
+    
+    async function exportPDF(){ 
+        const {jsPDF}=window.jspdf; 
+        const doc=new jsPDF(); 
+        doc.text(currentLang==='ar'?'تقرير صلاحية المنتجات':'Expiry Report',20,10); 
+        let y=20; 
+        inventory.slice(0,25).forEach(p=>{ 
+            doc.text(`${p.name} | ${p.expiry} | ${getDaysRemaining(p.expiry)} ${currentLang==='ar'?'يوم':'d'}`,20,y); 
+            y+=8; if(y>270) doc.addPage(); 
+        }); 
+        doc.save('inventory.pdf'); 
+        showToast(translations[currentLang].toastPDFSaved); 
+    }
+    
+    function printInventory(){ 
+        let w=window.open('','_blank'); 
+        w.document.write(`<html><head><title>Inventory</title><style>body{direction:${currentLang==='ar'?'rtl':'ltr'};font-family:Arial;padding:20px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:8px}th{background:#f0f0f0}</style></head><body><h2>${currentLang==='ar'?'تقرير الصلاحية':'Expiry Report'}</h2><table border="1"><thead><tr><th>${translations[currentLang].thProduct}</th><th>${translations[currentLang].thExpiry}</th><th>${translations[currentLang].thDays}</th><th>${translations[currentLang].thStatus}</th></tr></thead><tbody>${inventory.map(p=>`<tr><td>${p.name}</td><td>${p.expiry}</td><td>${getDaysRemaining(p.expiry)}</td><td>${getStatusText(getDaysRemaining(p.expiry))}</td></tr>`).join('')}</tbody></table></body></html>`); 
+        w.document.close(); 
+        w.print(); 
+    }
+    
+    function showToast(msg){ 
+        let t=document.getElementById('toastMsg'); 
+        document.getElementById('toastText').innerText=msg; 
+        t.style.display='flex'; 
+        setTimeout(()=>t.style.display='none',2000); 
+    }
+    
+    function escapeHtml(str){ 
+        return String(str).replace(/[&<>]/g, function(m){return m==='&'?'&amp;':m==='<'?'&lt;':'&gt;';}); 
+    }
+    
+    document.getElementById('exportExcelBtn')?.addEventListener('click',exportExcel); 
+    document.getElementById('exportPdfBtn')?.addEventListener('click',exportPDF); 
+    document.getElementById('printBtn')?.addEventListener('click',printInventory);
+    
+    // Search input listener - updates searchQuery and re-renders
+    document.getElementById('searchInput')?.addEventListener('input', (e) => { 
+        searchQuery = e.target.value; 
+        renderInventory(); 
+    });
+    
+    document.querySelectorAll('.filter-chip').forEach(btn=>{ 
+        btn.addEventListener('click',()=>{ 
+            document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active')); 
+            btn.classList.add('active'); 
+            currentFilter=btn.getAttribute('data-filter'); 
+            renderInventory(); 
+        }); 
+    });
+    
     document.getElementById('closeAlertBtn')?.addEventListener('click',closeAlertPopup);
-    document.getElementById('muteSoundBtn')?.addEventListener('click',()=>{ soundMuted=!soundMuted; document.getElementById('muteText').innerText = currentLang==='ar'?(soundMuted?'تشغيل':'كتم'):(soundMuted?'Unmute':'Mute'); if(!soundMuted && alertActive){ stopSoundLoop(); startSoundLoop(); } else if(soundMuted && alertActive) stopSoundLoop(); });
-    document.getElementById('langToggleBtn')?.addEventListener('click',()=>{ currentLang=currentLang==='en'?'ar':'en'; applyLanguage(); renderInventory(); if(alertActive) updatePopupContent(); });
-    function showSection(section){ currentSection=section; document.getElementById('dashboardSection').style.display=section==='dashboard'?'block':'none'; document.getElementById('inventorySection').style.display=section==='inventory'?'block':'none'; document.getElementById('trainingSection').style.display=section==='training'?'block':'none'; document.querySelectorAll('.sidebar .nav-link').forEach(l=>l.classList.remove('active')); document.querySelector(`.sidebar .nav-link[data-section="${section}"]`)?.classList.add('active'); if(section==='inventory') renderInventory(); }
-    document.querySelectorAll('.sidebar .nav-link[data-section]').forEach(link=>{ link.addEventListener('click',(e)=>{ e.preventDefault(); showSection(link.getAttribute('data-section')); document.getElementById('sidebar')?.classList.remove('show'); }); });
-    document.getElementById('menuToggleBtn')?.addEventListener('click',()=>{ document.getElementById('sidebar').classList.toggle('show'); });
-    document.getElementById('darkSidebarToggle')?.addEventListener('click',(e)=>{ e.preventDefault(); document.body.classList.toggle('dark'); showToast('Theme toggled'); });
     
-    initData(); renderInventory(); updateDashboardStats(); applyLanguage(); showSection('dashboard'); checkCriticalAndPopup();
-    setInterval(()=>{ renderInventory(); updateDashboardStats(); if(!alertActive) checkCriticalAndPopup(); }, 60000);
-    window.addEventListener('load',()=>{ if(!soundMuted && inventory.some(p=>getDaysRemaining(p.expiry)>=0 && getDaysRemaining(p.expiry)<=5)) showCriticalPopup(); });
+    document.getElementById('muteSoundBtn')?.addEventListener('click',()=>{ 
+        soundMuted=!soundMuted; 
+        const t = translations[currentLang];
+        document.getElementById('muteText').innerText = soundMuted ? t.unmuteText : t.muteText; 
+        if(!soundMuted && alertActive){ stopSoundLoop(); startSoundLoop(); } 
+        else if(soundMuted && alertActive) stopSoundLoop(); 
+    });
+    
+    document.getElementById('langToggleBtn')?.addEventListener('click',()=>{ 
+        currentLang = currentLang === 'ar' ? 'en' : 'ar';
+        applyLanguage();
+        renderInventory();
+        if(alertActive) updatePopupContent();
+        showToast(currentLang === 'ar' ? 'تم التغيير إلى العربية' : 'Switched to English');
+    });
+    
+    function showSection(section){ 
+        currentSection=section; 
+        document.getElementById('dashboardSection').style.display=section==='dashboard'?'block':'none'; 
+        document.getElementById('inventorySection').style.display=section==='inventory'?'block':'none'; 
+        document.querySelectorAll('.sidebar .nav-link').forEach(l=>l.classList.remove('active')); 
+        document.querySelector(`.sidebar .nav-link[data-section="${section}"]`)?.classList.add('active'); 
+        if(section==='inventory') renderInventory(); 
+        if(window.innerWidth < 992) document.getElementById('sidebar').classList.remove('show');
+    }
+    
+    document.querySelectorAll('.sidebar .nav-link[data-section]').forEach(link=>{ 
+        link.addEventListener('click',(e)=>{ 
+            e.preventDefault(); 
+            showSection(link.getAttribute('data-section')); 
+        }); 
+    });
+    
+    document.getElementById('menuToggleBtn')?.addEventListener('click',()=>{ 
+        document.getElementById('sidebar').classList.toggle('show'); 
+    });
+    
+    initData(); 
+    renderInventory(); 
+    updateDashboardStats(); 
+    applyLanguage();
+    showSection('dashboard'); 
+    checkCriticalAndPopup();
+    
+    setInterval(()=>{ 
+        renderInventory(); 
+        updateDashboardStats(); 
+        if(!alertActive) checkCriticalAndPopup(); 
+    }, 60000);
 </script>
 </body>
 </html>
