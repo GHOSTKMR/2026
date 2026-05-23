@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Sales Dashboard · SAR | Responsive Analytics</title>
+    <title>NetflixStyle | Sales Forecast Pro</title>
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- jQuery -->
@@ -22,32 +22,39 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* NETFLIX INSPIRED DARK THEME */
         :root {
-            --primary: #4a90e2;
-            --primary-dark: #1a56db;
+            --netflix-black: #000000;
+            --netflix-dark: #0a0a0a;
+            --netflix-card: #141414;
+            --netflix-card-hover: #1f1f1f;
+            --netflix-red: #e50914;
+            --netflix-red-dark: #b20710;
+            --netflix-gray: #808080;
+            --netflix-light-gray: #b3b3b3;
+            --netflix-white: #ffffff;
+            --netflix-border: #2a2a2a;
             --success: #00d97e;
             --warning: #f6c343;
             --danger: #e63757;
-            --achieved: #9c5fff;
-            --bg-dark: #121212;
-            --card-bg: #1e1e1e;
-            --text-light: #e0e0e0;
-            --text-muted: #9e9e9e;
-            --border: #333333;
-            --chart-bg: #2d2d2d;
         }
 
         body {
-            background: var(--bg-dark);
-            color: var(--text-light);
+            background: var(--netflix-black);
+            color: var(--netflix-white);
             margin: 0;
-            padding: 12px 16px 32px;
+            padding: 0;
             min-height: 100vh;
             width: 100%;
             overflow-x: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
-        /* FULL WIDTH CONTAINER - no wasted space */
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--netflix-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--netflix-red); border-radius: 10px; }
+
         .dashboard-wrapper {
             width: 100%;
             max-width: 100%;
@@ -55,49 +62,49 @@
             padding: 0;
         }
 
-        /* Responsive container that expands fully */
         .container-fluid-custom {
             width: 100%;
-            padding: 0 8px;
+            padding: 0 20px;
         }
 
-        /* header section */
+        /* NETFLIX STYLE HEADER */
         .page-header {
-            background: linear-gradient(135deg, var(--primary) 0%, #1a56db 100%);
-            border-radius: 20px;
-            padding: 18px 20px;
-            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--netflix-red) 0%, var(--netflix-red-dark) 100%);
+            border-radius: 12px;
+            padding: 20px 28px;
+            margin: 20px 0 24px;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
             gap: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
         }
 
         .title-section h1 {
-            font-size: 1.4rem;
-            font-weight: 700;
+            font-size: 1.5rem;
+            font-weight: 800;
             margin: 0;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
+            letter-spacing: -0.5px;
         }
 
-        .saudi-flag {
-            display: inline-flex;
-            width: 32px;
-            height: 24px;
-            background: linear-gradient(to right, #006233 0%, #006233 33%, white 33%, white 66%, #006233 66%, #006233 100%);
-            border-radius: 6px;
-            position: relative;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        .netflix-badge {
+            background: rgba(0,0,0,0.4);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
         }
 
         .month-selector {
-            background: rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
             border-radius: 40px;
-            padding: 5px 12px;
+            padding: 5px 16px;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -106,312 +113,264 @@
 
         .month-selector label {
             font-size: 0.8rem;
-            font-weight: 500;
+            font-weight: 600;
             margin: 0;
+            color: var(--netflix-light-gray);
         }
 
         #month-select {
-            background: #2d2d2d;
-            color: white;
-            border: 1px solid rgba(255,255,255,0.3);
+            background: var(--netflix-card);
+            color: var(--netflix-white);
+            border: 1px solid var(--netflix-red);
             border-radius: 40px;
-            padding: 8px 16px;
+            padding: 8px 20px;
             font-size: 0.85rem;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s;
         }
+        #month-select:hover { border-color: var(--netflix-white); }
 
-        /* Responsive KPI grid */
+        /* KPI CARDS - 6 CARDS GRID (including Averages) */
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
         }
 
         .kpi-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 16px 12px;
-            border: 1px solid var(--border);
-            text-align: center;
-            transition: transform 0.2s;
+            background: var(--netflix-card);
+            border-radius: 16px;
+            padding: 18px 14px;
+            border: 1px solid var(--netflix-border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-
-        .kpi-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--primary);
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--netflix-red);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
         }
+        .kpi-card:hover::before { transform: scaleX(1); }
+        .kpi-card:hover { transform: translateY(-4px); border-color: var(--netflix-red); box-shadow: 0 10px 30px rgba(229,9,20,0.2); }
 
         .kpi-label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            color: var(--netflix-gray);
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 600;
         }
 
         .kpi-value {
             font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            word-break: break-word;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--netflix-white), var(--netflix-light-gray));
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
         }
 
         .progress-bar-custom {
             height: 4px;
-            background: #2d2d2d;
+            background: var(--netflix-border);
             border-radius: 4px;
             overflow: hidden;
         }
-
         .progress-fill {
             height: 100%;
-            background: var(--primary);
+            background: linear-gradient(90deg, var(--netflix-red), #ff4d4d);
             border-radius: 4px;
-            transition: width 0.3s;
+            transition: width 0.5s ease;
         }
 
-        /* Notification Panel */
+        /* FORECAST PANEL - NETFLIX FEATURE CARD */
         .notif-panel {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 18px 20px;
+            background: linear-gradient(135deg, var(--netflix-card) 0%, #1a1a2e 100%);
+            border-radius: 20px;
+            padding: 24px;
             margin-bottom: 24px;
-            border: 1px solid var(--border);
+            border: 1px solid var(--netflix-border);
+            position: relative;
+            overflow: hidden;
         }
-
+        .notif-panel::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(229,9,20,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
         .notif-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: var(--primary);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--netflix-red);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
-
         .forecast-card {
-            background: rgba(74, 144, 226, 0.12);
-            border-left: 4px solid var(--warning);
-            border-radius: 18px;
-            padding: 16px;
-            margin-bottom: 12px;
+            background: rgba(229,9,20,0.15);
+            backdrop-filter: blur(8px);
+            border-left: 4px solid var(--netflix-red);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
         }
+        .trend-up { color: #00d97e; }
+        .trend-down { color: #e63757; }
+        .trend-stable { color: #f6c343; }
 
-        .trend-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        /* Chart Container - responsive height */
+        /* CHART */
         .chart-wrapper {
-            background: var(--chart-bg);
-            border-radius: 24px;
-            padding: 16px;
-            border: 1px solid var(--border);
+            background: var(--netflix-card);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--netflix-border);
             margin-bottom: 24px;
         }
+        .chart-wrapper canvas { max-height: 350px; width: 100% !important; }
 
-        .chart-wrapper canvas {
-            width: 100% !important;
-            height: auto !important;
-            max-height: 320px;
-        }
-
-        /* Table Card - horizontal scroll on small screens */
+        /* TABLE - NETFLIX STYLE */
         .table-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            border: 1px solid var(--border);
+            background: var(--netflix-card);
+            border-radius: 20px;
+            border: 1px solid var(--netflix-border);
             overflow: hidden;
-            width: 100%;
+            margin-bottom: 20px;
         }
-
         .table-header {
-            padding: 16px 20px;
-            background: rgba(74, 144, 226, 0.1);
-            border-bottom: 1px solid var(--border);
-            font-weight: 600;
+            padding: 18px 24px;
+            background: rgba(229,9,20,0.1);
+            border-bottom: 1px solid var(--netflix-border);
+            font-weight: 700;
+            font-size: 1rem;
         }
-
         .table-responsive-custom {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            width: 100%;
         }
-
         .sales-table {
             width: 100%;
             min-width: 900px;
             border-collapse: collapse;
-            color: var(--text-light);
+            color: var(--netflix-white);
             font-size: 0.75rem;
         }
-
         .sales-table th {
-            background: #2a2a3a;
-            padding: 12px 8px;
+            background: #1a1a2a;
+            padding: 14px 8px;
             text-align: center;
-            font-weight: 600;
-            color: var(--primary);
-            border-bottom: 1px solid var(--border);
-            white-space: nowrap;
+            font-weight: 700;
+            color: var(--netflix-red);
+            border-bottom: 1px solid var(--netflix-border);
         }
-
         .sales-table td {
-            padding: 10px 6px;
+            padding: 12px 6px;
             text-align: center;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--netflix-border);
         }
-
         .sales-input {
-            width: 85px;
-            background: #2d2d2d;
-            border: 1px solid #4f5b7a;
-            border-radius: 20px;
-            padding: 8px 6px;
-            color: white;
+            width: 90px;
+            background: #2a2a3a;
+            border: 1px solid var(--netflix-border);
+            border-radius: 30px;
+            padding: 8px 8px;
+            color: var(--netflix-white);
             font-size: 0.75rem;
             text-align: center;
+            transition: all 0.2s;
         }
-
         .sales-input:focus {
-            border-color: var(--primary);
+            border-color: var(--netflix-red);
             outline: none;
+            box-shadow: 0 0 0 2px rgba(229,9,20,0.3);
         }
-
         .total-row {
-            background: #262b3f;
+            background: linear-gradient(90deg, #1a1a2a, #0f0f1a);
+            font-weight: 800;
+        }
+        .stats-row {
+            background: rgba(229,9,20,0.08);
             font-weight: 700;
         }
 
+        /* BUTTONS */
         .btn-group-custom {
             display: flex;
-            gap: 12px;
-            padding: 16px 20px;
+            gap: 16px;
+            padding: 20px 24px;
             flex-wrap: wrap;
         }
-
         .action-btn {
             flex: 1;
-            min-width: 120px;
+            min-width: 140px;
             border-radius: 40px;
-            padding: 12px;
-            font-weight: 600;
+            padding: 12px 20px;
+            font-weight: 700;
             font-size: 0.85rem;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             transition: all 0.2s;
+            cursor: pointer;
         }
-
-        .btn-primary-custom {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        .btn-netflix-red {
+            background: linear-gradient(135deg, var(--netflix-red), var(--netflix-red-dark));
             color: white;
         }
-
-        .btn-danger-custom {
-            background: linear-gradient(135deg, var(--danger), #b91c3d);
-            color: white;
+        .btn-netflix-red:hover { transform: scale(0.98); opacity: 0.9; }
+        .btn-netflix-outline {
+            background: transparent;
+            border: 1px solid var(--netflix-red);
+            color: var(--netflix-red);
         }
+        .btn-netflix-outline:hover { background: rgba(229,9,20,0.2); }
 
-        .action-btn:active {
-            transform: scale(0.97);
-        }
-
-        /* Color helpers */
-        .text-success { color: #00d97e !important; }
-        .text-warning { color: #f6c343 !important; }
-        .text-danger { color: #e63757 !important; }
-        .text-achieved { color: #9c5fff !important; }
-
-        /* Responsive Breakpoints */
-        @media (max-width: 992px) {
-            .kpi-grid {
-                gap: 12px;
-            }
-            .kpi-value {
-                font-size: 1.2rem;
-            }
-        }
-
+        /* RESPONSIVE */
+        @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); gap: 15px; } }
         @media (max-width: 768px) {
-            body {
-                padding: 10px 12px 24px;
-            }
-            .kpi-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-            .page-header {
-                flex-direction: column;
-                align-items: stretch;
-                text-align: center;
-            }
-            .month-selector {
-                justify-content: center;
-            }
-            .title-section h1 {
-                justify-content: center;
-            }
-            .kpi-value {
-                font-size: 1.1rem;
-            }
+            .container-fluid-custom { padding: 0 12px; }
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .page-header { flex-direction: column; text-align: center; }
+            .kpi-value { font-size: 1.1rem; }
         }
-
         @media (max-width: 480px) {
-            .kpi-grid {
-                gap: 8px;
-            }
-            .kpi-card {
-                padding: 12px 8px;
-            }
-            .kpi-label {
-                font-size: 0.6rem;
-            }
-            .kpi-value {
-                font-size: 0.95rem;
-            }
-            .forecast-card {
-                padding: 12px;
-            }
-            .action-btn {
-                min-width: 100px;
-                padding: 10px;
-                font-size: 0.75rem;
-            }
-        }
-
-        @media (min-width: 1400px) {
-            .dashboard-wrapper {
-                max-width: 1600px;
-                margin: 0 auto;
-            }
-            .kpi-value {
-                font-size: 1.6rem;
-            }
+            .kpi-card { padding: 14px 10px; }
+            .action-btn { min-width: 100px; padding: 10px; font-size: 0.7rem; }
         }
     </style>
 </head>
 <body>
 <div class="dashboard-wrapper">
     <div class="container-fluid-custom">
-        <!-- Header Section -->
+        <!-- Netflix Style Header -->
         <div class="page-header">
             <div class="title-section">
                 <h1>
-                    <span class="saudi-flag"></span>
-                    <span>SALES ANALYTICS · SAR</span>
+                    <i class="fas fa-film" style="color: white;"></i>
+                    <span>SALES FORECAST</span>
+                    <span class="netflix-badge"><i class="fas fa-chart-line"></i> AI PREDICTIVE</span>
                 </h1>
             </div>
             <div class="month-selector">
-                <label><i class="fas fa-calendar-alt"></i> MONTH:</label>
+                <label><i class="fas fa-calendar-alt"></i> SELECT MONTH:</label>
                 <select id="month-select">
                     <option value="January">JANUARY</option><option value="February">FEBRUARY</option>
                     <option value="March">MARCH</option><option value="April">APRIL</option>
@@ -424,46 +383,32 @@
             </div>
         </div>
 
-        <!-- KPI Cards Grid - Fully Responsive -->
+        <!-- KPI Cards - 6 Cards including Average Daily Sales & Average TC -->
         <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-label"><i class="fas fa-chart-simple"></i> MTD SALES</div>
-                <div class="kpi-value" id="mtd-sales">SAR 0</div>
-                <div class="progress-bar-custom"><div class="progress-fill" id="mtd-sales-progress" style="width:0%"></div></div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label"><i class="fas fa-bullseye"></i> MTD TARGET</div>
-                <div class="kpi-value" id="mtd-target">SAR 0</div>
-                <div class="progress-bar-custom"><div class="progress-fill" id="mtd-target-progress" style="width:0%"></div></div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label"><i class="fas fa-trophy"></i> ACHIEVEMENT</div>
-                <div class="kpi-value" id="achievement-rate">0%</div>
-                <div class="progress-bar-custom"><div class="progress-fill" id="achievement-progress" style="width:0%"></div></div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label"><i class="fas fa-arrow-trend-up"></i> GROWTH</div>
-                <div class="kpi-value" id="growth-rate">0%</div>
-                <div class="progress-bar-custom"><div class="progress-fill" id="growth-progress" style="width:0%"></div></div>
-            </div>
+            <div class="kpi-card"><div class="kpi-label"><i class="fas fa-chart-simple"></i> MTD SALES</div><div class="kpi-value" id="mtd-sales">SAR 0</div><div class="progress-bar-custom"><div class="progress-fill" id="mtd-sales-progress" style="width:0%"></div></div></div>
+            <div class="kpi-card"><div class="kpi-label"><i class="fas fa-bullseye"></i> MTD TARGET</div><div class="kpi-value" id="mtd-target">SAR 0</div><div class="progress-bar-custom"><div class="progress-fill" id="mtd-target-progress" style="width:0%"></div></div></div>
+            <div class="kpi-card"><div class="kpi-label"><i class="fas fa-trophy"></i> ACHIEVEMENT</div><div class="kpi-value" id="achievement-rate">0%</div><div class="progress-bar-custom"><div class="progress-fill" id="achievement-progress" style="width:0%"></div></div></div>
+            <div class="kpi-card"><div class="kpi-label"><i class="fas fa-arrow-trend-up"></i> GROWTH</div><div class="kpi-value" id="growth-rate">0%</div><div class="progress-bar-custom"><div class="progress-fill" id="growth-progress" style="width:0%"></div></div></div>
+            <div class="kpi-card"><div class="kpi-label"><i class="fas fa-calendar-day"></i> AVG DAILY SALES</div><div class="kpi-value" id="avg-daily-sales">SAR 0</div><div class="progress-bar-custom"><div class="progress-fill" id="avg-sales-progress" style="width:0%"></div></div></div>
+            <div class="kpi-card"><div class="kpi-label"><i class="fas fa-percent"></i> AVG TC (%)</div><div class="kpi-value" id="avg-tc-value">0%</div><div class="progress-bar-custom"><div class="progress-fill" id="avg-tc-progress" style="width:0%"></div></div></div>
         </div>
 
-        <!-- Forecast & Alerts Panel -->
+        <!-- Forecast Panel - Enhanced AI Prediction -->
         <div class="notif-panel">
-            <div class="notif-title"><i class="fas fa-chart-line"></i> TODAY'S FORECAST</div>
+            <div class="notif-title"><i class="fas fa-brain"></i> AI POWERED FORECAST ENGINE</div>
             <div id="trend-analysis"></div>
             <div id="today-forecast-container"></div>
-            <div id="notifications-container" class="mt-2"></div>
+            <div id="notifications-container" class="mt-3"></div>
         </div>
 
-        <!-- Chart Section -->
+        <!-- Chart -->
         <div class="chart-wrapper">
             <canvas id="performance-chart"></canvas>
         </div>
 
         <!-- Data Table -->
         <div class="table-card">
-            <div class="table-header"><i class="fas fa-table me-2"></i> DAILY PERFORMANCE · scroll horizontally on smaller screens</div>
+            <div class="table-header"><i class="fas fa-table me-2"></i> DAILY PERFORMANCE · ENTER DATA FOR SMART FORECASTS</div>
             <div class="table-responsive-custom">
                 <table class="sales-table">
                     <thead>
@@ -471,18 +416,16 @@
                     </thead>
                     <tbody id="sales-table-body"></tbody>
                     <tfoot id="table-footer">
-                        <tr class="total-row">
-                            <td>TOTAL</td>
-                            <td id="total-sales">SAR0</td><td id="total-target">SAR0</td><td id="total-lastyear">SAR0</td>
-                            <td id="total-tc">0%</td><td id="total-ac">0</td><td id="total-achieved">0%</td>
-                            <td id="total-growth">0%</td><td id="total-average">0%</td>
-                        </tr>
+                        <tr class="total-row"><tr>TOTAL</td><td id="total-sales">SAR0</td><td id="total-target">SAR0</td><td id="total-lastyear">SAR0</td>
+                        <td id="total-tc">0%</td><td id="total-ac">0</td><td id="total-achieved">0%</td><td id="total-growth">0%</td><td id="total-average">0%</td></tr>
+                        <tr class="stats-row"><td>📊 AVERAGE (per day)</td><td id="avg-sales-row">SAR0</td><td id="avg-target-row">SAR0</td><td id="avg-lastyear-row">SAR0</td>
+                        <td id="avg-tc-row">0%</td><td id="avg-ac-row">0</td><td id="avg-ach-row">0%</td><td id="avg-growth-row">0%</td><td id="avg-avg-row">0%</td></tr>
                     </tfoot>
                 </table>
             </div>
             <div class="btn-group-custom">
-                <button class="action-btn btn-primary-custom" id="exportPdf"><i class="fas fa-file-pdf"></i> EXPORT PDF</button>
-                <button class="action-btn btn-danger-custom" id="clearAll"><i class="fas fa-trash-alt"></i> CLEAR DATA</button>
+                <button class="action-btn btn-netflix-red" id="exportPdf"><i class="fas fa-file-pdf"></i> EXPORT PDF</button>
+                <button class="action-btn btn-netflix-outline" id="clearAll"><i class="fas fa-trash-alt"></i> CLEAR DATA</button>
             </div>
         </div>
     </div>
@@ -544,47 +487,71 @@
         }
     }
 
-    function calculateTodayForecast() {
-        const today = new Date().getDate();
-        let yesterday = today > 1 ? today - 1 : 30;
-        let dayBefore = today > 2 ? today - 2 : (today > 1 ? 29 : 28);
-        
-        const yesterdayTarget = parseFloat(targetData[currentMonth][yesterday-1]) || 0;
-        const yesterdaySales = parseFloat(salesData[currentMonth][yesterday-1]) || 0;
-        const yesterdayAchieved = yesterdayTarget > 0 ? (yesterdaySales / yesterdayTarget) * 100 : 0;
-        
-        const dayBeforeTarget = parseFloat(targetData[currentMonth][dayBefore-1]) || 0;
-        const dayBeforeSales = parseFloat(salesData[currentMonth][dayBefore-1]) || 0;
-        const dayBeforeAchieved = dayBeforeTarget > 0 ? (dayBeforeSales / dayBeforeTarget) * 100 : 0;
-        
-        const todayTarget = parseFloat(targetData[currentMonth][today-1]) || 0;
-        
-        let validDays = 0, totalAchieved = 0;
-        if (yesterdayTarget > 0) { totalAchieved += yesterdayAchieved; validDays++; }
-        if (dayBeforeTarget > 0) { totalAchieved += dayBeforeAchieved; validDays++; }
-        
-        const avgAchieved = validDays > 0 ? totalAchieved / validDays : 100;
-        const todayForecast = todayTarget > 0 ? (avgAchieved / 100) * todayTarget : 0;
-        
-        let trend = '', trendClass = '', recommendation = '';
-        if (validDays >= 2 && yesterdayTarget > 0 && dayBeforeTarget > 0) {
-            if (yesterdayAchieved > dayBeforeAchieved) { trend = '⬆️ Improving'; trendClass = 'text-success'; recommendation = 'Consider increasing today\'s target'; }
-            else if (yesterdayAchieved < dayBeforeAchieved) { trend = '⬇️ Declining'; trendClass = 'text-danger'; recommendation = 'Focus on improving performance'; }
-            else { trend = '➡️ Stable'; trendClass = 'text-warning'; recommendation = 'Maintain current levels'; }
+    // ========== ADVANCED FORECAST ALGORITHM ==========
+    function calculateAdvancedForecast(today) {
+        const last7Sales = [];
+        const last7Targets = [];
+        for (let i = Math.max(1, today-7); i < today; i++) {
+            const sale = parseFloat(salesData[currentMonth][i-1]) || 0;
+            const tgt = parseFloat(targetData[currentMonth][i-1]) || 0;
+            if (sale > 0) {
+                last7Sales.push(sale);
+                last7Targets.push(tgt > 0 ? tgt : sale);
+            }
         }
-        
+        let weightedSum = 0, weightTotal = 0;
+        for (let i = 0; i < last7Sales.length; i++) {
+            const weight = i + 1;
+            weightedSum += last7Sales[i] * weight;
+            weightTotal += weight;
+        }
+        const weightedAvg = weightTotal > 0 ? weightedSum / weightTotal : 0;
+        let trendFactor = 1.0;
+        if (last7Sales.length >= 3) {
+            const recent = last7Sales.slice(-5);
+            let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+            for (let i = 0; i < recent.length; i++) {
+                sumX += i;
+                sumY += recent[i];
+                sumXY += i * recent[i];
+                sumX2 += i * i;
+            }
+            const slope = (recent.length * sumXY - sumX * sumY) / (recent.length * sumX2 - sumX * sumX);
+            trendFactor = 1 + (slope / (weightedAvg || 1)) * 0.5;
+            trendFactor = Math.max(0.85, Math.min(1.15, trendFactor));
+        }
+        const todayTarget = parseFloat(targetData[currentMonth][today-1]) || 0;
+        let targetBasedPrediction = todayTarget;
+        if (last7Sales.length >= 3) {
+            const avgAchievement = last7Sales.reduce((a,b,i) => a + (b / (last7Targets[i] || b)), 0) / last7Sales.length;
+            targetBasedPrediction = todayTarget * (avgAchievement || 1);
+        }
+        let finalForecast = (weightedAvg * trendFactor * 0.7) + (targetBasedPrediction * 0.3);
+        if (isNaN(finalForecast) || finalForecast <= 0) finalForecast = todayTarget * 0.95 || weightedAvg || 10000;
+        let confidence = Math.min(95, 50 + (last7Sales.length * 6));
+        return { forecast: finalForecast, confidence: Math.round(confidence), trend: trendFactor, dataPoints: last7Sales.length };
+    }
+
+    function calculateTodayForecastEnhanced() {
+        const today = new Date().getDate();
+        const { forecast, confidence, trend, dataPoints } = calculateAdvancedForecast(today);
+        const todayTarget = parseFloat(targetData[currentMonth][today-1]) || 0;
+        let trendIcon = '', trendText = '', trendClass = '';
+        if (trend > 1.03) { trendIcon = '📈'; trendText = 'Strong Upward'; trendClass = 'trend-up'; }
+        else if (trend > 0.97) { trendIcon = '➡️'; trendText = 'Stable'; trendClass = 'trend-stable'; }
+        else { trendIcon = '📉'; trendText = 'Declining'; trendClass = 'trend-down'; }
         return `
             <div class="forecast-card">
-                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                    <span><strong><i class="fas fa-bullseye"></i> TODAY'S FORECAST:</strong></span>
-                    <span class="text-warning fw-bold">SAR ${formatSAR(todayForecast)}</span>
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center; gap: 15px;">
+                    <div><span style="background: rgba(229,9,20,0.2); padding: 6px 14px; border-radius: 30px;">${trendIcon} ${trendText} Trend</span></div>
+                    <div><span style="color: var(--netflix-gray);">AI Confidence:</span> <span class="fw-bold" style="color: #00d97e;">${confidence}%</span></div>
                 </div>
-                <div class="mt-2 small">
-                    ${validDays > 0 ? `<div>Based on last ${validDays} day(s): Avg ACH% ${avgAchieved.toFixed(1)}%</div>
-                    <div class="${trendClass}">${trend}</div>
-                    <div class="text-info mt-1"><i class="fas fa-lightbulb"></i> ${recommendation || 'Enter targets for better predictions'}</div>` : '<div class="text-warning">Not enough data from previous days</div>'}
-                    <div class="mt-2">Today's Target: <strong>SAR ${formatSAR(todayTarget)}</strong></div>
+                <div class="mt-3" style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 15px;">
+                    <span><strong><i class="fas fa-chart-line"></i> FORECASTED SALES TODAY:</strong></span>
+                    <span style="font-size: 2rem; font-weight: 800; color: var(--netflix-red);">SAR ${formatSAR(forecast)}</span>
                 </div>
+                <div class="mt-2 small text-secondary">Based on ${dataPoints} days of historical data | Target: SAR ${formatSAR(todayTarget)} | AI Model: Weighted Moving Avg + Trend</div>
+                <div class="mt-2"><div class="progress-bar-custom"><div class="progress-fill" style="width: ${Math.min((forecast/(todayTarget||forecast))*100, 100)}%"></div></div></div>
             </div>
         `;
     }
@@ -624,6 +591,7 @@
             }
         }
 
+        // Update totals row
         $("#total-sales").html('SAR '+formatSAR(totalSales));
         $("#total-target").html('SAR '+formatSAR(totalTarget));
         $("#total-lastyear").html('SAR '+formatSAR(totalLastYear));
@@ -633,7 +601,33 @@
         $("#total-achieved").text(avgAch.toFixed(1)+'%'); $("#total-growth").text(avgGr.toFixed(1)+'%');
         $("#total-average").text(avgAvg.toFixed(1)+'%');
 
-        // MTD up to yesterday
+        // Calculate Averages per day (for the month so far based on valid entries)
+        const avgDailySales = validDays > 0 ? totalSales / validDays : 0;
+        const avgDailyTarget = validDays > 0 ? totalTarget / validDays : 0;
+        const avgDailyLastYear = validDays > 0 ? totalLastYear / validDays : 0;
+        const avgDailyTC = validDays > 0 ? totalTC / validDays : 0;
+        const avgDailyAC = validDays > 0 ? totalAC / validDays : 0;
+        const avgDailyAch = validDays > 0 ? totalAchieved / validDays : 0;
+        const avgDailyGrowth = validDays > 0 ? totalGrowth / validDays : 0;
+        const avgDailyAvg = validDays > 0 ? totalAverage / validDays : 0;
+
+        $("#avg-sales-row").html('SAR '+formatSAR(avgDailySales));
+        $("#avg-target-row").html('SAR '+formatSAR(avgDailyTarget));
+        $("#avg-lastyear-row").html('SAR '+formatSAR(avgDailyLastYear));
+        $("#avg-tc-row").text(avgDailyTC.toFixed(1)+'%');
+        $("#avg-ac-row").text(avgDailyAC.toFixed(1));
+        $("#avg-ach-row").text(avgDailyAch.toFixed(1)+'%');
+        $("#avg-growth-row").text(avgDailyGrowth.toFixed(1)+'%');
+        $("#avg-avg-row").text(avgDailyAvg.toFixed(1)+'%');
+
+        // Update KPI cards with new Averages
+        $("#avg-daily-sales").html('SAR '+formatSAR(avgDailySales));
+        $("#avg-tc-value").text(avgDailyTC.toFixed(1)+'%');
+        const avgSalesPercent = (avgDailySales / (avgDailyTarget||1)) * 100;
+        $("#avg-sales-progress").width(Math.min(avgSalesPercent, 100)+'%');
+        $("#avg-tc-progress").width(Math.min(avgDailyTC, 100)+'%');
+
+        // MTD calculations up to yesterday
         const yesterday = today>1 ? today-1 : 30;
         let mtdSales=0, mtdTarget=0, mtdLastYear=0;
         for (let i=1; i<=yesterday && i<=30; i++) {
@@ -655,11 +649,11 @@
 
         saveData();
         updateChart();
-        updateTargetForecast(today, totalTarget, mtdSales, mtdTarget);
-        $("#today-forecast-container").html(calculateTodayForecast());
+        updateEOMForecast(today, totalTarget, mtdSales);
+        $("#today-forecast-container").html(calculateTodayForecastEnhanced());
     }
 
-    function updateTargetForecast(today, totalMonthlyTarget, mtdSales, mtdTarget) {
+    function updateEOMForecast(today, totalMonthlyTarget, mtdSales) {
         let dailyAchPct = [];
         for (let i = 1; i < today; i++) {
             const t = parseFloat(targetData[currentMonth][i-1]) || 0;
@@ -674,17 +668,16 @@
         const projectedAch = totalMonthlyTarget > 0 ? (projectedTotal / totalMonthlyTarget) * 100 : 0;
         
         let forecastMsg = '', cssClass = '';
-        if (projectedAch >= 105) { forecastMsg = `✅ EXCEEDING (${projectedAch.toFixed(1)}%)`; cssClass = 'text-success'; }
-        else if (projectedAch >= 100) { forecastMsg = `⚠️ ON TRACK (${projectedAch.toFixed(1)}%)`; cssClass = 'text-warning'; }
-        else { forecastMsg = `❌ MISSING (${projectedAch.toFixed(1)}%)`; cssClass = 'text-danger'; }
+        if (projectedAch >= 105) { forecastMsg = `🎯 EXCEEDING EXPECTATIONS (${projectedAch.toFixed(1)}%)`; cssClass = 'trend-up'; }
+        else if (projectedAch >= 100) { forecastMsg = `📊 ON TRACK TO HIT TARGET (${projectedAch.toFixed(1)}%)`; cssClass = 'trend-stable'; }
+        else { forecastMsg = `⚠️ BELOW TARGET PROJECTION (${projectedAch.toFixed(1)}%)`; cssClass = 'trend-down'; }
         
         $("#trend-analysis").html(`
-            <div class="${cssClass} fw-bold mb-2">${forecastMsg}</div>
-            <div class="small text-secondary">Projected EOM: SAR ${formatSAR(projectedTotal)} | Based on ${dailyAchPct.length} days avg ACH%: ${avgAch.toFixed(1)}%</div>
+            <div class="${cssClass} fw-bold mb-2" style="font-size: 1.1rem;">${forecastMsg}</div>
+            <div class="small text-secondary">Projected EOM: SAR ${formatSAR(projectedTotal)} | Based on ${dailyAchPct.length} days | Avg ACH%: ${avgAch.toFixed(1)}%</div>
+            <div class="progress-bar-custom mt-2"><div class="progress-fill" style="width: ${Math.min(projectedAch, 100)}%"></div></div>
         `);
-        const notif = $("#notifications-container");
-        notif.empty();
-        notif.append(`<div class="forecast-card mt-2"><i class="fas fa-chart-line me-2"></i>MTD Sales: SAR ${formatSAR(mtdSales)} | Remaining Target: SAR ${formatSAR(remainingTargetSum)}</div>`);
+        $("#notifications-container").html(`<div class="forecast-card mt-2" style="background: rgba(0,0,0,0.3);"><i class="fas fa-chart-line me-2 text-danger"></i><strong>MTD Sales:</strong> SAR ${formatSAR(mtdSales)} | <strong>Remaining Target:</strong> SAR ${formatSAR(remainingTargetSum)}</div>`);
     }
 
     function updateChart() {
@@ -695,16 +688,15 @@
             data: {
                 labels: Array.from({length:30}, (_,i)=>`D${i+1}`),
                 datasets: [
-                    { label: "A.C", data: acData[currentMonth], borderColor: "#2c7be5", backgroundColor: "rgba(44,123,229,0.1)", borderWidth:2, tension:0.3, pointBackgroundColor:"#2c7be5", yAxisID:'y' },
-                    { label: "Growth %", data: growthData[currentMonth], borderColor: "#00d97e", backgroundColor: "rgba(0,217,126,0.1)", borderWidth:2, tension:0.3, pointBackgroundColor:"#00d97e", yAxisID:'y1' },
-                    { label: "TC %", data: tcData[currentMonth], borderColor: "#f6c343", backgroundColor: "rgba(246,195,67,0.1)", borderWidth:2, tension:0.3, pointBackgroundColor:"#f6c343", yAxisID:'y' },
-                    { label: "ACH %", data: achievedData[currentMonth], borderColor: "#9c5fff", backgroundColor: "rgba(156,95,255,0.1)", borderWidth:2, tension:0.3, pointBackgroundColor:"#9c5fff", yAxisID:'y' }
+                    { label: "A.C", data: acData[currentMonth], borderColor: "#e50914", backgroundColor: "rgba(229,9,20,0.1)", borderWidth:2, tension:0.3, fill: true },
+                    { label: "Growth %", data: growthData[currentMonth], borderColor: "#00d97e", backgroundColor: "rgba(0,217,126,0.05)", borderWidth:2, tension:0.3 },
+                    { label: "ACH %", data: achievedData[currentMonth], borderColor: "#f6c343", backgroundColor: "rgba(246,195,67,0.05)", borderWidth:2, tension:0.3 }
                 ]
             },
             options: {
                 responsive: true, maintainAspectRatio: true,
-                plugins: { legend: { labels: { color:'#e0e0e0', font:{size:9} } } },
-                scales: { x: { ticks: { color:'#9e9e9e', font:{size:8} } }, y: { position:'left', ticks: { color:'#9e9e9e' } }, y1: { position:'right', ticks: { color:'#9e9e9e', callback: (v) => v+'%' } } }
+                plugins: { legend: { labels: { color: '#b3b3b3', font: { size: 10 } } } },
+                scales: { x: { ticks: { color: '#808080' }, grid: { display: false } }, y: { ticks: { color: '#808080' }, grid: { color: '#2a2a2a' } } }
             }
         });
     }
@@ -712,12 +704,12 @@
     async function exportToPDF() {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('landscape');
-        pdf.setFont('helvetica','bold'); pdf.setTextColor(44,123,229); pdf.setFontSize(16);
+        pdf.setFont('helvetica','bold'); pdf.setTextColor(229,9,20); pdf.setFontSize(18);
         pdf.text(`SALES REPORT - ${currentMonth} (SAR)`,14,15);
-        pdf.setFontSize(10); pdf.setTextColor(110,132,163);
-        pdf.text(`Generated: ${new Date().toLocaleString()}`,14,22);
-        pdf.autoTable({ html:'.sales-table', startY:30, head:[['DAY','SALES','TARGET','LAST YR','TC%','AC','ACH%','GROWTH%','AVG%']] });
-        pdf.save(`${currentMonth}_SAR.pdf`);
+        pdf.setFontSize(10); pdf.setTextColor(180,180,180);
+        pdf.text(`Generated: ${new Date().toLocaleString()} · AI Forecast Engine · Includes Daily Averages`,14,23);
+        pdf.autoTable({ html:'.sales-table', startY:32, head:[['DAY','SALES','TARGET','LAST YR','TC%','AC','ACH%','GROWTH%','AVG%']], theme:'dark', headStyles: { fillColor: [229,9,20] } });
+        pdf.save(`${currentMonth}_Netflix_Sales.pdf`);
     }
 
     function clearAllData() {
