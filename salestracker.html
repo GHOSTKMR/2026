@@ -2,737 +2,599 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>NetflixStyle | Sales Forecast Pro</title>
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- jsPDF + AutoTable -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* NETFLIX INSPIRED DARK THEME */
-        :root {
-            --netflix-black: #000000;
-            --netflix-dark: #0a0a0a;
-            --netflix-card: #141414;
-            --netflix-card-hover: #1f1f1f;
-            --netflix-red: #e50914;
-            --netflix-red-dark: #b20710;
-            --netflix-gray: #808080;
-            --netflix-light-gray: #b3b3b3;
-            --netflix-white: #ffffff;
-            --netflix-border: #2a2a2a;
-            --success: #00d97e;
-            --warning: #f6c343;
-            --danger: #e63757;
-        }
-
-        body {
-            background: var(--netflix-black);
-            color: var(--netflix-white);
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            width: 100%;
-            overflow-x: hidden;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: var(--netflix-dark); }
-        ::-webkit-scrollbar-thumb { background: var(--netflix-red); border-radius: 10px; }
-
-        .dashboard-wrapper {
-            width: 100%;
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 0;
-        }
-
-        .container-fluid-custom {
-            width: 100%;
-            padding: 0 20px;
-        }
-
-        /* NETFLIX STYLE HEADER */
-        .page-header {
-            background: linear-gradient(135deg, var(--netflix-red) 0%, var(--netflix-red-dark) 100%);
-            border-radius: 12px;
-            padding: 20px 28px;
-            margin: 20px 0 24px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-        }
-
-        .title-section h1 {
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            letter-spacing: -0.5px;
-        }
-
-        .netflix-badge {
-            background: rgba(0,0,0,0.4);
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        .month-selector {
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
-            border-radius: 40px;
-            padding: 5px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .month-selector label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin: 0;
-            color: var(--netflix-light-gray);
-        }
-
-        #month-select {
-            background: var(--netflix-card);
-            color: var(--netflix-white);
-            border: 1px solid var(--netflix-red);
-            border-radius: 40px;
-            padding: 8px 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        #month-select:hover { border-color: var(--netflix-white); }
-
-        /* KPI CARDS - 6 CARDS GRID (including Averages) */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 20px;
-            margin-bottom: 28px;
-        }
-
-        .kpi-card {
-            background: var(--netflix-card);
-            border-radius: 16px;
-            padding: 18px 14px;
-            border: 1px solid var(--netflix-border);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .kpi-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: var(--netflix-red);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-        .kpi-card:hover::before { transform: scaleX(1); }
-        .kpi-card:hover { transform: translateY(-4px); border-color: var(--netflix-red); box-shadow: 0 10px 30px rgba(229,9,20,0.2); }
-
-        .kpi-label {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            color: var(--netflix-gray);
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .kpi-value {
-            font-size: 1.4rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, var(--netflix-white), var(--netflix-light-gray));
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-
-        .progress-bar-custom {
-            height: 4px;
-            background: var(--netflix-border);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--netflix-red), #ff4d4d);
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-
-        /* FORECAST PANEL - NETFLIX FEATURE CARD */
-        .notif-panel {
-            background: linear-gradient(135deg, var(--netflix-card) 0%, #1a1a2e 100%);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 24px;
-            border: 1px solid var(--netflix-border);
-            position: relative;
-            overflow: hidden;
-        }
-        .notif-panel::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(229,9,20,0.1) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-        .notif-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: var(--netflix-red);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .forecast-card {
-            background: rgba(229,9,20,0.15);
-            backdrop-filter: blur(8px);
-            border-left: 4px solid var(--netflix-red);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
-        .trend-up { color: #00d97e; }
-        .trend-down { color: #e63757; }
-        .trend-stable { color: #f6c343; }
-
-        /* CHART */
-        .chart-wrapper {
-            background: var(--netflix-card);
-            border-radius: 20px;
-            padding: 20px;
-            border: 1px solid var(--netflix-border);
-            margin-bottom: 24px;
-        }
-        .chart-wrapper canvas { max-height: 350px; width: 100% !important; }
-
-        /* TABLE - NETFLIX STYLE */
-        .table-card {
-            background: var(--netflix-card);
-            border-radius: 20px;
-            border: 1px solid var(--netflix-border);
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        .table-header {
-            padding: 18px 24px;
-            background: rgba(229,9,20,0.1);
-            border-bottom: 1px solid var(--netflix-border);
-            font-weight: 700;
-            font-size: 1rem;
-        }
-        .table-responsive-custom {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        .sales-table {
-            width: 100%;
-            min-width: 900px;
-            border-collapse: collapse;
-            color: var(--netflix-white);
-            font-size: 0.75rem;
-        }
-        .sales-table th {
-            background: #1a1a2a;
-            padding: 14px 8px;
-            text-align: center;
-            font-weight: 700;
-            color: var(--netflix-red);
-            border-bottom: 1px solid var(--netflix-border);
-        }
-        .sales-table td {
-            padding: 12px 6px;
-            text-align: center;
-            border-bottom: 1px solid var(--netflix-border);
-        }
-        .sales-input {
-            width: 90px;
-            background: #2a2a3a;
-            border: 1px solid var(--netflix-border);
-            border-radius: 30px;
-            padding: 8px 8px;
-            color: var(--netflix-white);
-            font-size: 0.75rem;
-            text-align: center;
-            transition: all 0.2s;
-        }
-        .sales-input:focus {
-            border-color: var(--netflix-red);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(229,9,20,0.3);
-        }
-        .total-row {
-            background: linear-gradient(90deg, #1a1a2a, #0f0f1a);
-            font-weight: 800;
-        }
-        .stats-row {
-            background: rgba(229,9,20,0.08);
-            font-weight: 700;
-        }
-
-        /* BUTTONS */
-        .btn-group-custom {
-            display: flex;
-            gap: 16px;
-            padding: 20px 24px;
-            flex-wrap: wrap;
-        }
-        .action-btn {
-            flex: 1;
-            min-width: 140px;
-            border-radius: 40px;
-            padding: 12px 20px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        .btn-netflix-red {
-            background: linear-gradient(135deg, var(--netflix-red), var(--netflix-red-dark));
-            color: white;
-        }
-        .btn-netflix-red:hover { transform: scale(0.98); opacity: 0.9; }
-        .btn-netflix-outline {
-            background: transparent;
-            border: 1px solid var(--netflix-red);
-            color: var(--netflix-red);
-        }
-        .btn-netflix-outline:hover { background: rgba(229,9,20,0.2); }
-
-        /* RESPONSIVE */
-        @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); gap: 15px; } }
-        @media (max-width: 768px) {
-            .container-fluid-custom { padding: 0 12px; }
-            .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .page-header { flex-direction: column; text-align: center; }
-            .kpi-value { font-size: 1.1rem; }
-        }
-        @media (max-width: 480px) {
-            .kpi-card { padding: 14px 10px; }
-            .action-btn { min-width: 100px; padding: 10px; font-size: 0.7rem; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sales Performance Tracker & Forecasting Dashboard</title>
+  <!-- Bootstrap 5 + Icons + Fonts -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- SheetJS (XLSX) -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+  <!-- jsPDF + html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    * { transition: all 0.2s ease; }
+    body {
+      background: #0a0f1e;
+      font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, 'Inter', sans-serif;
+      color: #eef2ff;
+      padding-bottom: 2rem;
+    }
+    /* Glassmorphism cards */
+    .glass-card {
+      background: rgba(18, 25, 45, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(72, 187, 255, 0.2);
+      border-radius: 1.25rem;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+      transition: transform 0.2s;
+    }
+    .glass-card:hover { transform: translateY(-2px); border-color: rgba(0, 200, 255, 0.4); }
+    .kpi-value { font-size: 1.9rem; font-weight: 700; background: linear-gradient(135deg, #fff, #7bc5ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .kpi-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #9aa9c1; }
+    .badge-achievement { background: #1e2a47; border-radius: 2rem; padding: 0.3rem 0.8rem; }
+    .table-dark-custom { background-color: #0f1422; color: #e2e8f0; border-color: #2d3a5e; }
+    .table-dark-custom th { background: #111827; border-bottom: 1px solid #2d3a5e; }
+    .btn-outline-accent { border-color: #2c7da0; color: #7bc5ff; }
+    .btn-outline-accent:hover { background: #2c7da0; color: white; }
+    .rtl { direction: rtl; text-align: right; }
+    .rtl .me-2 { margin-right: 0 !important; margin-left: 0.5rem !important; }
+    .rtl .ms-2 { margin-left: 0 !important; margin-right: 0.5rem !important; }
+    .rtl .text-start { text-align: right !important; }
+    .rtl .text-end { text-align: left !important; }
+    canvas { max-height: 400px; width: 100%; }
+    .scrollable-table { overflow-x: auto; }
+    @media (max-width: 768px) { .kpi-value { font-size: 1.4rem; } }
+    select, input { background-color: #111827 !important; color: white !important; border: 1px solid #2d3a5e; }
+    select:focus, input:focus { border-color: #3b82f6; box-shadow: 0 0 0 0.2rem rgba(59,130,246,0.3); }
+    .btn-primary { background: #1e4b6e; border: none; }
+    .btn-primary:hover { background: #2c628b; }
+    .btn-success { background: #0f5c3a; }
+    .btn-danger { background: #8b3a3a; }
+    .btn-warning { background: #a07c1a; color: white; }
+    .editable-cell { cursor: pointer; position: relative; }
+    .editable-cell:hover { background: rgba(59,130,246,0.2); text-decoration: underline; }
+    .modal-content { background: #0f1422; color: white; border: 1px solid #2c7da0; }
+    .modal-header { border-bottom-color: #2c7da0; }
+    .modal-footer { border-top-color: #2c7da0; }
+    .form-control, .form-select { background: #1a1f2e !important; border-color: #2d3a5e; color: white; }
+    .action-buttons { position: sticky; top: 0; z-index: 100; background: #0a0f1e; padding: 10px 0; margin-bottom: 15px; border-radius: 12px; }
+    .quick-edit-icon { font-size: 0.9rem; margin-left: 5px; opacity: 0.6; }
+    .quick-edit-icon:hover { opacity: 1; }
+  </style>
 </head>
 <body>
-<div class="dashboard-wrapper">
-    <div class="container-fluid-custom">
-        <!-- Netflix Style Header -->
-        <div class="page-header">
-            <div class="title-section">
-                <h1>
-                    <i class="fas fa-film" style="color: white;"></i>
-                    <span>SALES FORECAST</span>
-                    <span class="netflix-badge"><i class="fas fa-chart-line"></i> AI PREDICTIVE</span>
-                </h1>
-            </div>
-            <div class="month-selector">
-                <label><i class="fas fa-calendar-alt"></i> SELECT MONTH:</label>
-                <select id="month-select">
-                    <option value="January">JANUARY</option><option value="February">FEBRUARY</option>
-                    <option value="March">MARCH</option><option value="April">APRIL</option>
-                    <option value="May">MAY</option><option value="June">JUNE</option>
-                    <option value="July">JULY</option><option value="August">AUGUST</option>
-                    <option value="September">SEPTEMBER</option>
-                    <option value="October">OCTOBER</option><option value="November">NOVEMBER</option>
-                    <option value="December">DECEMBER</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- KPI Cards - 6 Cards including Average Daily Sales & Average TC -->
-        <div class="kpi-grid">
-            <div class="kpi-card"><div class="kpi-label"><i class="fas fa-chart-simple"></i> MTD SALES</div><div class="kpi-value" id="mtd-sales">SAR 0</div><div class="progress-bar-custom"><div class="progress-fill" id="mtd-sales-progress" style="width:0%"></div></div></div>
-            <div class="kpi-card"><div class="kpi-label"><i class="fas fa-bullseye"></i> MTD TARGET</div><div class="kpi-value" id="mtd-target">SAR 0</div><div class="progress-bar-custom"><div class="progress-fill" id="mtd-target-progress" style="width:0%"></div></div></div>
-            <div class="kpi-card"><div class="kpi-label"><i class="fas fa-trophy"></i> ACHIEVEMENT</div><div class="kpi-value" id="achievement-rate">0%</div><div class="progress-bar-custom"><div class="progress-fill" id="achievement-progress" style="width:0%"></div></div></div>
-            <div class="kpi-card"><div class="kpi-label"><i class="fas fa-arrow-trend-up"></i> GROWTH</div><div class="kpi-value" id="growth-rate">0%</div><div class="progress-bar-custom"><div class="progress-fill" id="growth-progress" style="width:0%"></div></div></div>
-            <div class="kpi-card"><div class="kpi-label"><i class="fas fa-calendar-day"></i> AVG DAILY SALES</div><div class="kpi-value" id="avg-daily-sales">SAR 0</div><div class="progress-bar-custom"><div class="progress-fill" id="avg-sales-progress" style="width:0%"></div></div></div>
-            <div class="kpi-card"><div class="kpi-label"><i class="fas fa-percent"></i> AVG TC (%)</div><div class="kpi-value" id="avg-tc-value">0%</div><div class="progress-bar-custom"><div class="progress-fill" id="avg-tc-progress" style="width:0%"></div></div></div>
-        </div>
-
-        <!-- Forecast Panel - Enhanced AI Prediction -->
-        <div class="notif-panel">
-            <div class="notif-title"><i class="fas fa-brain"></i> AI POWERED FORECAST ENGINE</div>
-            <div id="trend-analysis"></div>
-            <div id="today-forecast-container"></div>
-            <div id="notifications-container" class="mt-3"></div>
-        </div>
-
-        <!-- Chart -->
-        <div class="chart-wrapper">
-            <canvas id="performance-chart"></canvas>
-        </div>
-
-        <!-- Data Table -->
-        <div class="table-card">
-            <div class="table-header"><i class="fas fa-table me-2"></i> DAILY PERFORMANCE · ENTER DATA FOR SMART FORECASTS</div>
-            <div class="table-responsive-custom">
-                <table class="sales-table">
-                    <thead>
-                        <tr><th>DAY</th><th>SALES (SAR)</th><th>TARGET (SAR)</th><th>LAST YR (SAR)</th><th>TC%</th><th>A.C</th><th>ACH%</th><th>GROWTH%</th><th>AVG%</th></tr>
-                    </thead>
-                    <tbody id="sales-table-body"></tbody>
-                    <tfoot id="table-footer">
-                        <tr class="total-row"><tr>TOTAL</td><td id="total-sales">SAR0</td><td id="total-target">SAR0</td><td id="total-lastyear">SAR0</td>
-                        <td id="total-tc">0%</td><td id="total-ac">0</td><td id="total-achieved">0%</td><td id="total-growth">0%</td><td id="total-average">0%</td></tr>
-                        <tr class="stats-row"><td>📊 AVERAGE (per day)</td><td id="avg-sales-row">SAR0</td><td id="avg-target-row">SAR0</td><td id="avg-lastyear-row">SAR0</td>
-                        <td id="avg-tc-row">0%</td><td id="avg-ac-row">0</td><td id="avg-ach-row">0%</td><td id="avg-growth-row">0%</td><td id="avg-avg-row">0%</td></tr>
-                    </tfoot>
-                </table>
-            </div>
-            <div class="btn-group-custom">
-                <button class="action-btn btn-netflix-red" id="exportPdf"><i class="fas fa-file-pdf"></i> EXPORT PDF</button>
-                <button class="action-btn btn-netflix-outline" id="clearAll"><i class="fas fa-trash-alt"></i> CLEAR DATA</button>
-            </div>
-        </div>
+<div class="container-fluid px-3 px-lg-4 py-3" id="appRoot">
+  <!-- Header + Lang Toggle + Action Buttons -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+    <h2 class="fw-bold"><i class="bi bi-graph-up me-2"></i><span data-key="app_title">Sales Tracker & Forecast</span></h2>
+    <div class="d-flex gap-2">
+      <button class="btn btn-sm btn-outline-accent" id="langEnBtn">🇬🇧 EN</button>
+      <button class="btn btn-sm btn-outline-accent" id="langArBtn">🇸🇦 AR</button>
     </div>
+  </div>
+
+  <!-- Quick Action Buttons Row -->
+  <div class="action-buttons d-flex flex-wrap gap-2 mb-3">
+    <button class="btn btn-sm btn-primary" id="quickAddDataBtn" data-key="quick_add"><i class="bi bi-plus-circle"></i> Quick Add/Edit Day</button>
+    <button class="btn btn-sm btn-warning" id="clearAllDataBtn" data-key="clear_all"><i class="bi bi-trash3"></i> Clear ALL Data (Current Month)</button>
+    <button class="btn btn-sm btn-danger" id="resetMonthDataBtn" data-key="reset_month"><i class="bi bi-arrow-repeat"></i> Reset Month to Empty</button>
+    <button class="btn btn-sm btn-secondary" id="bulkSampleBtn" data-key="bulk_sample"><i class="bi bi-database"></i> Load Sample Data</button>
+  </div>
+
+  <!-- Month Selector + Date Range Row -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <label class="form-label" data-key="select_month">Select Month</label>
+      <select id="monthSelect" class="form-select"></select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" data-key="date_range">Date Range (Start - End)</label>
+      <div class="d-flex gap-2">
+        <input type="number" id="rangeStart" class="form-control" placeholder="1" min="1" max="31" value="1">
+        <span class="align-self-center">—</span>
+        <input type="number" id="rangeEnd" class="form-control" placeholder="31" min="1" max="31" value="31">
+      </div>
+    </div>
+    <div class="col-md-4 d-flex align-items-end gap-2">
+      <button id="applyRangeBtn" class="btn btn-primary" data-key="apply_filter">Apply Filter</button>
+      <button id="resetMonthBtn" class="btn btn-secondary" data-key="reset_view">Reset View</button>
+    </div>
+  </div>
+
+  <!-- KPI Cards Row -->
+  <div class="row g-3 mb-4" id="kpiRow">
+    <!-- dynamic KPI cards filled by JS -->
+  </div>
+
+  <!-- Main Chart -->
+  <div class="glass-card p-3 mb-4">
+    <h5 class="mb-2" data-key="performance_chart">Performance Overview (Targets, Actuals, Growth & Forecast)</h5>
+    <canvas id="mainChart" width="800" height="350" style="max-height: 350px;"></canvas>
+  </div>
+
+  <!-- Reports & Tables -->
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="glass-card p-3">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+          <h5 data-key="summary_report">📋 Summary Report</h5>
+          <div class="d-flex gap-2">
+            <button id="exportExcelBtn" class="btn btn-sm btn-success"><i class="bi bi-file-excel"></i> <span data-key="export_excel">Excel</span></button>
+            <button id="exportPdfBtn" class="btn btn-sm btn-danger"><i class="bi bi-file-pdf"></i> <span data-key="export_pdf">PDF</span></button>
+          </div>
+        </div>
+        <div id="summaryCards" class="row g-3 mb-4"></div>
+        <h6 data-key="daily_details">📅 Daily Details <small class="text-muted" data-key="edit_hint">(Click any value to edit | Click ✏️ for Last Year Sales)</small></h6>
+        <div class="scrollable-table">
+          <table class="table table-dark-custom table-hover table-bordered" id="dailyTable">
+            <thead><tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Quick Add/Edit -->
+<div class="modal fade" id="editDayModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">Edit Day Data</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editDayIndex">
+        <div class="mb-3">
+          <label class="form-label">Day Number</label>
+          <input type="number" id="editDayNum" class="form-control" min="1" max="31" readonly>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Sales Target ($)</label>
+          <input type="number" id="editSalesTarget" class="form-control" step="any">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Actual Sales ($)</label>
+          <input type="number" id="editActualSales" class="form-control" step="any">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">TC Target (Transactions)</label>
+          <input type="number" id="editTcTarget" class="form-control" step="any">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Actual TC (Transactions)</label>
+          <input type="number" id="editActualTc" class="form-control" step="any">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Last Year Sales ($)</label>
+          <input type="number" id="editLastYearSales" class="form-control" step="any">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveDayDataBtn">Save Changes</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    let currentMonth = "January";
-    const salesData = {}, targetData = {}, lastYearData = {}, tcData = {}, acData = {}, achievedData = {}, growthData = {}, averageData = {};
-    let chart = null;
-
-    months.forEach(m => {
-        salesData[m] = JSON.parse(localStorage.getItem(`salesData_${m}`)) || Array(30).fill('');
-        targetData[m] = JSON.parse(localStorage.getItem(`targetData_${m}`)) || Array(30).fill('');
-        lastYearData[m] = JSON.parse(localStorage.getItem(`lastYearData_${m}`)) || Array(30).fill('');
-        tcData[m] = JSON.parse(localStorage.getItem(`tcData_${m}`)) || Array(30).fill('');
-        acData[m] = JSON.parse(localStorage.getItem(`acData_${m}`)) || Array(30).fill('');
-        achievedData[m] = JSON.parse(localStorage.getItem(`achievedData_${m}`)) || Array(30).fill('');
-        growthData[m] = JSON.parse(localStorage.getItem(`growthData_${m}`)) || Array(30).fill('');
-        averageData[m] = JSON.parse(localStorage.getItem(`averageData_${m}`)) || Array(30).fill('');
-    });
-
-    function formatSAR(val) { return Math.round(val).toLocaleString('en-US'); }
-    function calculateAC(sales, tc) { return tc > 0 ? sales / tc : 0; }
-
-    function saveData() {
-        localStorage.setItem(`salesData_${currentMonth}`, JSON.stringify(salesData[currentMonth]));
-        localStorage.setItem(`targetData_${currentMonth}`, JSON.stringify(targetData[currentMonth]));
-        localStorage.setItem(`lastYearData_${currentMonth}`, JSON.stringify(lastYearData[currentMonth]));
-        localStorage.setItem(`tcData_${currentMonth}`, JSON.stringify(tcData[currentMonth]));
-        localStorage.setItem(`acData_${currentMonth}`, JSON.stringify(acData[currentMonth]));
-        localStorage.setItem(`achievedData_${currentMonth}`, JSON.stringify(achievedData[currentMonth]));
-        localStorage.setItem(`growthData_${currentMonth}`, JSON.stringify(growthData[currentMonth]));
-        localStorage.setItem(`averageData_${currentMonth}`, JSON.stringify(averageData[currentMonth]));
+  // ---------- TRANSLATIONS (EN / AR) ----------
+  const translations = {
+    en: {
+      app_title: "Sales Tracker & Forecast", select_month: "Select Month", date_range: "Date Range (Day numbers)",
+      apply_filter: "Apply Filter", reset_view: "Reset View", performance_chart: "Performance Overview (Targets, Actuals, Growth & Forecast)",
+      summary_report: "📋 Summary Report", export_excel: "Excel", export_pdf: "PDF", daily_details: "📅 Daily Details",
+      mtd_sales: "MTD Sales", avg_daily_sales: "Avg Daily Sales", remaining_sales: "Remaining Sales", forecast_sales: "Forecast Sales",
+      mtd_target: "MTD Target", target_ach: "Target Achievement %", remaining_target: "Remaining Target", mtd_tc: "MTD TC",
+      tc_ach: "TC Achievement %", forecast_tc: "Forecast TC", avg_check: "Avg Check (MTD)", mtd_growth: "MTD Growth %",
+      date: "Date", sales_target: "Sales Target", actual_sales: "Actual Sales", tc_target: "TC Target", actual_tc: "Actual TC",
+      ach_percent: "Ach%", growth_percent: "Growth%", avg_check_daily: "Avg Check", quick_add: "Quick Add/Edit Day",
+      clear_all: "Clear ALL Data", reset_month: "Reset Month", bulk_sample: "Load Sample Data", edit_hint: "(Click any value to edit | Click ✏️ for Last Year Sales)"
+    },
+    ar: {
+      app_title: "لوحة أداء المبيعات والتوقعات", select_month: "اختر الشهر", date_range: "نطاق التاريخ (أيام)",
+      apply_filter: "تطبيق", reset_view: "إعادة تعيين", performance_chart: "نظرة عامة على الأداء (الأهداف، الفعلي، النمو والتوقعات)",
+      summary_report: "📋 تقرير ملخص", export_excel: "إكسل", export_pdf: "PDF", daily_details: "📅 التفاصيل اليومية",
+      mtd_sales: "المبيعات من بداية الشهر", avg_daily_sales: "متوسط المبيعات اليومي", remaining_sales: "المبيعات المتبقية", forecast_sales: "المبيعات المتوقعة",
+      mtd_target: "هدف MTD", target_ach: "نسبة الإنجاز %", remaining_target: "الهدف المتبقي", mtd_tc: "العمليات MTD",
+      tc_ach: "نسبة إنجاز العمليات", forecast_tc: "العمليات المتوقعة", avg_check: "متوسط الفاتورة", mtd_growth: "نمو MTD %",
+      date: "التاريخ", sales_target: "هدف المبيعات", actual_sales: "المبيعات الفعلية", tc_target: "هدف العمليات", actual_tc: "العمليات الفعلية",
+      ach_percent: "نسبة الإنجاز", growth_percent: "نمو%", avg_check_daily: "متوسط الفاتورة", quick_add: "إضافة/تحرير يوم",
+      clear_all: "مسح كل البيانات", reset_month: "إعادة تعيين الشهر", bulk_sample: "تحميل بيانات نموذجية", edit_hint: "(انقر أي قيمة للتعديل | اضغط ✏️ لتعديل مبيعات العام الماضي)"
     }
+  };
+  let currentLang = localStorage.getItem("salesLang") || "en";
+  let currentMonthKey = "";
+  let allMonthsData = {};
+  let chartInstance = null;
+  let currentRange = { start: 1, end: 31 };
+  let editModal = null;
 
-    function generateTable() {
-        const tbody = $("#sales-table-body");
-        tbody.empty();
-        for (let i=1; i<=30; i++) {
-            const sales = salesData[currentMonth][i-1] || '';
-            const target = targetData[currentMonth][i-1] || '';
-            const lastYear = lastYearData[currentMonth][i-1] || '';
-            const tc = tcData[currentMonth][i-1] || '';
-            tbody.append(`
-                <tr>
-                    <td>${i}</td>
-                    <td><input type="number" class="sales-input" id="sales-${i}" value="${sales}" placeholder="0"></td>
-                    <td><input type="number" class="sales-input" id="target-${i}" value="${target}" placeholder="0"></td>
-                    <td><input type="number" class="sales-input" id="lastYear-${i}" value="${lastYear}" placeholder="0"></td>
-                    <td><input type="number" class="sales-input" id="tc-${i}" value="${tc}" placeholder="0" min="0" max="100"></td>
-                    <td class="result-cell" id="ac-${i}">0</td>
-                    <td class="result-cell" id="achieved-${i}">0%</td>
-                    <td class="result-cell" id="growth-${i}">0%</td>
-                    <td class="result-cell" id="average-${i}">0%</td>
-                </tr>
-            `);
-        }
+  const generateMonthKeys = () => {
+    let keys = [];
+    let year = 2026;
+    for (let y = 0; y < 3; y++) {
+      for (let m = 1; m <= 12; m++) {
+        keys.push(`${year}-${String(m).padStart(2,'0')}`);
+      }
+      year++;
     }
+    return keys;
+  };
 
-    // ========== ADVANCED FORECAST ALGORITHM ==========
-    function calculateAdvancedForecast(today) {
-        const last7Sales = [];
-        const last7Targets = [];
-        for (let i = Math.max(1, today-7); i < today; i++) {
-            const sale = parseFloat(salesData[currentMonth][i-1]) || 0;
-            const tgt = parseFloat(targetData[currentMonth][i-1]) || 0;
-            if (sale > 0) {
-                last7Sales.push(sale);
-                last7Targets.push(tgt > 0 ? tgt : sale);
-            }
-        }
-        let weightedSum = 0, weightTotal = 0;
-        for (let i = 0; i < last7Sales.length; i++) {
-            const weight = i + 1;
-            weightedSum += last7Sales[i] * weight;
-            weightTotal += weight;
-        }
-        const weightedAvg = weightTotal > 0 ? weightedSum / weightTotal : 0;
-        let trendFactor = 1.0;
-        if (last7Sales.length >= 3) {
-            const recent = last7Sales.slice(-5);
-            let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-            for (let i = 0; i < recent.length; i++) {
-                sumX += i;
-                sumY += recent[i];
-                sumXY += i * recent[i];
-                sumX2 += i * i;
-            }
-            const slope = (recent.length * sumXY - sumX * sumY) / (recent.length * sumX2 - sumX * sumX);
-            trendFactor = 1 + (slope / (weightedAvg || 1)) * 0.5;
-            trendFactor = Math.max(0.85, Math.min(1.15, trendFactor));
-        }
-        const todayTarget = parseFloat(targetData[currentMonth][today-1]) || 0;
-        let targetBasedPrediction = todayTarget;
-        if (last7Sales.length >= 3) {
-            const avgAchievement = last7Sales.reduce((a,b,i) => a + (b / (last7Targets[i] || b)), 0) / last7Sales.length;
-            targetBasedPrediction = todayTarget * (avgAchievement || 1);
-        }
-        let finalForecast = (weightedAvg * trendFactor * 0.7) + (targetBasedPrediction * 0.3);
-        if (isNaN(finalForecast) || finalForecast <= 0) finalForecast = todayTarget * 0.95 || weightedAvg || 10000;
-        let confidence = Math.min(95, 50 + (last7Sales.length * 6));
-        return { forecast: finalForecast, confidence: Math.round(confidence), trend: trendFactor, dataPoints: last7Sales.length };
-    }
-
-    function calculateTodayForecastEnhanced() {
-        const today = new Date().getDate();
-        const { forecast, confidence, trend, dataPoints } = calculateAdvancedForecast(today);
-        const todayTarget = parseFloat(targetData[currentMonth][today-1]) || 0;
-        let trendIcon = '', trendText = '', trendClass = '';
-        if (trend > 1.03) { trendIcon = '📈'; trendText = 'Strong Upward'; trendClass = 'trend-up'; }
-        else if (trend > 0.97) { trendIcon = '➡️'; trendText = 'Stable'; trendClass = 'trend-stable'; }
-        else { trendIcon = '📉'; trendText = 'Declining'; trendClass = 'trend-down'; }
-        return `
-            <div class="forecast-card">
-                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center; gap: 15px;">
-                    <div><span style="background: rgba(229,9,20,0.2); padding: 6px 14px; border-radius: 30px;">${trendIcon} ${trendText} Trend</span></div>
-                    <div><span style="color: var(--netflix-gray);">AI Confidence:</span> <span class="fw-bold" style="color: #00d97e;">${confidence}%</span></div>
-                </div>
-                <div class="mt-3" style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 15px;">
-                    <span><strong><i class="fas fa-chart-line"></i> FORECASTED SALES TODAY:</strong></span>
-                    <span style="font-size: 2rem; font-weight: 800; color: var(--netflix-red);">SAR ${formatSAR(forecast)}</span>
-                </div>
-                <div class="mt-2 small text-secondary">Based on ${dataPoints} days of historical data | Target: SAR ${formatSAR(todayTarget)} | AI Model: Weighted Moving Avg + Trend</div>
-                <div class="mt-2"><div class="progress-bar-custom"><div class="progress-fill" style="width: ${Math.min((forecast/(todayTarget||forecast))*100, 100)}%"></div></div></div>
-            </div>
-        `;
-    }
-
-    function updateResults() {
-        let totalSales=0, totalTarget=0, totalLastYear=0, totalTC=0, totalAC=0, totalAchieved=0, totalGrowth=0, totalAverage=0, validDays=0;
-        const today = new Date().getDate();
-
-        for (let i=1; i<=30; i++) {
-            const sales = parseFloat($(`#sales-${i}`).val()) || 0;
-            const target = parseFloat($(`#target-${i}`).val()) || 0;
-            const lastYear = parseFloat($(`#lastYear-${i}`).val()) || 0;
-            const tc = parseFloat($(`#tc-${i}`).val()) || 0;
-            const ac = calculateAC(sales, tc);
-            const achieved = target > 0 ? (sales/target)*100 : 0;
-            const growth = lastYear > 0 ? ((sales-lastYear)/lastYear)*100 : 0;
-            const avg = (ac + growth)/2;
-
-            $(`#ac-${i}`).text(ac.toFixed(1));
-            $(`#achieved-${i}`).text(achieved.toFixed(1)+'%');
-            $(`#growth-${i}`).text(growth.toFixed(1)+'%');
-            $(`#average-${i}`).text(avg.toFixed(1)+'%');
-
-            salesData[currentMonth][i-1] = sales;
-            targetData[currentMonth][i-1] = target;
-            lastYearData[currentMonth][i-1] = lastYear;
-            tcData[currentMonth][i-1] = tc;
-            acData[currentMonth][i-1] = ac;
-            achievedData[currentMonth][i-1] = achieved;
-            growthData[currentMonth][i-1] = growth;
-            averageData[currentMonth][i-1] = avg;
-
-            if (sales||target||lastYear||tc) {
-                totalSales += sales; totalTarget += target; totalLastYear += lastYear;
-                totalTC += tc; totalAC += ac; totalAchieved += achieved;
-                totalGrowth += growth; totalAverage += avg; validDays++;
-            }
-        }
-
-        // Update totals row
-        $("#total-sales").html('SAR '+formatSAR(totalSales));
-        $("#total-target").html('SAR '+formatSAR(totalTarget));
-        $("#total-lastyear").html('SAR '+formatSAR(totalLastYear));
-        const avgTC = validDays? totalTC/validDays:0, avgAC = validDays? totalAC/validDays:0;
-        const avgAch = validDays? totalAchieved/validDays:0, avgGr = validDays? totalGrowth/validDays:0, avgAvg = validDays? totalAverage/validDays:0;
-        $("#total-tc").text(avgTC.toFixed(1)+'%'); $("#total-ac").text(avgAC.toFixed(1));
-        $("#total-achieved").text(avgAch.toFixed(1)+'%'); $("#total-growth").text(avgGr.toFixed(1)+'%');
-        $("#total-average").text(avgAvg.toFixed(1)+'%');
-
-        // Calculate Averages per day (for the month so far based on valid entries)
-        const avgDailySales = validDays > 0 ? totalSales / validDays : 0;
-        const avgDailyTarget = validDays > 0 ? totalTarget / validDays : 0;
-        const avgDailyLastYear = validDays > 0 ? totalLastYear / validDays : 0;
-        const avgDailyTC = validDays > 0 ? totalTC / validDays : 0;
-        const avgDailyAC = validDays > 0 ? totalAC / validDays : 0;
-        const avgDailyAch = validDays > 0 ? totalAchieved / validDays : 0;
-        const avgDailyGrowth = validDays > 0 ? totalGrowth / validDays : 0;
-        const avgDailyAvg = validDays > 0 ? totalAverage / validDays : 0;
-
-        $("#avg-sales-row").html('SAR '+formatSAR(avgDailySales));
-        $("#avg-target-row").html('SAR '+formatSAR(avgDailyTarget));
-        $("#avg-lastyear-row").html('SAR '+formatSAR(avgDailyLastYear));
-        $("#avg-tc-row").text(avgDailyTC.toFixed(1)+'%');
-        $("#avg-ac-row").text(avgDailyAC.toFixed(1));
-        $("#avg-ach-row").text(avgDailyAch.toFixed(1)+'%');
-        $("#avg-growth-row").text(avgDailyGrowth.toFixed(1)+'%');
-        $("#avg-avg-row").text(avgDailyAvg.toFixed(1)+'%');
-
-        // Update KPI cards with new Averages
-        $("#avg-daily-sales").html('SAR '+formatSAR(avgDailySales));
-        $("#avg-tc-value").text(avgDailyTC.toFixed(1)+'%');
-        const avgSalesPercent = (avgDailySales / (avgDailyTarget||1)) * 100;
-        $("#avg-sales-progress").width(Math.min(avgSalesPercent, 100)+'%');
-        $("#avg-tc-progress").width(Math.min(avgDailyTC, 100)+'%');
-
-        // MTD calculations up to yesterday
-        const yesterday = today>1 ? today-1 : 30;
-        let mtdSales=0, mtdTarget=0, mtdLastYear=0;
-        for (let i=1; i<=yesterday && i<=30; i++) {
-            mtdSales += parseFloat(salesData[currentMonth][i-1])||0;
-            mtdTarget += parseFloat(targetData[currentMonth][i-1])||0;
-            mtdLastYear += parseFloat(lastYearData[currentMonth][i-1])||0;
-        }
-        const mtdAchRate = mtdTarget>0 ? (mtdSales/mtdTarget)*100:0;
-        const mtdGrowth = mtdLastYear>0 ? ((mtdSales-mtdLastYear)/mtdLastYear)*100:0;
-
-        $("#mtd-sales").html(`SAR ${formatSAR(mtdSales)}`);
-        $("#mtd-target").html(`SAR ${formatSAR(mtdTarget)}`);
-        $("#achievement-rate").text(mtdAchRate.toFixed(1)+'%');
-        $("#growth-rate").text(mtdGrowth.toFixed(1)+'%');
-        $("#mtd-sales-progress").width(Math.min((mtdSales/(totalTarget||1))*100,100)+'%');
-        $("#mtd-target-progress").width(Math.min((mtdTarget/(totalTarget||1))*100,100)+'%');
-        $("#achievement-progress").width(Math.min(mtdAchRate,100)+'%');
-        $("#growth-progress").width(Math.min(Math.abs(mtdGrowth),100)+'%');
-
-        saveData();
-        updateChart();
-        updateEOMForecast(today, totalTarget, mtdSales);
-        $("#today-forecast-container").html(calculateTodayForecastEnhanced());
-    }
-
-    function updateEOMForecast(today, totalMonthlyTarget, mtdSales) {
-        let dailyAchPct = [];
-        for (let i = 1; i < today; i++) {
-            const t = parseFloat(targetData[currentMonth][i-1]) || 0;
-            const s = parseFloat(salesData[currentMonth][i-1]) || 0;
-            if (t > 0) dailyAchPct.push((s / t) * 100);
-        }
-        const avgAch = dailyAchPct.length > 0 ? dailyAchPct.reduce((a,b) => a + b, 0) / dailyAchPct.length : 100;
-        let remainingTargetSum = 0;
-        for (let i = today; i <= 30; i++) remainingTargetSum += parseFloat(targetData[currentMonth][i-1]) || 0;
-        const projectedFutureSales = (avgAch / 100) * remainingTargetSum;
-        const projectedTotal = mtdSales + projectedFutureSales;
-        const projectedAch = totalMonthlyTarget > 0 ? (projectedTotal / totalMonthlyTarget) * 100 : 0;
-        
-        let forecastMsg = '', cssClass = '';
-        if (projectedAch >= 105) { forecastMsg = `🎯 EXCEEDING EXPECTATIONS (${projectedAch.toFixed(1)}%)`; cssClass = 'trend-up'; }
-        else if (projectedAch >= 100) { forecastMsg = `📊 ON TRACK TO HIT TARGET (${projectedAch.toFixed(1)}%)`; cssClass = 'trend-stable'; }
-        else { forecastMsg = `⚠️ BELOW TARGET PROJECTION (${projectedAch.toFixed(1)}%)`; cssClass = 'trend-down'; }
-        
-        $("#trend-analysis").html(`
-            <div class="${cssClass} fw-bold mb-2" style="font-size: 1.1rem;">${forecastMsg}</div>
-            <div class="small text-secondary">Projected EOM: SAR ${formatSAR(projectedTotal)} | Based on ${dailyAchPct.length} days | Avg ACH%: ${avgAch.toFixed(1)}%</div>
-            <div class="progress-bar-custom mt-2"><div class="progress-fill" style="width: ${Math.min(projectedAch, 100)}%"></div></div>
-        `);
-        $("#notifications-container").html(`<div class="forecast-card mt-2" style="background: rgba(0,0,0,0.3);"><i class="fas fa-chart-line me-2 text-danger"></i><strong>MTD Sales:</strong> SAR ${formatSAR(mtdSales)} | <strong>Remaining Target:</strong> SAR ${formatSAR(remainingTargetSum)}</div>`);
-    }
-
-    function updateChart() {
-        const ctx = document.getElementById("performance-chart").getContext("2d");
-        if (chart) chart.destroy();
-        chart = new Chart(ctx, {
-            type: "line",
-            data: {
-                labels: Array.from({length:30}, (_,i)=>`D${i+1}`),
-                datasets: [
-                    { label: "A.C", data: acData[currentMonth], borderColor: "#e50914", backgroundColor: "rgba(229,9,20,0.1)", borderWidth:2, tension:0.3, fill: true },
-                    { label: "Growth %", data: growthData[currentMonth], borderColor: "#00d97e", backgroundColor: "rgba(0,217,126,0.05)", borderWidth:2, tension:0.3 },
-                    { label: "ACH %", data: achievedData[currentMonth], borderColor: "#f6c343", backgroundColor: "rgba(246,195,67,0.05)", borderWidth:2, tension:0.3 }
-                ]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: true,
-                plugins: { legend: { labels: { color: '#b3b3b3', font: { size: 10 } } } },
-                scales: { x: { ticks: { color: '#808080' }, grid: { display: false } }, y: { ticks: { color: '#808080' }, grid: { color: '#2a2a2a' } } }
-            }
+  const initDataForMonth = (monthKey) => {
+    if (!allMonthsData[monthKey]) {
+      let daily = [];
+      for (let d = 1; d <= 31; d++) {
+        daily.push({
+          salesTarget: 0, actualSales: 0, tcTarget: 0, actualTc: 0, lastYearSales: 0
         });
+      }
+      allMonthsData[monthKey] = { daily: daily };
     }
+    return allMonthsData[monthKey];
+  };
 
-    async function exportToPDF() {
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('landscape');
-        pdf.setFont('helvetica','bold'); pdf.setTextColor(229,9,20); pdf.setFontSize(18);
-        pdf.text(`SALES REPORT - ${currentMonth} (SAR)`,14,15);
-        pdf.setFontSize(10); pdf.setTextColor(180,180,180);
-        pdf.text(`Generated: ${new Date().toLocaleString()} · AI Forecast Engine · Includes Daily Averages`,14,23);
-        pdf.autoTable({ html:'.sales-table', startY:32, head:[['DAY','SALES','TARGET','LAST YR','TC%','AC','ACH%','GROWTH%','AVG%']], theme:'dark', headStyles: { fillColor: [229,9,20] } });
-        pdf.save(`${currentMonth}_Netflix_Sales.pdf`);
+  const saveAllData = () => { localStorage.setItem("sales_tracker_all_months", JSON.stringify(allMonthsData)); };
+
+  const loadAllData = () => {
+    const stored = localStorage.getItem("sales_tracker_all_months");
+    if (stored) {
+      allMonthsData = JSON.parse(stored);
+    } else {
+      allMonthsData = {};
+      const demoMonth = "2026-06";
+      initDataForMonth(demoMonth);
+      for (let i = 1; i <= 15; i++) {
+        allMonthsData[demoMonth].daily[i-1] = {
+          salesTarget: 5000 + (i*100), actualSales: 3800 + (i*80), tcTarget: 45 + i, actualTc: 30 + i, lastYearSales: 3500 + (i*70)
+        };
+      }
+      for (let i = 16; i <= 31; i++) {
+        allMonthsData[demoMonth].daily[i-1] = { salesTarget: 6000, actualSales: 0, tcTarget: 60, actualTc: 0, lastYearSales: 4200 };
+      }
+      saveAllData();
     }
+  };
 
-    function clearAllData() {
-        if (confirm("Delete all data for this month?")) {
-            salesData[currentMonth] = Array(30).fill('');
-            targetData[currentMonth] = Array(30).fill('');
-            lastYearData[currentMonth] = Array(30).fill('');
-            tcData[currentMonth] = Array(30).fill('');
-            acData[currentMonth] = Array(30).fill('');
-            achievedData[currentMonth] = Array(30).fill('');
-            growthData[currentMonth] = Array(30).fill('');
-            averageData[currentMonth] = Array(30).fill('');
-            saveData();
-            generateTable();
-            updateResults();
+  const getFilteredDays = (monthData, start, end) => {
+    return monthData.daily.slice(start-1, end).map((day, idx) => ({ ...day, dayIndex: start+idx }));
+  };
+
+  const computeMTD = (dailyArray, currentDayLimit = null) => {
+    let salesTargetSum = 0, actualSalesSum = 0, tcTargetSum = 0, actualTcSum = 0, lastYearSum = 0, validDays = 0;
+    const limit = (currentDayLimit !== null) ? currentDayLimit : dailyArray.length;
+    for (let i = 0; i < Math.min(dailyArray.length, limit); i++) {
+      const d = dailyArray[i];
+      salesTargetSum += d.salesTarget;
+      actualSalesSum += d.actualSales;
+      tcTargetSum += d.tcTarget;
+      actualTcSum += d.actualTc;
+      lastYearSum += d.lastYearSales;
+      if (d.actualSales > 0 || d.salesTarget > 0) validDays++;
+    }
+    const avgDailySales = validDays ? actualSalesSum / validDays : 0;
+    const mtdAvgCheck = actualTcSum ? actualSalesSum / actualTcSum : 0;
+    const growthMTD = lastYearSum ? ((actualSalesSum - lastYearSum) / lastYearSum) * 100 : 0;
+    let targetAchievement = 0;
+    if (salesTargetSum > 0) targetAchievement = (actualSalesSum / salesTargetSum) * 100;
+    return { salesTargetSum, actualSalesSum, tcTargetSum, actualTcSum, avgDailySales, mtdAvgCheck, growthMTD, targetAchievement };
+  };
+
+  const computeForecast = (dailyArray, elapsedDays) => {
+    if (elapsedDays === 0) return { forecastSales: 0, forecastTc: 0, expectedAch: 0, gap: 0 };
+    let mtdSales = 0, mtdTc = 0, totalTargetSales = 0;
+    for (let i=0; i<elapsedDays; i++) { mtdSales += dailyArray[i].actualSales; mtdTc += dailyArray[i].actualTc; }
+    for (let i=0; i<dailyArray.length; i++) totalTargetSales += dailyArray[i].salesTarget;
+    const forecastSales = (mtdSales / elapsedDays) * dailyArray.length;
+    const forecastTc = (mtdTc / elapsedDays) * dailyArray.length;
+    const expectedAch = totalTargetSales ? (forecastSales / totalTargetSales) * 100 : 0;
+    const gap = forecastSales > totalTargetSales ? 0 : totalTargetSales - forecastSales;
+    return { forecastSales, forecastTc, expectedAch, gap };
+  };
+
+  function renderDashboard() {
+    const monthData = allMonthsData[currentMonthKey];
+    if (!monthData) return;
+    const filteredDaysData = monthData.daily.slice(currentRange.start-1, currentRange.end);
+    const todayDate = new Date();
+    let currentDayOfMonth = todayDate.getDate();
+    if (todayDate.getMonth()+1 !== parseInt(currentMonthKey.split('-')[1]) || todayDate.getFullYear() !== parseInt(currentMonthKey.split('-')[0])) {
+      currentDayOfMonth = 999;
+    }
+    const elapsedForAch = (currentDayOfMonth <= currentRange.end && currentDayOfMonth >= currentRange.start) ? (currentDayOfMonth - currentRange.start + 1) : filteredDaysData.length;
+    const mtdFull = computeMTD(monthData.daily, currentRange.end);
+    const mtdYesterdayAch = computeMTD(monthData.daily, Math.min(elapsedForAch, currentRange.end));
+    const forecastObj = computeForecast(monthData.daily, filteredDaysData.length);
+    const remainingTarget = mtdFull.salesTargetSum - mtdFull.actualSalesSum;
+    const remainingSalesToTarget = remainingTarget > 0 ? remainingTarget : 0;
+    
+    const kpis = [
+      { key: "mtd_sales", value: mtdFull.actualSalesSum.toFixed(0), icon: "cash-stack" },
+      { key: "avg_daily_sales", value: (filteredDaysData.length ? (mtdFull.actualSalesSum/filteredDaysData.length).toFixed(0) : 0), icon: "calendar" },
+      { key: "remaining_sales", value: remainingSalesToTarget.toFixed(0), icon: "arrow-right-circle" },
+      { key: "forecast_sales", value: forecastObj.forecastSales.toFixed(0), icon: "graph-up" },
+      { key: "mtd_target", value: mtdFull.salesTargetSum.toFixed(0), icon: "bullseye" },
+      { key: "target_ach", value: mtdYesterdayAch.targetAchievement.toFixed(1)+"%", icon: "percent" },
+      { key: "remaining_target", value: (mtdFull.salesTargetSum - mtdFull.actualSalesSum >0 ? (mtdFull.salesTargetSum - mtdFull.actualSalesSum).toFixed(0):0), icon: "hourglass-split" },
+      { key: "mtd_tc", value: mtdFull.actualTcSum.toFixed(0), icon: "cart" },
+      { key: "tc_ach", value: (mtdFull.tcTargetSum ? ((mtdFull.actualTcSum/mtdFull.tcTargetSum)*100).toFixed(1):0)+"%", icon: "check-circle" },
+      { key: "forecast_tc", value: forecastObj.forecastTc.toFixed(0), icon: "bar-chart-steps" },
+      { key: "avg_check", value: mtdFull.mtdAvgCheck.toFixed(0), icon: "calculator" },
+      { key: "mtd_growth", value: mtdFull.growthMTD.toFixed(1)+"%", icon: "activity" }
+    ];
+    const kpiRow = document.getElementById("kpiRow");
+    kpiRow.innerHTML = kpis.map(k => `<div class="col-md-3 col-sm-6 col-6"><div class="glass-card p-3 h-100"><div class="d-flex align-items-center gap-2"><i class="bi bi-${k.icon} fs-4"></i><div><div class="kpi-label" data-key="${k.key}">${translations[currentLang][k.key] || k.key}</div><div class="kpi-value">${k.value}</div></div></div></div></div>`).join('');
+    
+    const summaryDiv = document.getElementById("summaryCards");
+    summaryDiv.innerHTML = `<div class="col-md-3 col-6"><div class="bg-dark p-2 rounded"><small data-key="mtd_sales">MTD Sales</small><br><strong>${mtdFull.actualSalesSum.toFixed(0)}</strong></div></div>
+    <div class="col-md-3 col-6"><div class="bg-dark p-2 rounded"><small data-key="target_ach">Achievement %</small><br><strong>${mtdYesterdayAch.targetAchievement.toFixed(1)}%</strong></div></div>
+    <div class="col-md-3 col-6"><div class="bg-dark p-2 rounded"><small data-key="mtd_growth">MTD Growth</small><br><strong>${mtdFull.growthMTD.toFixed(1)}%</strong></div></div>
+    <div class="col-md-3 col-6"><div class="bg-dark p-2 rounded"><small data-key="forecast_sales">Forecast Sales</small><br><strong>${forecastObj.forecastSales.toFixed(0)}</strong><br><small>Exp.Ach: ${forecastObj.expectedAch.toFixed(1)}%</small></div></div>`;
+    
+    const tableHead = document.getElementById("dailyTable").querySelector("thead tr");
+    const headers = ["date","sales_target","actual_sales","tc_target","actual_tc","ach_percent","growth_percent","avg_check_daily","actions"];
+    tableHead.innerHTML = headers.map(h => `<th data-key="${h}">${translations[currentLang][h] || h}</th>`).join('');
+    const tbody = document.getElementById("dailyTable").querySelector("tbody");
+    tbody.innerHTML = "";
+    for (let idx = 0; idx < filteredDaysData.length; idx++) {
+      const day = filteredDaysData[idx];
+      const actualDate = currentRange.start + idx;
+      const salesAch = day.salesTarget ? ((day.actualSales/day.salesTarget)*100).toFixed(1) : "0";
+      const growth = day.lastYearSales ? (((day.actualSales - day.lastYearSales)/day.lastYearSales)*100).toFixed(1) : "0";
+      const avgCheck = day.actualTc ? (day.actualSales/day.actualTc).toFixed(0) : "0";
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="editable-cell" data-field="dayNum">${actualDate}</td>
+        <td class="editable-cell" data-field="salesTarget" data-day="${actualDate}">${day.salesTarget.toFixed(0)}</td>
+        <td class="editable-cell" data-field="actualSales" data-day="${actualDate}">${day.actualSales.toFixed(0)}</td>
+        <td class="editable-cell" data-field="tcTarget" data-day="${actualDate}">${day.tcTarget.toFixed(0)}</td>
+        <td class="editable-cell" data-field="actualTc" data-day="${actualDate}">${day.actualTc.toFixed(0)}</td>
+        <td>${salesAch}%</td>
+        <td>${growth}%</td>
+        <td>${avgCheck}</td>
+        <td><i class="bi bi-pencil-square quick-edit-icon" data-day="${actualDate}" style="cursor:pointer; font-size:1.2rem;" title="Edit Last Year Sales & Full Data"></i></td>
+      `;
+      tbody.appendChild(row);
+    }
+    attachInlineEditing(monthData);
+    updateChart(monthData, filteredDaysData);
+    applyLanguageDynamic();
+  }
+
+  function attachInlineEditing(monthData) {
+    // Direct click on editable cells
+    document.querySelectorAll('.editable-cell[data-field]').forEach(cell => {
+      cell.removeEventListener('click', cell.clickHandler);
+      const handler = (e) => {
+        const field = cell.getAttribute('data-field');
+        if (field === 'dayNum') return;
+        const dayNum = parseInt(cell.getAttribute('data-day'));
+        if (isNaN(dayNum)) return;
+        const currentVal = parseFloat(cell.innerText);
+        const newVal = prompt(`Edit ${field}:`, currentVal);
+        if (newVal !== null && !isNaN(parseFloat(newVal))) {
+          const idx = dayNum - 1;
+          if (monthData.daily[idx]) {
+            if (field === 'salesTarget') monthData.daily[idx].salesTarget = parseFloat(newVal);
+            else if (field === 'actualSales') monthData.daily[idx].actualSales = parseFloat(newVal);
+            else if (field === 'tcTarget') monthData.daily[idx].tcTarget = parseFloat(newVal);
+            else if (field === 'actualTc') monthData.daily[idx].actualTc = parseFloat(newVal);
+            saveAllData();
+            renderDashboard();
+          }
         }
-    }
+      };
+      cell.addEventListener('click', handler);
+      cell.clickHandler = handler;
+    });
+    // Quick edit icon for full modal (including last year sales)
+    document.querySelectorAll('.quick-edit-icon').forEach(icon => {
+      icon.removeEventListener('click', icon.clickHandler);
+      const modalHandler = () => {
+        const dayNum = parseInt(icon.getAttribute('data-day'));
+        openEditModal(dayNum, monthData);
+      };
+      icon.addEventListener('click', modalHandler);
+      icon.clickHandler = modalHandler;
+    });
+  }
 
-    $("#month-select").on("change", function() { currentMonth = $(this).val(); generateTable(); updateResults(); });
-    $(document).on("input", ".sales-input", updateResults);
-    $("#clearAll").on("click", clearAllData);
-    $("#exportPdf").on("click", exportToPDF);
-    $(document).ready(() => { generateTable(); updateResults(); });
+  function openEditModal(dayNum, monthData) {
+    const idx = dayNum - 1;
+    const dayData = monthData.daily[idx];
+    document.getElementById('editDayIndex').value = idx;
+    document.getElementById('editDayNum').value = dayNum;
+    document.getElementById('editSalesTarget').value = dayData.salesTarget;
+    document.getElementById('editActualSales').value = dayData.actualSales;
+    document.getElementById('editTcTarget').value = dayData.tcTarget;
+    document.getElementById('editActualTc').value = dayData.actualTc;
+    document.getElementById('editLastYearSales').value = dayData.lastYearSales;
+    document.getElementById('modalTitle').innerText = `Edit Day ${dayNum} Data`;
+    editModal.show();
+  }
+
+  function saveModalData() {
+    const monthData = allMonthsData[currentMonthKey];
+    if (!monthData) return;
+    const idx = parseInt(document.getElementById('editDayIndex').value);
+    const dayNum = parseInt(document.getElementById('editDayNum').value);
+    if (!isNaN(idx) && monthData.daily[idx]) {
+      monthData.daily[idx].salesTarget = parseFloat(document.getElementById('editSalesTarget').value) || 0;
+      monthData.daily[idx].actualSales = parseFloat(document.getElementById('editActualSales').value) || 0;
+      monthData.daily[idx].tcTarget = parseFloat(document.getElementById('editTcTarget').value) || 0;
+      monthData.daily[idx].actualTc = parseFloat(document.getElementById('editActualTc').value) || 0;
+      monthData.daily[idx].lastYearSales = parseFloat(document.getElementById('editLastYearSales').value) || 0;
+      saveAllData();
+      renderDashboard();
+      editModal.hide();
+    }
+  }
+
+  function updateChart(monthData, filteredDays) {
+    const ctx = document.getElementById('mainChart').getContext('2d');
+    const labels = filteredDays.map((_,i) => `Day ${currentRange.start+i}`);
+    const salesTargets = filteredDays.map(d => d.salesTarget);
+    const actualSales = filteredDays.map(d => d.actualSales);
+    const tcTargets = filteredDays.map(d => d.tcTarget);
+    const actualTc = filteredDays.map(d => d.actualTc);
+    const growthPerc = filteredDays.map(d => d.lastYearSales ? ((d.actualSales-d.lastYearSales)/d.lastYearSales*100) : 0);
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          { label: 'Sales Target', data: salesTargets, backgroundColor: 'rgba(54, 162, 235, 0.6)', borderRadius: 8 },
+          { label: 'Actual Sales', data: actualSales, backgroundColor: 'rgba(75, 192, 192, 0.7)', borderRadius: 8 },
+          { label: 'TC Target', data: tcTargets, backgroundColor: 'rgba(255, 206, 86, 0.6)', borderRadius: 6, yAxisID: 'y1' },
+          { label: 'Actual TC', data: actualTc, backgroundColor: 'rgba(255, 99, 132, 0.6)', borderRadius: 6, yAxisID: 'y1' },
+          { label: 'Growth %', data: growthPerc, type: 'line', borderColor: '#f97316', backgroundColor: 'transparent', tension: 0.2, yAxisID: 'y2', fill: false, borderWidth: 2 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: true, plugins: { tooltip: { mode: 'index' }, legend: { labels: { color: '#ddd' } } },
+        scales: { y: { title: { display: true, text: 'Sales ($)', color: '#ccc' }, grid: { color: '#2d3a5e' } },
+                  y1: { position: 'right', title: { text: 'Transaction Count', color: '#ccc' }, grid: { drawOnChartArea: false } },
+                  y2: { position: 'right', title: { text: 'Growth %', color: '#f97316' }, min: -50, max: 150, grid: { drawOnChartArea: false } } }
+      }
+    });
+  }
+
+  function populateMonthSelect() {
+    const months = generateMonthKeys();
+    const select = document.getElementById("monthSelect");
+    select.innerHTML = "";
+    months.forEach(m => {
+      const opt = document.createElement("option");
+      opt.value = m;
+      const [year, mon] = m.split('-');
+      opt.textContent = `${year} - ${new Date(year, mon-1).toLocaleString('default', { month: 'long' })}`;
+      select.appendChild(opt);
+    });
+    const today = new Date();
+    const defaultMonth = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;
+    if (months.includes(defaultMonth)) currentMonthKey = defaultMonth;
+    else currentMonthKey = "2026-06";
+    select.value = currentMonthKey;
+    select.addEventListener("change", (e) => { currentMonthKey = e.target.value; initDataForMonth(currentMonthKey); currentRange = { start:1, end:31 }; renderDashboard(); });
+    initDataForMonth(currentMonthKey);
+  }
+
+  function applyLanguageDynamic() {
+    document.querySelectorAll("[data-key]").forEach(el => { const key = el.getAttribute("data-key"); if (translations[currentLang][key]) el.innerText = translations[currentLang][key]; });
+  }
+
+  function applyLanguage() {
+    document.documentElement.lang = currentLang;
+    if (currentLang === 'ar') document.getElementById("appRoot").classList.add("rtl"); else document.getElementById("appRoot").classList.remove("rtl");
+    applyLanguageDynamic();
+    renderDashboard();
+  }
+
+  function exportToExcel() {
+    const wsData = [];
+    const table = document.getElementById("dailyTable");
+    const headers = Array.from(table.querySelectorAll("thead th")).map(th => th.innerText);
+    wsData.push(headers);
+    const rows = table.querySelectorAll("tbody tr");
+    rows.forEach(row => { const rowData = Array.from(row.cells).map(cell => cell.innerText); wsData.push(rowData); });
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "SalesData");
+    XLSX.writeFile(wb, `Sales_${currentMonthKey}_report.xlsx`);
+  }
+
+  async function exportToPDF() {
+    const element = document.getElementById("appRoot");
+    const canvas = await html2canvas(element, { scale: 2 });
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgWidth = 210;
+    const pageHeight = 297;
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+    while (heightLeft >= 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+    pdf.save(`dashboard_${currentMonthKey}.pdf`);
+  }
+
+  // Clear ALL data for current month
+  function clearCurrentMonthData() {
+    if (confirm(`⚠️ WARNING: This will erase ALL data for ${currentMonthKey}. Continue?`)) {
+      const blankDaily = [];
+      for (let i = 0; i < 31; i++) blankDaily.push({ salesTarget: 0, actualSales: 0, tcTarget: 0, actualTc: 0, lastYearSales: 0 });
+      allMonthsData[currentMonthKey] = { daily: blankDaily };
+      saveAllData();
+      renderDashboard();
+    }
+  }
+
+  // Reset month to empty (same as clear)
+  function resetMonthEmpty() { clearCurrentMonthData(); }
+
+  // Load sample data for current month
+  function loadSampleData() {
+    if (confirm(`Load sample data for ${currentMonthKey}? This will overwrite existing data.`)) {
+      for (let i = 1; i <= 31; i++) {
+        allMonthsData[currentMonthKey].daily[i-1] = {
+          salesTarget: 4500 + (i * 80), actualSales: (i <= 20 ? 3200 + (i * 60) : 0), 
+          tcTarget: 40 + Math.floor(i/2), actualTc: (i <= 20 ? 28 + Math.floor(i/3) : 0), 
+          lastYearSales: 3500 + (i * 50)
+        };
+      }
+      saveAllData();
+      renderDashboard();
+    }
+  }
+
+  // Quick add day through modal
+  function quickAddDay() {
+    const dayNum = prompt("Enter day number (1-31):", new Date().getDate());
+    if (dayNum && dayNum >= 1 && dayNum <= 31) {
+      openEditModal(parseInt(dayNum), allMonthsData[currentMonthKey]);
+    } else alert("Invalid day number");
+  }
+
+  // Event Listeners
+  document.getElementById("applyRangeBtn").addEventListener("click", () => {
+    let s = parseInt(document.getElementById("rangeStart").value);
+    let e = parseInt(document.getElementById("rangeEnd").value);
+    if(s>=1 && e<=31 && s<=e) { currentRange = { start:s, end:e }; renderDashboard(); }
+    else alert("Invalid range (1-31)");
+  });
+  document.getElementById("resetMonthBtn").addEventListener("click", () => { currentRange = { start:1, end:31 }; document.getElementById("rangeStart").value=1; document.getElementById("rangeEnd").value=31; renderDashboard(); });
+  document.getElementById("exportExcelBtn").addEventListener("click", exportToExcel);
+  document.getElementById("exportPdfBtn").addEventListener("click", exportToPDF);
+  document.getElementById("langEnBtn").onclick = () => { currentLang = "en"; localStorage.setItem("salesLang","en"); applyLanguage(); };
+  document.getElementById("langArBtn").onclick = () => { currentLang = "ar"; localStorage.setItem("salesLang","ar"); applyLanguage(); };
+  document.getElementById("clearAllDataBtn").addEventListener("click", clearCurrentMonthData);
+  document.getElementById("resetMonthDataBtn").addEventListener("click", resetMonthEmpty);
+  document.getElementById("bulkSampleBtn").addEventListener("click", loadSampleData);
+  document.getElementById("quickAddDataBtn").addEventListener("click", quickAddDay);
+  document.getElementById("saveDayDataBtn").addEventListener("click", saveModalData);
+
+  // Initialize
+  loadAllData();
+  populateMonthSelect();
+  applyLanguage();
+  renderDashboard();
+  editModal = new bootstrap.Modal(document.getElementById('editDayModal'));
 </script>
 </body>
 </html>
