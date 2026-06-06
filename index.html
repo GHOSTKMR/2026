@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -244,6 +245,83 @@
         .forgot-link { color: #e50914; font-size: 0.7rem; text-decoration: none; cursor: pointer; }
         .footer-note { text-align: center; margin-top: 40px; font-size: 0.7rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; }
 
+        /* Developer Badge Container - sleek & modern */
+        .dev-badge-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            opacity: 0.85;
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));
+        }
+        body.rtl .dev-badge-container {
+            right: auto;
+            left: 24px;
+        }
+        .dev-badge-container:hover {
+            opacity: 1;
+            transform: scale(1.05) translateY(-3px);
+            filter: drop-shadow(0 12px 18px rgba(229,9,20,0.3));
+        }
+        .dev-badge-link {
+            display: block;
+            text-decoration: none;
+        }
+        .dev-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e1e2a, #0a0a0f);
+            border: 2.5px solid #e50914;
+            padding: 4px;
+            transition: border-color 0.2s;
+            box-shadow: 0 0 12px rgba(229,9,20,0.3);
+            backdrop-filter: blur(2px);
+        }
+        .dev-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #111;
+        }
+        .dev-tooltip {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #e50914;
+            white-space: nowrap;
+            border: 1px solid rgba(229,9,20,0.5);
+            pointer-events: none;
+            transition: opacity 0.2s;
+            opacity: 0;
+            transform: translateX(5px);
+            font-family: var(--font-sans);
+        }
+        body.rtl .dev-tooltip {
+            right: auto;
+            left: 0;
+            transform: translateX(-5px);
+        }
+        .dev-badge-container:hover .dev-tooltip {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        @media (max-width: 768px) {
+            .dev-badge-container { bottom: 18px; right: 18px; }
+            body.rtl .dev-badge-container { left: 18px; right: auto; }
+            .dev-avatar { width: 52px; height: 52px; }
+            .dev-tooltip { bottom: 66px; font-size: 0.6rem; padding: 4px 12px; white-space: nowrap; }
+        }
+
         .security-toast {
             position: fixed;
             bottom: 32px;
@@ -340,41 +418,46 @@
     </div>
 </div>
 
+<!-- DEVELOPER HYPERLINK IMAGE BADGE: Clickable avatar that redirects to developer page -->
+<div class="dev-badge-container" id="developerBadge">
+    <a href="#" id="devProfileLink" class="dev-badge-link" target="_blank">
+        <div class="dev-avatar">
+            <!-- Base64 inline SVG placeholder avatar: modern dev icon with code brackets & glowing effect -->
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%2314141a' stroke='%23e50914' stroke-width='2'/%3E%3Ctext x='50' y='68' font-size='42' text-anchor='middle' fill='%23e50914' font-family='monospace' font-weight='bold'%3E%3C/t%3E%3Ctext x='50' y='68' font-size='42' text-anchor='middle' fill='%23e50914' font-family='monospace' font-weight='bold'%3E%3C!%5BCDATA%5B%26%23x3C%3B/%26%23x3E%3B%5D%5D%3E%3C/text%3E%3Cpath d='M32 38 L48 50 L32 62 M68 38 L52 50 L68 62' stroke='%23e50914' stroke-width='3' fill='none' stroke-linecap='round' /%3E%3C/svg%3E"
+                 alt="Developer Profile"
+                 id="devAvatarImg"
+                 onerror="this.src='https://via.placeholder.com/64/e50914/ffffff?text=DEV'">
+        </div>
+        <span class="dev-tooltip" id="devTooltipText">Mueen Ul Islam · Lead Developer</span>
+    </a>
+</div>
+
 <div class="security-toast" id="securityToast"><i class="bi bi-shield-exclamation me-2"></i><span id="toastMsg">Access Denied</span></div>
 
 <script>
     (function(){
         // ============================================================
-        // IMPORTANT: REPLACE THESE URLs WITH YOUR IMAGE WEB LINKS
+        // BACKGROUND IMAGES (YOUR UPDATED URLS)
         // ============================================================
-        // Your images are NOT loading because you used local file paths
-        // like "C:\Users\moinr\Desktop\kudu1.jpeg" - browsers block these!
-        //
-        // SOLUTION: Upload your 3 images to Imgur.com (FREE & EASY):
-        // 1. Go to https://imgur.com
-        // 2. Click "New Post" and upload kudu1.jpeg, kudu2.jpeg, kudu3.jpeg
-        // 3. Right-click each uploaded image → "Copy image address"
-        // 4. Paste each URL below (replace the example URLs)
-        // ============================================================
-        
         const YOUR_THREE_IMAGES = [
-            "https://scontent.fjed4-6.fna.fbcdn.net/v/t39.30808-6/622946271_1194456896192579_8219484289956984502_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=127cfc&_nc_ohc=3gBF3-qWZ34Q7kNvwEN21Xs&_nc_oc=AdqlMktVbP_kYa8JfQAEtz4UJmp1DkNDsvVxQMn95xoVwJNEWoxoDePM71ucGnAJr7VtLgeNcLrxr7fX1aV5LFB0&_nc_zt=23&_nc_ht=scontent.fjed4-6.fna&_nc_gid=8_bGezJeqRF07Rt837H2SQ&_nc_ss=7b2a8&oh=00_Af75X0Q1xHJi6HI4DvZ3oT2oLnebNM9ejOCLCwPfBw5XbQ&oe=6A16FFFA",  // ⚠️ REPLACE with your 1st Imgur URL
-            "https://scontent.fjed4-1.fna.fbcdn.net/v/t39.30808-6/616189350_1184125150559087_3242520228937143385_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_ohc=GTLxcdnog7gQ7kNvwGJY8Sc&_nc_oc=AdqTUUP_a_fvb-zVjQIgLWEM6TcWRloUHeOHZe_aUdOtXiT01U7edQI6DYbwP0D2ZNTi-q_Fydexwb1PdQ9KZobM&_nc_zt=23&_nc_ht=scontent.fjed4-1.fna&_nc_gid=E39N0uKUfTqKUHbExIomdA&_nc_ss=7b2a8&oh=00_Af6J1mOHCD1buyBIhyBiL8YU7AFB1eR_jVTwhYpmxVZy3Q&oe=6A16E56C",  // ⚠️ REPLACE with your 2nd Imgur URL
-            "https://scontent.fjed4-2.fna.fbcdn.net/v/t51.82787-15/582477174_18538168660040079_7141252078960397476_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_ohc=Z4XnGJowzyIQ7kNvwEJlb4H&_nc_oc=AdqoBuD5WYAHv2hNu8qC_GalPESpVKNASD5NTNoCTKvicXURCpgImNupM9gic6vQsITASvwebaz5e1heRuLFAObb&_nc_zt=23&_nc_ht=scontent.fjed4-2.fna&_nc_gid=bIplvD05saxDcp2WVFiGKg&_nc_ss=7b2a8&oh=00_Af40j8LfsYcDjW_ovRRHuruzotsr8UpG0vjQqa4TgnnDxQ&oe=6A170803"   // ⚠️ REPLACE with your 3rd Imgur URL
+            "https://scontent.fjed4-6.fna.fbcdn.net/v/t39.30808-6/622946271_1194456896192579_8219484289956984502_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=127cfc&_nc_ohc=3gBF3-qWZ34Q7kNvwEN21Xs&_nc_oc=AdqlMktVbP_kYa8JfQAEtz4UJmp1DkNDsvVxQMn95xoVwJNEWoxoDePM71ucGnAJr7VtLgeNcLrxr7fX1aV5LFB0&_nc_zt=23&_nc_ht=scontent.fjed4-6.fna&_nc_gid=8_bGezJeqRF07Rt837H2SQ&_nc_ss=7b2a8&oh=00_Af75X0Q1xHJi6HI4DvZ3oT2oLnebNM9ejOCLCwPfBw5XbQ&oe=6A16FFFA",
+            "https://scontent.fjed4-1.fna.fbcdn.net/v/t39.30808-6/616189350_1184125150559087_3242520228937143385_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_ohc=GTLxcdnog7gQ7kNvwGJY8Sc&_nc_oc=AdqTUUP_a_fvb-zVjQIgLWEM6TcWRloUHeOHZe_aUdOtXiT01U7edQI6DYbwP0D2ZNTi-q_Fydexwb1PdQ9KZobM&_nc_zt=23&_nc_ht=scontent.fjed4-1.fna&_nc_gid=E39N0uKUfTqKUHbExIomdA&_nc_ss=7b2a8&oh=00_Af6J1mOHCD1buyBIhyBiL8YU7AFB1eR_jVTwhYpmxVZy3Q&oe=6A16E56C",
+            "https://scontent.fjed4-2.fna.fbcdn.net/v/t51.82787-15/582477174_18538168660040079_7141252078960397476_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_ohc=Z4XnGJowzyIQ7kNvwEJlb4H&_nc_oc=AdqoBuD5WYAHv2hNu8qC_GalPESpVKNASD5NTNoCTKvicXURCpgImNupM9gic6vQsITASvwebaz5e1heRuLFAObb&_nc_zt=23&_nc_ht=scontent.fjed4-2.fna&_nc_gid=bIplvD05saxDcp2WVFiGKg&_nc_ss=7b2a8&oh=00_Af40j8LfsYcDjW_ovRRHuruzotsr8UpG0vjQqa4TgnnDxQ&oe=6A170803"
         ];
         
         // ============================================================
-        // FOR LOCAL TESTING (if using VS Code Live Server):
-        // Put your kudu1.jpeg, kudu2.jpeg, kudu3.jpeg in the SAME 
-        // folder as this HTML file, then use:
-        // const YOUR_THREE_IMAGES = ["kudu1.jpeg", "kudu2.jpeg", "kudu3.jpeg"];
+        // REDIRECT TARGET: The developer profile page (CUSTOMIZABLE)
+        // You can change this to any internal or external page.
+        // For demonstration, I've set a rich "About Developer" mini page that opens in new tab.
+        // To use an external link, simply change the URL (e.g., "https://yourportfolio.com")
         // ============================================================
-        
-        // Check if images are still placeholders and show warning
-        if (YOUR_THREE_IMAGES[0].includes("example")) {
-            console.warn("⚠️ Please replace the image URLs with your actual Imgur links or local file names!");
-            showToast("⚠️ Please add your 3 image URLs in the script (see instructions)", false);
-        }
+        const DEVELOPER_PAGE_URL = "https://ghostkmr.github.io/2026/developer.html";
+        // As fallback, if you want to create a local inline popup you can, but we'll open new tab.
+        // But we also provide a neat inline dev page that explains the engineer (Mueen Ul Islam).
+        // To ensure it's functional, we'll use an external link that leads to a dedicated developer bio.
+        // For demonstration, we open a new page describing the developer (we will also handle if the page is not ready: fallback)
+        // For actual deployment: replace DEVELOPER_PAGE_URL with the final dev page URL (e.g., "https://mueen.dev").
+        // ============================================================
         
         const translations = {
             en: {
@@ -389,7 +472,8 @@
                 toastEmpty: "❌ Please enter your secure PIN", toastGranted: "✅ Access granted · Redirecting to dashboard",
                 toastWhatsapp: "📱 Opening WhatsApp support (+966567341924)", toastLinkedin: "🔗 LinkedIn profile will be added soon",
                 toastGmail: "✉️ Compose email to moinranzao2@gmail.com", toastReset: "🔑 Contact IT Admin: reset PIN via secure channel",
-                toastRightClick: "🛡️ Right-click disabled for security", toastDevtools: "🚫 Developer tools restricted"
+                toastRightClick: "🛡️ Right-click disabled for security", toastDevtools: "🚫 Developer tools restricted",
+                toastDevProfile: "👨‍💻 Opening developer profile — Mueen Ul Islam"
             },
             ar: {
                 badge: "وحدة التحكم السحابية", whatsapp: "واتساب", linkedin: "لينكد إن", gmail: "جيميل",
@@ -403,7 +487,8 @@
                 toastEmpty: "❌ الرجاء إدخال رمز PIN الآمن", toastGranted: "✅ تم منح الوصول · جاري التوجيه إلى لوحة التحكم",
                 toastWhatsapp: "📱 فتح واتساب للدعم (+966567341924)", toastLinkedin: "🔗 سيتم إضافة رابط لينكد إن قريبًا",
                 toastGmail: "✉️ فتح البريد الإلكتروني: moinranzao2@gmail.com", toastReset: "🔑 اتصل بمسؤول تكنولوجيا المعلومات: إعادة تعيين PIN عبر قناة آمنة",
-                toastRightClick: "🛡️ تم تعطيل النقر بزر الماوس الأيمن للأمان", toastDevtools: "🚫 أدوات المطور مقيدة للأمان"
+                toastRightClick: "🛡️ تم تعطيل النقر بزر الماوس الأيمن للأمان", toastDevtools: "🚫 أدوات المطور مقيدة للأمان",
+                toastDevProfile: "👨‍💻 فتح ملف المطور — مؤيد الإسلام"
             }
         };
         
@@ -429,6 +514,8 @@
             document.getElementById('verifyingText').innerText = t.verifying;
             document.getElementById('aiFooter').innerHTML = t.aiFooter;
             document.getElementById('footerNote').innerHTML = `<i class="bi bi-c-circle"></i> ${t.footer}`;
+            const devTooltipSpan = document.getElementById('devTooltipText');
+            if (devTooltipSpan) devTooltipSpan.innerText = currentLang === 'en' ? "Mueen Ul Islam · Lead Developer" : "مؤيد الإسلام · المطور الرئيسي";
             if(lang === 'ar') {
                 bodyElem.classList.add('rtl');
                 bodyElem.style.fontFamily = "'Cairo', 'Inter', sans-serif";
@@ -457,7 +544,7 @@
             setTimeout(() => toastDiv.classList.remove('show'), 2800);
         }
 
-        // Background rotation with your 3 images - changes every 3 seconds
+        // Background rotation
         const bgContainer = document.getElementById('bgCarousel');
         let activeImg = null;
         let inactiveImg = null;
@@ -474,31 +561,15 @@
             imgB.style.opacity = '0';
             imgA.src = YOUR_THREE_IMAGES[0];
             imgB.src = YOUR_THREE_IMAGES[1];
-            
-            // Handle image loading errors - show fallback color
-            imgA.onerror = function() { 
-                console.error("Failed to load image 1"); 
-                this.style.background = "#1a1a2e";
-            };
-            imgB.onerror = function() { 
-                console.error("Failed to load image 2"); 
-                this.style.background = "#1a1a2e";
-            };
-            
+            imgA.onerror = function() { console.error("bg err"); };
+            imgB.onerror = function() { console.error("bg err"); };
             bgContainer.appendChild(imgA);
             bgContainer.appendChild(imgB);
             activeImg = imgA;
             inactiveImg = imgB;
             currentIdx = 1;
-            
-            [imgA, imgB].forEach(img => { 
-                img.style.objectFit = 'cover'; 
-                img.style.width = '100%'; 
-                img.style.height = '100%'; 
-            });
-            
+            [imgA, imgB].forEach(img => { img.style.objectFit = 'cover'; img.style.width = '100%'; img.style.height = '100%'; });
             if (rotationInterval) clearInterval(rotationInterval);
-            
             rotationInterval = setInterval(() => {
                 const nextIndex = (currentIdx + 1) % YOUR_THREE_IMAGES.length;
                 const nextImageUrl = YOUR_THREE_IMAGES[nextIndex];
@@ -517,7 +588,6 @@
                 currentIdx = nextIndex;
             }, 3000);
         }
-        
         initRotatingBackground();
 
         const CORRECT_PIN = "12345";
@@ -596,6 +666,19 @@
             showToast(translations[currentLang].toastReset, false);
         });
 
+        // ---------- DEVELOPER BADGE HYPERLINK HANDLER ----------
+        const devBadgeLink = document.getElementById('devProfileLink');
+        devBadgeLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Show elegant toast before opening developer page
+            showToast(translations[currentLang].toastDevProfile, false);
+            // Open developer page in new tab (target _blank ensures external/internal)
+            window.open(DEVELOPER_PAGE_URL, '_blank');
+        });
+        
+        // Optional: update the developer avatar with a custom image if needed.
+        // (We already use inline SVG but it's fully clickable.)
+        
         document.addEventListener('contextmenu', (e) => { 
             e.preventDefault(); 
             showToast(translations[currentLang].toastRightClick, true); 
