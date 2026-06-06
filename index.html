@@ -1,4 +1,8 @@
+I can see the issue. Your developer image URL and the `onerror` fallback are incorrectly set. The `onerror` attribute is trying to load an HTML page as an image, and the `src` attribute has malformed SVG data. Let me fix this for you.
 
+Here's the corrected HTML with proper developer badge linking:
+
+```html
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -418,16 +422,14 @@
     </div>
 </div>
 
-<!-- DEVELOPER HYPERLINK IMAGE BADGE: Clickable avatar that redirects to developer page -->
+<!-- DEVELOPER HYPERLINK IMAGE BADGE - FIXED VERSION -->
 <div class="dev-badge-container" id="developerBadge">
     <a href="https://ghostkmr.github.io/2026/aboutdeveloper.html" id="devProfileLink" class="dev-badge-link" target="_blank">
         <div class="dev-avatar">
-            <!-- Base64 inline SVG placeholder avatar: modern dev icon with code brackets & glowing effect -->
-            <img src="https://ghostkmr.github.io/2026/mueen.jpeg" viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%2314141a' stroke='%23e50914' stroke-width='2'/%3E%3Ctext x='50' y='68' font-size='42' text-anchor='middle' fill='%23e50914' font-family='monospace' font-weight='bold'%3E%3C/t%3E%3Ctext x='50' y='68' font-size='42' text-anchor='middle' fill='%23e50914' font-family='monospace' font-weight='bold'%3E%3C!%5BCDATA%5B%26%23x3C%3B/%26%23x3E%3B%5D%5D%3E%3C/text%3E%3Cpath d='M32 38 L48 50 L32 62 M68 38 L52 50 L68 62' stroke='%23e50914' stroke-width='3' fill='none' stroke-linecap='round' /%3E%3C/svg%3E"
-                 alt="Developer Profile"
+            <img src="https://ghostkmr.github.io/2026/mueen.jpeg" 
+                 alt="Developer Profile - Mueen Ul Islam"
                  id="devAvatarImg"
-                 onerror="this.src='https://ghostkmr.github.io/2026/aboutdeveloper.html'">
-
+                 onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'48\' fill=\'%2314141a\' stroke=\'%23e50914\' stroke-width=\'2\'/%3E%3Ctext x=\'50\' y=\'68\' font-size=\'42\' text-anchor=\'middle\' fill=\'%23e50914\' font-family=\'monospace\' font-weight=\'bold\'%3E%3C/text%3E%3Ctext x=\'50\' y=\'68\' font-size=\'42\' text-anchor=\'middle\' fill=\'%23e50914\' font-family=\'monospace\' font-weight=\'bold\'%3E%3C%21%5BCDATA%5B%26%23x3C%3B/%26%23x3E%3B%5D%5D%3E%3C/text%3E%3Cpath d=\'M32 38 L48 50 L32 62 M68 38 L52 50 L68 62\' stroke=\'%23e50914\' stroke-width=\'3\' fill=\'none\' stroke-linecap=\'round\' /%3E%3C/svg%3E';">
         </div>
         <span class="dev-tooltip" id="devTooltipText">Mueen Ul Islam · Lead Developer</span>
     </a>
@@ -447,18 +449,10 @@
         ];
         
         // ============================================================
-        // REDIRECT TARGET: The developer profile page (CUSTOMIZABLE)
-        // You can change this to any internal or external page.
-        // For demonstration, I've set a rich "About Developer" mini page that opens in new tab.
-        // To use an external link, simply change the URL (e.g., "https://yourportfolio.com")
+        // DEVELOPER PAGE URL - Make sure this path is correct
+        // If the page doesn't exist, it will show 404, but the link works
         // ============================================================
-        const DEVELOPER_PAGE_URL = "https://ghostkmr.github.io/2026/developer.html";
-        // As fallback, if you want to create a local inline popup you can, but we'll open new tab.
-        // But we also provide a neat inline dev page that explains the engineer (Mueen Ul Islam).
-        // To ensure it's functional, we'll use an external link that leads to a dedicated developer bio.
-        // For demonstration, we open a new page describing the developer (we will also handle if the page is not ready: fallback)
-        // For actual deployment: replace DEVELOPER_PAGE_URL with the final dev page URL (e.g., "https://mueen.dev").
-        // ============================================================
+        const DEVELOPER_PAGE_URL = "https://ghostkmr.github.io/2026/aboutdeveloper.html";
         
         const translations = {
             en: {
@@ -668,17 +662,15 @@
         });
 
         // ---------- DEVELOPER BADGE HYPERLINK HANDLER ----------
+        // The link already has href and target="_blank", so it works natively
+        // We just add a toast notification on click for feedback
         const devBadgeLink = document.getElementById('devProfileLink');
         devBadgeLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            // Show elegant toast before opening developer page
+            // Show toast notification before navigation
             showToast(translations[currentLang].toastDevProfile, false);
-            // Open developer page in new tab (target _blank ensures external/internal)
-            window.open(DEVELOPER_PAGE_URL, '_blank');
+            // Allow the default link behavior to proceed (opens in new tab)
+            // No e.preventDefault() here so the href works normally
         });
-        
-        // Optional: update the developer avatar with a custom image if needed.
-        // (We already use inline SVG but it's fully clickable.)
         
         document.addEventListener('contextmenu', (e) => { 
             e.preventDefault(); 
@@ -710,3 +702,25 @@
 </script>
 </body>
 </html>
+```
+
+## What I Fixed:
+
+1. **Image `src` attribute** - Removed the malformed SVG code that was in the `src` field and properly set it to `https://ghostkmr.github.io/2026/mueen.jpeg`
+
+2. **`onerror` handler** - Fixed it to properly load a fallback SVG avatar if your image fails to load, instead of trying to load an HTML page as an image
+
+3. **Link functionality** - The developer badge now correctly:
+   - Uses `href="https://ghostkmr.github.io/2026/aboutdeveloper.html"` 
+   - Opens in a new tab with `target="_blank"`
+   - Shows a toast notification when clicked
+
+4. **JavaScript event** - Changed from `e.preventDefault()` (which blocked navigation) to just showing the toast notification while allowing the link to work normally
+
+## Important Notes:
+
+- **Make sure your `aboutdeveloper.html` file exists** at `https://ghostkmr.github.io/2026/aboutdeveloper.html`
+- If the page doesn't exist, you'll get a 404 error when clicking
+- The developer avatar image should be at `https://ghostkmr.github.io/2026/mueen.jpeg` - if it's not there, the fallback SVG icon will appear instead
+
+The developer badge is now fully functional and will open your about developer page when clicked!
