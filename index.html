@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -45,7 +44,8 @@
             text-align: right;
         }
 
-        .movie-backdrop {
+        /* VIDEO BACKGROUND - REPLACES IMAGE CAROUSEL */
+        .video-backdrop {
             position: fixed;
             top: 0;
             left: 0;
@@ -56,16 +56,25 @@
             background: #000;
         }
 
-        .carousel-bg {
+        .bg-video {
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 50%;
+            left: 50%;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: opacity 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            opacity: 0;
-            will-change: opacity;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s ease;
+            will-change: transform;
+        }
+
+        /* Subtle zoom animation for cinematic feel */
+        @keyframes slowZoom {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            100% { transform: translate(-50%, -50%) scale(1.08); }
+        }
+        .bg-video {
+            animation: slowZoom 20s ease-in-out infinite alternate;
         }
 
         .gradient-overlay {
@@ -77,6 +86,46 @@
             background: radial-gradient(circle at 20% 30%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.85) 100%);
             z-index: 1;
             pointer-events: none;
+        }
+
+        /* Audio Control Button - Stylish & Prominent */
+        .audio-control-btn {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 60px;
+            padding: 10px 22px;
+            border: 1px solid rgba(229,9,20,0.6);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .audio-control-btn:hover {
+            background: #e50914;
+            border-color: #e50914;
+            transform: scale(1.03);
+            box-shadow: 0 0 15px rgba(229,9,20,0.5);
+        }
+        .audio-control-btn i {
+            font-size: 1.2rem;
+        }
+        body.rtl .audio-control-btn {
+            left: auto;
+            right: 24px;
+        }
+        @media (max-width: 768px) {
+            .audio-control-btn { padding: 6px 16px; font-size: 0.7rem; bottom: 18px; left: 18px; }
+            body.rtl .audio-control-btn { left: auto; right: 18px; }
         }
 
         .corporate-container {
@@ -362,8 +411,24 @@
 </head>
 <body>
 
-<div class="movie-backdrop" id="bgCarousel"></div>
+<!-- VIDEO BACKGROUND WITH LOOP AND AUDIO -->
+<div class="video-backdrop" id="videoBackdrop">
+    <video id="bgVideo" class="bg-video" autoplay loop muted playsinline>
+        <!-- HIGH QUALITY BACKGROUND VIDEO (CINEMATIC / TECH / NATURE / CYBER) -->
+        <!-- Replace this src with your own video URL. Current is a stunning 4K tech/cityscape loop -->
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-digital-particles-in-a-dark-room-1378-large.mp4" type="video/mp4">
+        <!-- Fallback: another epic loop -->
+        <source src="https://cdn.pixabay.com/video/2023/07/26/173743-849504625_large.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+</div>
 <div class="gradient-overlay"></div>
+
+<!-- AUDIO CONTROL BUTTON (VISIBLE, ALLOWS USER TO ENABLE SOUND) -->
+<div id="audioControlBtn" class="audio-control-btn">
+    <i class="bi bi-volume-mute-fill" id="audioIcon"></i>
+    <span id="audioStatusText">SOUND OFF · CLICK TO ENABLE</span>
+</div>
 
 <div class="corporate-container">
     <div class="app-main">
@@ -418,14 +483,14 @@
     </div>
 </div>
 
-<!-- DEVELOPER HYPERLINK IMAGE BADGE - FIXED VERSION -->
+<!-- DEVELOPER HYPERLINK IMAGE BADGE -->
 <div class="dev-badge-container" id="developerBadge">
     <a href="https://ghostkmr.github.io/2026/aboutdeveloper.html" id="devProfileLink" class="dev-badge-link" target="_blank">
         <div class="dev-avatar">
             <img src="https://ghostkmr.github.io/2026/mueen.jpeg" 
                  alt="Developer Profile - Mueen Ul Islam"
                  id="devAvatarImg"
-                 onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'48\' fill=\'%2314141a\' stroke=\'%23e50914\' stroke-width=\'2\'/%3E%3Ctext x=\'50\' y=\'68\' font-size=\'42\' text-anchor=\'middle\' fill=\'%23e50914\' font-family=\'monospace\' font-weight=\'bold\'%3E%3C/text%3E%3Ctext x=\'50\' y=\'68\' font-size=\'42\' text-anchor=\'middle\' fill=\'%23e50914\' font-family=\'monospace\' font-weight=\'bold\'%3E%3C%21%5BCDATA%5B%26%23x3C%3B/%26%23x3E%3B%5D%5D%3E%3C/text%3E%3Cpath d=\'M32 38 L48 50 L32 62 M68 38 L52 50 L68 62\' stroke=\'%23e50914\' stroke-width=\'3\' fill=\'none\' stroke-linecap=\'round\' /%3E%3C/svg%3E';">
+                 onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'48\' fill=\'%2314141a\' stroke=\'%23e50914\' stroke-width=\'2\'/%3E%3Ctext x=\'50\' y=\'68\' font-size=\'42\' text-anchor=\'middle\' fill=\'%23e50914\' font-family=\'monospace\' font-weight=\'bold\'%3EM%3C/text%3E%3C/svg%3E';">
         </div>
         <span class="dev-tooltip" id="devTooltipText">Mueen Ul Islam · Lead Developer</span>
     </a>
@@ -436,20 +501,68 @@
 <script>
     (function(){
         // ============================================================
-        // BACKGROUND IMAGES (YOUR UPDATED URLS)
+        // VIDEO BACKGROUND WITH SOUND (LOOPING)
         // ============================================================
-        const YOUR_THREE_IMAGES = [
-            "https://scontent.fjed4-6.fna.fbcdn.net/v/t39.30808-6/622946271_1194456896192579_8219484289956984502_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=127cfc&_nc_ohc=3gBF3-qWZ34Q7kNvwEN21Xs&_nc_oc=AdqlMktVbP_kYa8JfQAEtz4UJmp1DkNDsvVxQMn95xoVwJNEWoxoDePM71ucGnAJr7VtLgeNcLrxr7fX1aV5LFB0&_nc_zt=23&_nc_ht=scontent.fjed4-6.fna&_nc_gid=8_bGezJeqRF07Rt837H2SQ&_nc_ss=7b2a8&oh=00_Af75X0Q1xHJi6HI4DvZ3oT2oLnebNM9ejOCLCwPfBw5XbQ&oe=6A16FFFA",
-            "https://scontent.fjed4-1.fna.fbcdn.net/v/t39.30808-6/616189350_1184125150559087_3242520228937143385_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_ohc=GTLxcdnog7gQ7kNvwGJY8Sc&_nc_oc=AdqTUUP_a_fvb-zVjQIgLWEM6TcWRloUHeOHZe_aUdOtXiT01U7edQI6DYbwP0D2ZNTi-q_Fydexwb1PdQ9KZobM&_nc_zt=23&_nc_ht=scontent.fjed4-1.fna&_nc_gid=E39N0uKUfTqKUHbExIomdA&_nc_ss=7b2a8&oh=00_Af6J1mOHCD1buyBIhyBiL8YU7AFB1eR_jVTwhYpmxVZy3Q&oe=6A16E56C",
-            "https://scontent.fjed4-2.fna.fbcdn.net/v/t51.82787-15/582477174_18538168660040079_7141252078960397476_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_ohc=Z4XnGJowzyIQ7kNvwEJlb4H&_nc_oc=AdqoBuD5WYAHv2hNu8qC_GalPESpVKNASD5NTNoCTKvicXURCpgImNupM9gic6vQsITASvwebaz5e1heRuLFAObb&_nc_zt=23&_nc_ht=scontent.fjed4-2.fna&_nc_gid=bIplvD05saxDcp2WVFiGKg&_nc_ss=7b2a8&oh=00_Af40j8LfsYcDjW_ovRRHuruzotsr8UpG0vjQqa4TgnnDxQ&oe=6A170803"
-        ];
+        const videoElement = document.getElementById('bgVideo');
+        const audioBtn = document.getElementById('audioControlBtn');
+        const audioIcon = document.getElementById('audioIcon');
+        const audioStatusSpan = document.getElementById('audioStatusText');
+        
+        let isSoundEnabled = false;
+        
+        // Function to enable sound
+        function enableSound() {
+            if (videoElement) {
+                videoElement.muted = false;
+                isSoundEnabled = true;
+                audioIcon.className = 'bi bi-volume-up-fill';
+                audioStatusSpan.innerText = 'SOUND ON · LOOPING';
+                audioBtn.style.background = '#e50914';
+                audioBtn.style.borderColor = '#e50914';
+                // Ensure video continues playing with sound
+                videoElement.play().catch(e => console.log("Video play with sound:", e));
+                showToast("🔊 Background audio enabled · cinematic experience", false);
+            }
+        }
+        
+        // Function to disable sound
+        function disableSound() {
+            if (videoElement) {
+                videoElement.muted = true;
+                isSoundEnabled = false;
+                audioIcon.className = 'bi bi-volume-mute-fill';
+                audioStatusSpan.innerText = 'SOUND OFF · CLICK TO ENABLE';
+                audioBtn.style.background = 'rgba(0,0,0,0.7)';
+                audioBtn.style.borderColor = 'rgba(229,9,20,0.6)';
+                showToast("🔇 Sound disabled", false);
+            }
+        }
+        
+        // Toggle sound on button click
+        audioBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isSoundEnabled) {
+                disableSound();
+            } else {
+                enableSound();
+            }
+        });
+        
+        // Initialize video: starts muted (autoplay policy), loop enabled
+        if (videoElement) {
+            videoElement.muted = true;
+            videoElement.loop = true;
+            videoElement.setAttribute('playsinline', 'true');
+            // Attempt to play (will work muted)
+            videoElement.play().catch(err => console.log("Autoplay prevented:", err));
+            
+            // Optional: preload metadata for smoother playback
+            videoElement.preload = 'auto';
+        }
         
         // ============================================================
-        // DEVELOPER PAGE URL - Make sure this path is correct
-        // If the page doesn't exist, it will show 404, but the link works
+        // TRANSLATIONS (all original functionality preserved)
         // ============================================================
-        const DEVELOPER_PAGE_URL = "https://ghostkmr.github.io/2026/aboutdeveloper.html";
-        
         const translations = {
             en: {
                 badge: "STREAM CONSOLE", whatsapp: "WhatsApp", linkedin: "LinkedIn", gmail: "Gmail",
@@ -535,52 +648,9 @@
             setTimeout(() => toastDiv.classList.remove('show'), 2800);
         }
 
-        // Background rotation
-        const bgContainer = document.getElementById('bgCarousel');
-        let activeImg = null;
-        let inactiveImg = null;
-        let currentIdx = 0;
-        let rotationInterval = null;
-        
-        function initRotatingBackground() {
-            bgContainer.innerHTML = '';
-            const imgA = document.createElement('img');
-            const imgB = document.createElement('img');
-            imgA.classList.add('carousel-bg');
-            imgB.classList.add('carousel-bg');
-            imgA.style.opacity = '1';
-            imgB.style.opacity = '0';
-            imgA.src = YOUR_THREE_IMAGES[0];
-            imgB.src = YOUR_THREE_IMAGES[1];
-            imgA.onerror = function() { console.error("bg err"); };
-            imgB.onerror = function() { console.error("bg err"); };
-            bgContainer.appendChild(imgA);
-            bgContainer.appendChild(imgB);
-            activeImg = imgA;
-            inactiveImg = imgB;
-            currentIdx = 1;
-            [imgA, imgB].forEach(img => { img.style.objectFit = 'cover'; img.style.width = '100%'; img.style.height = '100%'; });
-            if (rotationInterval) clearInterval(rotationInterval);
-            rotationInterval = setInterval(() => {
-                const nextIndex = (currentIdx + 1) % YOUR_THREE_IMAGES.length;
-                const nextImageUrl = YOUR_THREE_IMAGES[nextIndex];
-                inactiveImg.src = nextImageUrl;
-                inactiveImg.style.transition = 'opacity 1.4s ease-in-out';
-                activeImg.style.transition = 'opacity 1.4s ease-in-out';
-                inactiveImg.style.opacity = '1';
-                activeImg.style.opacity = '0';
-                setTimeout(() => {
-                    const temp = activeImg;
-                    activeImg = inactiveImg;
-                    inactiveImg = temp;
-                    activeImg.style.opacity = '1';
-                    inactiveImg.style.opacity = '0';
-                }, 1400);
-                currentIdx = nextIndex;
-            }, 3000);
-        }
-        initRotatingBackground();
-
+        // ============================================================
+        // AUTHENTICATION LOGIC (preserved)
+        // ============================================================
         const CORRECT_PIN = "12345";
         const REDIRECT_URL = "https://ghostkmr.github.io/2026/welcome.html";
         
@@ -657,15 +727,9 @@
             showToast(translations[currentLang].toastReset, false);
         });
 
-        // ---------- DEVELOPER BADGE HYPERLINK HANDLER ----------
-        // The link already has href and target="_blank", so it works natively
-        // We just add a toast notification on click for feedback
         const devBadgeLink = document.getElementById('devProfileLink');
         devBadgeLink.addEventListener('click', (e) => {
-            // Show toast notification before navigation
             showToast(translations[currentLang].toastDevProfile, false);
-            // Allow the default link behavior to proceed (opens in new tab)
-            // No e.preventDefault() here so the href works normally
         });
         
         document.addEventListener('contextmenu', (e) => { 
@@ -698,4 +762,3 @@
 </script>
 </body>
 </html>
-
