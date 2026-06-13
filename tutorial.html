@@ -1,0 +1,751 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>SADWAP Tutorials | Prime-Style Video Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --prime-bg: #0f171e;
+            --prime-header: #1a242f;
+            --prime-card: #1a242f;
+            --prime-accent: #00a8e1;
+            --prime-hover: #0a8cbf;
+            --text-light: #ffffff;
+            --text-muted: #a5b1b8;
+            --gradient-overlay: linear-gradient(0deg, rgba(15,23,30,0.95) 0%, rgba(15,23,30,0.4) 50%, rgba(15,23,30,0.1) 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--prime-bg);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0a1117; }
+        ::-webkit-scrollbar-thumb { background: var(--prime-accent); border-radius: 10px; }
+
+        /* Navbar - Amazon Prime Style */
+        .prime-nav {
+            background: var(--prime-header);
+            backdrop-filter: blur(0px);
+            padding: 0.8rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.3);
+            border-bottom: 1px solid rgba(0,168,225,0.2);
+        }
+        .logo-area {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            cursor: pointer;
+        }
+        .logo-icon {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00a8e1, #0077b6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .logo-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .logo-text span {
+            color: var(--prime-accent);
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--prime-accent);
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.08);
+            border-radius: 40px;
+            padding: 0.3rem 1rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .search-box input {
+            background: transparent;
+            border: none;
+            padding: 0.4rem;
+            color: white;
+            font-size: 0.8rem;
+            outline: none;
+            width: 180px;
+        }
+        .search-box input::placeholder {
+            color: var(--text-muted);
+        }
+        .search-box i {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        .user-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #00a8e1, #0077b6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .user-icon:hover {
+            transform: scale(1.05);
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            background: linear-gradient(90deg, #0f171e 0%, rgba(15,23,30,0.6) 100%);
+            padding: 2.5rem 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(0,168,225,0.15);
+        }
+        .hero-banner h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .hero-banner p {
+            color: var(--text-muted);
+            max-width: 600px;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem 3rem;
+        }
+
+        /* Category Section */
+        .category-section {
+            margin-bottom: 2.5rem;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .section-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            border-left: 4px solid var(--prime-accent);
+            padding-left: 12px;
+        }
+        .section-header a {
+            color: var(--prime-accent);
+            font-size: 0.8rem;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Video Grid - Prime Style (Responsive) */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Video Card - Amazon Prime Inspired */
+        .video-card {
+            background: var(--prime-card);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .video-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+        }
+        .thumbnail-wrapper {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            background: #000;
+        }
+        .thumbnail-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .video-card:hover .thumbnail-wrapper img {
+            transform: scale(1.05);
+        }
+        .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+        .video-card:hover .play-overlay {
+            opacity: 1;
+        }
+        .play-overlay i {
+            font-size: 3rem;
+            color: white;
+            text-shadow: 0 0 20px rgba(0,0,0,0.8);
+            background: rgba(0,168,225,0.8);
+            border-radius: 50%;
+            padding: 12px;
+        }
+        .video-info {
+            padding: 0.8rem 1rem 1rem;
+        }
+        .video-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        .duration {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.5);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        .badge-new {
+            background: var(--prime-accent);
+            color: white;
+            font-size: 0.6rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        .empty-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Modal for Video Playback - Prime Style Lightbox */
+        .video-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+        .video-modal.active {
+            display: flex;
+        }
+        .modal-content {
+            width: 90%;
+            max-width: 1000px;
+            background: #0a1117;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        .modal-video-container {
+            position: relative;
+            background: #000;
+        }
+        .modal-video-container video {
+            width: 100%;
+            max-height: 70vh;
+            outline: none;
+        }
+        .modal-info {
+            padding: 1rem 1.5rem 1.5rem;
+        }
+        .modal-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        .modal-info p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(0,0,0,0.6);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: 0.2s;
+            z-index: 10;
+        }
+        .close-modal:hover {
+            background: var(--prime-accent);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--prime-header);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(0,168,225,0.15);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .prime-nav {
+                padding: 0.8rem 1rem;
+            }
+            .search-box input {
+                width: 120px;
+            }
+            .hero-banner {
+                padding: 1.5rem 1rem;
+            }
+            .hero-banner h1 {
+                font-size: 1.5rem;
+            }
+            .container {
+                padding: 0 1rem 2rem;
+            }
+            .video-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 1rem;
+            }
+            .modal-content {
+                width: 95%;
+            }
+            .modal-info h3 {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-links {
+                gap: 0.8rem;
+            }
+            .nav-link span {
+                display: none;
+            }
+            .nav-link i {
+                font-size: 1.2rem;
+            }
+            .search-box {
+                padding: 0.3rem 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Prime-Style Navigation -->
+<nav class="prime-nav">
+    <div class="logo-area">
+        <div class="logo-icon"><i class="fas fa-play-circle"></i></div>
+        <div class="logo-text">SADWAP<span> Tutorials</span></div>
+    </div>
+    <div class="nav-links">
+        <a href="#" class="nav-link active" data-nav="home"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="#" class="nav-link" data-nav="hub"><i class="fas fa-graduation-cap"></i><span>Learning Hub</span></a>
+        <a href="#" class="nav-link" data-nav="picks"><i class="fas fa-star"></i><span>Prime Picks</span></a>
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search tutorials..." id="searchInput">
+        </div>
+        <div class="user-icon">
+            <i class="fas fa-user"></i>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Banner -->
+<div class="hero-banner">
+    <h1>Prime Video Tutorials</h1>
+    <p>Master SADWAP modules, IT asset management, and automation with our curated video library — all in one place.</p>
+</div>
+
+<div class="container">
+    <!-- Categories with video galleries - initially populated with 1 demo video + placeholder for future expansion -->
+    <div class="category-section" id="allVideosSection">
+        <div class="section-header">
+            <h2><i class="fas fa-fire" style="color: #00a8e1; margin-right: 6px;"></i> Trending Now</h2>
+            <a href="#" class="view-all-link" data-category="trending">View All <i class="fas fa-chevron-right"></i></a>
+        </div>
+        <div class="video-grid" id="trendingGrid"></div>
+    </div>
+
+    <div class="category-section">
+        <div class="section-header">
+            <h2><i class="fas fa-chalkboard-teacher"></i> Essential Training</h2>
+            <a href="#" class="view-all-link" data-category="training">More <i class="fas fa-chevron-right"></i></a>
+        </div>
+        <div class="video-grid" id="trainingGrid"></div>
+    </div>
+
+    <div class="category-section">
+        <div class="section-header">
+            <h2><i class="fas fa-rocket"></i> Advanced Series</h2>
+            <a href="#" class="view-all-link" data-category="advanced">Explore <i class="fas fa-chevron-right"></i></a>
+        </div>
+        <div class="video-grid" id="advancedGrid"></div>
+    </div>
+    
+    <!-- Hint for admin: how to add more videos -->
+    <div style="background: rgba(0,168,225,0.08); border-radius: 12px; padding: 1rem; margin-top: 2rem; text-align: center; border-left: 3px solid #00a8e1;">
+        <p style="font-size: 0.75rem; color: #8e9eab;"><i class="fas fa-code-branch"></i> <strong>Gallery ready for expansion</strong> — Add new video objects to the <code style="background:#00000055; padding:2px 6px; border-radius:6px;">videosData</code> array following the same schema. New cards will appear automatically.</p>
+    </div>
+</div>
+
+<div class="footer">
+    <p><i class="fas fa-copyright"></i> 2026 SADWAP Tutorials — Prime Style Interface. All tutorials for educational purposes.</p>
+    <p style="margin-top: 8px;">Reduce Human Effort · AI-Driven Learning</p>
+</div>
+
+<!-- Video Modal -->
+<div id="videoModal" class="video-modal">
+    <div class="modal-content">
+        <div class="close-modal" id="closeModalBtn"><i class="fas fa-times"></i></div>
+        <div class="modal-video-container">
+            <video id="modalVideo" controls preload="metadata">
+                <source src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <div class="modal-info">
+            <h3 id="modalTitle"></h3>
+            <p id="modalDescription"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ------------------------------------------------------------------
+    // VIDEO DATA SOURCE: Contains ONE high-quality sample tutorial + comments
+    // for easy addition of more videos later.
+    // To add more tutorials, simply push new objects to this array.
+    // Each object must have: id, title, description, duration, category, thumbnail, videoUrl, isNew (optional)
+    // ------------------------------------------------------------------
+    const videosData = [
+        // ========== SAMPLE TUTORIAL (Fully functional demo video) ==========
+        { 
+            id: 1, 
+            title: "SADWAP StreamOps: Complete Dashboard Walkthrough", 
+            description: "Master the core SADWAP dashboard, real-time asset tracking, inventory insights, and reduce manual effort with AI-driven alerts — a complete primer for new users.", 
+            duration: "10:24", 
+            category: "trending", 
+            thumbnail: "https://picsum.photos/id/20/400/225", 
+            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", 
+            isNew: true 
+        },
+        // ------------------------------------------------------------------
+        // --- ADD MORE VIDEOS BELOW THIS LINE ---
+        // Example additional entry (commented to show pattern, you can uncomment or add more):
+        // { 
+        //     id: 2, 
+        //     title: "Advanced Inventory Analytics", 
+        //     description: "Deep dive into predictive analytics and stock optimization.", 
+        //     duration: "14:22", 
+        //     category: "advanced", 
+        //     thumbnail: "https://picsum.photos/id/26/400/225", 
+        //     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", 
+        //     isNew: false 
+        // },
+        // { 
+        //     id: 3, 
+        //     title: "Expiry Tracker & Compliance", 
+        //     description: "Set up automated expiry alerts and compliance reporting.", 
+        //     duration: "08:45", 
+        //     category: "training", 
+        //     thumbnail: "https://picsum.photos/id/40/400/225", 
+        //     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFunflies.mp4", 
+        //     isNew: true 
+        // },
+        // ------------------------------------------------------------------
+        // Additional ready-to-use expansion (you can uncomment any of these as needed)
+        // { id: 4, title: "AI Chatbot Deployment", description: "Deploy AI assistant for real-time support.", duration: "12:15", category: "advanced", thumbnail: "https://picsum.photos/id/42/400/225", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", isNew: false },
+        // { id: 5, title: "Sales Forecasting Masterclass", description: "Leverage historical data for accurate forecasts.", duration: "09:33", category: "trending", thumbnail: "https://picsum.photos/id/48/400/225", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", isNew: false },
+        // { id: 6, title: "Municipality Licensing Module", description: "Manage permits and renewals efficiently.", duration: "07:50", category: "training", thumbnail: "https://picsum.photos/id/58/400/225", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCar.mp4", isNew: true }
+    ];
+
+    // Helper: render video grid for a specific category
+    function renderVideoGrid(containerId, category) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const filtered = videosData.filter(v => v.category === category);
+        container.innerHTML = '';
+        
+        if (filtered.length === 0) {
+            // Show elegant empty state with hint for admin
+            const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'empty-message';
+            emptyDiv.innerHTML = `
+                <i class="fas fa-video" style="font-size: 2rem; opacity: 0.5; margin-bottom: 1rem; display: block;"></i>
+                <p>No videos in this category yet.</p>
+                <p style="font-size: 0.7rem; margin-top: 0.5rem;">Add a video object with category "${category}" to the videosData array.</p>
+            `;
+            container.appendChild(emptyDiv);
+            return;
+        }
+        
+        filtered.forEach(video => {
+            const card = document.createElement('div');
+            card.className = 'video-card';
+            card.setAttribute('data-video-id', video.id);
+            card.innerHTML = `
+                <div class="thumbnail-wrapper">
+                    <img src="${video.thumbnail}" alt="${escapeHtml(video.title)}" loading="lazy">
+                    <div class="play-overlay">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <div class="video-title">${escapeHtml(video.title)}</div>
+                    <div class="video-meta">
+                        <span class="duration"><i class="far fa-clock"></i> ${video.duration}</span>
+                        ${video.isNew ? '<span class="badge-new">NEW</span>' : ''}
+                    </div>
+                </div>
+            `;
+            card.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openVideoModal(video);
+            });
+            container.appendChild(card);
+        });
+    }
+
+    // Simple escape utility to prevent XSS
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // Search functionality across all visible video cards (only those currently in DOM)
+    const searchInput = document.getElementById('searchInput');
+    function filterAllVideos(searchTerm) {
+        const lowerTerm = searchTerm.toLowerCase().trim();
+        const allCards = document.querySelectorAll('.video-card');
+        if (lowerTerm === '') {
+            allCards.forEach(card => card.style.display = '');
+            return;
+        }
+        allCards.forEach(card => {
+            const titleElem = card.querySelector('.video-title');
+            const title = titleElem ? titleElem.innerText.toLowerCase() : '';
+            if (title.includes(lowerTerm)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    searchInput.addEventListener('input', (e) => {
+        filterAllVideos(e.target.value);
+    });
+
+    // Modal Management
+    const modal = document.getElementById('videoModal');
+    const modalVideo = document.getElementById('modalVideo');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDesc = document.getElementById('modalDescription');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    function openVideoModal(video) {
+        modalTitle.innerText = video.title;
+        modalDesc.innerText = video.description;
+        // Update video source
+        const sourceElem = modalVideo.querySelector('source');
+        sourceElem.src = video.videoUrl;
+        modalVideo.load();
+        modal.classList.add('active');
+        // Attempt autoplay; it's user-friendly and works if browser allows
+        modalVideo.play().catch(e => console.log("Autoplay blocked; user can click play."));
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+        modalVideo.pause();
+        modalVideo.currentTime = 0;
+        const sourceElem = modalVideo.querySelector('source');
+        sourceElem.src = '';
+        modalVideo.load();
+    }
+
+    closeModalBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
+    });
+
+    // Render all categories based on videosData array (supports future expansion)
+    function renderAllSections() {
+        renderVideoGrid('trendingGrid', 'trending');
+        renderVideoGrid('trainingGrid', 'training');
+        renderVideoGrid('advancedGrid', 'advanced');
+    }
+    
+    renderAllSections();
+
+    // Optional: "View All" links - simple scroll to section (no filter demo, but can be extended)
+    const viewAllLinks = document.querySelectorAll('.view-all-link');
+    viewAllLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            // simple visual feedback: scroll to respective section
+            const section = link.closest('.category-section');
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // Navbar interaction: home resets search and scrolls top
+    const navHome = document.querySelector('.nav-link[data-nav="home"]');
+    if (navHome) {
+        navHome.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            navHome.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (searchInput) {
+                searchInput.value = '';
+                filterAllVideos('');
+            }
+        });
+    }
+    
+    // Additional nav items just for UI polish
+    const otherNavs = document.querySelectorAll('.nav-link[data-nav="hub"], .nav-link[data-nav="picks"]');
+    otherNavs.forEach(nav => {
+        nav.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            nav.classList.add('active');
+            // show a small toast-like message (no console error)
+            const msg = document.createElement('div');
+            msg.innerText = `✨ ${nav.innerText.trim()} section coming soon — add more videos!`;
+            msg.style.position = 'fixed';
+            msg.style.bottom = '20px';
+            msg.style.left = '20px';
+            msg.style.backgroundColor = '#00a8e1';
+            msg.style.color = '#fff';
+            msg.style.padding = '8px 16px';
+            msg.style.borderRadius = '40px';
+            msg.style.fontSize = '0.75rem';
+            msg.style.zIndex = '999';
+            msg.style.opacity = '0.9';
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 2500);
+        });
+    });
+    
+    // Display a ready message in console encouraging future additions
+    console.log("✅ SADWAP Prime-style gallery loaded. Current videos count: " + videosData.length + ". Add more objects to 'videosData' to expand content dynamically.");
+    
+    // If only one video exists, show a friendly note in browser console with instructions.
+    if (videosData.length === 1) {
+        console.log("%c🎬 TIP: Ready to expand! Copy the commented example in videosData array and paste new entries. Each new video will appear in the correct category grid.", "color: #00a8e1; font-size: 12px;");
+    }
+    
+    // Optional: small dynamic adjustment for user icon (future expansion)
+    const userIcon = document.querySelector('.user-icon');
+    if (userIcon) {
+        userIcon.addEventListener('click', () => {
+            alert("Prime profile: Stay tuned for personalized recommendations!");
+        });
+    }
+    
+    // Ensure that any future dynamic addition (if you later implement an admin UI) re-renders.
+    window.addVideoToGallery = function(newVideo) {
+        videosData.push(newVideo);
+        renderAllSections();
+        console.log(`✅ Added new video: ${newVideo.title}. Gallery updated!`);
+    };
+    // Expose videosData for external debug/expansion (optional)
+    window.videosData = videosData;
+</script>
+</body>
+</html>
