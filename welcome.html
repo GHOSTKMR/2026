@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>SADWAP | Draggable Radial Dashboard | All Links Working</title>
+    <title>SADWAP | Draggable Radial Dashboard | All Links Fixed</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -375,7 +375,7 @@
     }
     simulateLoading();
 
-    // Navigation - ALL LINKS WORKING
+    // Navigation - ALL LINKS WORKING (FIXED CASE SENSITIVITY)
     const iframeContainer = document.getElementById('iframeContainer');
     const pageIframe = document.getElementById('pageIframe');
     const closeIframeBtn = document.getElementById('closeIframeBtn');
@@ -569,7 +569,7 @@
         showToast("تم تحويل الواجهة إلى العربية"); 
     };
     
-    // Quick Access Modules Grid - ALL WORKING
+    // Quick Access Modules Grid - ALL WORKING (FIXED Insights URL - lowercase 'i')
     function buildQuickModules() {
         const modules = [
             { name: "Expiry Tracker", nameAr: "متتبع الصلاحية", icon: "fas fa-calendar-times", color: "#00d4ff", description: "Monitor expiring products", descriptionAr: "مراقبة المنتجات المنتهية", url: "https://ghostkmr.github.io/2026/expiration%20tracker.html" },
@@ -579,7 +579,7 @@
             { name: "Training", nameAr: "التدريب", icon: "fas fa-calendar-alt", color: "#00d4ff", description: "Staff training schedule", descriptionAr: "جدول تدريب الموظفين", url: "https://ghostkmr.github.io/2026/training%20calender.html" },
             { name: "Municipality", nameAr: "البلدية", icon: "fas fa-id-card", color: "#7b2cbf", description: "License management", descriptionAr: "إدارة الرخص", url: "https://ghostkmr.github.io/2026/muncipality.html" },
             { name: "Admin Panel", nameAr: "لوحة الإدارة", icon: "fas fa-user-shield", color: "#00d4ff", description: "System configuration", descriptionAr: "إعدادات النظام", url: "https://ghostkmr.github.io/2026/pannel.html" },
-            { name: "Insights", nameAr: "التحليلات", icon: "fas fa-chart-pie", color: "#7b2cbf", description: "Analytics & Reports", descriptionAr: "التحليلات والتقارير", url: "https://ghostkmr.github.io/2026/Insights.html" },
+            { name: "Insights", nameAr: "التحليلات", icon: "fas fa-chart-pie", color: "#7b2cbf", description: "Analytics & Reports", descriptionAr: "التحليلات والتقارير", url: "https://ghostkmr.github.io/2026/insights.html" },
             { name: "RVR", nameAr: "الواقع الافتراضي", icon: "fas fa-vr-cardboard", color: "#00d4ff", description: "Immersive experience", descriptionAr: "تجربة غامرة", url: "https://ghostkmr.github.io/2026/RVR.html" }
         ];
         const grid = document.getElementById("modulesGrid");
@@ -704,7 +704,7 @@
         addActivityLog("🚀 SADWAP StreamOps initialized · Drag the circular menu anywhere!"); 
         addActivityLog("📋 Click the compass icon to open the radial menu (10 modules)"); 
         addActivityLog("🤖 AI Assistant ready - click the floating robot button"); 
-        addActivityLog("✅ All menu links are fully functional"); 
+        addActivityLog("✅ All menu links are fully functional - Insights fixed!"); 
     }
 </script>
 </body>
