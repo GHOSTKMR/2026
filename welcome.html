@@ -1,4 +1,6 @@
+Here's the complete working HTML with your chatbot link properly embedded in the iframe:
 
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -284,7 +286,13 @@
         .iframe-container.active { display: block; }
         .iframe-container iframe { width: 100%; height: 100%; border: none; }
         .close-iframe { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 95; box-shadow: 0 0 15px var(--accent-glow); }
-        @media (max-width: 768px) { .menu-center-btn { width: 60px; height: 60px; } .circular-menu { width: 220px; height: 220px; margin-left: -110px; margin-top: -110px; } .menu-item { width: 50px; height: 50px; } .chatbot-modal { width: calc(100vw - 40px); right: 20px; left: 20px; height: 65vh; } }
+        @media (max-width: 768px) { 
+            .menu-center-btn { width: 60px; height: 60px; } 
+            .circular-menu { width: 220px; height: 220px; margin-left: -110px; margin-top: -110px; } 
+            .menu-item { width: 50px; height: 50px; } 
+            .chatbot-modal { width: calc(100vw - 40px); right: 20px; left: 20px; height: 65vh; }
+            .dashboard-inner { padding: 1rem; }
+        }
         [dir="rtl"] .floating-ai-assistant { right: auto; left: 30px; }
         [dir="rtl"] .chatbot-modal { right: auto; left: 30px; }
     </style>
@@ -339,7 +347,13 @@
 </div>
 
 <div class="floating-ai-assistant" id="floatingAiBtn"><i class="fas fa-robot"></i></div>
-<div class="chatbot-modal" id="chatbotModal"><div class="chatbot-header"><h4><i class="fas fa-microchip"></i> SADWAP AI Assistant</h4><button id="closeChatbotBtn"><i class="fas fa-times"></i></button></div><iframe class="chatbot-iframe" id="chatbotIframe" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-top-navigation"></iframe></div>
+<div class="chatbot-modal" id="chatbotModal">
+    <div class="chatbot-header">
+        <h4><i class="fas fa-microchip"></i> SADWAP AI Assistant</h4>
+        <button id="closeChatbotBtn"><i class="fas fa-times"></i></button>
+    </div>
+    <iframe class="chatbot-iframe" id="chatbotIframe" src="https://ghostkmr.github.io/2026/chatbotformobile.html" title="AI Assistant"></iframe>
+</div>
 <div id="toastMessage" class="notification-toast"><i class="fas fa-check-circle"></i> <span></span></div>
 
 <script>
@@ -427,7 +441,14 @@
 
     // Language
     let currentLang = "en";
-    function setLanguage(lang) { currentLang = lang; document.getElementById("welcomeMsg").innerText = lang === 'en' ? "Welcome back, Operations Director" : "مرحباً بعودتك، مدير العمليات"; document.documentElement.setAttribute("dir", lang === 'ar' ? 'rtl' : 'ltr'); document.querySelectorAll('.menu-item .item-label').forEach(l => { l.innerText = lang === 'ar' ? l.getAttribute('data-name-ar') : l.getAttribute('data-name'); }); document.getElementById("menuLabel").innerText = menuOpen ? (lang === 'ar' ? 'إغلاق' : 'CLOSE') : (lang === 'ar' ? 'القائمة' : 'MENU'); buildQuickModules(); }
+    function setLanguage(lang) { 
+        currentLang = lang; 
+        document.getElementById("welcomeMsg").innerText = lang === 'en' ? "Welcome back, Operations Director" : "مرحباً بعودتك، مدير العمليات"; 
+        document.documentElement.setAttribute("dir", lang === 'ar' ? 'rtl' : 'ltr'); 
+        document.querySelectorAll('.menu-item .item-label').forEach(l => { l.innerText = lang === 'ar' ? l.getAttribute('data-name-ar') : l.getAttribute('data-name'); }); 
+        document.getElementById("menuLabel").innerText = menuOpen ? (lang === 'ar' ? 'إغلاق' : 'CLOSE') : (lang === 'ar' ? 'القائمة' : 'MENU'); 
+        buildQuickModules(); 
+    }
     document.getElementById("langEn").onclick = () => { currentLang = "en"; document.getElementById("langEn").classList.add("active"); document.getElementById("langAr").classList.remove("active"); setLanguage("en"); showToast("English interface loaded"); };
     document.getElementById("langAr").onclick = () => { currentLang = "ar"; document.getElementById("langAr").classList.add("active"); document.getElementById("langEn").classList.remove("active"); setLanguage("ar"); showToast("تم تحويل الواجهة إلى العربية"); };
     
@@ -455,33 +476,105 @@
     }
     
     // Activity & Toast
-    function addActivityLog(msg) { let cont = document.getElementById("activityList"); let div = document.createElement("div"); div.className = "activity-item"; let t = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); div.innerHTML = `<i class="fas fa-bell"></i> <span>${msg}</span><small style="margin-left:auto; color:#6b7280;">${t}</small>`; cont.prepend(div); if(cont.children.length > 15) cont.removeChild(cont.lastChild); let logs = JSON.parse(localStorage.getItem('activity_logs_stream')||'[]'); logs.unshift({message:msg, time:t}); if(logs.length>40) logs.pop(); localStorage.setItem('activity_logs_stream', JSON.stringify(logs)); }
-    function loadActivityLogs() { let logs = JSON.parse(localStorage.getItem('activity_logs_stream')||'[]'); let cont = document.getElementById("activityList"); cont.innerHTML = ""; if(logs.length===0) { cont.innerHTML = `<div class="activity-item"><i class="fas fa-check-circle"></i> <span>Welcome to SADWAP StreamOps.</span></div>`; return; } logs.slice(0,15).forEach(l => { let div = document.createElement("div"); div.className = "activity-item"; div.innerHTML = `<i class="fas fa-history"></i> <span>${l.message}</span><small style="margin-left:auto; color:#6b7280;">${l.time}</small>`; cont.appendChild(div); }); }
-    function showToast(msg) { let t = document.getElementById("toastMessage"); t.querySelector("span").innerText = msg; t.style.display = "flex"; setTimeout(() => t.style.display = "none", 2500); }
-    function refreshAllData() { addActivityLog("🔄 Manual data sync completed"); showToast("Dashboard refreshed"); }
+    function addActivityLog(msg) { 
+        let cont = document.getElementById("activityList"); 
+        let div = document.createElement("div"); 
+        div.className = "activity-item"; 
+        let t = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); 
+        div.innerHTML = `<i class="fas fa-bell"></i> <span>${msg}</span><small style="margin-left:auto; color:#6b7280;">${t}</small>`; 
+        cont.prepend(div); 
+        if(cont.children.length > 15) cont.removeChild(cont.lastChild); 
+        let logs = JSON.parse(localStorage.getItem('activity_logs_stream')||'[]'); 
+        logs.unshift({message:msg, time:t}); 
+        if(logs.length>40) logs.pop(); 
+        localStorage.setItem('activity_logs_stream', JSON.stringify(logs)); 
+    }
+    function loadActivityLogs() { 
+        let logs = JSON.parse(localStorage.getItem('activity_logs_stream')||'[]'); 
+        let cont = document.getElementById("activityList"); 
+        cont.innerHTML = ""; 
+        if(logs.length===0) { 
+            cont.innerHTML = `<div class="activity-item"><i class="fas fa-check-circle"></i> <span>Welcome to SADWAP StreamOps. Drag the circular menu anywhere!</span></div>`; 
+            return; 
+        } 
+        logs.slice(0,15).forEach(l => { 
+            let div = document.createElement("div"); 
+            div.className = "activity-item"; 
+            div.innerHTML = `<i class="fas fa-history"></i> <span>${l.message}</span><small style="margin-left:auto; color:#6b7280;">${l.time}</small>`; 
+            cont.appendChild(div); 
+        }); 
+    }
+    function showToast(msg) { 
+        let t = document.getElementById("toastMessage"); 
+        t.querySelector("span").innerText = msg; 
+        t.style.display = "flex"; 
+        setTimeout(() => t.style.display = "none", 2500); 
+    }
+    function refreshAllData() { 
+        addActivityLog("🔄 Manual data sync completed"); 
+        showToast("Dashboard refreshed"); 
+    }
     document.getElementById("refreshDataBtn").addEventListener("click", refreshAllData);
     
-    // Chatbot with working hyperlinks
-    const chatbotPageContent = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI Chat</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Inter',sans-serif;background:#0f111a;color:#fff;height:100vh;display:flex;flex-direction:column;overflow:hidden;}.chat-header{background:linear-gradient(135deg,#00d4ff,#7b2cbf);padding:16px;display:flex;align-items:center;gap:12px;}.messages-area{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}.message{display:flex;gap:10px;animation:fadeIn 0.3s ease;}.message.ai{justify-content:flex-start;}.message.user{justify-content:flex-end;}.bubble{max-width:85%;padding:10px 14px;border-radius:18px;font-size:0.85rem;line-height:1.4;}.ai .bubble{background:#1a1f2e;border-bottom-left-radius:4px;}.user .bubble{background:linear-gradient(135deg,#00d4ff,#7b2cbf);border-bottom-right-radius:4px;}.input-area{padding:12px 16px;background:#0a0c15;border-top:1px solid rgba(255,255,255,0.1);display:flex;gap:10px;}.input-area input{flex:1;background:#1a1f2e;border:1px solid #2a2f3e;padding:12px 16px;border-radius:25px;color:white;}.input-area button{background:linear-gradient(135deg,#00d4ff,#7b2cbf);border:none;padding:0 20px;border-radius:25px;cursor:pointer;color:white;}.quick-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}.quick-link{background:rgba(0,212,255,0.15);border:1px solid rgba(0,212,255,0.3);padding:6px 12px;border-radius:20px;font-size:0.7rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}.quick-link:hover{background:rgba(0,212,255,0.3);}@keyframes fadeIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}</style></head><body><div class="chat-header"><i class="fas fa-robot"></i><div><h3>SADWAP AI Assistant</h3><p>Click any link to navigate</p></div></div><div class="messages-area" id="messagesArea"><div class="message ai"><div class="bubble">👋 Hello! I can open any page for you.<br><br><strong>Quick Links (click to open):</strong><div class="quick-links" id="quickLinks"></div><br>Or type a command like: Inventory, Sales, Municipality, Transfers, Training, Admin, Expiry</div></div></div><div class="input-area"><input type="text" id="chatInput" placeholder="Ask me to open a page..."><button id="sendBtn"><i class="fas fa-paper-plane"></i></button></div><script>const links=[{name:"Inventory",url:"https://ghostkmr.github.io/2026/inventory.html",icon:"fa-boxes"},{name:"Sales",url:"https://ghostkmr.github.io/2026/salestracker.html",icon:"fa-chart-line"},{name:"Expiry",url:"https://ghostkmr.github.io/2026/expiration%20tracker.html",icon:"fa-calendar-times"},{name:"Municipality",url:"https://ghostkmr.github.io/2026/muncipality.html",icon:"fa-id-card"},{name:"Transfers",url:"https://ghostkmr.github.io/2026/transferrecords.html",icon:"fa-exchange-alt"},{name:"Training",url:"https://ghostkmr.github.io/2026/training%20calender.html",icon:"fa-calendar-alt"},{name:"Admin",url:"https://ghostkmr.github.io/2026/pannel.html",icon:"fa-user-shield"}];const ql=document.getElementById('quickLinks');links.forEach(l=>{let btn=document.createElement('div');btn.className='quick-link';btn.innerHTML='<i class="fas '+l.icon+'"></i> '+l.name;btn.onclick=()=>{window.parent.postMessage({type:'navigate',url:l.url},'*');};ql.appendChild(btn);});function addMessage(txt,isUser=false){let div=document.createElement('div');div.className='message '+(isUser?'user':'ai');div.innerHTML='<div class="bubble">'+txt+'</div>';document.getElementById('messagesArea').appendChild(div);div.scrollIntoView({behavior:'smooth'});}const map={inventory:"https://ghostkmr.github.io/2026/inventory.html",sales:"https://ghostkmr.github.io/2026/salestracker.html",expiry:"https://ghostkmr.github.io/2026/expiration%20tracker.html",municipality:"https://ghostkmr.github.io/2026/muncipality.html",transfers:"https://ghostkmr.github.io/2026/transferrecords.html",training:"https://ghostkmr.github.io/2026/training%20calender.html",admin:"https://ghostkmr.github.io/2026/pannel.html"};document.getElementById('sendBtn').onclick=()=>{let inp=document.getElementById('chatInput');let txt=inp.value.trim().toLowerCase();if(!txt)return;addMessage(inp.value.trim(),true);inp.value='';for(let[k,v]of Object.entries(map)){if(txt.includes(k)){window.parent.postMessage({type:'navigate',url:v},'*');addMessage("Opening "+k+"...",false);return;}}addMessage("Try: Inventory, Sales, Municipality, Transfers, Training, Expiry, or Admin",false);};document.getElementById('chatInput').addEventListener('keypress',(e)=>{if(e.key==='Enter')document.getElementById('sendBtn').click();});<\/script></body></html>`;
+    // Chatbot - Using your external link
     const chatbotIframe = document.getElementById('chatbotIframe');
-    chatbotIframe.srcdoc = chatbotPageContent;
-    window.addEventListener('message', (event) => { if(event.data && event.data.type === 'navigate') { navigateTo(event.data.url); closeChatbot(); } });
+    // The iframe src is already set to your chatbot URL: https://ghostkmr.github.io/2026/chatbotformobile.html
+    
     const floatingBtn = document.getElementById('floatingAiBtn'), chatbotModal = document.getElementById('chatbotModal'), closeChatbotBtn = document.getElementById('closeChatbotBtn');
-    function openChatbot() { chatbotModal.classList.add('open'); addActivityLog("🤖 AI Assistant opened"); }
-    function closeChatbot() { chatbotModal.classList.remove('open'); }
-    floatingBtn.addEventListener('click', openChatbot); closeChatbotBtn.addEventListener('click', closeChatbot);
+    function openChatbot() { 
+        chatbotModal.classList.add('open'); 
+        addActivityLog("🤖 AI Assistant opened"); 
+    }
+    function closeChatbot() { 
+        chatbotModal.classList.remove('open'); 
+    }
+    floatingBtn.addEventListener('click', openChatbot); 
+    closeChatbotBtn.addEventListener('click', closeChatbot);
     
     // Date/Time & Stats
-    function updateDateTime() { let n=new Date(); document.getElementById("currentDate").innerHTML = n.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); document.getElementById("currentTime").innerHTML = n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
-    setInterval(updateDateTime,1000); updateDateTime();
+    function updateDateTime() { 
+        let n=new Date(); 
+        document.getElementById("currentDate").innerHTML = n.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); 
+        document.getElementById("currentTime").innerHTML = n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); 
+    }
+    setInterval(updateDateTime,1000); 
+    updateDateTime();
+    
     let statsAnimated=false;
-    function animateStats(){ if(statsAnimated) return; statsAnimated=true; let start=0; let iv=setInterval(()=>{ start+=50; if(start>=1247){ document.getElementById("activeUsers").innerText="1,247"; document.getElementById("systemHealth").innerText="99.9%"; document.getElementById("processedOps").innerText="45.2K"; clearInterval(iv); } else { document.getElementById("activeUsers").innerText=Math.floor(start); document.getElementById("processedOps").innerText=Math.floor(start*36.2); } },20); }
+    function animateStats(){ 
+        if(statsAnimated) return; 
+        statsAnimated=true; 
+        let start=0; 
+        let iv=setInterval(()=>{ 
+            start+=50; 
+            if(start>=1247){ 
+                document.getElementById("activeUsers").innerText="1,247"; 
+                document.getElementById("systemHealth").innerText="99.9%"; 
+                document.getElementById("processedOps").innerText="45.2K"; 
+                clearInterval(iv); 
+            } else { 
+                document.getElementById("activeUsers").innerText=Math.floor(start); 
+                document.getElementById("processedOps").innerText=Math.floor(start*36.2); 
+            } 
+        },20); 
+    }
     setTimeout(animateStats,1000);
     
     // Initialize
-    positionMenuItems(); loadSavedPosition(); setLanguage("en"); buildQuickModules(); loadActivityLogs();
+    positionMenuItems(); 
+    loadSavedPosition(); 
+    setLanguage("en"); 
+    buildQuickModules(); 
+    loadActivityLogs();
+    
     let existing = JSON.parse(localStorage.getItem('activity_logs_stream')||'[]');
-    if(existing.length===0){ addActivityLog("🚀 SADWAP StreamOps initialized · Drag the circular menu anywhere!"); addActivityLog("📋 Click the compass icon to open the radial menu"); addActivityLog("🤖 AI Assistant ready - click the floating robot button"); addActivityLog("🔗 The chatbot has working hyperlinks!"); }
+    if(existing.length===0){ 
+        addActivityLog("🚀 SADWAP StreamOps initialized · Drag the circular menu anywhere!"); 
+        addActivityLog("📋 Click the compass icon to open the radial menu"); 
+        addActivityLog("🤖 AI Assistant ready - click the floating robot button"); 
+        addActivityLog("🔗 Chatbot loaded from: chatbotformobile.html"); 
+    }
 </script>
 </body>
 </html>
+```
