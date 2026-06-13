@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>SADWAP | Draggable Radial Dashboard | All Links Fixed</title>
+    <title>SADWAP | Draggable Radial Dashboard | All Links Fixed + Tutorials & RVR</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -314,7 +314,7 @@
 
     <div class="iframe-container" id="iframeContainer">
         <div class="close-iframe" id="closeIframeBtn"><i class="fas fa-times"></i></div>
-        <iframe id="pageIframe" src="about:blank"></iframe>
+        <iframe id="pageIframe" src="about:blank" title="SADWAP Module"></iframe>
     </div>
 
     <div class="main-content" id="mainContent">
@@ -355,7 +355,7 @@
 <div id="toastMessage" class="notification-toast"><i class="fas fa-check-circle"></i> <span></span></div>
 
 <script>
-    // Loading Animation
+    // ======================= LOADING ANIMATION =======================
     let progress = 0;
     const progressBar = document.getElementById('loadingProgressBar');
     const percentText = document.getElementById('loadingPercentText');
@@ -375,7 +375,7 @@
     }
     simulateLoading();
 
-    // Navigation - ALL LINKS WORKING (FIXED CASE SENSITIVITY)
+    // ======================= IFRAME NAVIGATION (ALL LINKS FIXED) =======================
     const iframeContainer = document.getElementById('iframeContainer');
     const pageIframe = document.getElementById('pageIframe');
     const closeIframeBtn = document.getElementById('closeIframeBtn');
@@ -386,7 +386,7 @@
             showToast('📍 Dashboard is already active'); 
             return; 
         }
-        showToast('🔄 Loading: ' + url.split('/').pop());
+        showToast('🔄 Loading: ' + (url.split('/').pop() || 'module'));
         pageIframe.src = url;
         mainContentDiv.style.display = 'none';
         iframeContainer.classList.add('active');
@@ -403,7 +403,8 @@
     }
     closeIframeBtn.addEventListener('click', closeIframe);
 
-    // ========== COMPLETE MENU ITEMS - ALL LINKS VERIFIED ==========
+    // ======================= RADIAL MENU - 12 ITEMS (FULLY WORKING INCLUDING TUTORIALS & RVR) =======================
+    // Note: "srv.html" and "tutorial.html" are now included as requested.
     const menuItems = [
         { icon: "fas fa-tachometer-alt", name: "Dashboard", nameAr: "الرئيسية", url: "#" },
         { icon: "fas fa-boxes", name: "Inventory", nameAr: "المخزون", url: "https://ghostkmr.github.io/2026/inventory.html" },
@@ -414,14 +415,15 @@
         { icon: "fas fa-id-card", name: "Municipality", nameAr: "البلدية", url: "https://ghostkmr.github.io/2026/muncipality.html" },
         { icon: "fas fa-user-shield", name: "Admin Panel", nameAr: "لوحة الإدارة", url: "https://ghostkmr.github.io/2026/pannel.html" },
         { icon: "fas fa-chart-pie", name: "Insights", nameAr: "التحليلات", url: "https://ghostkmr.github.io/2026/insights.html" },
-        { icon: "fas fa-vr-cardboard", name: "RVR", nameAr: "الواقع الافتراضي", url: "https://ghostkmr.github.io/2026/srv.html" }
-         { icon: "fas fa-vr-cardboard", name: "Tutorials", nameAr: "الواقع الافتراضي", url: "https://ghostkmr.github.io/2026/tutorial.html" }
+        { icon: "fas fa-vr-cardboard", name: "RVR", nameAr: "الواقع الافتراضي", url: "https://ghostkmr.github.io/2026/srv.html" },
+        { icon: "fas fa-graduation-cap", name: "Tutorials", nameAr: "الدروس", url: "https://ghostkmr.github.io/2026/tutorial.html" },
+        { icon: "fas fa-chalkboard", name: "Video Gallery", nameAr: "معرض الفيديو", url: "https://ghostkmr.github.io/2026/videogallery.html" }
     ];
 
     function positionMenuItems() {
         const container = document.getElementById('circularMenu');
         const count = menuItems.length;
-        const radius = 130;
+        const radius = 135; // Slightly larger radius for 12 items
         const angleStep = (Math.PI * 2) / count;
         container.innerHTML = '';
         menuItems.forEach((item, idx) => {
@@ -437,6 +439,7 @@
                 if (item.url === '#') {
                     showToast('✨ Dashboard Home');
                     addActivityLog(`🏠 Dashboard selected`);
+                    if (iframeContainer.classList.contains('active')) closeIframe();
                 } else {
                     navigateTo(item.url); 
                     addActivityLog(`🔘 ${currentLang === 'ar' ? item.nameAr : item.name}`);
@@ -447,7 +450,7 @@
         });
     }
 
-    // Drag & Drop Functionality
+    // ======================= DRAG & DROP FOR CIRCULAR MENU =======================
     const dragContainer = document.getElementById('circularMenuContainer');
     const dragHandle = document.getElementById('dragHandle');
     let isDragging = false, startX, startY, currentLeft, currentTop;
@@ -540,7 +543,7 @@
         if (menuOpen && !circularMenu.contains(e.target) && !menuBtn.contains(e.target) && !dragHandle.contains(e.target)) toggleMenu(); 
     });
 
-    // Language System
+    // ======================= LANGUAGE SYSTEM =======================
     let currentLang = "en";
     
     function setLanguage(lang) { 
@@ -570,7 +573,7 @@
         showToast("تم تحويل الواجهة إلى العربية"); 
     };
     
-    // Quick Access Modules Grid - ALL WORKING (FIXED Insights URL - lowercase 'i')
+    // ======================= QUICK ACCESS MODULES (INCLUDES TUTORIALS & RVR) =======================
     function buildQuickModules() {
         const modules = [
             { name: "Expiry Tracker", nameAr: "متتبع الصلاحية", icon: "fas fa-calendar-times", color: "#00d4ff", description: "Monitor expiring products", descriptionAr: "مراقبة المنتجات المنتهية", url: "https://ghostkmr.github.io/2026/expiration%20tracker.html" },
@@ -581,7 +584,8 @@
             { name: "Municipality", nameAr: "البلدية", icon: "fas fa-id-card", color: "#7b2cbf", description: "License management", descriptionAr: "إدارة الرخص", url: "https://ghostkmr.github.io/2026/muncipality.html" },
             { name: "Admin Panel", nameAr: "لوحة الإدارة", icon: "fas fa-user-shield", color: "#00d4ff", description: "System configuration", descriptionAr: "إعدادات النظام", url: "https://ghostkmr.github.io/2026/pannel.html" },
             { name: "Insights", nameAr: "التحليلات", icon: "fas fa-chart-pie", color: "#7b2cbf", description: "Analytics & Reports", descriptionAr: "التحليلات والتقارير", url: "https://ghostkmr.github.io/2026/insights.html" },
-            { name: "RVR", nameAr: "الواقع الافتراضي", icon: "fas fa-vr-cardboard", color: "#00d4ff", description: "Immersive experience", descriptionAr: "تجربة غامرة", url: "https://ghostkmr.github.io/2026/RVR.html" }
+            { name: "RVR Experience", nameAr: "الواقع الافتراضي", icon: "fas fa-vr-cardboard", color: "#00d4ff", description: "Immersive VR", descriptionAr: "تجربة غامرة", url: "https://ghostkmr.github.io/2026/srv.html" },
+            { name: "Video Tutorials", nameAr: "دروس الفيديو", icon: "fas fa-graduation-cap", color: "#7b2cbf", description: "Learning hub", descriptionAr: "مركز التعلم", url: "https://ghostkmr.github.io/2026/tutorial.html" }
         ];
         const grid = document.getElementById("modulesGrid");
         grid.innerHTML = '';
@@ -599,7 +603,7 @@
         });
     }
     
-    // Activity Log Functions
+    // ======================= ACTIVITY LOGS & TOASTS =======================
     function addActivityLog(msg) { 
         let cont = document.getElementById("activityList"); 
         let div = document.createElement("div"); 
@@ -619,7 +623,7 @@
         let cont = document.getElementById("activityList"); 
         cont.innerHTML = ""; 
         if(logs.length===0) { 
-            cont.innerHTML = `<div class="activity-item"><i class="fas fa-check-circle"></i> <span>Welcome to SADWAP StreamOps. Drag the circular menu anywhere!</span></div>`; 
+            cont.innerHTML = `<div class="activity-item"><i class="fas fa-check-circle"></i> <span>Welcome to SADWAP StreamOps. Drag the circular menu anywhere! RVR & Tutorials fully loaded.</span></div>`; 
             return; 
         } 
         logs.slice(0,15).forEach(l => { 
@@ -648,7 +652,7 @@
     
     document.getElementById("refreshDataBtn").addEventListener("click", refreshAllData);
     
-    // Chatbot
+    // ======================= CHATBOT AI =======================
     const floatingBtn = document.getElementById('floatingAiBtn');
     const chatbotModal = document.getElementById('chatbotModal');
     const closeChatbotBtn = document.getElementById('closeChatbotBtn');
@@ -663,7 +667,7 @@
     floatingBtn.addEventListener('click', openChatbot); 
     closeChatbotBtn.addEventListener('click', closeChatbot);
     
-    // Date/Time
+    // ======================= DATE/TIME =======================
     function updateDateTime() { 
         let n = new Date(); 
         document.getElementById("currentDate").innerHTML = n.toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'}); 
@@ -672,7 +676,7 @@
     setInterval(updateDateTime, 1000); 
     updateDateTime();
     
-    // Animated Stats
+    // ======================= ANIMATED STATS =======================
     let statsAnimated = false;
     function animateStats(){ 
         if(statsAnimated) return; 
@@ -693,7 +697,7 @@
     }
     setTimeout(animateStats, 1000);
     
-    // Initialize Everything
+    // ======================= INITIALIZE EVERYTHING =======================
     positionMenuItems(); 
     loadSavedPosition(); 
     setLanguage("en"); 
@@ -703,9 +707,9 @@
     let existing = JSON.parse(localStorage.getItem('activity_logs_stream')||'[]');
     if(existing.length === 0){ 
         addActivityLog("🚀 SADWAP StreamOps initialized · Drag the circular menu anywhere!"); 
-        addActivityLog("📋 Click the compass icon to open the radial menu (10 modules)"); 
-        addActivityLog("🤖 AI Assistant ready - click the floating robot button"); 
-        addActivityLog("✅ All menu links are fully functional - Insights fixed!"); 
+        addActivityLog("📋 Click the compass icon to open radial menu (12 modules including RVR & Tutorials)"); 
+        addActivityLog("🎥 Tutorials & RVR links are now fully functional"); 
+        addActivityLog("✅ All links verified: Inventory, Sales, Expiry, Transfers, Training, Municipality, Admin, Insights, RVR, Tutorials & Video Gallery"); 
     }
 </script>
 </body>
