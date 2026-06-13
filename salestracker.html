@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Sales Performance Tracker & Forecasting Dashboard</title>
+  <title>نظام تتبع المبيعات والتوقعات | Sales Tracker & Forecast</title>
   <!-- Bootstrap 5 + Icons + Fonts -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -23,7 +22,6 @@
       color: #eef2ff;
       padding-bottom: 2rem;
     }
-    /* Glassmorphism cards */
     .glass-card {
       background: rgba(18, 25, 45, 0.75);
       backdrop-filter: blur(12px);
@@ -35,7 +33,6 @@
     .glass-card:hover { transform: translateY(-2px); border-color: rgba(0, 200, 255, 0.4); }
     .kpi-value { font-size: 1.9rem; font-weight: 700; background: linear-gradient(135deg, #fff, #7bc5ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
     .kpi-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #9aa9c1; }
-    .badge-achievement { background: #1e2a47; border-radius: 2rem; padding: 0.3rem 0.8rem; }
     .table-dark-custom { background-color: #0f1422; color: #e2e8f0; border-color: #2d3a5e; }
     .table-dark-custom th { background: #111827; border-bottom: 1px solid #2d3a5e; }
     .btn-outline-accent { border-color: #2c7da0; color: #7bc5ff; }
@@ -45,7 +42,7 @@
     .rtl .ms-2 { margin-left: 0 !important; margin-right: 0.5rem !important; }
     .rtl .text-start { text-align: right !important; }
     .rtl .text-end { text-align: left !important; }
-    canvas { max-height: 400px; width: 100%; }
+    canvas { max-height: 450px; width: 100%; }
     .scrollable-table { overflow-x: auto; }
     @media (max-width: 768px) { .kpi-value { font-size: 1.4rem; } }
     select, input { background-color: #111827 !important; color: white !important; border: 1px solid #2d3a5e; }
@@ -56,545 +53,780 @@
     .btn-danger { background: #8b3a3a; }
     .btn-warning { background: #a07c1a; color: white; }
     .editable-cell { cursor: pointer; position: relative; }
-    .editable-cell:hover { background: rgba(59,130,246,0.2); text-decoration: underline; }
-    .modal-content { background: #0f1422; color: white; border: 1px solid #2c7da0; }
-    .modal-header { border-bottom-color: #2c7da0; }
-    .modal-footer { border-top-color: #2c7da0; }
-    .form-control, .form-select { background: #1a1f2e !important; border-color: #2d3a5e; color: white; }
-    .action-buttons { position: sticky; top: 0; z-index: 100; background: #0a0f1e; padding: 10px 0; margin-bottom: 15px; border-radius: 12px; }
-    .quick-edit-icon { font-size: 0.9rem; margin-left: 5px; opacity: 0.6; }
-    .quick-edit-icon:hover { opacity: 1; }
+    .editable-cell:hover { background: rgba(59,130,246,0.2); }
+    .inline-input { width: 100%; background: #1a1f2e; border: 1px solid #3b82f6; color: white; padding: 4px 8px; border-radius: 6px; }
+    .forecast-badge { background: linear-gradient(135deg, #e50914, #b20710); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; margin-left: 8px; display: inline-block; }
+    .today-forecast-card { background: linear-gradient(135deg, #1e2a47, #0f1422); border-left: 4px solid #e50914; }
+    .prediction-value { font-size: 2rem; font-weight: 800; color: #e50914; }
+    .confidence-badge { background: rgba(229, 9, 20, 0.2); padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; }
+    .growth-positive { color: #4caf50; font-weight: bold; }
+    .growth-negative { color: #f44336; font-weight: bold; }
+    .growth-neutral { color: #ffc107; }
+    .chart-container { position: relative; }
+    .growth-indicator { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; }
   </style>
 </head>
 <body>
 <div class="container-fluid px-3 px-lg-4 py-3" id="appRoot">
-  <!-- Header + Lang Toggle + Action Buttons -->
+  <!-- Header -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-    <h2 class="fw-bold"><i class="bi bi-graph-up me-2"></i><span data-key="app_title">Sales Tracker & Forecast</span></h2>
+    <h2 class="fw-bold"><i class="bi bi-graph-up me-2"></i><span id="appTitle">نظام تتبع المبيعات والتوقعات</span></h2>
     <div class="d-flex gap-2">
-      <button class="btn btn-sm btn-outline-accent" id="langEnBtn">🇬🇧 EN</button>
-      <button class="btn btn-sm btn-outline-accent" id="langArBtn">🇸🇦 AR</button>
+      <button class="btn btn-sm btn-outline-accent" id="langEnBtn">🇬🇧 English</button>
+      <button class="btn btn-sm btn-outline-accent" id="langArBtn">🇸🇦 العربية</button>
     </div>
   </div>
 
-  <!-- Quick Action Buttons Row -->
-  <div class="action-buttons d-flex flex-wrap gap-2 mb-3">
-    <button class="btn btn-sm btn-primary" id="quickAddDataBtn" data-key="quick_add"><i class="bi bi-plus-circle"></i> Quick Add/Edit Day</button>
-    <button class="btn btn-sm btn-warning" id="clearAllDataBtn" data-key="clear_all"><i class="bi bi-trash3"></i> Clear ALL Data (Current Month)</button>
-    <button class="btn btn-sm btn-danger" id="resetMonthDataBtn" data-key="reset_month"><i class="bi bi-arrow-repeat"></i> Reset Month to Empty</button>
-    <button class="btn btn-sm btn-secondary" id="bulkSampleBtn" data-key="bulk_sample"><i class="bi bi-database"></i> Load Sample Data</button>
+  <!-- Action Buttons -->
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    <button class="btn btn-sm btn-warning" id="clearAllDataBtn"><i class="bi bi-trash3"></i> <span id="clearAllText">مسح جميع البيانات</span></button>
+    <button class="btn btn-sm btn-secondary" id="bulkSampleBtn"><i class="bi bi-database"></i> <span id="sampleDataText">تحميل بيانات تجريبية</span></button>
   </div>
 
-  <!-- Month Selector + Date Range Row -->
+  <!-- TODAY'S FORECAST SECTION -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="glass-card p-3 today-forecast-card">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+          <div>
+            <h5 class="mb-1"><i class="bi bi-calendar-today me-2"></i> <span id="forecastTitle">توقعات اليوم</span> <span id="todayDateDisplay"></span></h5>
+            <small class="text-muted" id="forecastBasedOn"></small>
+          </div>
+          <div class="d-flex gap-4 flex-wrap">
+            <div class="text-center">
+              <div class="kpi-label"><span id="predictedSalesLabel">المبيعات المتوقعة</span></div>
+              <div class="prediction-value" id="todayForecastSales">0 ر.س</div>
+              <small id="salesConfidence" class="confidence-badge"></small>
+            </div>
+            <div class="text-center">
+              <div class="kpi-label"><span id="predictedTcLabel">العمليات المتوقعة</span></div>
+              <div class="prediction-value" id="todayForecastTc">0</div>
+              <small id="tcConfidence" class="confidence-badge"></small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Month Selector -->
   <div class="row g-3 mb-4">
     <div class="col-md-4">
-      <label class="form-label" data-key="select_month">Select Month</label>
+      <label class="form-label" id="selectMonthLabel">اختر الشهر</label>
       <select id="monthSelect" class="form-select"></select>
     </div>
     <div class="col-md-4">
-      <label class="form-label" data-key="date_range">Date Range (Start - End)</label>
+      <label class="form-label" id="dateRangeLabel">نطاق التاريخ</label>
       <div class="d-flex gap-2">
         <input type="number" id="rangeStart" class="form-control" placeholder="1" min="1" max="31" value="1">
-        <span class="align-self-center">—</span>
+        <span>—</span>
         <input type="number" id="rangeEnd" class="form-control" placeholder="31" min="1" max="31" value="31">
       </div>
     </div>
     <div class="col-md-4 d-flex align-items-end gap-2">
-      <button id="applyRangeBtn" class="btn btn-primary" data-key="apply_filter">Apply Filter</button>
-      <button id="resetMonthBtn" class="btn btn-secondary" data-key="reset_view">Reset View</button>
+      <button id="applyRangeBtn" class="btn btn-primary"><span id="applyFilterText">تطبيق</span></button>
+      <button id="resetMonthBtn" class="btn btn-secondary"><span id="resetViewText">إعادة تعيين</span></button>
     </div>
   </div>
 
-  <!-- KPI Cards Row -->
-  <div class="row g-3 mb-4" id="kpiRow">
-    <!-- dynamic KPI cards filled by JS -->
-  </div>
+  <!-- KPI Cards -->
+  <div class="row g-3 mb-4" id="kpiRow"></div>
 
-  <!-- Main Chart -->
+  <!-- Main Chart with Dual Axis (Sales + TC + Growth %) -->
   <div class="glass-card p-3 mb-4">
-    <h5 class="mb-2" data-key="performance_chart">Performance Overview (Targets, Actuals, Growth & Forecast)</h5>
-    <canvas id="mainChart" width="800" height="350" style="max-height: 350px;"></canvas>
-  </div>
-
-  <!-- Reports & Tables -->
-  <div class="row g-4">
-    <div class="col-12">
-      <div class="glass-card p-3">
-        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-          <h5 data-key="summary_report">📋 Summary Report</h5>
-          <div class="d-flex gap-2">
-            <button id="exportExcelBtn" class="btn btn-sm btn-success"><i class="bi bi-file-excel"></i> <span data-key="export_excel">Excel</span></button>
-            <button id="exportPdfBtn" class="btn btn-sm btn-danger"><i class="bi bi-file-pdf"></i> <span data-key="export_pdf">PDF</span></button>
-          </div>
-        </div>
-        <div id="summaryCards" class="row g-3 mb-4"></div>
-        <h6 data-key="daily_details">📅 Daily Details <small class="text-muted" data-key="edit_hint">(Click any value to edit | Click ✏️ for Last Year Sales)</small></h6>
-        <div class="scrollable-table">
-          <table class="table table-dark-custom table-hover table-bordered" id="dailyTable">
-            <thead><tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
+    <h5 class="mb-2" id="chartTitle">نظرة عامة على الأداء (المبيعات، العمليات، ونسبة النمو)</h5>
+    <div class="chart-container">
+      <canvas id="mainChart" width="800" height="400" style="max-height: 400px;"></canvas>
+    </div>
+    <div class="text-muted mt-2 small text-center" id="chartHint">
+      📊 أشرطة: المبيعات (أزرق/أخضر) | خط متقطع: العمليات | خط أحمر: نسبة النمو السنوي
     </div>
   </div>
-</div>
 
-<!-- Modal for Quick Add/Edit -->
-<div class="modal fade" id="editDayModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalTitle">Edit Day Data</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" id="editDayIndex">
-        <div class="mb-3">
-          <label class="form-label">Day Number</label>
-          <input type="number" id="editDayNum" class="form-control" min="1" max="31" readonly>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Sales Target ($)</label>
-          <input type="number" id="editSalesTarget" class="form-control" step="any">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Actual Sales ($)</label>
-          <input type="number" id="editActualSales" class="form-control" step="any">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">TC Target (Transactions)</label>
-          <input type="number" id="editTcTarget" class="form-control" step="any">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Actual TC (Transactions)</label>
-          <input type="number" id="editActualTc" class="form-control" step="any">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Last Year Sales ($)</label>
-          <input type="number" id="editLastYearSales" class="form-control" step="any">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="saveDayDataBtn">Save Changes</button>
+  <!-- Daily Table with Last Year Sales Column -->
+  <div class="glass-card p-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+      <h5 id="dailyDetailsTitle">📅 التفاصيل اليومية</h5>
+      <div class="d-flex gap-2">
+        <button id="exportExcelBtn" class="btn btn-sm btn-success"><i class="bi bi-file-excel"></i> <span id="excelText">إكسل</span></button>
+        <button id="exportPdfBtn" class="btn btn-sm btn-danger"><i class="bi bi-file-pdf"></i> <span id="pdfText">PDF</span></button>
       </div>
     </div>
+    <div class="scrollable-table">
+      <table class="table table-dark-custom table-hover table-bordered" id="dailyTable">
+        <thead><tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="text-muted mt-2 small" id="editHintText">💡 انقر على أي قيمة لتعديلها مباشرة | النمو = (المبيعات الفعلية - مبيعات العام الماضي) / مبيعات العام الماضي × 100</div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // ---------- TRANSLATIONS (EN / AR) ----------
+  // ========== TRANSLATIONS ==========
   const translations = {
     en: {
-      app_title: "Sales Tracker & Forecast", select_month: "Select Month", date_range: "Date Range (Day numbers)",
-      apply_filter: "Apply Filter", reset_view: "Reset View", performance_chart: "Performance Overview (Targets, Actuals, Growth & Forecast)",
-      summary_report: "📋 Summary Report", export_excel: "Excel", export_pdf: "PDF", daily_details: "📅 Daily Details",
-      mtd_sales: "MTD Sales", avg_daily_sales: "Avg Daily Sales", remaining_sales: "Remaining Sales", forecast_sales: "Forecast Sales",
-      mtd_target: "MTD Target", target_ach: "Target Achievement %", remaining_target: "Remaining Target", mtd_tc: "MTD TC",
-      tc_ach: "TC Achievement %", forecast_tc: "Forecast TC", avg_check: "Avg Check (MTD)", mtd_growth: "MTD Growth %",
-      date: "Date", sales_target: "Sales Target", actual_sales: "Actual Sales", tc_target: "TC Target", actual_tc: "Actual TC",
-      ach_percent: "Ach%", growth_percent: "Growth%", avg_check_daily: "Avg Check", quick_add: "Quick Add/Edit Day",
-      clear_all: "Clear ALL Data", reset_month: "Reset Month", bulk_sample: "Load Sample Data", edit_hint: "(Click any value to edit | Click ✏️ for Last Year Sales)"
+      appTitle: "Sales Tracker & Forecast System",
+      clearAllText: "Clear ALL Data",
+      sampleDataText: "Load Sample Data",
+      forecastTitle: "Today's Forecast",
+      predictedSalesLabel: "Predicted Sales",
+      predictedTcLabel: "Predicted Transactions",
+      selectMonthLabel: "Select Month",
+      dateRangeLabel: "Date Range",
+      applyFilterText: "Apply Filter",
+      resetViewText: "Reset View",
+      chartTitle: "Performance Overview (Sales, Transactions & Growth %)",
+      chartHint: "📊 Bars: Sales (Blue/Green) | Dashed Line: Transactions | Red Line: Year-over-Year Growth %",
+      dailyDetailsTitle: "📅 Daily Details",
+      excelText: "Excel",
+      pdfText: "PDF",
+      editHintText: "💡 Click any value to edit | Growth = (Actual - Last Year) / Last Year × 100",
+      mtdSales: "MTD Sales",
+      mtdTarget: "MTD Target",
+      achievement: "Achievement %",
+      mtdTc: "MTD Transactions",
+      avgCheck: "Avg Check",
+      mtdGrowth: "MTD Growth %",
+      day: "Day",
+      salesTarget: "Sales Target",
+      actualSales: "Actual Sales",
+      lastYearSales: "Last Year Sales",
+      tcTarget: "TC Target",
+      actualTc: "Actual TC",
+      achPercent: "Ach%",
+      growthPercent: "Growth%",
+      avgCheckDaily: "Avg Check"
     },
     ar: {
-      app_title: "لوحة أداء المبيعات والتوقعات", select_month: "اختر الشهر", date_range: "نطاق التاريخ (أيام)",
-      apply_filter: "تطبيق", reset_view: "إعادة تعيين", performance_chart: "نظرة عامة على الأداء (الأهداف، الفعلي، النمو والتوقعات)",
-      summary_report: "📋 تقرير ملخص", export_excel: "إكسل", export_pdf: "PDF", daily_details: "📅 التفاصيل اليومية",
-      mtd_sales: "المبيعات من بداية الشهر", avg_daily_sales: "متوسط المبيعات اليومي", remaining_sales: "المبيعات المتبقية", forecast_sales: "المبيعات المتوقعة",
-      mtd_target: "هدف MTD", target_ach: "نسبة الإنجاز %", remaining_target: "الهدف المتبقي", mtd_tc: "العمليات MTD",
-      tc_ach: "نسبة إنجاز العمليات", forecast_tc: "العمليات المتوقعة", avg_check: "متوسط الفاتورة", mtd_growth: "نمو MTD %",
-      date: "التاريخ", sales_target: "هدف المبيعات", actual_sales: "المبيعات الفعلية", tc_target: "هدف العمليات", actual_tc: "العمليات الفعلية",
-      ach_percent: "نسبة الإنجاز", growth_percent: "نمو%", avg_check_daily: "متوسط الفاتورة", quick_add: "إضافة/تحرير يوم",
-      clear_all: "مسح كل البيانات", reset_month: "إعادة تعيين الشهر", bulk_sample: "تحميل بيانات نموذجية", edit_hint: "(انقر أي قيمة للتعديل | اضغط ✏️ لتعديل مبيعات العام الماضي)"
+      appTitle: "نظام تتبع المبيعات والتوقعات",
+      clearAllText: "مسح جميع البيانات",
+      sampleDataText: "تحميل بيانات تجريبية",
+      forecastTitle: "توقعات اليوم",
+      predictedSalesLabel: "المبيعات المتوقعة",
+      predictedTcLabel: "العمليات المتوقعة",
+      selectMonthLabel: "اختر الشهر",
+      dateRangeLabel: "نطاق التاريخ",
+      applyFilterText: "تطبيق",
+      resetViewText: "إعادة تعيين",
+      chartTitle: "نظرة عامة على الأداء (المبيعات، العمليات، ونسبة النمو)",
+      chartHint: "📊 أشرطة: المبيعات (أزرق/أخضر) | خط متقطع: العمليات | خط أحمر: نسبة النمو السنوي",
+      dailyDetailsTitle: "📅 التفاصيل اليومية",
+      excelText: "إكسل",
+      pdfText: "PDF",
+      editHintText: "💡 انقر على أي قيمة لتعديلها | النمو = (الفعلية - مبيعات العام الماضي) / مبيعات العام الماضي × 100",
+      mtdSales: "المبيعات منذ بداية الشهر",
+      mtdTarget: "الهدف الشهري",
+      achievement: "نسبة الإنجاز",
+      mtdTc: "العمليات منذ البداية",
+      avgCheck: "متوسط الفاتورة",
+      mtdGrowth: "نمو شهري",
+      day: "اليوم",
+      salesTarget: "هدف المبيعات",
+      actualSales: "المبيعات الفعلية",
+      lastYearSales: "مبيعات العام الماضي",
+      tcTarget: "هدف العمليات",
+      actualTc: "العمليات الفعلية",
+      achPercent: "الإنجاز",
+      growthPercent: "النمو",
+      avgCheckDaily: "متوسط الفاتورة"
     }
   };
-  let currentLang = localStorage.getItem("salesLang") || "en";
-  let currentMonthKey = "";
+  
+  let currentLang = localStorage.getItem("salesLang") || "ar";
   let allMonthsData = {};
-  let chartInstance = null;
+  let currentMonthKey = "";
   let currentRange = { start: 1, end: 31 };
-  let editModal = null;
-
-  const generateMonthKeys = () => {
-    let keys = [];
-    let year = 2026;
-    for (let y = 0; y < 3; y++) {
-      for (let m = 1; m <= 12; m++) {
-        keys.push(`${year}-${String(m).padStart(2,'0')}`);
-      }
-      year++;
+  let chartInstance = null;
+  
+  // Apply language to all elements
+  const applyLanguage = () => {
+    const t = translations[currentLang];
+    document.getElementById("appTitle").innerText = t.appTitle;
+    document.getElementById("clearAllText").innerText = t.clearAllText;
+    document.getElementById("sampleDataText").innerText = t.sampleDataText;
+    document.getElementById("forecastTitle").innerText = t.forecastTitle;
+    document.getElementById("predictedSalesLabel").innerText = t.predictedSalesLabel;
+    document.getElementById("predictedTcLabel").innerText = t.predictedTcLabel;
+    document.getElementById("selectMonthLabel").innerText = t.selectMonthLabel;
+    document.getElementById("dateRangeLabel").innerText = t.dateRangeLabel;
+    document.getElementById("applyFilterText").innerText = t.applyFilterText;
+    document.getElementById("resetViewText").innerText = t.resetViewText;
+    document.getElementById("chartTitle").innerText = t.chartTitle;
+    document.getElementById("chartHint").innerHTML = t.chartHint;
+    document.getElementById("dailyDetailsTitle").innerText = t.dailyDetailsTitle;
+    document.getElementById("excelText").innerText = t.excelText;
+    document.getElementById("pdfText").innerText = t.pdfText;
+    document.getElementById("editHintText").innerHTML = t.editHintText;
+    
+    if (currentLang === "ar") {
+      document.getElementById("appRoot").classList.add("rtl");
+      document.documentElement.dir = "rtl";
+    } else {
+      document.getElementById("appRoot").classList.remove("rtl");
+      document.documentElement.dir = "ltr";
     }
-    return keys;
+    
+    localStorage.setItem("salesLang", currentLang);
+    renderDashboard();
   };
-
+  
+  // Initialize data structure
   const initDataForMonth = (monthKey) => {
     if (!allMonthsData[monthKey]) {
       let daily = [];
       for (let d = 1; d <= 31; d++) {
         daily.push({
-          salesTarget: 0, actualSales: 0, tcTarget: 0, actualTc: 0, lastYearSales: 0
+          salesTarget: 0, actualSales: 0, lastYearSales: 0, tcTarget: 0, actualTc: 0
         });
       }
       allMonthsData[monthKey] = { daily: daily };
     }
     return allMonthsData[monthKey];
   };
-
-  const saveAllData = () => { localStorage.setItem("sales_tracker_all_months", JSON.stringify(allMonthsData)); };
-
+  
+  const saveAllData = () => {
+    localStorage.setItem("sales_tracker_all_months_v5", JSON.stringify(allMonthsData));
+  };
+  
   const loadAllData = () => {
-    const stored = localStorage.getItem("sales_tracker_all_months");
+    const stored = localStorage.getItem("sales_tracker_all_months_v5");
     if (stored) {
       allMonthsData = JSON.parse(stored);
     } else {
       allMonthsData = {};
       const demoMonth = "2026-06";
       initDataForMonth(demoMonth);
-      for (let i = 1; i <= 15; i++) {
+      // Sample data with realistic growth patterns
+      for (let i = 1; i <= 10; i++) {
         allMonthsData[demoMonth].daily[i-1] = {
-          salesTarget: 5000 + (i*100), actualSales: 3800 + (i*80), tcTarget: 45 + i, actualTc: 30 + i, lastYearSales: 3500 + (i*70)
+          salesTarget: 5000 + (i*80), actualSales: 3800 + (i*100), lastYearSales: 3500 + (i*60),
+          tcTarget: 45 + i, actualTc: 30 + Math.floor(i*1.2)
         };
       }
-      for (let i = 16; i <= 31; i++) {
-        allMonthsData[demoMonth].daily[i-1] = { salesTarget: 6000, actualSales: 0, tcTarget: 60, actualTc: 0, lastYearSales: 4200 };
+      for (let i = 11; i <= 20; i++) {
+        allMonthsData[demoMonth].daily[i-1] = { 
+          salesTarget: 6000, actualSales: 4200 + ((i-10)*50), lastYearSales: 4000 + ((i-10)*30), 
+          tcTarget: 60, actualTc: 35 + Math.floor((i-10)*0.8)
+        };
+      }
+      for (let i = 21; i <= 31; i++) {
+        allMonthsData[demoMonth].daily[i-1] = { 
+          salesTarget: 6500, actualSales: 0, lastYearSales: 4500, tcTarget: 65, actualTc: 0
+        };
       }
       saveAllData();
     }
   };
-
-  const getFilteredDays = (monthData, start, end) => {
-    return monthData.daily.slice(start-1, end).map((day, idx) => ({ ...day, dayIndex: start+idx }));
+  
+  // Calculate growth percentage
+  const calculateGrowth = (actualSales, lastYearSales) => {
+    if (!lastYearSales || lastYearSales === 0) return null;
+    return ((actualSales - lastYearSales) / lastYearSales) * 100;
   };
-
-  const computeMTD = (dailyArray, currentDayLimit = null) => {
-    let salesTargetSum = 0, actualSalesSum = 0, tcTargetSum = 0, actualTcSum = 0, lastYearSum = 0, validDays = 0;
-    const limit = (currentDayLimit !== null) ? currentDayLimit : dailyArray.length;
-    for (let i = 0; i < Math.min(dailyArray.length, limit); i++) {
-      const d = dailyArray[i];
-      salesTargetSum += d.salesTarget;
-      actualSalesSum += d.actualSales;
-      tcTargetSum += d.tcTarget;
-      actualTcSum += d.actualTc;
-      lastYearSum += d.lastYearSales;
-      if (d.actualSales > 0 || d.salesTarget > 0) validDays++;
+  
+  // Get growth class for styling
+  const getGrowthClass = (growth) => {
+    if (growth === null) return "growth-neutral";
+    if (growth > 0) return "growth-positive";
+    if (growth < 0) return "growth-negative";
+    return "growth-neutral";
+  };
+  
+  // Forecast based on last 3 days
+  const getForecastForDay = (dailyArray, targetDayNum) => {
+    let last3Sales = [];
+    let last3Tc = [];
+    
+    for (let i = targetDayNum - 2; i >= 0; i--) {
+      if (last3Sales.length >= 3) break;
+      if (i >= 0 && dailyArray[i] && dailyArray[i].actualSales > 0) {
+        last3Sales.push(dailyArray[i].actualSales);
+        last3Tc.push(dailyArray[i].actualTc);
+      }
     }
-    const avgDailySales = validDays ? actualSalesSum / validDays : 0;
+    
+    if (last3Sales.length === 0) {
+      return { forecastSales: 0, forecastTc: 0, avgSales: 0, avgTc: 0, daysUsed: 0 };
+    }
+    
+    const avgSales = last3Sales.reduce((a, b) => a + b, 0) / last3Sales.length;
+    const avgTc = last3Tc.reduce((a, b) => a + b, 0) / last3Tc.length;
+    
+    return {
+      forecastSales: avgSales,
+      forecastTc: avgTc,
+      avgSales: avgSales,
+      avgTc: avgTc,
+      daysUsed: last3Sales.length
+    };
+  };
+  
+  const getNextForecastDay = (dailyArray) => {
+    for (let i = 0; i < dailyArray.length; i++) {
+      if (dailyArray[i].actualSales === 0) {
+        return i + 1;
+      }
+    }
+    return null;
+  };
+  
+  // Update today's forecast
+  const updateTodayForecast = () => {
+    const monthData = allMonthsData[currentMonthKey];
+    if (!monthData) return;
+    
+    const today = new Date();
+    const currentDay = today.getDate();
+    const currentMonth = today.getMonth() + 1;
+    const currentYear = today.getFullYear();
+    const [year, month] = currentMonthKey.split('-').map(Number);
+    const isCurrentMonth = (year === currentYear && month === currentMonth);
+    
+    let forecastDayNum = isCurrentMonth ? currentDay : 1;
+    
+    if (isCurrentMonth && monthData.daily[currentDay - 1] && monthData.daily[currentDay - 1].actualSales > 0) {
+      forecastDayNum = currentDay + 1;
+      if (forecastDayNum > 31) forecastDayNum = 31;
+    } else if (!isCurrentMonth) {
+      const nextEmpty = getNextForecastDay(monthData.daily);
+      if (nextEmpty) forecastDayNum = nextEmpty;
+    }
+    
+    const forecast = getForecastForDay(monthData.daily, forecastDayNum);
+    
+    document.getElementById("todayDateDisplay").innerHTML = `<strong>${currentLang === 'ar' ? 'اليوم' : 'Day'} ${forecastDayNum}</strong>`;
+    document.getElementById("todayForecastSales").innerHTML = `${forecast.forecastSales.toFixed(0)} ر.س`;
+    document.getElementById("todayForecastTc").innerHTML = forecast.forecastTc.toFixed(0);
+    
+    if (forecast.daysUsed > 0) {
+      const msg = currentLang === 'ar' 
+        ? `بناءً على آخر ${forecast.daysUsed} أيام (متوسط ${forecast.avgSales.toFixed(0)} ر.س)`
+        : `Based on last ${forecast.daysUsed} days (Avg ${forecast.avgSales.toFixed(0)} SAR)`;
+      document.getElementById("forecastBasedOn").innerHTML = msg;
+      document.getElementById("salesConfidence").innerHTML = currentLang === 'ar' ? `متوسط ${forecast.avgSales.toFixed(0)} ر.س/يوم` : `Avg ${forecast.avgSales.toFixed(0)} SAR/day`;
+      document.getElementById("tcConfidence").innerHTML = currentLang === 'ar' ? `متوسط ${forecast.avgTc.toFixed(0)} عملية/يوم` : `Avg ${forecast.avgTc.toFixed(0)} transactions/day`;
+    } else {
+      const msg = currentLang === 'ar' ? '⚠️ أدخل يوم واحد على الأقل من البيانات للحصول على توقعات' : '⚠️ Enter at least 1 day of data for forecast';
+      document.getElementById("forecastBasedOn").innerHTML = msg;
+      document.getElementById("salesConfidence").innerHTML = currentLang === 'ar' ? 'بيانات غير كافية' : 'Insufficient data';
+      document.getElementById("tcConfidence").innerHTML = currentLang === 'ar' ? 'بيانات غير كافية' : 'Insufficient data';
+    }
+  };
+  
+  // Compute MTD metrics
+  const computeMTD = (dailyArray, endDay) => {
+    let salesTargetSum = 0, actualSalesSum = 0, lastYearSum = 0, tcTargetSum = 0, actualTcSum = 0;
+    for (let i = 0; i < Math.min(dailyArray.length, endDay); i++) {
+      salesTargetSum += dailyArray[i].salesTarget;
+      actualSalesSum += dailyArray[i].actualSales;
+      lastYearSum += dailyArray[i].lastYearSales;
+      tcTargetSum += dailyArray[i].tcTarget;
+      actualTcSum += dailyArray[i].actualTc;
+    }
     const mtdAvgCheck = actualTcSum ? actualSalesSum / actualTcSum : 0;
     const growthMTD = lastYearSum ? ((actualSalesSum - lastYearSum) / lastYearSum) * 100 : 0;
-    let targetAchievement = 0;
-    if (salesTargetSum > 0) targetAchievement = (actualSalesSum / salesTargetSum) * 100;
-    return { salesTargetSum, actualSalesSum, tcTargetSum, actualTcSum, avgDailySales, mtdAvgCheck, growthMTD, targetAchievement };
+    const targetAchievement = salesTargetSum ? (actualSalesSum / salesTargetSum) * 100 : 0;
+    return { salesTargetSum, actualSalesSum, tcTargetSum, actualTcSum, mtdAvgCheck, growthMTD, targetAchievement, lastYearSum };
   };
-
-  const computeForecast = (dailyArray, elapsedDays) => {
-    if (elapsedDays === 0) return { forecastSales: 0, forecastTc: 0, expectedAch: 0, gap: 0 };
-    let mtdSales = 0, mtdTc = 0, totalTargetSales = 0;
-    for (let i=0; i<elapsedDays; i++) { mtdSales += dailyArray[i].actualSales; mtdTc += dailyArray[i].actualTc; }
-    for (let i=0; i<dailyArray.length; i++) totalTargetSales += dailyArray[i].salesTarget;
-    const forecastSales = (mtdSales / elapsedDays) * dailyArray.length;
-    const forecastTc = (mtdTc / elapsedDays) * dailyArray.length;
-    const expectedAch = totalTargetSales ? (forecastSales / totalTargetSales) * 100 : 0;
-    const gap = forecastSales > totalTargetSales ? 0 : totalTargetSales - forecastSales;
-    return { forecastSales, forecastTc, expectedAch, gap };
-  };
-
-  function renderDashboard() {
-    const monthData = allMonthsData[currentMonthKey];
-    if (!monthData) return;
-    const filteredDaysData = monthData.daily.slice(currentRange.start-1, currentRange.end);
-    const todayDate = new Date();
-    let currentDayOfMonth = todayDate.getDate();
-    if (todayDate.getMonth()+1 !== parseInt(currentMonthKey.split('-')[1]) || todayDate.getFullYear() !== parseInt(currentMonthKey.split('-')[0])) {
-      currentDayOfMonth = 999;
-    }
-    const elapsedForAch = (currentDayOfMonth <= currentRange.end && currentDayOfMonth >= currentRange.start) ? (currentDayOfMonth - currentRange.start + 1) : filteredDaysData.length;
-    const mtdFull = computeMTD(monthData.daily, currentRange.end);
-    const mtdYesterdayAch = computeMTD(monthData.daily, Math.min(elapsedForAch, currentRange.end));
-    const forecastObj = computeForecast(monthData.daily, filteredDaysData.length);
-    const remainingTarget = mtdFull.salesTargetSum - mtdFull.actualSalesSum;
-    const remainingSalesToTarget = remainingTarget > 0 ? remainingTarget : 0;
-    
-    const kpis = [
-      { key: "mtd_sales", value: mtdFull.actualSalesSum.toFixed(0), icon: "cash-stack" },
-      { key: "avg_daily_sales", value: (filteredDaysData.length ? (mtdFull.actualSalesSum/filteredDaysData.length).toFixed(0) : 0), icon: "calendar" },
-      { key: "remaining_sales", value: remainingSalesToTarget.toFixed(0), icon: "arrow-right-circle" },
-      { key: "forecast_sales", value: forecastObj.forecastSales.toFixed(0), icon: "graph-up" },
-      { key: "mtd_target", value: mtdFull.salesTargetSum.toFixed(0), icon: "bullseye" },
-      { key: "target_ach", value: mtdYesterdayAch.targetAchievement.toFixed(1)+"%", icon: "percent" },
-      { key: "remaining_target", value: (mtdFull.salesTargetSum - mtdFull.actualSalesSum >0 ? (mtdFull.salesTargetSum - mtdFull.actualSalesSum).toFixed(0):0), icon: "hourglass-split" },
-      { key: "mtd_tc", value: mtdFull.actualTcSum.toFixed(0), icon: "cart" },
-      { key: "tc_ach", value: (mtdFull.tcTargetSum ? ((mtdFull.actualTcSum/mtdFull.tcTargetSum)*100).toFixed(1):0)+"%", icon: "check-circle" },
-      { key: "forecast_tc", value: forecastObj.forecastTc.toFixed(0), icon: "bar-chart-steps" },
-      { key: "avg_check", value: mtdFull.mtdAvgCheck.toFixed(0), icon: "calculator" },
-      { key: "mtd_growth", value: mtdFull.growthMTD.toFixed(1)+"%", icon: "activity" }
-    ];
-    const kpiRow = document.getElementById("kpiRow");
-    kpiRow.innerHTML = kpis.map(k => `<div class="col-md-3 col-sm-6 col-6"><div class="glass-card p-3 h-100"><div class="d-flex align-items-center gap-2"><i class="bi bi-${k.icon} fs-4"></i><div><div class="kpi-label" data-key="${k.key}">${translations[currentLang][k.key] || k.key}</div><div class="kpi-value">${k.value}</div></div></div></div></div>`).join('');
-    
-    const summaryDiv = document.getElementById("summaryCards");
-    summaryDiv.innerHTML = `<div class="col-md-3 col-6"><div class="bg-dark p-2 rounded"><small data-key="mtd_sales">MTD Sales</small><br><strong>${mtdFull.actualSalesSum.toFixed(0)}</strong></div></div>
-    <div class="col-md-3 col-6"><div class="bg-dark p-2 rounded"><small data-key="target_ach">Achievement %</small><br><strong>${mtdYesterdayAch.targetAchievement.toFixed(1)}%</strong></div></div>
-    <div class="col-md-3 col-6"><div class="bg-dark p-2 rounded"><small data-key="mtd_growth">MTD Growth</small><br><strong>${mtdFull.growthMTD.toFixed(1)}%</strong></div></div>
-    <div class="col-md-3 col-6"><div class="bg-dark p-2 rounded"><small data-key="forecast_sales">Forecast Sales</small><br><strong>${forecastObj.forecastSales.toFixed(0)}</strong><br><small>Exp.Ach: ${forecastObj.expectedAch.toFixed(1)}%</small></div></div>`;
-    
-    const tableHead = document.getElementById("dailyTable").querySelector("thead tr");
-    const headers = ["date","sales_target","actual_sales","tc_target","actual_tc","ach_percent","growth_percent","avg_check_daily","actions"];
-    tableHead.innerHTML = headers.map(h => `<th data-key="${h}">${translations[currentLang][h] || h}</th>`).join('');
-    const tbody = document.getElementById("dailyTable").querySelector("tbody");
-    tbody.innerHTML = "";
-    for (let idx = 0; idx < filteredDaysData.length; idx++) {
-      const day = filteredDaysData[idx];
-      const actualDate = currentRange.start + idx;
-      const salesAch = day.salesTarget ? ((day.actualSales/day.salesTarget)*100).toFixed(1) : "0";
-      const growth = day.lastYearSales ? (((day.actualSales - day.lastYearSales)/day.lastYearSales)*100).toFixed(1) : "0";
-      const avgCheck = day.actualTc ? (day.actualSales/day.actualTc).toFixed(0) : "0";
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td class="editable-cell" data-field="dayNum">${actualDate}</td>
-        <td class="editable-cell" data-field="salesTarget" data-day="${actualDate}">${day.salesTarget.toFixed(0)}</td>
-        <td class="editable-cell" data-field="actualSales" data-day="${actualDate}">${day.actualSales.toFixed(0)}</td>
-        <td class="editable-cell" data-field="tcTarget" data-day="${actualDate}">${day.tcTarget.toFixed(0)}</td>
-        <td class="editable-cell" data-field="actualTc" data-day="${actualDate}">${day.actualTc.toFixed(0)}</td>
-        <td>${salesAch}%</td>
-        <td>${growth}%</td>
-        <td>${avgCheck}</td>
-        <td><i class="bi bi-pencil-square quick-edit-icon" data-day="${actualDate}" style="cursor:pointer; font-size:1.2rem;" title="Edit Last Year Sales & Full Data"></i></td>
-      `;
-      tbody.appendChild(row);
-    }
-    attachInlineEditing(monthData);
-    updateChart(monthData, filteredDaysData);
-    applyLanguageDynamic();
-  }
-
-  function attachInlineEditing(monthData) {
-    // Direct click on editable cells
-    document.querySelectorAll('.editable-cell[data-field]').forEach(cell => {
-      cell.removeEventListener('click', cell.clickHandler);
-      const handler = (e) => {
-        const field = cell.getAttribute('data-field');
-        if (field === 'dayNum') return;
-        const dayNum = parseInt(cell.getAttribute('data-day'));
-        if (isNaN(dayNum)) return;
-        const currentVal = parseFloat(cell.innerText);
-        const newVal = prompt(`Edit ${field}:`, currentVal);
-        if (newVal !== null && !isNaN(parseFloat(newVal))) {
-          const idx = dayNum - 1;
-          if (monthData.daily[idx]) {
-            if (field === 'salesTarget') monthData.daily[idx].salesTarget = parseFloat(newVal);
-            else if (field === 'actualSales') monthData.daily[idx].actualSales = parseFloat(newVal);
-            else if (field === 'tcTarget') monthData.daily[idx].tcTarget = parseFloat(newVal);
-            else if (field === 'actualTc') monthData.daily[idx].actualTc = parseFloat(newVal);
-            saveAllData();
-            renderDashboard();
-          }
+  
+  // Inline editing handler
+  const makeEditable = (cell, field, dayNum, monthData, currentValue) => {
+    cell.onclick = (e) => {
+      e.stopPropagation();
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.step = 'any';
+      input.value = currentValue;
+      input.className = 'inline-input';
+      input.style.width = '100%';
+      
+      const originalText = cell.innerText;
+      cell.innerText = '';
+      cell.appendChild(input);
+      input.focus();
+      
+      const saveEdit = () => {
+        const newValue = parseFloat(input.value);
+        if (!isNaN(newValue)) {
+          monthData.daily[dayNum - 1][field] = newValue;
+          saveAllData();
+          renderDashboard();
+        } else {
+          cell.innerText = originalText;
         }
       };
-      cell.addEventListener('click', handler);
-      cell.clickHandler = handler;
-    });
-    // Quick edit icon for full modal (including last year sales)
-    document.querySelectorAll('.quick-edit-icon').forEach(icon => {
-      icon.removeEventListener('click', icon.clickHandler);
-      const modalHandler = () => {
-        const dayNum = parseInt(icon.getAttribute('data-day'));
-        openEditModal(dayNum, monthData);
-      };
-      icon.addEventListener('click', modalHandler);
-      icon.clickHandler = modalHandler;
-    });
-  }
-
-  function openEditModal(dayNum, monthData) {
-    const idx = dayNum - 1;
-    const dayData = monthData.daily[idx];
-    document.getElementById('editDayIndex').value = idx;
-    document.getElementById('editDayNum').value = dayNum;
-    document.getElementById('editSalesTarget').value = dayData.salesTarget;
-    document.getElementById('editActualSales').value = dayData.actualSales;
-    document.getElementById('editTcTarget').value = dayData.tcTarget;
-    document.getElementById('editActualTc').value = dayData.actualTc;
-    document.getElementById('editLastYearSales').value = dayData.lastYearSales;
-    document.getElementById('modalTitle').innerText = `Edit Day ${dayNum} Data`;
-    editModal.show();
-  }
-
-  function saveModalData() {
+      
+      input.onblur = saveEdit;
+      input.onkeypress = (e) => { if (e.key === 'Enter') saveEdit(); };
+    };
+  };
+  
+  // Render dashboard
+  const renderDashboard = () => {
     const monthData = allMonthsData[currentMonthKey];
     if (!monthData) return;
-    const idx = parseInt(document.getElementById('editDayIndex').value);
-    const dayNum = parseInt(document.getElementById('editDayNum').value);
-    if (!isNaN(idx) && monthData.daily[idx]) {
-      monthData.daily[idx].salesTarget = parseFloat(document.getElementById('editSalesTarget').value) || 0;
-      monthData.daily[idx].actualSales = parseFloat(document.getElementById('editActualSales').value) || 0;
-      monthData.daily[idx].tcTarget = parseFloat(document.getElementById('editTcTarget').value) || 0;
-      monthData.daily[idx].actualTc = parseFloat(document.getElementById('editActualTc').value) || 0;
-      monthData.daily[idx].lastYearSales = parseFloat(document.getElementById('editLastYearSales').value) || 0;
-      saveAllData();
-      renderDashboard();
-      editModal.hide();
+    
+    const filteredDays = monthData.daily.slice(currentRange.start - 1, currentRange.end);
+    const mtd = computeMTD(monthData.daily, currentRange.end);
+    const t = translations[currentLang];
+    
+    // Update KPI Cards
+    const kpis = [
+      { label: t.mtdSales, value: `${mtd.actualSalesSum.toFixed(0)} ر.س`, icon: "cash-stack" },
+      { label: t.mtdTarget, value: `${mtd.salesTargetSum.toFixed(0)} ر.س`, icon: "bullseye" },
+      { label: t.achievement, value: `${mtd.targetAchievement.toFixed(1)}%`, icon: "percent" },
+      { label: t.mtdTc, value: mtd.actualTcSum.toFixed(0), icon: "cart" },
+      { label: t.avgCheck, value: `${mtd.mtdAvgCheck.toFixed(0)} ر.س`, icon: "calculator" },
+      { label: t.mtdGrowth, value: `${mtd.growthMTD.toFixed(1)}%`, icon: "activity" }
+    ];
+    
+    const kpiRow = document.getElementById("kpiRow");
+    kpiRow.innerHTML = kpis.map(k => `
+      <div class="col-md-2 col-sm-4 col-6">
+        <div class="glass-card p-2 text-center">
+          <i class="bi bi-${k.icon} fs-4"></i>
+          <div class="kpi-label">${k.label}</div>
+          <div class="kpi-value">${k.value}</div>
+        </div>
+      </div>
+    `).join('');
+    
+    // Update Table Headers
+    const headers = [t.day, t.salesTarget, t.actualSales, t.lastYearSales, t.tcTarget, t.actualTc, t.achPercent, t.growthPercent, t.avgCheckDaily];
+    const thead = document.querySelector("#dailyTable thead tr");
+    thead.innerHTML = headers.map(h => `<th>${h}</th>`).join('');
+    
+    // Update Table Body
+    const tbody = document.querySelector("#dailyTable tbody");
+    tbody.innerHTML = "";
+    
+    for (let i = 0; i < filteredDays.length; i++) {
+      const day = filteredDays[i];
+      const dayNum = currentRange.start + i;
+      const salesAch = day.salesTarget ? ((day.actualSales / day.salesTarget) * 100).toFixed(1) : "0";
+      const growth = calculateGrowth(day.actualSales, day.lastYearSales);
+      const growthDisplay = growth !== null ? `${growth.toFixed(1)}%` : "—";
+      const growthClass = getGrowthClass(growth);
+      const avgCheck = day.actualTc ? (day.actualSales / day.actualTc).toFixed(0) : "0";
+      
+      const row = document.createElement('tr');
+      
+      const dayCell = document.createElement('td');
+      dayCell.innerText = dayNum;
+      row.appendChild(dayCell);
+      
+      const targetCell = document.createElement('td');
+      targetCell.innerText = day.salesTarget.toFixed(0);
+      makeEditable(targetCell, 'salesTarget', dayNum, monthData, day.salesTarget);
+      row.appendChild(targetCell);
+      
+      const actualCell = document.createElement('td');
+      actualCell.innerText = day.actualSales === 0 ? '—' : day.actualSales.toFixed(0);
+      if (day.actualSales === 0) actualCell.style.color = '#808080';
+      makeEditable(actualCell, 'actualSales', dayNum, monthData, day.actualSales);
+      row.appendChild(actualCell);
+      
+      const lastYearCell = document.createElement('td');
+      lastYearCell.innerText = day.lastYearSales === 0 ? '—' : day.lastYearSales.toFixed(0);
+      if (day.lastYearSales === 0) lastYearCell.style.color = '#808080';
+      makeEditable(lastYearCell, 'lastYearSales', dayNum, monthData, day.lastYearSales);
+      row.appendChild(lastYearCell);
+      
+      const tcTargetCell = document.createElement('td');
+      tcTargetCell.innerText = day.tcTarget.toFixed(0);
+      makeEditable(tcTargetCell, 'tcTarget', dayNum, monthData, day.tcTarget);
+      row.appendChild(tcTargetCell);
+      
+      const actualTcCell = document.createElement('td');
+      actualTcCell.innerText = day.actualTc === 0 ? '—' : day.actualTc.toFixed(0);
+      if (day.actualTc === 0) actualTcCell.style.color = '#808080';
+      makeEditable(actualTcCell, 'actualTc', dayNum, monthData, day.actualTc);
+      row.appendChild(actualTcCell);
+      
+      const achCell = document.createElement('td');
+      achCell.innerText = `${salesAch}%`;
+      row.appendChild(achCell);
+      
+      const growthCell = document.createElement('td');
+      growthCell.innerText = growthDisplay;
+      growthCell.className = growthClass;
+      row.appendChild(growthCell);
+      
+      const avgCell = document.createElement('td');
+      avgCell.innerText = `${avgCheck} ر.س`;
+      row.appendChild(avgCell);
+      
+      tbody.appendChild(row);
     }
-  }
-
-  function updateChart(monthData, filteredDays) {
+    
+    updateChart(monthData, filteredDays);
+    updateTodayForecast();
+  };
+  
+  // Update chart with Sales, TC, AND Growth % line
+  const updateChart = (monthData, filteredDays) => {
     const ctx = document.getElementById('mainChart').getContext('2d');
-    const labels = filteredDays.map((_,i) => `Day ${currentRange.start+i}`);
+    const labels = filteredDays.map((_, i) => `${currentLang === 'ar' ? 'يوم' : 'Day'} ${currentRange.start + i}`);
     const salesTargets = filteredDays.map(d => d.salesTarget);
     const actualSales = filteredDays.map(d => d.actualSales);
     const tcTargets = filteredDays.map(d => d.tcTarget);
     const actualTc = filteredDays.map(d => d.actualTc);
-    const growthPerc = filteredDays.map(d => d.lastYearSales ? ((d.actualSales-d.lastYearSales)/d.lastYearSales*100) : 0);
+    
+    // Calculate growth percentage for each day
+    const growthPercentages = filteredDays.map(d => {
+      const growth = calculateGrowth(d.actualSales, d.lastYearSales);
+      return growth !== null ? growth : 0;
+    });
+    
     if (chartInstance) chartInstance.destroy();
+    
     chartInstance = new Chart(ctx, {
       type: 'bar',
       data: {
         labels: labels,
         datasets: [
-          { label: 'Sales Target', data: salesTargets, backgroundColor: 'rgba(54, 162, 235, 0.6)', borderRadius: 8 },
-          { label: 'Actual Sales', data: actualSales, backgroundColor: 'rgba(75, 192, 192, 0.7)', borderRadius: 8 },
-          { label: 'TC Target', data: tcTargets, backgroundColor: 'rgba(255, 206, 86, 0.6)', borderRadius: 6, yAxisID: 'y1' },
-          { label: 'Actual TC', data: actualTc, backgroundColor: 'rgba(255, 99, 132, 0.6)', borderRadius: 6, yAxisID: 'y1' },
-          { label: 'Growth %', data: growthPerc, type: 'line', borderColor: '#f97316', backgroundColor: 'transparent', tension: 0.2, yAxisID: 'y2', fill: false, borderWidth: 2 }
+          // Sales Target (Bar)
+          { 
+            label: currentLang === 'ar' ? 'هدف المبيعات' : 'Sales Target', 
+            data: salesTargets, 
+            backgroundColor: 'rgba(54, 162, 235, 0.5)', 
+            borderRadius: 8, 
+            yAxisID: 'y',
+            order: 2
+          },
+          // Actual Sales (Bar)
+          { 
+            label: currentLang === 'ar' ? 'المبيعات الفعلية' : 'Actual Sales', 
+            data: actualSales, 
+            backgroundColor: 'rgba(75, 192, 192, 0.7)', 
+            borderRadius: 8, 
+            yAxisID: 'y',
+            order: 2
+          },
+          // TC Target (Line with dots)
+          { 
+            label: currentLang === 'ar' ? 'هدف العمليات' : 'TC Target', 
+            data: tcTargets, 
+            borderColor: 'rgba(255, 206, 86, 0.9)', 
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderDash: [5, 5],
+            tension: 0.3,
+            type: 'line',
+            pointRadius: 3,
+            pointBackgroundColor: 'rgba(255, 206, 86, 1)',
+            yAxisID: 'y1',
+            fill: false,
+            order: 1
+          },
+          // Actual TC (Line with dots)
+          { 
+            label: currentLang === 'ar' ? 'العمليات الفعلية' : 'Actual TC', 
+            data: actualTc, 
+            borderColor: 'rgba(255, 99, 132, 0.9)', 
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            tension: 0.3,
+            type: 'line',
+            pointRadius: 3,
+            pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+            yAxisID: 'y1',
+            fill: false,
+            order: 1
+          },
+          // GROWTH % (Line on third Y-axis)
+          { 
+            label: currentLang === 'ar' ? 'نسبة النمو %' : 'Growth %', 
+            data: growthPercentages, 
+            borderColor: '#e50914', 
+            backgroundColor: 'rgba(229, 9, 20, 0.1)',
+            borderWidth: 3,
+            tension: 0.2,
+            type: 'line',
+            pointRadius: 4,
+            pointBackgroundColor: '#e50914',
+            pointBorderColor: 'white',
+            pointBorderWidth: 2,
+            yAxisID: 'y2',
+            fill: false,
+            order: 0
+          }
         ]
       },
       options: {
-        responsive: true, maintainAspectRatio: true, plugins: { tooltip: { mode: 'index' }, legend: { labels: { color: '#ddd' } } },
-        scales: { y: { title: { display: true, text: 'Sales ($)', color: '#ccc' }, grid: { color: '#2d3a5e' } },
-                  y1: { position: 'right', title: { text: 'Transaction Count', color: '#ccc' }, grid: { drawOnChartArea: false } },
-                  y2: { position: 'right', title: { text: 'Growth %', color: '#f97316' }, min: -50, max: 150, grid: { drawOnChartArea: false } } }
+        responsive: true,
+        maintainAspectRatio: true,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        plugins: {
+          tooltip: { 
+            mode: 'index',
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || '';
+                let value = context.raw;
+                if (context.dataset.label === (currentLang === 'ar' ? 'نسبة النمو %' : 'Growth %')) {
+                  return `${label}: ${value.toFixed(1)}%`;
+                } else if (context.dataset.label === (currentLang === 'ar' ? 'هدف العمليات' : 'TC Target') || 
+                           context.dataset.label === (currentLang === 'ar' ? 'العمليات الفعلية' : 'Actual TC')) {
+                  return `${label}: ${value.toFixed(0)} عمليات`;
+                } else {
+                  return `${label}: ${value.toFixed(0)} ر.س`;
+                }
+              }
+            }
+          },
+          legend: { 
+            labels: { color: '#ddd', font: { size: 11 } },
+            position: 'top'
+          }
+        },
+        scales: {
+          y: { 
+            title: { display: true, text: currentLang === 'ar' ? 'المبيعات (ر.س)' : 'Sales (SAR)', color: '#7bc5ff' }, 
+            grid: { color: '#2d3a5e' },
+            position: 'left'
+          },
+          y1: { 
+            position: 'right', 
+            title: { display: true, text: currentLang === 'ar' ? 'عدد العمليات' : 'Transactions', color: '#ffce56' }, 
+            grid: { drawOnChartArea: false },
+            min: 0
+          },
+          y2: { 
+            position: 'right', 
+            title: { display: true, text: currentLang === 'ar' ? 'نسبة النمو %' : 'Growth %', color: '#e50914' }, 
+            grid: { drawOnChartArea: false },
+            min: -50, 
+            max: 100,
+            ticks: {
+              callback: function(value) {
+                return value + '%';
+              }
+            }
+          }
+        }
       }
     });
-  }
-
-  function populateMonthSelect() {
-    const months = generateMonthKeys();
+  };
+  
+  // Month select population
+  const generateMonthKeys = () => {
+    let keys = [];
+    for (let y = 2025; y <= 2027; y++) {
+      for (let m = 1; m <= 12; m++) keys.push(`${y}-${String(m).padStart(2, '0')}`);
+    }
+    return keys;
+  };
+  
+  const populateMonthSelect = () => {
     const select = document.getElementById("monthSelect");
-    select.innerHTML = "";
-    months.forEach(m => {
-      const opt = document.createElement("option");
-      opt.value = m;
+    const months = generateMonthKeys();
+    select.innerHTML = months.map(m => {
       const [year, mon] = m.split('-');
-      opt.textContent = `${year} - ${new Date(year, mon-1).toLocaleString('default', { month: 'long' })}`;
-      select.appendChild(opt);
-    });
+      const monthName = new Date(year, mon-1).toLocaleString(currentLang === 'ar' ? 'ar' : 'en', { month: 'long' });
+      return `<option value="${m}">${year} - ${monthName}</option>`;
+    }).join('');
     const today = new Date();
-    const defaultMonth = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;
-    if (months.includes(defaultMonth)) currentMonthKey = defaultMonth;
-    else currentMonthKey = "2026-06";
+    currentMonthKey = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2, '0')}`;
     select.value = currentMonthKey;
-    select.addEventListener("change", (e) => { currentMonthKey = e.target.value; initDataForMonth(currentMonthKey); currentRange = { start:1, end:31 }; renderDashboard(); });
-    initDataForMonth(currentMonthKey);
-  }
-
-  function applyLanguageDynamic() {
-    document.querySelectorAll("[data-key]").forEach(el => { const key = el.getAttribute("data-key"); if (translations[currentLang][key]) el.innerText = translations[currentLang][key]; });
-  }
-
-  function applyLanguage() {
-    document.documentElement.lang = currentLang;
-    if (currentLang === 'ar') document.getElementById("appRoot").classList.add("rtl"); else document.getElementById("appRoot").classList.remove("rtl");
-    applyLanguageDynamic();
-    renderDashboard();
-  }
-
-  function exportToExcel() {
-    const wsData = [];
-    const table = document.getElementById("dailyTable");
-    const headers = Array.from(table.querySelectorAll("thead th")).map(th => th.innerText);
-    wsData.push(headers);
-    const rows = table.querySelectorAll("tbody tr");
-    rows.forEach(row => { const rowData = Array.from(row.cells).map(cell => cell.innerText); wsData.push(rowData); });
+    select.onchange = () => { 
+      currentMonthKey = select.value; 
+      initDataForMonth(currentMonthKey); 
+      renderDashboard(); 
+    };
+  };
+  
+  // Data management functions
+  const clearCurrentMonthData = () => {
+    if (confirm(currentLang === 'ar' ? `⚠️ تحذير: سيتم مسح جميع بيانات ${currentMonthKey}. هل تريد المتابعة؟` : `⚠️ Warning: This will erase ALL data for ${currentMonthKey}. Continue?`)) {
+      for (let i = 0; i < 31; i++) {
+        allMonthsData[currentMonthKey].daily[i] = { salesTarget: 0, actualSales: 0, lastYearSales: 0, tcTarget: 0, actualTc: 0 };
+      }
+      saveAllData();
+      renderDashboard();
+    }
+  };
+  
+  const loadSampleData = () => {
+    if (confirm(currentLang === 'ar' ? `تحميل بيانات تجريبية لـ ${currentMonthKey}؟` : `Load sample data for ${currentMonthKey}?`)) {
+      for (let i = 1; i <= 10; i++) {
+        allMonthsData[currentMonthKey].daily[i-1] = {
+          salesTarget: 5000 + (i*80), actualSales: 3800 + (i*100), lastYearSales: 3500 + (i*60),
+          tcTarget: 45 + i, actualTc: 30 + Math.floor(i*1.2)
+        };
+      }
+      for (let i = 11; i <= 20; i++) {
+        allMonthsData[currentMonthKey].daily[i-1] = { 
+          salesTarget: 6000, actualSales: 4200 + ((i-10)*50), lastYearSales: 4000 + ((i-10)*30), 
+          tcTarget: 60, actualTc: 35 + Math.floor((i-10)*0.8)
+        };
+      }
+      for (let i = 21; i <= 31; i++) {
+        allMonthsData[currentMonthKey].daily[i-1] = { 
+          salesTarget: 6500, actualSales: 0, lastYearSales: 4500, tcTarget: 65, actualTc: 0
+        };
+      }
+      saveAllData();
+      renderDashboard();
+    }
+  };
+  
+  const exportToExcel = () => {
+    const t = translations[currentLang];
+    const wsData = [[t.day, t.salesTarget, t.actualSales, t.lastYearSales, t.tcTarget, t.actualTc, t.achPercent, t.growthPercent]];
+    const monthData = allMonthsData[currentMonthKey];
+    for (let i = 0; i < 31; i++) {
+      const d = monthData.daily[i];
+      const ach = d.salesTarget ? ((d.actualSales / d.salesTarget) * 100).toFixed(1) : "0";
+      const growth = d.lastYearSales ? (((d.actualSales - d.lastYearSales) / d.lastYearSales) * 100).toFixed(1) : "0";
+      wsData.push([i+1, d.salesTarget, d.actualSales, d.lastYearSales, d.tcTarget, d.actualTc, ach, growth]);
+    }
     const ws = XLSX.utils.aoa_to_sheet(wsData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "SalesData");
-    XLSX.writeFile(wb, `Sales_${currentMonthKey}_report.xlsx`);
-  }
-
-  async function exportToPDF() {
+    XLSX.writeFile(wb, `Sales_${currentMonthKey}.xlsx`);
+  };
+  
+  const exportToPDF = async () => {
     const element = document.getElementById("appRoot");
     const canvas = await html2canvas(element, { scale: 2 });
     const imgData = canvas.toDataURL('image/png');
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = 210;
-    const pageHeight = 297;
     const imgHeight = canvas.height * imgWidth / canvas.width;
-    let heightLeft = imgHeight;
-    let position = 0;
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
+    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
     pdf.save(`dashboard_${currentMonthKey}.pdf`);
-  }
-
-  // Clear ALL data for current month
-  function clearCurrentMonthData() {
-    if (confirm(`⚠️ WARNING: This will erase ALL data for ${currentMonthKey}. Continue?`)) {
-      const blankDaily = [];
-      for (let i = 0; i < 31; i++) blankDaily.push({ salesTarget: 0, actualSales: 0, tcTarget: 0, actualTc: 0, lastYearSales: 0 });
-      allMonthsData[currentMonthKey] = { daily: blankDaily };
-      saveAllData();
-      renderDashboard();
-    }
-  }
-
-  // Reset month to empty (same as clear)
-  function resetMonthEmpty() { clearCurrentMonthData(); }
-
-  // Load sample data for current month
-  function loadSampleData() {
-    if (confirm(`Load sample data for ${currentMonthKey}? This will overwrite existing data.`)) {
-      for (let i = 1; i <= 31; i++) {
-        allMonthsData[currentMonthKey].daily[i-1] = {
-          salesTarget: 4500 + (i * 80), actualSales: (i <= 20 ? 3200 + (i * 60) : 0), 
-          tcTarget: 40 + Math.floor(i/2), actualTc: (i <= 20 ? 28 + Math.floor(i/3) : 0), 
-          lastYearSales: 3500 + (i * 50)
-        };
-      }
-      saveAllData();
-      renderDashboard();
-    }
-  }
-
-  // Quick add day through modal
-  function quickAddDay() {
-    const dayNum = prompt("Enter day number (1-31):", new Date().getDate());
-    if (dayNum && dayNum >= 1 && dayNum <= 31) {
-      openEditModal(parseInt(dayNum), allMonthsData[currentMonthKey]);
-    } else alert("Invalid day number");
-  }
-
+  };
+  
   // Event Listeners
-  document.getElementById("applyRangeBtn").addEventListener("click", () => {
+  document.getElementById("applyRangeBtn").onclick = () => {
     let s = parseInt(document.getElementById("rangeStart").value);
     let e = parseInt(document.getElementById("rangeEnd").value);
-    if(s>=1 && e<=31 && s<=e) { currentRange = { start:s, end:e }; renderDashboard(); }
-    else alert("Invalid range (1-31)");
-  });
-  document.getElementById("resetMonthBtn").addEventListener("click", () => { currentRange = { start:1, end:31 }; document.getElementById("rangeStart").value=1; document.getElementById("rangeEnd").value=31; renderDashboard(); });
-  document.getElementById("exportExcelBtn").addEventListener("click", exportToExcel);
-  document.getElementById("exportPdfBtn").addEventListener("click", exportToPDF);
-  document.getElementById("langEnBtn").onclick = () => { currentLang = "en"; localStorage.setItem("salesLang","en"); applyLanguage(); };
-  document.getElementById("langArBtn").onclick = () => { currentLang = "ar"; localStorage.setItem("salesLang","ar"); applyLanguage(); };
-  document.getElementById("clearAllDataBtn").addEventListener("click", clearCurrentMonthData);
-  document.getElementById("resetMonthDataBtn").addEventListener("click", resetMonthEmpty);
-  document.getElementById("bulkSampleBtn").addEventListener("click", loadSampleData);
-  document.getElementById("quickAddDataBtn").addEventListener("click", quickAddDay);
-  document.getElementById("saveDayDataBtn").addEventListener("click", saveModalData);
-
+    if (s >= 1 && e <= 31 && s <= e) { currentRange = { start: s, end: e }; renderDashboard(); }
+    else alert(currentLang === 'ar' ? 'نطاق غير صالح (1-31)' : 'Invalid range (1-31)');
+  };
+  document.getElementById("resetMonthBtn").onclick = () => { currentRange = { start: 1, end: 31 }; document.getElementById("rangeStart").value = 1; document.getElementById("rangeEnd").value = 31; renderDashboard(); };
+  document.getElementById("clearAllDataBtn").onclick = clearCurrentMonthData;
+  document.getElementById("bulkSampleBtn").onclick = loadSampleData;
+  document.getElementById("exportExcelBtn").onclick = exportToExcel;
+  document.getElementById("exportPdfBtn").onclick = exportToPDF;
+  
+  // Language Toggle
+  document.getElementById("langEnBtn").onclick = () => { currentLang = "en"; applyLanguage(); populateMonthSelect(); renderDashboard(); };
+  document.getElementById("langArBtn").onclick = () => { currentLang = "ar"; applyLanguage(); populateMonthSelect(); renderDashboard(); };
+  
   // Initialize
   loadAllData();
   populateMonthSelect();
+  initDataForMonth(currentMonthKey);
   applyLanguage();
   renderDashboard();
-  editModal = new bootstrap.Modal(document.getElementById('editDayModal'));
 </script>
 </body>
 </html>
