@@ -1,11 +1,10 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>StreamOps | Netflix-Style Enterprise Dashboard</title>
+    <title>SADWAP | Draggable Radial Dashboard</title>
     <!-- Google Fonts + Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -14,42 +13,44 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
         }
 
-        /* Netflix-Inspired Dark Theme (Base) */
+        /* Futuristic Dark Theme */
         :root {
-            --netflix-black: #000000;
-            --netflix-dark: #0a0a0a;
-            --netflix-card: #141414;
-            --netflix-card-hover: #1f1f1f;
-            --netflix-red: #e50914;
-            --netflix-red-dark: #b20710;
-            --netflix-gray: #808080;
-            --netflix-light-gray: #b3b3b3;
-            --netflix-white: #ffffff;
-            --netflix-border: #222222;
-            --sidebar-width: 260px;
+            --bg-primary: #0a0c15;
+            --bg-secondary: #0f111a;
+            --bg-card: rgba(18, 22, 35, 0.95);
+            --accent-cyan: #00d4ff;
+            --accent-purple: #7b2cbf;
+            --accent-glow: rgba(0, 212, 255, 0.3);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a8c0;
+            --text-muted: #6b7280;
+            --border-glow: rgba(0, 212, 255, 0.15);
             --header-height: 70px;
-            --transition-speed: 0.2s;
+            --menu-radius: 280px;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--netflix-black);
-            color: var(--netflix-white);
+            background: var(--bg-primary);
+            color: var(--text-primary);
             margin: 0;
             padding: 0;
             overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
         }
 
-        /* LOADING SCREEN - 0% to 100% Animation */
+        /* Loading Screen */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--netflix-black);
+            background: var(--bg-primary);
             z-index: 10000;
             display: flex;
             flex-direction: column;
@@ -61,176 +62,190 @@
             opacity: 0;
             visibility: hidden;
         }
-        .netflix-loader {
-            width: 280px;
+        .futuristic-loader {
             text-align: center;
         }
         .loader-logo {
             font-size: 3rem;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--netflix-red), #ff4d4d);
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
             margin-bottom: 2rem;
-            letter-spacing: -1px;
         }
         .progress-container {
-            width: 100%;
-            height: 4px;
-            background: var(--netflix-border);
-            border-radius: 4px;
+            width: 280px;
+            height: 2px;
+            background: rgba(0, 212, 255, 0.2);
+            border-radius: 2px;
             overflow: hidden;
-            margin-bottom: 1rem;
         }
         .progress-bar-fill {
             height: 100%;
             width: 0%;
-            background: var(--netflix-red);
-            border-radius: 4px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
             transition: width 0.05s linear;
         }
         .loading-percent {
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 600;
-            color: var(--netflix-light-gray);
-            font-family: monospace;
-            letter-spacing: 1px;
-        }
-        .loading-text {
-            font-size: 0.75rem;
-            color: var(--netflix-gray);
+            color: var(--accent-cyan);
             margin-top: 1rem;
+            font-family: monospace;
         }
 
-        /* Custom Scrollbar - Netflix style */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--netflix-dark);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--netflix-red);
-            border-radius: 10px;
-        }
-
-        .dashboard-container {
-            display: flex;
-            min-height: 100vh;
-            opacity: 0;
-            animation: contentFadeIn 0.6s ease forwards;
-            animation-delay: 0.3s;
-        }
-        @keyframes contentFadeIn {
-            to { opacity: 1; }
-        }
-
-        /* SIDEBAR - Netflix Dark Style */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: var(--netflix-black);
-            border-right: 1px solid var(--netflix-border);
+        /* Draggable Circular Menu Container */
+        .circular-menu-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            z-index: 30;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow-y: auto;
+            left: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            cursor: grab;
+            transition: cursor 0.1s;
         }
-        .sidebar.collapsed {
-            transform: translateX(-100%);
+        .circular-menu-container.dragging {
+            cursor: grabbing;
+            opacity: 0.9;
         }
-        .sidebar-header {
-            padding: 1.8rem 1.5rem;
-            border-bottom: 1px solid var(--netflix-border);
-            margin-bottom: 1.5rem;
+        .circular-menu-container.dragging .circular-menu {
+            pointer-events: none;
         }
-        .sidebar-header h2 {
-            font-size: 1.6rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--netflix-red), #ff4d4d);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: -0.5px;
-        }
-        .sidebar-header p {
-            font-size: 0.7rem;
-            color: var(--netflix-gray);
-            margin-top: 6px;
-        }
-        .sidebar-menu {
-            list-style: none;
-            padding: 0 1rem;
-        }
-        .sidebar-menu li {
-            margin-bottom: 0.3rem;
-        }
-        .sidebar-menu a {
+
+        /* Main Circular Menu Button */
+        .menu-center-btn {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 1rem;
-            padding: 0.8rem 1rem;
-            border-radius: 8px;
-            color: var(--netflix-light-gray);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            z-index: 50;
+            box-shadow: 0 0 30px var(--accent-glow);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255,255,255,0.2);
         }
-        .sidebar-menu a:hover {
-            background: var(--netflix-card-hover);
-            color: var(--netflix-white);
+        .menu-center-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 45px var(--accent-glow);
         }
-        .sidebar-menu .active a {
-            background: var(--netflix-red);
+        .menu-center-btn i {
+            font-size: 2rem;
             color: white;
         }
-        .sidebar-menu i {
-            width: 1.4rem;
-            font-size: 1.1rem;
+        .menu-center-btn span {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            white-space: nowrap;
+            color: var(--text-secondary);
+            font-weight: 500;
+            background: rgba(10,12,21,0.8);
+            padding: 2px 10px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Circular Menu Items */
+        .circular-menu {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: var(--menu-radius);
+            height: var(--menu-radius);
+            margin-left: -140px;
+            margin-top: -140px;
+            border-radius: 50%;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform: scale(0.3);
+            pointer-events: none;
+        }
+        .circular-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+        .menu-item {
+            position: absolute;
+            width: 65px;
+            height: 65px;
+            background: rgba(18, 22, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        .menu-item:hover {
+            transform: scale(1.15);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px var(--accent-glow);
+            background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(123,44,191,0.2));
+        }
+        .menu-item i {
+            font-size: 1.5rem;
+        }
+        .menu-item .item-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.6rem;
+            white-space: nowrap;
+            color: var(--text-muted);
+            font-weight: 500;
+            background: rgba(10,12,21,0.8);
+            padding: 2px 8px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+            pointer-events: none;
+        }
+        .menu-item.active {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-color: white;
+            box-shadow: 0 0 25px var(--accent-glow);
+        }
+        .menu-item.active .item-label {
+            color: var(--accent-cyan);
         }
 
         /* Main Content */
         .main-content {
             flex: 1;
-            margin-left: var(--sidebar-width);
-            transition: margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            min-width: 0;
-            background: var(--netflix-dark);
-        }
-        .main-content.full-width {
             margin-left: 0;
+            transition: margin var(--transition-speed);
+            min-width: 0;
+            background: var(--bg-primary);
         }
 
-        /* Top Navbar - Netflix Style (Glass) */
+        /* Top Navbar */
         .top-navbar {
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(10, 12, 21, 0.95);
             backdrop-filter: blur(12px);
             padding: 0 2rem;
             height: var(--header-height);
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--netflix-border);
+            justify-content: flex-end;
+            border-bottom: 1px solid var(--border-glow);
             position: sticky;
             top: 0;
-            z-index: 25;
-        }
-        .menu-toggle {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--netflix-white);
-            transition: transform 0.2s;
-        }
-        .menu-toggle:hover {
-            transform: scale(1.05);
-            color: var(--netflix-red);
+            z-index: 100;
         }
         .nav-actions {
             display: flex;
@@ -241,10 +256,10 @@
         .lang-switch {
             display: flex;
             gap: 0.3rem;
-            background: var(--netflix-card);
+            background: rgba(0, 212, 255, 0.1);
             padding: 0.25rem;
             border-radius: 2rem;
-            border: 1px solid var(--netflix-border);
+            border: 1px solid var(--border-glow);
         }
         .lang-btn {
             background: transparent;
@@ -254,41 +269,25 @@
             font-weight: 600;
             font-size: 0.75rem;
             cursor: pointer;
-            color: var(--netflix-light-gray);
+            color: var(--text-secondary);
             transition: all 0.2s;
         }
         .lang-btn.active {
-            background: var(--netflix-red);
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
             color: white;
-        }
-        .theme-toggle-btn {
-            background: var(--netflix-card);
-            border: 1px solid var(--netflix-border);
-            border-radius: 2rem;
-            padding: 0.4rem 1rem;
-            font-size: 0.8rem;
-            cursor: pointer;
-            color: var(--netflix-white);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s;
-        }
-        .theme-toggle-btn:hover {
-            border-color: var(--netflix-red);
         }
         .user-badge {
             display: flex;
             align-items: center;
             gap: 0.6rem;
-            background: var(--netflix-card);
+            background: rgba(0, 212, 255, 0.08);
             padding: 0.4rem 1rem;
             border-radius: 2rem;
-            border: 1px solid var(--netflix-border);
+            border: 1px solid var(--border-glow);
             font-size: 0.85rem;
         }
         .refresh-btn {
-            background: var(--netflix-red);
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
             border: none;
             border-radius: 2rem;
             padding: 0.4rem 1.2rem;
@@ -299,62 +298,82 @@
             transition: all 0.2s;
         }
         .refresh-btn:hover {
-            background: var(--netflix-red-dark);
             transform: scale(0.98);
+            box-shadow: 0 0 15px var(--accent-glow);
         }
 
-        /* Dashboard Content - Netflix Card Layout */
+        /* Dashboard Content */
         .dashboard-inner {
-            padding: 1.8rem 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        /* Hero Video Banner - Netflix Style */
-        .hero-banner {
-            position: relative;
-            border-radius: 12px;
-            overflow: hidden;
+        /* Hero Section */
+        .hero-futuristic {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(123, 44, 191, 0.08));
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-            cursor: pointer;
-        }
-        .hero-video-wrapper {
+            border: 1px solid var(--border-glow);
             position: relative;
-            width: 100%;
-            max-height: 320px;
-            background: #000;
+            overflow: hidden;
         }
-        .hero-video-wrapper video {
-            width: 100%;
-            height: auto;
-            max-height: 320px;
-            object-fit: cover;
-            display: block;
-        }
-        .hero-overlay {
+        .hero-futuristic::before {
+            content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
-            padding: 2rem;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.05), transparent);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
         }
         .hero-title {
-            font-size: 1.8rem;
+            font-size: 2.5rem;
             font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
             margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
         }
         .hero-subtitle {
-            font-size: 0.9rem;
-            color: var(--netflix-light-gray);
+            font-size: 1rem;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 1;
         }
-        .hero-badge {
-            display: inline-block;
-            background: var(--netflix-red);
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
+        .hero-stats {
+            display: flex;
+            gap: 2.5rem;
+            margin-top: 1.5rem;
+            position: relative;
+            z-index: 1;
+            flex-wrap: wrap;
+        }
+        .hero-stat {
+            text-align: center;
+        }
+        .hero-stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .hero-stat-label {
             font-size: 0.7rem;
-            font-weight: 600;
-            margin-top: 0.5rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         /* Welcome Header */
@@ -364,60 +383,55 @@
             align-items: center;
             flex-wrap: wrap;
             margin-bottom: 2rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--netflix-red);
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-glow);
         }
         .greeting h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
+            font-size: 1.3rem;
+            font-weight: 600;
         }
         .info-badge {
             display: flex;
             gap: 1.2rem;
-            background: var(--netflix-card);
-            padding: 0.6rem 1.2rem;
+            background: rgba(0, 212, 255, 0.08);
+            padding: 0.5rem 1.2rem;
             border-radius: 40px;
-            font-size: 0.85rem;
-            border: 1px solid var(--netflix-border);
+            font-size: 0.8rem;
+            border: 1px solid var(--border-glow);
         }
 
-        /* Section Title - Netflix Row Style */
+        /* Section Title */
         .section-title {
             font-weight: 700;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             margin-bottom: 1.2rem;
             display: flex;
             align-items: center;
             gap: 0.8rem;
-            letter-spacing: -0.3px;
         }
         .section-title i {
-            color: var(--netflix-red);
-            font-size: 1.4rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
         }
 
-        /* Netflix-Style Card Grid */
+        /* Card Grid */
         .modules-grid-enhanced {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1.2rem;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
         .module-card {
-            background: var(--netflix-card);
-            border-radius: 12px;
-            padding: 1.2rem;
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
             text-align: center;
             cursor: pointer;
-            transition: all 0.25s ease;
-            color: var(--netflix-white);
-            text-decoration: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            border: 1px solid var(--netflix-border);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-glow);
             position: relative;
             overflow: hidden;
         }
@@ -425,164 +439,145 @@
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
+            left: -100%;
             width: 100%;
-            height: 3px;
-            background: var(--netflix-red);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-        .module-card:hover {
-            transform: translateY(-6px);
-            background: var(--netflix-card-hover);
-            border-color: var(--netflix-red);
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            transition: left 0.5s ease;
         }
         .module-card:hover::before {
-            transform: scaleX(1);
+            left: 100%;
+        }
+        .module-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px var(--accent-glow);
         }
         .module-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.2rem;
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
         }
         .module-card h3 {
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 700;
-            margin: 0;
+            margin: 0.5rem 0;
         }
         .module-card p {
             font-size: 0.7rem;
-            color: var(--netflix-gray);
-            margin: 0;
+            color: var(--text-muted);
         }
         .module-badge {
             font-size: 0.65rem;
-            background: rgba(229, 9, 20, 0.2);
+            background: rgba(0, 212, 255, 0.15);
             padding: 4px 12px;
             border-radius: 20px;
-            margin-top: 4px;
-            color: var(--netflix-red);
-            font-weight: 600;
+            margin-top: 8px;
+            color: var(--accent-cyan);
+            display: inline-block;
         }
 
-        /* Activity Feed - Timeline Netflix Style */
+        /* Activity Feed */
         .activity-feed-full {
-            background: var(--netflix-card);
-            border-radius: 12px;
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
             padding: 1.5rem;
-            border: 1px solid var(--netflix-border);
+            border: 1px solid var(--border-glow);
         }
         .activity-item {
             font-size: 0.85rem;
-            padding: 0.9rem 0;
-            border-bottom: 1px solid var(--netflix-border);
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border-glow);
             display: flex;
             gap: 1rem;
             align-items: center;
-            transition: all 0.2s;
         }
         .activity-item:hover {
-            background: rgba(229, 9, 20, 0.05);
+            background: rgba(0, 212, 255, 0.05);
             padding-left: 8px;
+            border-radius: 12px;
         }
         .activity-item i {
-            color: var(--netflix-red);
-            font-size: 0.9rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
         }
 
-        /* Notification Toast - Netflix Style */
+        /* Toast */
         .notification-toast {
             position: fixed;
             bottom: 24px;
             right: 24px;
-            background: var(--netflix-card);
-            border-left: 4px solid var(--netflix-red);
+            background: var(--bg-card);
+            border-left: 3px solid var(--accent-cyan);
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             padding: 0.8rem 1.2rem;
-            border-radius: 8px;
-            z-index: 1000;
-            font-size: 0.85rem;
+            border-radius: 12px;
+            z-index: 1100;
             display: none;
             align-items: center;
             gap: 12px;
-            color: var(--netflix-white);
             backdrop-filter: blur(8px);
         }
 
-        /* FLOATING AI ASSISTANT BUTTON */
+        /* Floating AI */
         .floating-ai-assistant {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, var(--netflix-red), #ff4d4d);
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 1100;
-            box-shadow: 0 8px 24px rgba(229, 9, 20, 0.4), 0 0 0 2px rgba(255,255,255,0.1);
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            animation: pulseGlow 2s infinite;
+            box-shadow: 0 0 20px var(--accent-glow);
+            transition: all 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
         .floating-ai-assistant:hover {
             transform: scale(1.1);
-            box-shadow: 0 12px 32px rgba(229, 9, 20, 0.6);
-        }
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 8px 24px rgba(229, 9, 20, 0.4), 0 0 0 0 rgba(229,9,20,0.4); }
-            70% { box-shadow: 0 8px 24px rgba(229, 9, 20, 0.6), 0 0 0 10px rgba(229,9,20,0); }
-            100% { box-shadow: 0 8px 24px rgba(229, 9, 20, 0.4), 0 0 0 0 rgba(229,9,20,0); }
         }
         .floating-ai-assistant i {
-            font-size: 2rem;
+            font-size: 1.5rem;
             color: white;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
         }
 
-        /* CHATBOT MODAL / IFRAME */
+        /* Chatbot Modal */
         .chatbot-modal {
             position: fixed;
-            bottom: 110px;
+            bottom: 105px;
             right: 30px;
-            width: 400px;
-            height: 600px;
-            background: var(--netflix-card);
+            width: 380px;
+            height: 550px;
+            background: var(--bg-card);
             border-radius: 20px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
             z-index: 1150;
             display: none;
             flex-direction: column;
             overflow: hidden;
-            border: 1px solid var(--netflix-border);
-            animation: modalSlideUp 0.3s ease;
+            border: 1px solid var(--border-glow);
         }
         .chatbot-modal.open {
             display: flex;
         }
-        @keyframes modalSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
         .chatbot-header {
-            background: var(--netflix-red);
-            padding: 1rem 1.2rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            padding: 0.8rem 1.2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
         }
         .chatbot-header h4 {
-            margin: 0;
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -591,68 +586,129 @@
             background: none;
             border: none;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .chatbot-header button:hover {
-            transform: scale(1.1);
         }
         .chatbot-iframe {
             flex: 1;
             width: 100%;
             border: none;
-            background: var(--netflix-dark);
+            background: var(--bg-secondary);
+        }
+
+        /* Drag Handle Style */
+        .drag-handle {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 30px;
+            height: 30px;
+            background: rgba(0,212,255,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            cursor: grab;
+            z-index: 60;
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border-glow);
+        }
+        .circular-menu-container.dragging .drag-handle {
+            cursor: grabbing;
+        }
+
+        /* IFrame Container for Navigation */
+        .iframe-container {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 90;
+            background: var(--bg-primary);
+            display: none;
+        }
+        .iframe-container.active {
+            display: block;
+        }
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: var(--bg-primary);
+        }
+        .close-iframe {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 95;
+            box-shadow: 0 0 15px var(--accent-glow);
+            transition: all 0.2s;
+        }
+        .close-iframe:hover {
+            transform: scale(1.1);
+        }
+        .close-iframe i {
+            font-size: 1.2rem;
+            color: white;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .sidebar {
-                width: 80%;
-                max-width: 280px;
+            .menu-center-btn {
+                width: 60px;
+                height: 60px;
+            }
+            .menu-center-btn i {
+                font-size: 1.5rem;
+            }
+            .circular-menu {
+                width: 220px;
+                height: 220px;
+                margin-left: -110px;
+                margin-top: -110px;
+            }
+            .menu-item {
+                width: 50px;
+                height: 50px;
+            }
+            .menu-item i {
+                font-size: 1.2rem;
             }
             .dashboard-inner {
                 padding: 1rem;
             }
-            .modules-grid-enhanced {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 0.8rem;
-            }
             .hero-title {
-                font-size: 1.2rem;
+                font-size: 1.5rem;
             }
-            .greeting h1 {
-                font-size: 1.2rem;
-            }
-            .info-badge {
-                margin-top: 0.5rem;
+            .modules-grid-enhanced {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 1rem;
             }
             .chatbot-modal {
                 width: calc(100vw - 40px);
                 right: 20px;
                 left: 20px;
-                bottom: 110px;
-                height: 70vh;
+                height: 65vh;
             }
-            .floating-ai-assistant {
-                width: 56px;
-                height: 56px;
-                bottom: 20px;
-                right: 20px;
+            .iframe-container {
+                top: 60px;
             }
         }
 
-        /* RTL Support */
-        [dir="rtl"] .sidebar {
-            left: auto;
-            right: 0;
-        }
-        [dir="rtl"] .main-content {
-            margin-left: 0;
-            margin-right: var(--sidebar-width);
-        }
-        [dir="rtl"] .activity-item i {
-            margin-left: auto;
+        /* RTL */
+        [dir="rtl"] .notification-toast {
+            right: auto;
+            left: 24px;
         }
         [dir="rtl"] .floating-ai-assistant {
             right: auto;
@@ -662,74 +718,73 @@
             right: auto;
             left: 30px;
         }
-        @media (max-width: 768px) {
-            [dir="rtl"] .chatbot-modal {
-                left: 20px;
-                right: 20px;
-            }
+        [dir="rtl"] .close-iframe {
+            right: auto;
+            left: 15px;
         }
     </style>
 </head>
 <body>
 
-<!-- FULL PAGE LOADING ANIMATION 0% -> 100% -->
+<!-- Loading Screen -->
 <div class="loading-overlay" id="loadingOverlay">
-    <div class="netflix-loader">
+    <div class="futuristic-loader">
         <div class="loader-logo">SADWAP</div>
         <div class="progress-container">
             <div class="progress-bar-fill" id="loadingProgressBar"></div>
         </div>
         <div class="loading-percent" id="loadingPercentText">0%</div>
-        <div class="loading-text">Initializing StreamOps Platform...</div>
     </div>
 </div>
 
 <div class="dashboard-container">
-    <!-- SIDEBAR - Netflix Dark (Chatbot removed from menu) -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header"
-            <h2>SADWAP Nexus</h2>
+    <!-- Draggable Circular Radial Menu -->
+    <div class="circular-menu-container" id="circularMenuContainer">
+        <div class="drag-handle" id="dragHandle"><i class="fas fa-arrows-alt"></i></div>
+        <div class="menu-center-btn" id="menuCenterBtn">
+            <i class="fas fa-compass"></i>
+            <span id="menuLabel">MENU</span>
         </div>
-        <ul class="sidebar-menu" id="sidebarMenu">
-            <li class="active"><a href="#" data-url="#" data-key="dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
-            <li><a href="https://ghostkmr.github.io/2026/inventory.html" data-key="inventory"><i class="fas fa-boxes"></i> <span>Inventory</span></a></li>
-            <li><a href="https://ghostkmr.github.io/2026/expiration tracker.html" data-key="expiry"><i class="fas fa-calendar-times"></i> <span>Expiry Tracker</span></a></li>
-            <li><a href="https://ghostkmr.github.io/2026/salestracker.html" data-key="sales"><i class="fas fa-chart-line"></i> <span>Sales</span></a></li>
-            <li><a href="https://ghostkmr.github.io/2026/transferrecords.html" data-key="transfers"><i class="fas fa-exchange-alt"></i> <span>Transfers records</span></a></li>
-            <li><a href="https://ghostkmr.github.io/2026/training calender.html" data-key="training calender"><i class="fas fa-file-alt"></i> <span>Training Calender</span></a></li>
-                 <li><a href="https://ghostkmr.github.io/2026/pannel.html" data-key="Admin Book"><i class="fas fa-boxes"></i> <span>Admin Book</span></a></li>
-            <!-- CHATBOT LINK REMOVED from menu -->
-        </ul>
-    </aside> 
+        <div class="circular-menu" id="circularMenu"></div>
+    </div>
 
-    <!-- MAIN CONTENT -->
+    <!-- IFrame Container for Same-Window Navigation -->
+    <div class="iframe-container" id="iframeContainer">
+        <div class="close-iframe" id="closeIframeBtn">
+            <i class="fas fa-times"></i>
+        </div>
+        <iframe id="pageIframe" src="about:blank"></iframe>
+    </div>
+
+    <!-- Main Content -->
     <div class="main-content" id="mainContent">
         <div class="top-navbar">
-            <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
             <div class="nav-actions">
-                <button class="theme-toggle-btn" id="themeToggleBtn">
-                    <i class="fas fa-moon"></i> <span id="themeText">Dark</span>
-                </button>
                 <div class="lang-switch">
                     <button class="lang-btn active" id="langEn">EN</button>
                     <button class="lang-btn" id="langAr">AR</button>
                 </div>
-                <div class="user-badge"><i class="fas fa-user-circle"></i> <span id="userName">StreamOps Admin</span></div>
-                <button class="refresh-btn" id="refreshDataBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+                <div class="user-badge"><i class="fas fa-user-circle"></i> <span id="userName">SADWAP Admin</span></div>
+                <button class="refresh-btn" id="refreshDataBtn"><i class="fas fa-sync-alt"></i> <span id="refreshText">Refresh</span></button>
             </div>
         </div>
 
         <div class="dashboard-inner" id="dashboardInner">
-            <!-- Hero Banner - Netflix Style Video -->
-            <div class="hero-banner">
-                <div class="hero-video-wrapper">
-                    <video id="promoVideo" autoplay loop muted playsinline>
-                        <source src="https://ghostkmr.github.io/2026/welcomevid.mp4" type="video/mp4">
-                    </video>
-                    <div class="hero-overlay">
-                        <div class="hero-title">SADWAP StreamOps</div>
-                        <div class="hero-subtitle">Enterprise Operations · Real-time Intelligence</div>
-                        <div class="hero-badge"><i class="fas fa-play"></i> Now Streaming</div>
+            <div class="hero-futuristic">
+                <div class="hero-title" id="heroTitle">SADWAP StreamOps</div>
+                <div class="hero-subtitle" id="heroSubtitle">Enterprise Operations · Real-time Intelligence · AI Powered</div>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="hero-stat-value" id="activeUsers">1</div>
+                        <div class="hero-stat-label" id="activeUsersLabel">Active Users</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value" id="systemHealth">99.9%</div>
+                        <div class="hero-stat-label" id="systemHealthLabel">System Health</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value" id="processedOps">0.1</div>
+                        <div class="hero-stat-label" id="processedOpsLabel">Processed Ops</div>
                     </div>
                 </div>
             </div>
@@ -737,7 +792,7 @@
             <div class="welcome-header">
                 <div class="greeting">
                     <h1 id="welcomeMsg">Welcome back, Operations Director</h1>
-                    <p id="branchInfo" style="color:var(--netflix-gray); font-size:0.8rem;">Main Hub · Live Metrics</p>
+                    <p id="branchInfo" style="color:var(--text-muted); font-size:0.75rem;">Main Hub · Real-time Metrics</p>
                 </div>
                 <div class="info-badge">
                     <span id="currentDate"></span> 
@@ -745,13 +800,11 @@
                 </div>
             </div>
 
-            <!-- Netflix-Style Quick Access Modules -->
             <div class="section-title">
                 <i class="fas fa-th-large"></i> <span data-key="quickAccess">Quick Access Modules</span>
             </div>
             <div class="modules-grid-enhanced" id="modulesGrid"></div>
 
-            <!-- Recent Activity - Netflix Timeline -->
             <div class="section-title">
                 <i class="fas fa-history"></i> <span data-key="recentActivity">Recent Activity</span>
             </div>
@@ -762,24 +815,30 @@
     </div>
 </div>
 
-<!-- FLOATING AI ASSISTANT BUTTON (FAVICON STYLE) -->
+<!-- Floating AI Assistant -->
 <div class="floating-ai-assistant" id="floatingAiBtn">
     <i class="fas fa-robot"></i>
 </div>
 
-<!-- CHATBOT IFRAME MODAL (Separate page for chatbot) -->
+<!-- Chatbot Modal -->
 <div class="chatbot-modal" id="chatbotModal">
     <div class="chatbot-header">
         <h4><i class="fas fa-microchip"></i> SADWAP AI Assistant</h4>
         <button id="closeChatbotBtn"><i class="fas fa-times"></i></button>
     </div>
-    <iframe class="chatbot-iframe" id="chatbotIframe" src="about:blank" title="AI Assistant"></iframe>
+    <iframe class="chatbot-iframe" id="chatbotIframe" srcdoc='
+        <!DOCTYPE html>
+        <html>
+        <head><style>body{font-family:sans-serif;background:#0f111a;color:#fff;display:flex;align-items:center;justify-content:center;height:100%;margin:0;padding:20px;text-align:center;} .msg{background:linear-gradient(135deg,#00d4ff,#7b2cbf);padding:20px;border-radius:20px;} h3{margin:0 0 10px;}</style></head>
+        <body><div class="msg"><h3>🤖 AI Assistant</h3><p>Ready to assist with enterprise operations</p></div></body>
+        </html>
+    '></iframe>
 </div>
 
 <div id="toastMessage" class="notification-toast"><i class="fas fa-check-circle"></i> <span></span></div>
 
 <script>
-    // ========== LOADING ANIMATION 0% to 100% ==========
+    // Loading Animation
     let progress = 0;
     const progressBar = document.getElementById('loadingProgressBar');
     const percentText = document.getElementById('loadingPercentText');
@@ -789,15 +848,11 @@
         const interval = setInterval(() => {
             if (progress >= 100) {
                 clearInterval(interval);
-                // Fade out loading screen after reaching 100%
                 setTimeout(() => {
                     loadingOverlay.classList.add('fade-out');
-                    setTimeout(() => {
-                        loadingOverlay.style.display = 'none';
-                    }, 800);
+                    setTimeout(() => loadingOverlay.style.display = 'none', 800);
                 }, 200);
             } else {
-                // Increment progress (faster at start, slower near end for realism)
                 let increment = progress < 30 ? 3 : (progress < 70 ? 2 : 1);
                 progress = Math.min(progress + increment, 100);
                 progressBar.style.width = progress + '%';
@@ -807,134 +862,382 @@
     }
     simulateLoading();
 
-    // ---------- TRANSLATIONS ----------
+    // IFrame Navigation Handler
+    const iframeContainer = document.getElementById('iframeContainer');
+    const pageIframe = document.getElementById('pageIframe');
+    const closeIframeBtn = document.getElementById('closeIframeBtn');
+    const mainContentDiv = document.getElementById('dashboardInner');
+    
+    function navigateTo(url) {
+        if (!url || url === '#' || url === 'javascript:void(0)') {
+            showToast('Already on Dashboard');
+            return;
+        }
+        
+        // Show loading toast
+        showToast('Loading page...', 'info');
+        
+        // Set iframe source
+        pageIframe.src = url;
+        
+        // Hide main content, show iframe container
+        mainContentDiv.style.display = 'none';
+        iframeContainer.classList.add('active');
+        
+        // Close circular menu if open
+        if (menuOpen) {
+            toggleMenu();
+        }
+        
+        addActivityLog(`📄 Navigated to: ${url.split('/').pop()}`);
+    }
+    
+    function closeIframe() {
+        mainContentDiv.style.display = 'block';
+        iframeContainer.classList.remove('active');
+        pageIframe.src = 'about:blank';
+        addActivityLog(`🏠 Returned to Dashboard`);
+    }
+    
+    closeIframeBtn.addEventListener('click', closeIframe);
+    
+    // Also handle browser back button
+    window.addEventListener('popstate', () => {
+        if (iframeContainer.classList.contains('active')) {
+            closeIframe();
+        }
+    });
+
+    // Menu Items Configuration
+    const menuItems = [
+        { icon: "fas fa-tachometer-alt", name: "Dashboard", nameAr: "الرئيسية", url: "#", key: "dashboard" },
+        { icon: "fas fa-boxes", name: "Inventory", nameAr: "المخزون", url: "https://ghostkmr.github.io/2026/inventory.html", key: "inventory" },
+        { icon: "fas fa-calendar-times", name: "Expiry", nameAr: "الصلاحية", url: "https://ghostkmr.github.io/2026/expiration%20tracker.html", key: "expiry" },
+        { icon: "fas fa-chart-line", name: "Sales", nameAr: "المبيعات", url: "https://ghostkmr.github.io/2026/salestracker.html", key: "sales" },
+        { icon: "fas fa-exchange-alt", name: "Transfers", nameAr: "التحويلات", url: "https://ghostkmr.github.io/2026/transferrecords.html", key: "transfers" },
+        { icon: "fas fa-calendar-alt", name: "Training", nameAr: "التدريب", url: "https://ghostkmr.github.io/2026/training%20calender.html", key: "training" },
+        { icon: "fas fa-user-shield", name: "Admin", nameAr: "الإدارة", url: "https://ghostkmr.github.io/2026/pannel.html", key: "admin" }
+    ];
+
+    // Position menu items in a circle
+    function positionMenuItems() {
+        const container = document.getElementById('circularMenu');
+        const itemsCount = menuItems.length;
+        const radius = 130;
+        const angleStep = (Math.PI * 2) / itemsCount;
+        
+        container.innerHTML = '';
+        menuItems.forEach((item, index) => {
+            const angle = angleStep * index - Math.PI / 2;
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+            
+            const menuItem = document.createElement('div');
+            menuItem.className = 'menu-item';
+            menuItem.setAttribute('data-url', item.url);
+            menuItem.setAttribute('data-key', item.key);
+            menuItem.style.transform = `translate(${x}px, ${y}px)`;
+            menuItem.innerHTML = `
+                <i class="${item.icon}"></i>
+                <span class="item-label" data-name="${item.name}" data-name-ar="${item.nameAr}">${item.name}</span>
+            `;
+            menuItem.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (item.url === '#') {
+                    showToast('Dashboard is the current view');
+                    if (iframeContainer.classList.contains('active')) {
+                        closeIframe();
+                    }
+                } else {
+                    navigateTo(item.url);
+                }
+                addActivityLog(`🔘 Navigated to ${currentLang === 'ar' ? item.nameAr : item.name}`);
+                document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+                menuItem.classList.add('active');
+                
+                // Close menu after clicking
+                if (menuOpen) {
+                    toggleMenu();
+                }
+            });
+            container.appendChild(menuItem);
+        });
+    }
+
+    // ========== DRAG FUNCTIONALITY ==========
+    const dragContainer = document.getElementById('circularMenuContainer');
+    const dragHandle = document.getElementById('dragHandle');
+    let isDragging = false;
+    let startX, startY, currentLeft, currentTop;
+    
+    function loadSavedPosition() {
+        const savedLeft = localStorage.getItem('circularMenuLeft');
+        const savedTop = localStorage.getItem('circularMenuTop');
+        if (savedLeft && savedTop) {
+            dragContainer.style.left = savedLeft + 'px';
+            dragContainer.style.top = savedTop + 'px';
+            dragContainer.style.transform = 'none';
+        } else {
+            const windowHeight = window.innerHeight;
+            const containerHeight = 80;
+            dragContainer.style.left = '30px';
+            dragContainer.style.top = (windowHeight / 2 - containerHeight / 2) + 'px';
+            dragContainer.style.transform = 'none';
+        }
+    }
+    
+    function savePosition(left, top) {
+        localStorage.setItem('circularMenuLeft', left);
+        localStorage.setItem('circularMenuTop', top);
+    }
+    
+    function startDrag(e) {
+        e.preventDefault();
+        isDragging = true;
+        dragContainer.classList.add('dragging');
+        
+        const rect = dragContainer.getBoundingClientRect();
+        currentLeft = rect.left;
+        currentTop = rect.top;
+        
+        if (e.type === 'mousedown') {
+            startX = e.clientX;
+            startY = e.clientY;
+        } else if (e.type === 'touchstart') {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        }
+        
+        document.addEventListener('mousemove', onDrag);
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('touchmove', onDrag);
+        document.addEventListener('touchend', stopDrag);
+    }
+    
+    function onDrag(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        
+        let clientX, clientY;
+        if (e.type === 'mousemove') {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        } else if (e.type === 'touchmove') {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            return;
+        }
+        
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+        
+        let newLeft = currentLeft + dx;
+        let newTop = currentTop + dy;
+        
+        const containerWidth = dragContainer.offsetWidth;
+        const containerHeight = dragContainer.offsetHeight;
+        const maxLeft = window.innerWidth - containerWidth - 10;
+        const maxTop = window.innerHeight - containerHeight - 10;
+        
+        newLeft = Math.max(10, Math.min(newLeft, maxLeft));
+        newTop = Math.max(10, Math.min(newTop, maxTop));
+        
+        dragContainer.style.left = newLeft + 'px';
+        dragContainer.style.top = newTop + 'px';
+        dragContainer.style.transform = 'none';
+    }
+    
+    function stopDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+        dragContainer.classList.remove('dragging');
+        
+        const left = parseInt(dragContainer.style.left);
+        const top = parseInt(dragContainer.style.top);
+        if (!isNaN(left) && !isNaN(top)) {
+            savePosition(left, top);
+        }
+        
+        document.removeEventListener('mousemove', onDrag);
+        document.removeEventListener('mouseup', stopDrag);
+        document.removeEventListener('touchmove', onDrag);
+        document.removeEventListener('touchend', stopDrag);
+    }
+    
+    dragHandle.addEventListener('mousedown', startDrag);
+    dragHandle.addEventListener('touchstart', startDrag);
+    
+    const menuCenterBtn = document.getElementById('menuCenterBtn');
+    menuCenterBtn.addEventListener('mousedown', (e) => e.stopPropagation());
+    menuCenterBtn.addEventListener('touchstart', (e) => e.stopPropagation());
+    
+    window.addEventListener('resize', () => {
+        const left = parseInt(dragContainer.style.left);
+        const top = parseInt(dragContainer.style.top);
+        const containerWidth = dragContainer.offsetWidth;
+        const containerHeight = dragContainer.offsetHeight;
+        const maxLeft = window.innerWidth - containerWidth - 10;
+        const maxTop = window.innerHeight - containerHeight - 10;
+        
+        let newLeft = Math.min(left, maxLeft);
+        let newTop = Math.min(top, maxTop);
+        newLeft = Math.max(10, newLeft);
+        newTop = Math.max(10, newTop);
+        
+        if (newLeft !== left || newTop !== top) {
+            dragContainer.style.left = newLeft + 'px';
+            dragContainer.style.top = newTop + 'px';
+            savePosition(newLeft, newTop);
+        }
+    });
+    
+    // Toggle Circular Menu
+    let menuOpen = false;
+    const circularMenu = document.getElementById('circularMenu');
+    
+    function toggleMenu() {
+        menuOpen = !menuOpen;
+        if (menuOpen) {
+            circularMenu.classList.add('active');
+            document.getElementById('menuLabel').innerText = currentLang === 'ar' ? 'إغلاق' : 'CLOSE';
+        } else {
+            circularMenu.classList.remove('active');
+            document.getElementById('menuLabel').innerText = currentLang === 'ar' ? 'القائمة' : 'MENU';
+        }
+    }
+    
+    menuCenterBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMenu();
+    });
+    
+    document.addEventListener('click', (e) => {
+        if (menuOpen && !circularMenu.contains(e.target) && !menuCenterBtn.contains(e.target) && !dragHandle.contains(e.target)) {
+            toggleMenu();
+        }
+    });
+
+    // Translations
     const translations = {
-        en: { 
-            dashboard:"Dashboard", inventory:"Inventory", expiry:"Expiry Tracker", sales:"Sales", transfers:"Transfers", 
-            reports:"Reports", audit:"Audit Tools", admin:"Admin Panel", 
-            quickAccess:"Quick Access Modules", recentActivity:"Recent Activity", 
-            welcomeMsg:"Welcome back, Operations Director", branchInfo:"Main Hub · Live Metrics" 
+        en: {
+            dashboard: "Dashboard", inventory: "Inventory", expiry: "Expiry Tracker", sales: "Sales",
+            transfers: "Transfers", training: "Training", admin: "Admin Panel",
+            quickAccess: "Quick Access Modules", recentActivity: "Recent Activity",
+            welcomeMsg: "Welcome back, Operations Director", branchInfo: "Main Hub · Real-time Metrics",
+            refreshText: "Refresh", activeUsersLabel: "Active Users", systemHealthLabel: "System Health",
+            processedOpsLabel: "Processed Ops", heroTitle: "SADWAP StreamOps",
+            heroSubtitle: "Enterprise Operations · Real-time Intelligence · AI Powered"
         },
-        ar: { 
-            dashboard:"لوحة القيادة", inventory:"المخزون", expiry:"متتبع الصلاحية", sales:"المبيعات", 
-            transfers:"التحويلات", reports:"التقارير", audit:"أدوات التدقيق", admin:"لوحة الإدارة", 
-            quickAccess:"الوصول السريع", recentActivity:"النشاط الأخير",
-            welcomeMsg:"مرحباً بعودتك، مدير العمليات", branchInfo:"المركز الرئيسي · المقاييس الحية" 
+        ar: {
+            dashboard: "لوحة القيادة", inventory: "المخزون", expiry: "متتبع الصلاحية", sales: "المبيعات",
+            transfers: "التحويلات", training: "التدريب", admin: "لوحة الإدارة",
+            quickAccess: "الوصول السريع", recentActivity: "النشاط الأخير",
+            welcomeMsg: "مرحباً بعودتك، مدير العمليات", branchInfo: "المركز الرئيسي · المقاييس الحية",
+            refreshText: "تحديث", activeUsersLabel: "المستخدمين النشطين", systemHealthLabel: "صحة النظام",
+            processedOpsLabel: "العمليات المعالجة", heroTitle: "سادواب ستريم أوبس",
+            heroSubtitle: "العمليات المؤسسية · ذكاء فوري · مدعوم بالذكاء الاصطناعي"
         }
     };
-    let currentLang = "en", isDarkMode = true;
-    
-    function showToast(msg, type="success") { 
-        let t=document.getElementById("toastMessage"); 
-        t.querySelector("span").innerText=msg; 
-        t.style.display="flex"; 
-        t.style.borderLeftColor=type==="error"?"#e50914":"#e50914"; 
-        setTimeout(()=>t.style.display="none",2500); 
+
+    let currentLang = "en";
+
+    function showToast(msg, type = "success") {
+        let t = document.getElementById("toastMessage");
+        t.querySelector("span").innerText = msg;
+        t.style.display = "flex";
+        setTimeout(() => t.style.display = "none", 2500);
     }
-    
-    function applyTheme() { 
-        if(!isDarkMode){
-            document.body.style.background = "#f5f5f5";
-            document.querySelector(".main-content").style.background = "#f5f5f5";
-        } else {
-            document.body.style.background = "var(--netflix-black)";
-            document.querySelector(".main-content").style.background = "var(--netflix-dark)";
-        }
-        localStorage.setItem('streamops_theme',isDarkMode?'dark':'light'); 
-        document.getElementById('themeText').innerHTML=isDarkMode?'<i class="fas fa-moon"></i> Dark':'<i class="fas fa-sun"></i> Light'; 
-    }
-    function toggleTheme(){ isDarkMode=!isDarkMode; applyTheme(); showToast(isDarkMode?"Netflix Dark mode restored":"Light mode (classic)"); }
-    
-    // --- Activity Feed Management ---
+
     function addActivityLog(message) {
         const container = document.getElementById("activityList");
         const div = document.createElement("div");
         div.className = "activity-item";
         const now = new Date();
-        const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-        div.innerHTML = `<i class="fas fa-bell"></i> <span>${message}</span><small style="margin-left:auto; color:#808080;">${timeStr}</small>`;
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        div.innerHTML = `<i class="fas fa-bell"></i> <span>${message}</span><small style="margin-left:auto; color:#6b7280;">${timeStr}</small>`;
         container.prepend(div);
-        if(container.children.length > 15) container.removeChild(container.lastChild);
+        if (container.children.length > 15) container.removeChild(container.lastChild);
         
         let logs = JSON.parse(localStorage.getItem('activity_logs_stream')) || [];
         logs.unshift({ message, time: timeStr });
-        if(logs.length > 40) logs.pop();
+        if (logs.length > 40) logs.pop();
         localStorage.setItem('activity_logs_stream', JSON.stringify(logs));
     }
-    
+
     function loadActivityLogs() {
         let logs = JSON.parse(localStorage.getItem('activity_logs_stream')) || [];
         const container = document.getElementById("activityList");
         container.innerHTML = "";
-        if(logs.length === 0){
-            container.innerHTML = `<div class="activity-item"><i class="fas fa-check-circle"></i> <span>Welcome to StreamOps. Your operations timeline starts here.</span></div>`;
+        if (logs.length === 0) {
+            container.innerHTML = `<div class="activity-item"><i class="fas fa-check-circle"></i> <span>Welcome to SADWAP StreamOps. Drag the circular menu anywhere!</span></div>`;
             return;
         }
-        logs.slice(0,15).forEach(log => {
+        logs.slice(0, 15).forEach(log => {
             const div = document.createElement("div");
             div.className = "activity-item";
-            div.innerHTML = `<i class="fas fa-history"></i> <span>${log.message}</span><small style="margin-left:auto; color:#808080;">${log.time}</small>`;
+            div.innerHTML = `<i class="fas fa-history"></i> <span>${log.message}</span><small style="margin-left:auto; color:#6b7280;">${log.time}</small>`;
             container.appendChild(div);
         });
     }
-    
+
     function refreshAllData() {
         addActivityLog("🔄 Manual data sync completed · All metrics updated");
-        showToast("Dashboard refreshed successfully", "success");
+        showToast("Dashboard refreshed successfully");
     }
-    
-    // --- Language & RTL ---
+
     function setLanguage(lang) {
         currentLang = lang;
         const t = translations[lang];
+        
         document.getElementById("welcomeMsg").innerText = t.welcomeMsg;
         document.getElementById("branchInfo").innerText = t.branchInfo;
-        document.querySelectorAll("[data-key]").forEach(el => { 
-            let k=el.getAttribute("data-key"); 
-            if(t[k]) el.innerText=t[k]; 
+        document.getElementById("refreshText").innerText = t.refreshText;
+        document.getElementById("heroTitle").innerText = t.heroTitle;
+        document.getElementById("heroSubtitle").innerText = t.heroSubtitle;
+        document.getElementById("activeUsersLabel").innerText = t.activeUsersLabel;
+        document.getElementById("systemHealthLabel").innerText = t.systemHealthLabel;
+        document.getElementById("processedOpsLabel").innerText = t.processedOpsLabel;
+        
+        document.querySelectorAll("[data-key]").forEach(el => {
+            let k = el.getAttribute("data-key");
+            if (t[k]) el.innerText = t[k];
         });
-        const menuMap = { dashboard:"dashboard", inventory:"inventory", expiry:"expiry", sales:"sales", transfers:"transfers", 
-                         reports:"reports", audit:"audit", admin:"admin" };
-        document.querySelectorAll("#sidebarMenu li a").forEach(a => { 
-            let key=a.getAttribute("data-key"); 
-            if(key && menuMap[key]) a.querySelector("span").innerText = t[menuMap[key]]; 
+        
+        document.querySelectorAll('.menu-item .item-label').forEach(label => {
+            const enName = label.getAttribute('data-name');
+            const arName = label.getAttribute('data-name-ar');
+            label.innerText = lang === 'ar' ? arName : enName;
         });
-        if(lang === "ar") { 
-            document.documentElement.setAttribute("dir","rtl"); 
-            document.body.style.textAlign="right"; 
-            document.querySelector(".dashboard-container").style.flexDirection="row-reverse";
-            if(!document.getElementById("sidebar").classList.contains("collapsed")){
-                document.getElementById("mainContent").style.marginRight = "260px";
-                document.getElementById("mainContent").style.marginLeft = "0";
-            }
-        } else { 
-            document.documentElement.setAttribute("dir","ltr"); 
-            document.body.style.textAlign="left"; 
-            document.querySelector(".dashboard-container").style.flexDirection="row";
-            if(!document.getElementById("sidebar").classList.contains("collapsed")){
-                document.getElementById("mainContent").style.marginLeft = "260px";
-                document.getElementById("mainContent").style.marginRight = "0";
-            }
+        
+        document.getElementById("menuLabel").innerText = menuOpen ? (lang === 'ar' ? 'إغلاق' : 'CLOSE') : (lang === 'ar' ? 'القائمة' : 'MENU');
+        
+        if (lang === "ar") {
+            document.documentElement.setAttribute("dir", "rtl");
+            document.body.style.textAlign = "right";
+        } else {
+            document.documentElement.setAttribute("dir", "ltr");
+            document.body.style.textAlign = "left";
         }
         buildQuickModules();
     }
-    
-    // --- Netflix-Style Quick Access Modules ---
-    function buildQuickModules(){
+
+    function buildQuickModules() {
         const modules = [
-            { name: "Expiry Tracker", nameAr: "متتبع انتهاء الصلاحية", icon: "fas fa-calendar-times", key: "expiry", color: "#e50914", description: "Monitor expiring products", descriptionAr: "مراقبة المنتجات المنتهية" },
-            { name: "Sales Dashboard", nameAr: "لوحة المبيعات", icon: "fas fa-chart-line", key: "sales", color: "#e50914", description: "Track daily revenue", descriptionAr: "تتبع الإيرادات اليومية" },
-            { name: "Admin Panel", nameAr: "لوحة الإدارة", icon: "fas fa-user-cog", key: "admin", color: "#e50914", description: "System configuration", descriptionAr: "تكوين النظام" },
-            { name: "Inventory Mgmt", nameAr: "إدارة المخزون", icon: "fas fa-boxes", key: "inventory", color: "#e50914", description: "Stock & supplies", descriptionAr: "المخزون والمستلزمات" },
-            { name: "Transfers", nameAr: "التحويلات", icon: "fas fa-exchange-alt", key: "transfers", color: "#e50914", description: "Stock movements", descriptionAr: "حركات المخزون" },
-            { name: "Reports", nameAr: "التقارير", icon: "fas fa-file-alt", key: "reports", color: "#e50914", description: "Voids & refunds", descriptionAr: "الإلغاءات والمبالغ" },
-            { name: "Audit Tools", nameAr: "أدوات التدقيق", icon: "fas fa-shield-alt", key: "audit", color: "#e50914", description: "Compliance checks", descriptionAr: "فحوصات الامتثال" }
+            { name: "Expiry Tracker", nameAr: "متتبع الصلاحية", icon: "fas fa-calendar-times", color: "#00d4ff", description: "Monitor expiring products", descriptionAr: "مراقبة المنتجات المنتهية", url: "https://ghostkmr.github.io/2026/expiration%20tracker.html" },
+            { name: "Sales Dashboard", nameAr: "المبيعات", icon: "fas fa-chart-line", color: "#7b2cbf", description: "Track daily revenue", descriptionAr: "تتبع الإيرادات", url: "https://ghostkmr.github.io/2026/salestracker.html" },
+            { name: "Inventory Mgmt", nameAr: "المخزون", icon: "fas fa-boxes", color: "#00d4ff", description: "Stock & supplies", descriptionAr: "المخزون والمستلزمات", url: "https://ghostkmr.github.io/2026/inventory.html" },
+            { name: "Transfers", nameAr: "التحويلات", icon: "fas fa-exchange-alt", color: "#7b2cbf", description: "Stock movements", descriptionAr: "حركات المخزون", url: "https://ghostkmr.github.io/2026/transferrecords.html" },
+            { name: "Training", nameAr: "التدريب", icon: "fas fa-calendar-alt", color: "#00d4ff", description: "Staff training", descriptionAr: "تدريب الموظفين", url: "https://ghostkmr.github.io/2026/training%20calender.html" },
+            { name: "Admin Panel", nameAr: "الإدارة", icon: "fas fa-user-shield", color: "#7b2cbf", description: "System config", descriptionAr: "إعدادات النظام", url: "https://ghostkmr.github.io/2026/pannel.html" }
         ];
+        
         const grid = document.getElementById("modulesGrid");
         grid.innerHTML = "";
         modules.forEach(mod => {
             const card = document.createElement("div");
-            card.className = `module-card`;
+            card.className = "module-card";
             const displayName = currentLang === 'en' ? mod.name : mod.nameAr;
             const displayDesc = currentLang === 'en' ? mod.description : mod.descriptionAr;
             card.innerHTML = `
@@ -943,55 +1246,18 @@
                 <p>${displayDesc}</p>
                 <div class="module-badge"><i class="fas fa-arrow-right"></i> Launch</div>
             `;
-            card.addEventListener("click", function(e) {
-                addActivityLog(`🎬 Launched ${displayName} module`);
-                showToast(`Opening ${displayName}...`, "success");
-                setTimeout(() => {
-                    showToast(`${displayName} ready for action`, "success");
-                }, 500);
+            card.addEventListener("click", () => {
+                addActivityLog(`🚀 Launched ${displayName} module`);
+                navigateTo(mod.url);
             });
             grid.appendChild(card);
         });
     }
-    
-    // --- Sidebar Toggle ---
-    const sidebar = document.getElementById("sidebar"), mainC = document.getElementById("mainContent"), menuToggle = document.getElementById("menuToggle");
-    function toggleSidebar() { 
-        sidebar.classList.toggle("collapsed"); 
-        mainC.classList.toggle("full-width"); 
-        if(currentLang === "ar") {
-            if(sidebar.classList.contains("collapsed")) mainC.style.marginRight = "0";
-            else mainC.style.marginRight = "260px";
-            mainC.style.marginLeft = "0";
-        } else {
-            if(sidebar.classList.contains("collapsed")) mainC.style.marginLeft = "0";
-            else mainC.style.marginLeft = "260px";
-            mainC.style.marginRight = "0";
-        }
-    }
-    menuToggle.addEventListener("click", toggleSidebar);
-    if(window.innerWidth<768) setTimeout(toggleSidebar, 100);
-    
-    // --- Floating AI Assistant & Chatbot Modal ---
+
+    // Chatbot
     const floatingBtn = document.getElementById('floatingAiBtn');
     const chatbotModal = document.getElementById('chatbotModal');
     const closeChatbotBtn = document.getElementById('closeChatbotBtn');
-    const chatbotIframe = document.getElementById('chatbotIframe');
-    
-    // Set the iframe source to a separate page where you will code chatbot functionality
-    // You can replace this URL with your actual chatbot page
-    chatbotIframe.src = "https://ghostkmr.github.io/2026/chatbotformobile.html"; // Placeholder - replace with your chatbot page URL
-    // Example: chatbotIframe.src = "https://your-domain.com/chatbot.html";
-    
-    // For demo purposes, we'll create a simple inline message to indicate where to put the chatbot code
-    // But we'll leave the iframe blank with a notice - user will replace with actual chatbot page
-    chatbotIframe.srcdoc = `
-        <!DOCTYPE html>
-        <html>
-        <head><style>body{font-family:sans-serif;background:#141414;color:#fff;display:flex;align-items:center;justify-content:center;height:100%;margin:0;padding:20px;text-align:center;} .msg{background:#e50914;padding:20px;border-radius:12px;} h3{margin:0 0 10px;} p{font-size:14px;color:#ccc;}</style></head>
-        <body><div class="msg"><h3>🤖 AI Assistant Ready</h3><p>Replace this iframe 'srcdoc' with your own chatbot page URL.<br><br>Set <code>chatbotIframe.src = "https://ghostkmr.github.io/2026/chatbotformobile.html"</code> in the JavaScript.</p></div></body>
-        </html>
-    `;
     
     function openChatbot() {
         chatbotModal.classList.add('open');
@@ -1002,56 +1268,67 @@
     }
     floatingBtn.addEventListener('click', openChatbot);
     closeChatbotBtn.addEventListener('click', closeChatbot);
-    // Close modal when clicking outside? Optional - but not needed for simplicity
-    
-    // --- Event Listeners ---
-    document.getElementById("themeToggleBtn").addEventListener("click", toggleTheme);
-    document.getElementById("langEn").addEventListener("click", ()=>{ 
-        document.getElementById("langEn").classList.add("active"); 
-        document.getElementById("langAr").classList.remove("active"); 
-        setLanguage("en"); 
+
+    // Event Listeners
+    document.getElementById("langEn").addEventListener("click", () => {
+        document.getElementById("langEn").classList.add("active");
+        document.getElementById("langAr").classList.remove("active");
+        setLanguage("en");
         showToast("English interface loaded");
     });
-    document.getElementById("langAr").addEventListener("click", ()=>{ 
-        document.getElementById("langAr").classList.add("active"); 
-        document.getElementById("langEn").classList.remove("active"); 
-        setLanguage("ar"); 
+    document.getElementById("langAr").addEventListener("click", () => {
+        document.getElementById("langAr").classList.add("active");
+        document.getElementById("langEn").classList.remove("active");
+        setLanguage("ar");
         showToast("تم تحويل الواجهة إلى العربية");
     });
     document.getElementById("refreshDataBtn").addEventListener("click", refreshAllData);
-    
-    // Video autoplay
-    const video = document.getElementById('promoVideo'); 
-    if(video){ 
-        video.muted = false; 
-        video.play().catch(()=>{ 
-            video.muted = true; 
-            video.play(); 
-        }); 
+
+    // Date/Time
+    function updateDateTime() {
+        const n = new Date();
+        document.getElementById("currentDate").innerHTML = n.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+        document.getElementById("currentTime").innerHTML = n.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
-    
-    // Date/Time updater
-    function updateDateTime() { 
-        const n=new Date(); 
-        document.getElementById("currentDate").innerHTML = n.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }); 
-        document.getElementById("currentTime").innerHTML = n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); 
-    }
-    setInterval(updateDateTime,1000); 
+    setInterval(updateDateTime, 1000);
     updateDateTime();
-    
-    // --- Initial Load ---
+
+    // Animate stats
+    let statsAnimated = false;
+    function animateStats() {
+        if (statsAnimated) return;
+        statsAnimated = true;
+        let start = 0;
+        const interval = setInterval(() => {
+            start += 50;
+            if (start >= 1247) {
+                document.getElementById("activeUsers").innerText = "1,247";
+                document.getElementById("systemHealth").innerText = "99.9%";
+                document.getElementById("processedOps").innerText = "45.2K";
+                clearInterval(interval);
+            } else {
+                document.getElementById("activeUsers").innerText = Math.floor(start);
+                document.getElementById("processedOps").innerText = Math.floor(start * 36.2);
+            }
+        }, 20);
+    }
+    setTimeout(animateStats, 1000);
+
+    // Initialize
+    positionMenuItems();
+    loadSavedPosition();
     setLanguage("en");
-    applyTheme();
     buildQuickModules();
     loadActivityLogs();
     
     let existingLogs = JSON.parse(localStorage.getItem('activity_logs_stream')) || [];
-    if(existingLogs.length === 0){
-        addActivityLog("🚀 StreamOps Dashboard initialized · Netflix-style UI active");
-        addActivityLog("📋 Quick access modules ready: Expiry, Sales, Inventory, Transfers");
-        addActivityLog("🤖 Floating AI Assistant ready - click the red robot button");
+    if (existingLogs.length === 0) {
+        addActivityLog("🚀 SADWAP StreamOps initialized · Drag the circular menu anywhere!");
+        addActivityLog("📋 Click the compass icon to open the radial menu");
+        addActivityLog("🎯 All pages open in the same window - use the X button to return");
+        addActivityLog("🤖 AI Assistant ready - click the floating robot button");
     } else {
-        addActivityLog("👋 Session started · Dashboard ready for operations");
+        addActivityLog("👋 Session started · Dashboard ready");
     }
 </script>
 </body>
