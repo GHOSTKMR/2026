@@ -775,7 +775,7 @@
                 <div class="hero-subtitle" id="heroSubtitle">Enterprise Operations · Real-time Intelligence · AI Powered</div>
                 <div class="hero-stats">
                     <div class="hero-stat">
-                        <div class="hero-stat-value" id="activeUsers">1</div>
+                        <div class="hero-stat-value" id="activeUsers">1,247</div>
                         <div class="hero-stat-label" id="activeUsersLabel">Active Users</div>
                     </div>
                     <div class="hero-stat">
@@ -783,7 +783,7 @@
                         <div class="hero-stat-label" id="systemHealthLabel">System Health</div>
                     </div>
                     <div class="hero-stat">
-                        <div class="hero-stat-value" id="processedOps">0.1</div>
+                        <div class="hero-stat-value" id="processedOps">45.2K</div>
                         <div class="hero-stat-label" id="processedOpsLabel">Processed Ops</div>
                     </div>
                 </div>
@@ -874,17 +874,11 @@
             return;
         }
         
-        // Show loading toast
         showToast('Loading page...', 'info');
-        
-        // Set iframe source
         pageIframe.src = url;
-        
-        // Hide main content, show iframe container
         mainContentDiv.style.display = 'none';
         iframeContainer.classList.add('active');
         
-        // Close circular menu if open
         if (menuOpen) {
             toggleMenu();
         }
@@ -901,14 +895,13 @@
     
     closeIframeBtn.addEventListener('click', closeIframe);
     
-    // Also handle browser back button
     window.addEventListener('popstate', () => {
         if (iframeContainer.classList.contains('active')) {
             closeIframe();
         }
     });
 
-    // Menu Items Configuration
+    // Menu Items Configuration (8 items including Municipality)
     const menuItems = [
         { icon: "fas fa-tachometer-alt", name: "Dashboard", nameAr: "الرئيسية", url: "#", key: "dashboard" },
         { icon: "fas fa-boxes", name: "Inventory", nameAr: "المخزون", url: "https://ghostkmr.github.io/2026/inventory.html", key: "inventory" },
@@ -916,8 +909,8 @@
         { icon: "fas fa-chart-line", name: "Sales", nameAr: "المبيعات", url: "https://ghostkmr.github.io/2026/salestracker.html", key: "sales" },
         { icon: "fas fa-exchange-alt", name: "Transfers", nameAr: "التحويلات", url: "https://ghostkmr.github.io/2026/transferrecords.html", key: "transfers" },
         { icon: "fas fa-calendar-alt", name: "Training", nameAr: "التدريب", url: "https://ghostkmr.github.io/2026/training%20calender.html", key: "training" },
+        { icon: "fas fa-id-card", name: "Municipality", nameAr: "البلدية", url: "https://ghostkmr.github.io/2026/muncipality.html", key: "municipality" },
         { icon: "fas fa-user-shield", name: "Admin", nameAr: "الإدارة", url: "https://ghostkmr.github.io/2026/pannel.html", key: "admin" }
-        { icon: "fas fa-user-shield", name: "Admin", nameAr: "الإدارة", url: "https://ghostkmr.github.io/2026/muncipality.html", key: "admin" }
     ];
 
     // Position menu items in a circle
@@ -957,7 +950,6 @@
                 document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
                 menuItem.classList.add('active');
                 
-                // Close menu after clicking
                 if (menuOpen) {
                     toggleMenu();
                 }
@@ -1124,7 +1116,7 @@
     const translations = {
         en: {
             dashboard: "Dashboard", inventory: "Inventory", expiry: "Expiry Tracker", sales: "Sales",
-            transfers: "Transfers", training: "Training", admin: "Admin Panel",
+            transfers: "Transfers", training: "Training", municipality: "Municipality", admin: "Admin Panel",
             quickAccess: "Quick Access Modules", recentActivity: "Recent Activity",
             welcomeMsg: "Welcome back, Operations Director", branchInfo: "Main Hub · Real-time Metrics",
             refreshText: "Refresh", activeUsersLabel: "Active Users", systemHealthLabel: "System Health",
@@ -1133,7 +1125,7 @@
         },
         ar: {
             dashboard: "لوحة القيادة", inventory: "المخزون", expiry: "متتبع الصلاحية", sales: "المبيعات",
-            transfers: "التحويلات", training: "التدريب", admin: "لوحة الإدارة",
+            transfers: "التحويلات", training: "التدريب", municipality: "البلدية", admin: "لوحة الإدارة",
             quickAccess: "الوصول السريع", recentActivity: "النشاط الأخير",
             welcomeMsg: "مرحباً بعودتك، مدير العمليات", branchInfo: "المركز الرئيسي · المقاييس الحية",
             refreshText: "تحديث", activeUsersLabel: "المستخدمين النشطين", systemHealthLabel: "صحة النظام",
@@ -1231,11 +1223,9 @@
             { name: "Inventory Mgmt", nameAr: "المخزون", icon: "fas fa-boxes", color: "#00d4ff", description: "Stock & supplies", descriptionAr: "المخزون والمستلزمات", url: "https://ghostkmr.github.io/2026/inventory.html" },
             { name: "Transfers", nameAr: "التحويلات", icon: "fas fa-exchange-alt", color: "#7b2cbf", description: "Stock movements", descriptionAr: "حركات المخزون", url: "https://ghostkmr.github.io/2026/transferrecords.html" },
             { name: "Training", nameAr: "التدريب", icon: "fas fa-calendar-alt", color: "#00d4ff", description: "Staff training", descriptionAr: "تدريب الموظفين", url: "https://ghostkmr.github.io/2026/training%20calender.html" },
-           
-        { name: "Admin Panel", nameAr: "الإدارة", icon: "fas fa-user-shield", color: "#7b2cbf", description: "System config", descriptionAr: "إعدادات النظام", url: "https://ghostkmr.github.io/2026/pannel.html" }
-        { name: "Admin Panel", nameAr: "الإدارة", icon: "fas fa-user-shield", color: "#7b2cbf", description: "System config", descriptionAr: "إعدادات النظام", url: "https://ghostkmr.github.io/2026/muncipality.html" }
+            { name: "Municipality", nameAr: "البلدية", icon: "fas fa-id-card", color: "#7b2cbf", description: "License management", descriptionAr: "إدارة الرخص", url: "https://ghostkmr.github.io/2026/muncipality.html" },
+            { name: "Admin Panel", nameAr: "الإدارة", icon: "fas fa-user-shield", color: "#00d4ff", description: "System config", descriptionAr: "إعدادات النظام", url: "https://ghostkmr.github.io/2026/pannel.html" }
         ];
-    
         
         const grid = document.getElementById("modulesGrid");
         grid.innerHTML = "";
@@ -1275,12 +1265,14 @@
 
     // Event Listeners
     document.getElementById("langEn").addEventListener("click", () => {
+        currentLang = "en";
         document.getElementById("langEn").classList.add("active");
         document.getElementById("langAr").classList.remove("active");
         setLanguage("en");
         showToast("English interface loaded");
     });
     document.getElementById("langAr").addEventListener("click", () => {
+        currentLang = "ar";
         document.getElementById("langAr").classList.add("active");
         document.getElementById("langEn").classList.remove("active");
         setLanguage("ar");
@@ -1329,6 +1321,7 @@
     if (existingLogs.length === 0) {
         addActivityLog("🚀 SADWAP StreamOps initialized · Drag the circular menu anywhere!");
         addActivityLog("📋 Click the compass icon to open the radial menu");
+        addActivityLog("🏛️ Municipality License Manager added to menu and modules");
         addActivityLog("🎯 All pages open in the same window - use the X button to return");
         addActivityLog("🤖 AI Assistant ready - click the floating robot button");
     } else {
