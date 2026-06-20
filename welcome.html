@@ -218,8 +218,10 @@
         .hero-title { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); background-clip: text; -webkit-background-clip: text; color: transparent; margin-bottom: 0.5rem; position: relative; z-index: 1; }
         .hero-subtitle { font-size: 1rem; color: var(--text-secondary); position: relative; z-index: 1; }
         .hero-stats { display: flex; gap: 2.5rem; margin-top: 1.5rem; position: relative; z-index: 1; flex-wrap: wrap; }
+        .hero-stat { text-align: center; }
         .hero-stat-value { font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); background-clip: text; -webkit-background-clip: text; color: transparent; }
         .hero-stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .hero-stat-sub { font-size: 0.6rem; color: var(--text-muted); opacity: 0.7; margin-top: 2px; }
         .welcome-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-glow); }
         .greeting h1 { font-size: 1.3rem; font-weight: 600; }
         .info-badge { display: flex; gap: 1.2rem; background: rgba(0, 212, 255, 0.08); padding: 0.5rem 1.2rem; border-radius: 40px; font-size: 0.8rem; border: 1px solid var(--border-glow); }
@@ -290,6 +292,8 @@
             .menu-item { width: 50px; height: 50px; }
             .chatbot-modal { width: calc(100vw - 40px); right: 20px; left: 20px; height: 65vh; }
             .dashboard-inner { padding: 1rem; }
+            .hero-stats { gap: 1.2rem; }
+            .hero-stat-value { font-size: 1.3rem; }
         }
         [dir="rtl"] .floating-ai-assistant { right: auto; left: 30px; }
         [dir="rtl"] .chatbot-modal { right: auto; left: 30px; }
@@ -331,9 +335,21 @@
                 <div class="hero-title">SADWAP StreamOps</div>
                 <div class="hero-subtitle">Enterprise Operations · Real-time Intelligence · AI Powered</div>
                 <div class="hero-stats">
-                    <div class="hero-stat"><div class="hero-stat-value" id="activeUsers">1</div><div class="hero-stat-label">Active Users</div></div>
-                    <div class="hero-stat"><div class="hero-stat-value" id="systemHealth">99.9%</div><div class="hero-stat-label">System Health</div></div>
-                    <div class="hero-stat"><div class="hero-stat-value" id="processedOps">1</div><div class="hero-stat-label">Processed Ops</div></div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value" id="activeUsers">5</div>
+                        <div class="hero-stat-label">Active Users</div>
+                        <div class="hero-stat-sub"><i class="fas fa-desktop"></i> PC: 1 · <i class="fas fa-mobile-alt"></i> Mobile: 3 · <i class="fas fa-tablet-alt"></i> Tablet: 1</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value" id="systemHealth">99.9%</div>
+                        <div class="hero-stat-label">System Health</div>
+                        <div class="hero-stat-sub"><i class="fas fa-check-circle" style="color:#10b981;"></i> All systems operational</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value" id="processedOps">10K+</div>
+                        <div class="hero-stat-label">Processed Ops</div>
+                        <div class="hero-stat-sub"><i class="fas fa-arrow-up" style="color:#00d4ff;"></i> 12.5% increase</div>
+                    </div>
                 </div>
             </div>
             <div class="welcome-header"><div class="greeting"><h1 id="welcomeMsg">Welcome back, Operations Director</h1><p style="color:var(--text-muted);">Main Hub · Real-time Metrics</p></div><div class="info-badge"><span id="currentDate"></span> <span id="currentTime"></span></div></div>
@@ -404,8 +420,7 @@
     }
     closeIframeBtn.addEventListener('click', closeIframe);
 
-    // ======================= RADIAL MENU - 13 ITEMS (FIXED ORDER) =======================
-    // Fixed: Void & Refunds (icon fa-undo-alt) and Video Gallery (fa-chalkboard) are now in correct positions
+    // ======================= RADIAL MENU - 13 ITEMS =======================
     const menuItems = [
         { icon: "fas fa-tachometer-alt", name: "Dashboard", nameAr: "الرئيسية", url: "#" },
         { icon: "fas fa-boxes", name: "Inventory", nameAr: "المخزون", url: "https://ghostkmr.github.io/2026/inventory.html" },
@@ -417,7 +432,7 @@
         { icon: "fas fa-user-shield", name: "Admin Panel", nameAr: "لوحة الإدارة", url: "https://ghostkmr.github.io/2026/pannel.html" },
         { icon: "fas fa-chart-pie", name: "Insights", nameAr: "التحليلات", url: "https://ghostkmr.github.io/2026/insights.html" },
         { icon: "fas fa-vr-cardboard", name: "RVR", nameAr: "الواقع الافتراضي", url: "https://ghostkmr.github.io/2026/srv.html" },
-        { icon: "fas fa-chalkboard", name: "Video Gallery", nameAr: "معرض الفيديو", url: "https://ghostkmr.github.io/2026/test.html" },
+        { icon: "fas fa-chalkboard", name: "Video Gallery", nameAr: "معرض الفيديو", url: "https://ghostkmr.github.io/2026/videogallery.html" },
         { icon: "fas fa-undo-alt", name: "Void & Refunds", nameAr: "الإلغاء والمستردات", url: "https://ghostkmr.github.io/2026/void%20and%20refunds.html" },
         { icon: "fas fa-graduation-cap", name: "Tutorials", nameAr: "الدروس", url: "https://ghostkmr.github.io/2026/tutorial.html" }
     ];
@@ -575,7 +590,7 @@
         showToast("تم تحويل الواجهة إلى العربية");
     };
 
-    // ======================= QUICK ACCESS MODULES (INCLUDES VOID & REFUNDS) =======================
+    // ======================= QUICK ACCESS MODULES =======================
     function buildQuickModules() {
         const modules = [
             { name: "Expiry Tracker", nameAr: "متتبع الصلاحية", icon: "fas fa-calendar-times", color: "#00d4ff", description: "Monitor expiring products", descriptionAr: "مراقبة المنتجات المنتهية", url: "https://ghostkmr.github.io/2026/expiration%20tracker.html" },
@@ -648,10 +663,8 @@
     function refreshAllData() {
         addActivityLog("🔄 Manual data sync completed");
         showToast("Dashboard refreshed");
-        let newUsers = Math.floor(1200 + Math.random() * 100);
-        document.getElementById("activeUsers").innerText = newUsers.toLocaleString();
-        document.getElementById("processedOps").innerText = (Math.floor(42 + Math.random() * 8)) + "." + Math.floor(Math.random() * 9) + "K";
-        addActivityLog("📊 Statistics updated: Active users " + newUsers);
+        // Keep stats fixed as requested
+        addActivityLog("📊 Statistics: 5 active users (1 PC, 3 Mobile, 1 Tablet), 99.9% health, 10K+ ops");
     }
     
     document.getElementById("refreshDataBtn").addEventListener("click", refreshAllData);
@@ -680,27 +693,6 @@
     setInterval(updateDateTime, 1000);
     updateDateTime();
 
-    // ======================= ANIMATED STATS =======================
-    let statsAnimated = false;
-    function animateStats(){
-        if(statsAnimated) return;
-        statsAnimated = true;
-        let start = 0;
-        let iv = setInterval(()=>{
-            start += 50;
-            if(start >= 1247){
-                document.getElementById("activeUsers").innerText = "1,247";
-                document.getElementById("systemHealth").innerText = "99.9%";
-                document.getElementById("processedOps").innerText = "45.2K";
-                clearInterval(iv);
-            } else {
-                document.getElementById("activeUsers").innerText = Math.floor(start);
-                document.getElementById("processedOps").innerText = Math.floor(start * 36.2);
-            }
-        }, 20);
-    }
-    setTimeout(animateStats, 1000);
-
     // ======================= INITIALIZE EVERYTHING =======================
     positionMenuItems();
     loadSavedPosition();
@@ -708,14 +700,18 @@
     buildQuickModules();
     loadActivityLogs();
     
+    // Set fixed stats
+    document.getElementById('activeUsers').innerHTML = '5';
+    document.getElementById('systemHealth').innerHTML = '99.9%';
+    document.getElementById('processedOps').innerHTML = '10K+';
+    
     let existing = JSON.parse(localStorage.getItem('activity_logs_stream')||'[]');
     if(existing.length === 0){
         addActivityLog("🚀 SADWAP StreamOps initialized · Drag the circular menu anywhere!");
+        addActivityLog("📊 Active users: 5 (1 PC, 3 Mobile, 1 Tablet) · System Health: 99.9% · Ops: 10K+");
         addActivityLog("📋 Click the compass icon to open radial menu (13 modules including Void & Refunds)");
-        addActivityLog("🔄 Void & Refunds module is now fully integrated and working");
         addActivityLog("✅ All links verified: Inventory, Sales, Expiry, Transfers, Training, Municipality, Admin, Insights, RVR, Tutorials, Void & Refunds, Video Gallery");
     }
 </script>
 </body>
 </html>
-
