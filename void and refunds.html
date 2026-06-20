@@ -1,24 +1,18 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>SADWAP | Refund & Void Management</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>SADWAP · Refund & Void (SAR)</title>
+    <!-- Bootstrap 5 + Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- jsPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        /* Professional Corporate Theme */
         :root {
             --primary: #2563eb;
             --primary-dark: #1e40af;
@@ -29,7 +23,6 @@
             --warning-soft: #fffbeb;
             --danger: #ef4444;
             --danger-soft: #fef2f2;
-            --info: #8b5cf6;
             --gray-50: #f9fafb;
             --gray-100: #f3f4f6;
             --gray-200: #e5e7eb;
@@ -42,10 +35,11 @@
             --gray-900: #111827;
             --card-bg: #ffffff;
             --border: #e5e7eb;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --radius-card: 20px;
-            --radius-element: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
+            --shadow-md: 0 8px 16px -4px rgba(0,0,0,0.08);
+            --radius-card: 24px;
+            --radius-element: 14px;
+            --transition: 0.25s ease;
         }
 
         body.dark {
@@ -70,149 +64,353 @@
             background: var(--gray-100);
             color: var(--gray-800);
             transition: background 0.2s, color 0.2s;
-            padding: 20px;
+            padding: 16px 12px;
+            min-height: 100vh;
         }
 
         .dashboard-container {
-            max-width: 500px;
+            max-width: 540px;
             margin: 0 auto;
         }
 
-        /* Header */
+        /* header card */
         .header-card {
             background: var(--card-bg);
             border-radius: var(--radius-card);
-            padding: 20px 24px;
-            margin-bottom: 20px;
+            padding: 16px 20px;
+            margin-bottom: 18px;
             border: 1px solid var(--border);
             box-shadow: var(--shadow-sm);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 12px;
         }
-        .logo-area h1 { font-size: 1.3rem; font-weight: 700; margin: 0; color: var(--primary); letter-spacing: -0.3px; }
-        .controls { display: flex; gap: 12px; align-items: center; }
-        .lang-switch { display: flex; gap: 6px; background: var(--gray-200); padding: 4px; border-radius: 40px; }
-        .lang-btn { background: transparent; border: none; padding: 6px 18px; border-radius: 32px; font-weight: 600; font-size: 0.7rem; cursor: pointer; color: var(--gray-600); transition: all 0.2s; }
-        .lang-btn.active { background: var(--primary); color: white; }
-        .theme-toggle { background: var(--gray-200); border: none; border-radius: 40px; padding: 6px 18px; display: flex; align-items: center; gap: 6px; color: var(--gray-700); font-weight: 500; font-size: 0.7rem; }
+        .logo-area h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--primary);
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .lang-switch {
+            display: flex;
+            gap: 4px;
+            background: var(--gray-200);
+            padding: 4px;
+            border-radius: 60px;
+        }
+        .lang-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            cursor: pointer;
+            color: var(--gray-600);
+            transition: all 0.2s;
+        }
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        .theme-toggle {
+            background: var(--gray-200);
+            border: none;
+            border-radius: 40px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gray-700);
+            font-weight: 500;
+            font-size: 0.7rem;
+            transition: 0.2s;
+        }
+        .theme-toggle:hover { background: var(--gray-300); }
 
-        /* Stats Row */
+        /* stats */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 18px;
         }
-        @media (max-width: 450px) { .stats-grid { gap: 8px; } }
         .stat-card {
             background: var(--card-bg);
             border-radius: var(--radius-card);
-            padding: 14px 10px;
+            padding: 12px 6px;
             border: 1px solid var(--border);
             text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: 0.2s;
         }
-        .stat-title { font-size: 0.6rem; text-transform: uppercase; font-weight: 600; color: var(--gray-500); letter-spacing: 0.3px; }
-        .stat-value { font-size: 1.3rem; font-weight: 700; margin: 4px 0; }
+        .stat-title {
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--gray-500);
+            letter-spacing: 0.4px;
+        }
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 4px 0;
+        }
         .stat-icon { font-size: 0.9rem; }
 
-        /* Form Card */
-        .form-card {
+        /* cards */
+        .form-card, .records-card {
             background: var(--card-bg);
             border-radius: var(--radius-card);
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 20px 18px;
+            margin-bottom: 18px;
             border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
         }
-        .form-card h5 { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: var(--primary); }
-        .form-label { font-size: 0.7rem; font-weight: 500; margin-bottom: 4px; color: var(--gray-600); }
+        .form-card h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--primary);
+        }
+        .form-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: var(--gray-600);
+        }
         .form-control, .form-select {
             background: var(--gray-50);
             border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 12px 16px;
+            border-radius: 60px;
+            padding: 10px 16px;
             font-size: 0.85rem;
             color: var(--gray-800);
+            transition: 0.2s;
         }
-        .form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.08);
+        }
         textarea.form-control { border-radius: 20px; resize: vertical; min-height: 70px; }
 
-        /* Camera Section */
+        /* camera */
         .camera-container {
             background: var(--gray-900);
             border-radius: 20px;
             overflow: hidden;
-            margin: 12px 0;
+            margin: 10px 0 12px;
             position: relative;
-            min-height: 200px;
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
         }
-        #cameraPreview { width: 100%; height: 200px; background: var(--gray-800); display: flex; align-items: center; justify-content: center; }
-        #cameraPreview video { width: 100%; height: 100%; object-fit: cover; }
-        #capturedImage { width: 100%; max-height: 200px; object-fit: contain; display: none; background: var(--gray-800); }
-        .camera-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-        .camera-controls .btn { flex: 1 1 auto; font-size: 0.7rem; padding: 10px; border-radius: 40px; }
-        .btn-primary-custom { background: var(--primary); color: white; border: none; }
-        .btn-outline-custom { background: var(--gray-100); border: 1px solid var(--border); color: var(--gray-700); }
+        #cameraPreview {
+            width: 100%;
+            height: 180px;
+            background: var(--gray-800);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-400);
+        }
+        #cameraPreview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #capturedImage {
+            width: 100%;
+            max-height: 180px;
+            object-fit: contain;
+            display: none;
+            background: var(--gray-800);
+        }
+        .camera-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .camera-controls .btn {
+            flex: 1 0 auto;
+            font-size: 0.7rem;
+            padding: 8px 12px;
+            border-radius: 60px;
+            font-weight: 500;
+        }
+        .btn-primary-custom {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+        .btn-primary-custom:hover { background: var(--primary-dark); color: white; }
+        .btn-outline-custom {
+            background: var(--gray-100);
+            border: 1px solid var(--border);
+            color: var(--gray-700);
+        }
 
-        /* Records List */
-        .records-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .records-header h5 { font-size: 0.95rem; font-weight: 600; margin: 0; }
-        .btn-pdf { background: var(--success); color: white; border: none; border-radius: 40px; padding: 8px 20px; font-size: 0.7rem; font-weight: 600; }
+        /* records */
+        .records-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .records-header h5 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin: 0;
+            color: var(--gray-700);
+        }
+        .btn-pdf {
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 60px;
+            padding: 6px 18px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn-pdf:hover { opacity: 0.85; color: white; }
+
         .record-card {
             background: var(--card-bg);
-            border-radius: 18px;
+            border-radius: 20px;
             padding: 14px;
             margin-bottom: 12px;
             border: 1px solid var(--border);
-            border-left-width: 4px;
-            transition: all 0.2s;
+            border-left-width: 5px;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
         }
         .record-card.refund { border-left-color: var(--warning); }
         .record-card.void { border-left-color: var(--danger); }
-        .record-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .record-badge { font-size: 0.65rem; padding: 4px 12px; border-radius: 40px; font-weight: 600; }
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .record-badge {
+            font-size: 0.6rem;
+            padding: 3px 14px;
+            border-radius: 60px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
         .badge-refund { background: var(--warning-soft); color: var(--warning); }
         .badge-void { background: var(--danger-soft); color: var(--danger); }
-        .record-detail { display: flex; gap: 12px; }
-        .record-image { width: 55px; height: 55px; border-radius: 14px; object-fit: cover; background: var(--gray-200); }
-        .record-info { flex: 1; font-size: 0.75rem; }
+        .record-detail {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .record-image {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            object-fit: cover;
+            background: var(--gray-200);
+            border: 1px solid var(--border);
+        }
+        .record-info {
+            flex: 1;
+            font-size: 0.72rem;
+            line-height: 1.4;
+        }
         .record-info p { margin-bottom: 2px; }
-        .delete-btn { background: none; border: none; color: var(--danger); font-size: 1.1rem; cursor: pointer; padding: 6px; }
-        .empty-state { text-align: center; padding: 40px 0; color: var(--gray-500); }
+        .delete-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--danger);
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 30px;
+            transition: 0.2s;
+        }
+        .delete-btn:hover { background: var(--danger-soft); }
 
-        /* Toast */
+        .empty-state {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--gray-500);
+        }
+
+        /* toast */
         .toast-notify {
             position: fixed;
-            bottom: 20px;
+            bottom: 24px;
             left: 20px;
             right: 20px;
             background: var(--card-bg);
-            border-left: 4px solid var(--success);
-            padding: 12px 16px;
-            border-radius: 12px;
+            border-left: 5px solid var(--success);
+            padding: 12px 18px;
+            border-radius: 18px;
             box-shadow: var(--shadow-md);
             z-index: 1100;
             display: none;
             align-items: center;
             gap: 10px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            max-width: 480px;
+            margin: 0 auto;
         }
 
-        /* RTL */
-        [dir="rtl"] .record-card { border-left-width: 1px; border-right-width: 4px; border-right-color: inherit; }
+        /* RTL fine-tuning */
+        [dir="rtl"] .record-card { border-left-width: 1px; border-right-width: 5px; border-right-color: inherit; }
         [dir="rtl"] .record-card.refund { border-left-color: var(--border); border-right-color: var(--warning); }
         [dir="rtl"] .record-card.void { border-left-color: var(--border); border-right-color: var(--danger); }
+        [dir="rtl"] .delete-btn { right: auto; left: 12px; }
+        [dir="rtl"] .camera-controls .btn { flex: 1 0 auto; }
+
+        /* responsive micro */
+        @media (max-width: 480px) {
+            .stats-grid { gap: 6px; }
+            .stat-card { padding: 8px 4px; }
+            .stat-value { font-size: 1rem; }
+            .header-card { flex-direction: column; align-items: stretch; }
+            .controls { justify-content: flex-start; }
+            .logo-area h1 { font-size: 1.1rem; }
+        }
+        @media (max-width: 380px) {
+            .camera-controls .btn { font-size: 0.6rem; padding: 6px 8px; }
+        }
     </style>
 </head>
 <body>
 <div class="dashboard-container">
     <!-- Header -->
     <div class="header-card">
-        <div class="logo-area"><h1><i class="bi bi-receipt-cutoff me-2"></i><span id="titleMain">Refund & Void</span></h1></div>
+        <div class="logo-area"><h1><i class="bi bi-receipt-cutoff"></i> <span id="titleMain">Refund & Void</span></h1></div>
         <div class="controls">
-            <div class="lang-switch"><button class="lang-btn active" id="langEn">EN</button><button class="lang-btn" id="langAr">AR</button></div>
+            <div class="lang-switch">
+                <button class="lang-btn active" id="langEn">EN</button>
+                <button class="lang-btn" id="langAr">AR</button>
+            </div>
             <button class="theme-toggle" id="themeToggle"><i class="bi bi-moon"></i> <span id="themeText">Dark</span></button>
         </div>
     </div>
@@ -222,20 +420,37 @@
         <div class="stat-card"><div class="stat-title" data-key="total">TOTAL</div><div class="stat-value" id="totalBills">0</div><div class="stat-icon text-primary"><i class="bi bi-receipt"></i></div></div>
         <div class="stat-card"><div class="stat-title" data-key="refund">REFUND</div><div class="stat-value" id="refundBills">0</div><div class="stat-icon text-warning"><i class="bi bi-arrow-counterclockwise"></i></div></div>
         <div class="stat-card"><div class="stat-title" data-key="void">VOID</div><div class="stat-value" id="voidBills">0</div><div class="stat-icon text-danger"><i class="bi bi-x-circle"></i></div></div>
-        <div class="stat-card"><div class="stat-title" data-key="amount">AMOUNT</div><div class="stat-value" id="totalAmount">$0</div><div class="stat-icon text-success"><i class="bi bi-currency-dollar"></i></div></div>
+        <div class="stat-card"><div class="stat-title" data-key="amount">AMOUNT</div><div class="stat-value" id="totalAmount">SAR 0</div><div class="stat-icon text-success"><i class="bi bi-currency-exchange"></i></div></div>
     </div>
 
     <!-- Form Card -->
     <div class="form-card">
         <h5><i class="bi bi-plus-circle me-2"></i><span data-key="newBill">New Bill</span></h5>
         <form id="billForm">
-            <div class="mb-2"><label class="form-label" data-key="typeLabel">Type *</label><select class="form-select" id="billType" required><option value="">Select</option><option value="refund">Refund</option><option value="void">Void</option></select></div>
-            <div class="row g-2 mb-2"><div class="col-6"><label class="form-label" data-key="billNumberLabel">Bill # *</label><input type="text" class="form-control" id="billNumber" required></div><div class="col-6"><label class="form-label" data-key="amountLabel">Amount ($) *</label><input type="number" class="form-control" id="billAmount" min="0.01" step="0.01" required></div></div>
-            <div class="mb-2" id="customerMobileField" style="display: none;"><label class="form-label" data-key="mobileLabel">Mobile *</label><input type="tel" class="form-control" id="customerMobile"></div>
-            <div class="mb-3"><label class="form-label" data-key="reasonLabel">Reason *</label><textarea class="form-control" id="reason" rows="2" required></textarea></div>
+            <div class="mb-2">
+                <label class="form-label" data-key="typeLabel">Type *</label>
+                <select class="form-select" id="billType" required>
+                    <option value="">Select</option><option value="refund">Refund</option><option value="void">Void</option>
+                </select>
+            </div>
+            <div class="row g-2 mb-2">
+                <div class="col-6"><label class="form-label" data-key="billNumberLabel">Bill # *</label><input type="text" class="form-control" id="billNumber" required></div>
+                <div class="col-6"><label class="form-label" data-key="amountLabel">Amount (SAR) *</label><input type="number" class="form-control" id="billAmount" min="0.01" step="0.01" required></div>
+            </div>
+            <div class="mb-2" id="customerMobileField" style="display: none;">
+                <label class="form-label" data-key="mobileLabel">Mobile *</label>
+                <input type="tel" class="form-control" id="customerMobile">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" data-key="reasonLabel">Reason *</label>
+                <textarea class="form-control" id="reason" rows="2" required></textarea>
+            </div>
 
             <label class="form-label" data-key="imageLabel">Bill Image *</label>
-            <div class="camera-container"><div id="cameraPreview"><div class="text-center"><i class="bi bi-camera fs-1"></i><p class="mt-2 small">Start camera</p></div></div><img id="capturedImage" alt="bill"></div>
+            <div class="camera-container">
+                <div id="cameraPreview"><div class="text-center"><i class="bi bi-camera fs-2"></i><p class="mt-1 small">Start camera</p></div></div>
+                <img id="capturedImage" alt="bill">
+            </div>
             <div class="camera-controls">
                 <button type="button" class="btn btn-primary-custom" id="startCamera"><i class="bi bi-camera-video"></i> <span data-key="start">Start</span></button>
                 <button type="button" class="btn btn-outline-custom" id="switchCamera" disabled><i class="bi bi-arrow-left-right"></i> <span data-key="switch">Switch</span></button>
@@ -244,42 +459,81 @@
                 <button type="button" class="btn btn-outline-custom" id="uploadImage"><i class="bi bi-upload"></i> <span data-key="upload">Upload</span></button>
                 <input type="file" id="imageUpload" accept="image/*" style="display: none;">
             </div>
-            <div class="d-flex gap-2 mt-4"><button type="submit" class="btn btn-primary-custom flex-grow-1"><i class="bi bi-check2-circle me-2"></i><span data-key="save">Save</span></button><button type="button" class="btn btn-outline-custom" id="clearForm"><i class="bi bi-arrow-clockwise"></i></button></div>
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary-custom flex-grow-1"><i class="bi bi-check2-circle me-2"></i><span data-key="save">Save</span></button>
+                <button type="button" class="btn btn-outline-custom" id="clearForm"><i class="bi bi-arrow-clockwise"></i></button>
+            </div>
         </form>
     </div>
 
     <!-- Records -->
-    <div class="records-header"><h5><i class="bi bi-clock-history me-2"></i><span data-key="history">History</span></h5><button class="btn-pdf" id="exportPDF"><i class="bi bi-file-pdf me-1"></i><span data-key="export">PDF</span></button></div>
-    <div id="savedRecordsContainer"></div>
-    <div id="noRecordsMessage" class="empty-state"><i class="bi bi-receipt fs-1"></i><p data-key="noRecords">No bills yet</p></div>
+    <div class="records-card">
+        <div class="records-header">
+            <h5><i class="bi bi-clock-history me-2"></i><span data-key="history">History</span></h5>
+            <button class="btn-pdf" id="exportPDF"><i class="bi bi-file-pdf me-1"></i><span data-key="export">PDF</span></button>
+        </div>
+        <div id="savedRecordsContainer"></div>
+        <div id="noRecordsMessage" class="empty-state"><i class="bi bi-receipt fs-1"></i><p data-key="noRecords">No bills yet</p></div>
+    </div>
 </div>
 
 <div id="toastMsg" class="toast-notify"><i class="bi bi-check-circle-fill"></i> <span id="toastText"></span></div>
 
 <script>
-    // ======================== TRANSLATIONS ========================
+    // ========== TRANSLATIONS ==========
     const translations = {
-        en: { titleMain: "Refund & Void", total: "TOTAL", refund: "REFUND", void: "VOID", amount: "AMOUNT", newBill: "New Bill", typeLabel: "Type *", billNumberLabel: "Bill # *", amountLabel: "Amount ($) *", mobileLabel: "Mobile *", reasonLabel: "Reason *", imageLabel: "Bill Image *", start: "Start", switch: "Switch", capture: "Capture", retake: "Retake", upload: "Upload", save: "Save", history: "History", export: "PDF", noRecords: "No bills yet" },
-        ar: { titleMain: "المبالغ المستردة والإلغاء", total: "الإجمالي", refund: "مسترد", void: "ملغي", amount: "المبلغ", newBill: "فاتورة جديدة", typeLabel: "النوع *", billNumberLabel: "رقم الفاتورة *", amountLabel: "المبلغ ($) *", mobileLabel: "الجوال *", reasonLabel: "السبب *", imageLabel: "صورة الفاتورة *", start: "تشغيل", switch: "تبديل", capture: "تصوير", retake: "إعادة", upload: "رفع", save: "حفظ", history: "السجل", export: "PDF", noRecords: "لا توجد فواتير" }
+        en: {
+            titleMain: "Refund & Void", total: "TOTAL", refund: "REFUND", void: "VOID", amount: "AMOUNT",
+            newBill: "New Bill", typeLabel: "Type *", billNumberLabel: "Bill # *", amountLabel: "Amount (SAR) *",
+            mobileLabel: "Mobile *", reasonLabel: "Reason *", imageLabel: "Bill Image *",
+            start: "Start", switch: "Switch", capture: "Capture", retake: "Retake", upload: "Upload",
+            save: "Save", history: "History", export: "PDF", noRecords: "No bills yet"
+        },
+        ar: {
+            titleMain: "المبالغ المستردة والإلغاء", total: "الإجمالي", refund: "مسترد", void: "ملغي", amount: "المبلغ",
+            newBill: "فاتورة جديدة", typeLabel: "النوع *", billNumberLabel: "رقم الفاتورة *", amountLabel: "المبلغ (ريال) *",
+            mobileLabel: "الجوال *", reasonLabel: "السبب *", imageLabel: "صورة الفاتورة *",
+            start: "تشغيل", switch: "تبديل", capture: "تصوير", retake: "إعادة", upload: "رفع",
+            save: "حفظ", history: "السجل", export: "PDF", noRecords: "لا توجد فواتير"
+        }
     };
+
     let currentLang = "en";
     let bills = JSON.parse(localStorage.getItem('bills_mobile')) || [];
     let stream = null, capturedImageData = null, currentFacingMode = 'environment';
 
-    // DOM Elements
+    // DOM refs
     const container = document.getElementById('savedRecordsContainer');
     const emptyMsg = document.getElementById('noRecordsMessage');
-    const totalSpan = document.getElementById('totalBills'), refundSpan = document.getElementById('refundBills'), voidSpan = document.getElementById('voidBills'), amountSpan = document.getElementById('totalAmount');
-    const form = document.getElementById('billForm'), billType = document.getElementById('billType'), billNumber = document.getElementById('billNumber'), billAmount = document.getElementById('billAmount'), customerMobile = document.getElementById('customerMobile'), reason = document.getElementById('reason'), mobileField = document.getElementById('customerMobileField'), clearBtn = document.getElementById('clearForm');
-    const toast = document.getElementById('toastMsg'), toastText = document.getElementById('toastText');
+    const totalSpan = document.getElementById('totalBills');
+    const refundSpan = document.getElementById('refundBills');
+    const voidSpan = document.getElementById('voidBills');
+    const amountSpan = document.getElementById('totalAmount');
+    const form = document.getElementById('billForm');
+    const billType = document.getElementById('billType');
+    const billNumber = document.getElementById('billNumber');
+    const billAmount = document.getElementById('billAmount');
+    const customerMobile = document.getElementById('customerMobile');
+    const reason = document.getElementById('reason');
+    const mobileField = document.getElementById('customerMobileField');
+    const clearBtn = document.getElementById('clearForm');
+    const toast = document.getElementById('toastMsg');
+    const toastText = document.getElementById('toastText');
 
-    function showToast(msg, type = 'success') { toastText.innerText = msg; toast.style.display = 'flex'; toast.style.borderLeftColor = type === 'error' ? '#ef4444' : '#10b981'; setTimeout(() => toast.style.display = 'none', 2500); }
+    function showToast(msg, type = 'success') {
+        toastText.innerText = msg;
+        toast.style.display = 'flex';
+        toast.style.borderLeftColor = type === 'error' ? '#ef4444' : '#10b981';
+        clearTimeout(window.toastTimer);
+        window.toastTimer = setTimeout(() => toast.style.display = 'none', 2600);
+    }
 
     function updateStats() {
         totalSpan.innerText = bills.length;
         refundSpan.innerText = bills.filter(b => b.billType === 'refund').length;
         voidSpan.innerText = bills.filter(b => b.billType === 'void').length;
-        amountSpan.innerText = '$' + bills.reduce((acc, b) => acc + (b.billAmount || 0), 0).toFixed(2);
+        const totalSAR = bills.reduce((acc, b) => acc + (b.billAmount || 0), 0);
+        amountSpan.innerText = 'SAR ' + totalSAR.toFixed(2);
     }
 
     function renderRecords() {
@@ -287,45 +541,235 @@
         emptyMsg.style.display = 'none';
         container.innerHTML = bills.slice().reverse().map(b => `
             <div class="record-card ${b.billType}" data-id="${b.id}">
-                <div class="record-header"><span class="record-badge ${b.billType === 'refund' ? 'badge-refund' : 'badge-void'}">${b.billType.toUpperCase()}</span><small>${b.date}</small></div>
-                <div class="record-detail"><img src="${b.imageData}" class="record-image" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2255%22%20height%3D%2255%22%20viewBox%3D%220%200%2055%2055%22%3E%3Crect%20width%3D%2255%22%20height%3D%2255%22%20fill%3D%22%23333%22%2F%3E%3Ctext%20x%3D%2210%22%20y%3D%2232%22%20fill%3D%22%23fff%22%3Ebill%3C%2Ftext%3E%3C%2Fsvg%3E'"><div class="record-info"><p><strong>#${b.billNumber}</strong> $${b.billAmount.toFixed(2)}</p>${b.customerMobile && b.customerMobile !== 'N/A' ? `<p><i class="bi bi-phone"></i> ${b.customerMobile}</p>` : ''}<p class="text-truncate" style="max-width:160px;" title="${b.reason}">${b.reason}</p></div></div>
+                <div class="record-header">
+                    <span class="record-badge ${b.billType === 'refund' ? 'badge-refund' : 'badge-void'}">${b.billType.toUpperCase()}</span>
+                    <small>${b.date}</small>
+                </div>
+                <div class="record-detail">
+                    <img src="${b.imageData}" class="record-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2252%22 height=%2252%22 viewBox=%220 0 52 52%22%3E%3Crect width=%2252%22 height=%2252%22 fill=%22%23333%22/%3E%3Ctext x=%2210%22 y=%2232%22 fill=%22%23fff%22 font-size=%2214%22%3Ebill%3C/text%3E%3C/svg%3E'">
+                    <div class="record-info">
+                        <p><strong>#${b.billNumber}</strong> SAR ${b.billAmount.toFixed(2)}</p>
+                        ${b.customerMobile && b.customerMobile !== 'N/A' ? `<p><i class="bi bi-phone"></i> ${b.customerMobile}</p>` : ''}
+                        <p class="text-truncate" style="max-width:160px;" title="${b.reason}">${b.reason}</p>
+                    </div>
+                </div>
                 <button class="delete-btn" onclick="deleteBill(${b.id})"><i class="bi bi-trash3"></i></button>
             </div>`).join('');
     }
 
-    window.deleteBill = function(id) { if (confirm(currentLang === 'en' ? 'Delete this record?' : 'حذف هذا السجل؟')) { bills = bills.filter(b => b.id !== id); localStorage.setItem('bills_mobile', JSON.stringify(bills)); renderRecords(); updateStats(); showToast(currentLang === 'en' ? 'Deleted' : 'تم الحذف', 'error'); } };
+    window.deleteBill = function(id) {
+        if (confirm(currentLang === 'en' ? 'Delete this record?' : 'حذف هذا السجل؟')) {
+            bills = bills.filter(b => b.id !== id);
+            localStorage.setItem('bills_mobile', JSON.stringify(bills));
+            renderRecords(); updateStats();
+            showToast(currentLang === 'en' ? 'Deleted' : 'تم الحذف', 'error');
+        }
+    };
 
-    // Camera Functions
+    // ========== CAMERA ==========
     async function startCamera(facingMode = 'environment') {
-        try { if (stream) stopCamera(); stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode }, audio: false }); const preview = document.getElementById('cameraPreview'); preview.innerHTML = ''; const video = document.createElement('video'); video.srcObject = stream; video.autoplay = true; video.playsInline = true; preview.appendChild(video); document.getElementById('captureImage').disabled = false; document.getElementById('switchCamera').disabled = false; document.getElementById('startCamera').disabled = true; currentFacingMode = facingMode; } 
-        catch (err) { showToast(currentLang === 'en' ? 'Camera access denied' : 'تم رفض الوصول للكاميرا', 'error'); } }
-    function stopCamera() { if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; } }
-    function captureImage() { if (stream) { const video = document.querySelector('#cameraPreview video'); const canvas = document.createElement('canvas'); canvas.width = video.videoWidth; canvas.height = video.videoHeight; canvas.getContext('2d').drawImage(video, 0, 0); capturedImageData = canvas.toDataURL('image/png'); document.getElementById('capturedImage').src = capturedImageData; document.getElementById('capturedImage').style.display = 'block'; document.getElementById('cameraPreview').style.display = 'none'; stopCamera(); document.getElementById('retakeImage').style.display = 'inline-block'; document.getElementById('captureImage').disabled = true; document.getElementById('switchCamera').disabled = true; document.getElementById('startCamera').disabled = false; } }
-    function retakeImage() { capturedImageData = null; document.getElementById('capturedImage').style.display = 'none'; document.getElementById('cameraPreview').style.display = 'flex'; document.getElementById('retakeImage').style.display = 'none'; startCamera(currentFacingMode); }
+        try {
+            if (stream) stopCamera();
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode }, audio: false });
+            const preview = document.getElementById('cameraPreview');
+            preview.innerHTML = '';
+            const video = document.createElement('video');
+            video.srcObject = stream; video.autoplay = true; video.playsInline = true;
+            preview.appendChild(video);
+            document.getElementById('captureImage').disabled = false;
+            document.getElementById('switchCamera').disabled = false;
+            document.getElementById('startCamera').disabled = true;
+            currentFacingMode = facingMode;
+        } catch (err) {
+            showToast(currentLang === 'en' ? 'Camera access denied' : 'تم رفض الوصول للكاميرا', 'error');
+        }
+    }
+
+    function stopCamera() {
+        if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    }
+
+    function captureImage() {
+        if (stream) {
+            const video = document.querySelector('#cameraPreview video');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            capturedImageData = canvas.toDataURL('image/png');
+            document.getElementById('capturedImage').src = capturedImageData;
+            document.getElementById('capturedImage').style.display = 'block';
+            document.getElementById('cameraPreview').style.display = 'none';
+            stopCamera();
+            document.getElementById('retakeImage').style.display = 'inline-block';
+            document.getElementById('captureImage').disabled = true;
+            document.getElementById('switchCamera').disabled = true;
+            document.getElementById('startCamera').disabled = false;
+        }
+    }
+
+    function retakeImage() {
+        capturedImageData = null;
+        document.getElementById('capturedImage').style.display = 'none';
+        document.getElementById('cameraPreview').style.display = 'flex';
+        document.getElementById('retakeImage').style.display = 'none';
+        startCamera(currentFacingMode);
+    }
 
     document.getElementById('startCamera').addEventListener('click', () => startCamera('environment'));
-    document.getElementById('switchCamera').addEventListener('click', () => { const newMode = currentFacingMode === 'environment' ? 'user' : 'environment'; startCamera(newMode); });
+    document.getElementById('switchCamera').addEventListener('click', () => {
+        const newMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+        startCamera(newMode);
+    });
     document.getElementById('captureImage').addEventListener('click', captureImage);
     document.getElementById('retakeImage').addEventListener('click', retakeImage);
     document.getElementById('uploadImage').addEventListener('click', () => document.getElementById('imageUpload').click());
-    document.getElementById('imageUpload').addEventListener('change', (e) => { const file = e.target.files[0]; if (file) { stopCamera(); document.getElementById('cameraPreview').style.display = 'none'; const reader = new FileReader(); reader.onload = (ev) => { capturedImageData = ev.target.result; document.getElementById('capturedImage').src = capturedImageData; document.getElementById('capturedImage').style.display = 'block'; document.getElementById('retakeImage').style.display = 'inline-block'; }; reader.readAsDataURL(file); } });
+    document.getElementById('imageUpload').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            stopCamera();
+            document.getElementById('cameraPreview').style.display = 'none';
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                capturedImageData = ev.target.result;
+                document.getElementById('capturedImage').src = capturedImageData;
+                document.getElementById('capturedImage').style.display = 'block';
+                document.getElementById('retakeImage').style.display = 'inline-block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
-    billType.addEventListener('change', () => { if (billType.value === 'refund') { mobileField.style.display = 'block'; customerMobile.required = true; } else { mobileField.style.display = 'none'; customerMobile.required = false; } });
+    // toggle mobile field
+    billType.addEventListener('change', () => {
+        if (billType.value === 'refund') { mobileField.style.display = 'block'; customerMobile.required = true; }
+        else { mobileField.style.display = 'none'; customerMobile.required = false; }
+    });
 
-    form.addEventListener('submit', (e) => { e.preventDefault(); if (!capturedImageData) { showToast(currentLang === 'en' ? 'Please capture or upload a bill image' : 'الرجاء تصوير أو رفع صورة الفاتورة', 'error'); return; } const newBill = { id: Date.now(), date: new Date().toLocaleString(), billType: billType.value, billNumber: billNumber.value, billAmount: parseFloat(billAmount.value), customerMobile: billType.value === 'refund' ? customerMobile.value : 'N/A', reason: reason.value, imageData: capturedImageData }; bills.push(newBill); localStorage.setItem('bills_mobile', JSON.stringify(bills)); renderRecords(); updateStats(); form.reset(); mobileField.style.display = 'none'; capturedImageData = null; document.getElementById('capturedImage').style.display = 'none'; document.getElementById('cameraPreview').style.display = 'flex'; document.getElementById('retakeImage').style.display = 'none'; stopCamera(); showToast(currentLang === 'en' ? 'Bill saved' : 'تم حفظ الفاتورة'); });
+    // ========== FORM SUBMIT ==========
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!capturedImageData) {
+            showToast(currentLang === 'en' ? 'Please capture or upload a bill image' : 'الرجاء تصوير أو رفع صورة الفاتورة', 'error');
+            return;
+        }
+        const newBill = {
+            id: Date.now(),
+            date: new Date().toLocaleString(),
+            billType: billType.value,
+            billNumber: billNumber.value,
+            billAmount: parseFloat(billAmount.value),
+            customerMobile: billType.value === 'refund' ? customerMobile.value : 'N/A',
+            reason: reason.value,
+            imageData: capturedImageData
+        };
+        bills.push(newBill);
+        localStorage.setItem('bills_mobile', JSON.stringify(bills));
+        renderRecords(); updateStats();
+        form.reset();
+        mobileField.style.display = 'none';
+        capturedImageData = null;
+        document.getElementById('capturedImage').style.display = 'none';
+        document.getElementById('cameraPreview').style.display = 'flex';
+        document.getElementById('retakeImage').style.display = 'none';
+        stopCamera();
+        showToast(currentLang === 'en' ? 'Bill saved' : 'تم حفظ الفاتورة');
+    });
 
-    clearBtn.addEventListener('click', () => { form.reset(); mobileField.style.display = 'none'; capturedImageData = null; document.getElementById('capturedImage').style.display = 'none'; document.getElementById('cameraPreview').style.display = 'flex'; document.getElementById('retakeImage').style.display = 'none'; stopCamera(); });
+    clearBtn.addEventListener('click', () => {
+        form.reset();
+        mobileField.style.display = 'none';
+        capturedImageData = null;
+        document.getElementById('capturedImage').style.display = 'none';
+        document.getElementById('cameraPreview').style.display = 'flex';
+        document.getElementById('retakeImage').style.display = 'none';
+        stopCamera();
+    });
 
-    document.getElementById('exportPDF').addEventListener('click', async () => { if (bills.length === 0) { showToast(currentLang === 'en' ? 'No records to export' : 'لا توجد سجلات للتصدير', 'error'); return; } const { jsPDF } = window.jspdf; const doc = new jsPDF(); doc.setFontSize(16); doc.text(currentLang === 'en' ? 'Bills Report' : 'تقرير الفواتير', 105, 20, { align: 'center' }); let y = 35; for (let i = 0; i < bills.length; i++) { const b = bills[i]; if (y > 260) { doc.addPage(); y = 20; } doc.setFontSize(9); doc.text(`${i+1}. ${b.billType.toUpperCase()} #${b.billNumber} - $${b.billAmount.toFixed(2)}`, 14, y); y += 5; doc.text(`   ${currentLang === 'en' ? 'Date' : 'التاريخ'}: ${b.date}`, 14, y); y += 5; if (b.imageData) { try { const imgProps = doc.getImageProperties(b.imageData); let imgW = 40, imgH = (imgProps.height * imgW) / imgProps.width; if (imgH > 35) { imgH = 35; imgW = (imgProps.width * imgH) / imgProps.height; } doc.addImage(b.imageData, 'PNG', 14, y, imgW, imgH); y += imgH + 5; } catch(err) { doc.text('   [Image unavailable]', 14, y); y += 5; } } else { doc.text('   [No image]', 14, y); y += 5; } const reasonLines = doc.splitTextToSize(`${currentLang === 'en' ? 'Reason' : 'السبب'}: ${b.reason}`, 180); doc.text(reasonLines, 14, y); y += (reasonLines.length * 4) + 8; } doc.save('bills.pdf'); showToast(currentLang === 'en' ? 'PDF exported' : 'تم تصدير PDF'); });
+    // ========== EXPORT PDF ==========
+    document.getElementById('exportPDF').addEventListener('click', async () => {
+        if (bills.length === 0) {
+            showToast(currentLang === 'en' ? 'No records to export' : 'لا توجد سجلات للتصدير', 'error');
+            return;
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFontSize(16);
+        doc.text(currentLang === 'en' ? 'Bills Report (SAR)' : 'تقرير الفواتير (ريال)', 105, 20, { align: 'center' });
+        let y = 35;
+        for (let i = 0; i < bills.length; i++) {
+            const b = bills[i];
+            if (y > 260) { doc.addPage(); y = 20; }
+            doc.setFontSize(9);
+            doc.text(`${i+1}. ${b.billType.toUpperCase()} #${b.billNumber} - SAR ${b.billAmount.toFixed(2)}`, 14, y);
+            y += 5;
+            doc.text(`   ${currentLang === 'en' ? 'Date' : 'التاريخ'}: ${b.date}`, 14, y);
+            y += 5;
+            if (b.imageData) {
+                try {
+                    const imgProps = doc.getImageProperties(b.imageData);
+                    let imgW = 40, imgH = (imgProps.height * imgW) / imgProps.width;
+                    if (imgH > 35) { imgH = 35; imgW = (imgProps.width * imgH) / imgProps.height; }
+                    doc.addImage(b.imageData, 'PNG', 14, y, imgW, imgH);
+                    y += imgH + 5;
+                } catch (err) {
+                    doc.text('   [Image unavailable]', 14, y);
+                    y += 5;
+                }
+            } else {
+                doc.text('   [No image]', 14, y);
+                y += 5;
+            }
+            const reasonLines = doc.splitTextToSize(`${currentLang === 'en' ? 'Reason' : 'السبب'}: ${b.reason}`, 180);
+            doc.text(reasonLines, 14, y);
+            y += (reasonLines.length * 4) + 8;
+        }
+        doc.save('bills_sar.pdf');
+        showToast(currentLang === 'en' ? 'PDF exported' : 'تم تصدير PDF');
+    });
 
-    // Language & Theme
-    function updateLanguage() { const t = translations[currentLang]; document.getElementById('titleMain').innerText = t.titleMain; document.querySelectorAll('[data-key]').forEach(el => { const key = el.getAttribute('data-key'); if (t[key]) el.innerText = t[key]; }); document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr'); renderRecords(); updateStats(); }
-    document.getElementById('langEn').addEventListener('click', () => { currentLang = 'en'; document.getElementById('langEn').classList.add('active'); document.getElementById('langAr').classList.remove('active'); updateLanguage(); });
-    document.getElementById('langAr').addEventListener('click', () => { currentLang = 'ar'; document.getElementById('langAr').classList.add('active'); document.getElementById('langEn').classList.remove('active'); updateLanguage(); });
+    // ========== LANGUAGE ==========
+    function updateLanguage() {
+        const t = translations[currentLang];
+        document.getElementById('titleMain').innerText = t.titleMain;
+        document.querySelectorAll('[data-key]').forEach(el => {
+            const key = el.getAttribute('data-key');
+            if (t[key]) el.innerText = t[key];
+        });
+        document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+        renderRecords(); updateStats();
+    }
+    document.getElementById('langEn').addEventListener('click', () => {
+        currentLang = 'en';
+        document.getElementById('langEn').classList.add('active');
+        document.getElementById('langAr').classList.remove('active');
+        updateLanguage();
+    });
+    document.getElementById('langAr').addEventListener('click', () => {
+        currentLang = 'ar';
+        document.getElementById('langAr').classList.add('active');
+        document.getElementById('langEn').classList.remove('active');
+        updateLanguage();
+    });
+
+    // ========== THEME ==========
     let darkMode = localStorage.getItem('refundDark') === 'true';
-    function applyDarkMode() { if (darkMode) document.body.classList.add('dark'); else document.body.classList.remove('dark'); document.getElementById('themeText').innerText = darkMode ? 'Light' : 'Dark'; document.getElementById('themeToggle').innerHTML = darkMode ? '<i class="bi bi-sun"></i> Light' : '<i class="bi bi-moon"></i> Dark'; }
-    document.getElementById('themeToggle').addEventListener('click', () => { darkMode = !darkMode; localStorage.setItem('refundDark', darkMode); applyDarkMode(); });
-    applyDarkMode(); updateLanguage(); renderRecords(); updateStats();
+    function applyDarkMode() {
+        if (darkMode) document.body.classList.add('dark');
+        else document.body.classList.remove('dark');
+        document.getElementById('themeText').innerText = darkMode ? 'Light' : 'Dark';
+        document.getElementById('themeToggle').innerHTML = darkMode ? '<i class="bi bi-sun"></i> Light' : '<i class="bi bi-moon"></i> Dark';
+    }
+    document.getElementById('themeToggle').addEventListener('click', () => {
+        darkMode = !darkMode;
+        localStorage.setItem('refundDark', darkMode);
+        applyDarkMode();
+    });
+
+    // ========== INIT ==========
+    applyDarkMode();
+    updateLanguage();
+    renderRecords();
+    updateStats();
 </script>
 </body>
 </html>
