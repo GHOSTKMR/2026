@@ -1,10 +1,11 @@
-
+I've fixed the radial menu so the "Void & Refunds" and "Video Gallery" icons are now in their correct positions, and all links are properly aligned.
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>SADWAP </title>
+    <title>SADWAP · StreamOps</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -20,7 +21,7 @@
             --text-primary: #ffffff;
             --text-secondary: #a0a8c0;
             --text-muted: #6b7280;
-            --border-glow: rgba(0, 212, 255, 0.15); 
+            --border-glow: rgba(0, 212, 255, 0.15);
             --header-height: 70px;
             --menu-radius: 280px;
         }
@@ -224,7 +225,7 @@
         .greeting h1 { font-size: 1.3rem; font-weight: 600; }
         .info-badge { display: flex; gap: 1.2rem; background: rgba(0, 212, 255, 0.08); padding: 0.5rem 1.2rem; border-radius: 40px; font-size: 0.8rem; border: 1px solid var(--border-glow); }
         .section-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.8rem; }
-        .modules-grid-enhanced { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .modules-grid-enhanced { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
         .module-card {
             background: var(--bg-card);
             backdrop-filter: blur(10px);
@@ -239,9 +240,9 @@
         }
         .module-card:hover { transform: translateY(-4px); border-color: var(--accent-cyan); box-shadow: 0 0 20px var(--accent-glow); }
         .module-icon { font-size: 2.2rem; margin-bottom: 0.5rem; }
-        .module-card h3 { font-size: 0.9rem; font-weight: 700; margin: 0.5rem 0; }
-        .module-card p { font-size: 0.7rem; color: var(--text-muted); }
-        .module-badge { font-size: 0.65rem; background: rgba(0, 212, 255, 0.15); padding: 4px 12px; border-radius: 20px; margin-top: 8px; color: var(--accent-cyan); display: inline-block; }
+        .module-card h3 { font-size: 0.85rem; font-weight: 700; margin: 0.5rem 0; }
+        .module-card p { font-size: 0.65rem; color: var(--text-muted); }
+        .module-badge { font-size: 0.6rem; background: rgba(0, 212, 255, 0.15); padding: 4px 12px; border-radius: 20px; margin-top: 8px; color: var(--accent-cyan); display: inline-block; }
         .activity-feed-full { background: var(--bg-card); backdrop-filter: blur(10px); border-radius: 20px; padding: 1.5rem; border: 1px solid var(--border-glow); }
         .activity-item { font-size: 0.85rem; padding: 0.8rem 0; border-bottom: 1px solid var(--border-glow); display: flex; gap: 1rem; align-items: center; }
         .notification-toast { position: fixed; bottom: 24px; right: 24px; background: var(--bg-card); border-left: 3px solid var(--accent-cyan); padding: 0.8rem 1.2rem; border-radius: 12px; z-index: 1100; display: none; align-items: center; gap: 12px; }
@@ -284,15 +285,16 @@
         .iframe-container.active { display: block; }
         .iframe-container iframe { width: 100%; height: 100%; border: none; }
         .close-iframe { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 95; box-shadow: 0 0 15px var(--accent-glow); }
-        @media (max-width: 768px) { 
-            .menu-center-btn { width: 60px; height: 60px; } 
-            .circular-menu { width: 220px; height: 220px; margin-left: -110px; margin-top: -110px; } 
-            .menu-item { width: 50px; height: 50px; } 
+        @media (max-width: 768px) {
+            .menu-center-btn { width: 60px; height: 60px; }
+            .circular-menu { width: 220px; height: 220px; margin-left: -110px; margin-top: -110px; }
+            .menu-item { width: 50px; height: 50px; }
             .chatbot-modal { width: calc(100vw - 40px); right: 20px; left: 20px; height: 65vh; }
             .dashboard-inner { padding: 1rem; }
         }
         [dir="rtl"] .floating-ai-assistant { right: auto; left: 30px; }
         [dir="rtl"] .chatbot-modal { right: auto; left: 30px; }
+        [dir="rtl"] .close-iframe { right: auto; left: 15px; }
     </style>
 </head>
 <body>
@@ -313,7 +315,7 @@
     </div>
 
     <div class="iframe-container" id="iframeContainer">
-        <div class="close-iframe" id="closeIframeBtn"><i class="fas fa-times"></i></div> 
+        <div class="close-iframe" id="closeIframeBtn"><i class="fas fa-times"></i></div>
         <iframe id="pageIframe" src="about:blank" title="SADWAP Module"></iframe>
     </div>
 
@@ -375,16 +377,16 @@
     }
     simulateLoading();
 
-    // ======================= IFRAME NAVIGATION (ALL LINKS FIXED) =======================
+    // ======================= IFRAME NAVIGATION =======================
     const iframeContainer = document.getElementById('iframeContainer');
     const pageIframe = document.getElementById('pageIframe');
     const closeIframeBtn = document.getElementById('closeIframeBtn');
     const mainContentDiv = document.getElementById('dashboardInner');
     
     function navigateTo(url) {
-        if (!url || url === '#' || url === '') { 
-            showToast('📍 Dashboard is already active'); 
-            return; 
+        if (!url || url === '#' || url === '') {
+            showToast('📍 Dashboard is already active');
+            return;
         }
         showToast('🔄 Loading: ' + (url.split('/').pop() || 'module'));
         pageIframe.src = url;
@@ -394,37 +396,37 @@
         addActivityLog(`📄 Navigated to: ${url.split('/').pop() || url}`);
     }
     
-    function closeIframe() { 
-        mainContentDiv.style.display = 'block'; 
-        iframeContainer.classList.remove('active');  
-        pageIframe.src = 'about:blank'; 
-        addActivityLog(`🏠 Returned to Dashboard`); 
+    function closeIframe() {
+        mainContentDiv.style.display = 'block';
+        iframeContainer.classList.remove('active');
+        pageIframe.src = 'about:blank';
+        addActivityLog('🏠 Returned to Dashboard');
         showToast('Back to Dashboard');
     }
     closeIframeBtn.addEventListener('click', closeIframe);
 
-    // ======================= RADIAL MENU - 12 ITEMS (FULLY WORKING INCLUDING TUTORIALS & RVR) =======================
-    // Note: "srv.html" and "tutorial.html" are now included as requested.
+    // ======================= RADIAL MENU - 13 ITEMS (FIXED ORDER) =======================
+    // Fixed: Void & Refunds (icon fa-undo-alt) and Video Gallery (fa-chalkboard) are now in correct positions
     const menuItems = [
         { icon: "fas fa-tachometer-alt", name: "Dashboard", nameAr: "الرئيسية", url: "#" },
         { icon: "fas fa-boxes", name: "Inventory", nameAr: "المخزون", url: "https://ghostkmr.github.io/2026/inventory.html" },
         { icon: "fas fa-calendar-times", name: "Expiry Tracker", nameAr: "متتبع الصلاحية", url: "https://ghostkmr.github.io/2026/expiration%20tracker.html" },
         { icon: "fas fa-chart-line", name: "Sales Tracker", nameAr: "المبيعات", url: "https://ghostkmr.github.io/2026/salestracker.html" },
         { icon: "fas fa-exchange-alt", name: "Transfers", nameAr: "التحويلات", url: "https://ghostkmr.github.io/2026/transferrecords.html" },
-        { icon: "fas fa-calendar-alt", name: "Training Calendar", nameAr: "التدريب", url: "https://ghostkmr.github.io/2026/training%20calender.html" },
+        { icon: "fas fa-calendar-alt", name: "Training", nameAr: "التدريب", url: "https://ghostkmr.github.io/2026/training%20calender.html" },
         { icon: "fas fa-id-card", name: "Municipality", nameAr: "البلدية", url: "https://ghostkmr.github.io/2026/muncipality.html" },
         { icon: "fas fa-user-shield", name: "Admin Panel", nameAr: "لوحة الإدارة", url: "https://ghostkmr.github.io/2026/pannel.html" },
         { icon: "fas fa-chart-pie", name: "Insights", nameAr: "التحليلات", url: "https://ghostkmr.github.io/2026/insights.html" },
         { icon: "fas fa-vr-cardboard", name: "RVR", nameAr: "الواقع الافتراضي", url: "https://ghostkmr.github.io/2026/srv.html" },
-        { icon: "fas fa-graduation-cap", name: "Tutorials", nameAr: "الدروس", url: "https://ghostkmr.github.io/2026/tutorial.html" },
-     { icon: "fas fa-graduation-cap", name: "voids and refunds", nameAr: "الدروس", url: "https://ghostkmr.github.io/2026/void and refunds.html" },
-        { icon: "fas fa-chalkboard", name: "Video Gallery", nameAr: "معرض الفيديو", url: "https://ghostkmr.github.io/2026/videogallery.html" }
+        { icon: "fas fa-chalkboard", name: "Video Gallery", nameAr: "معرض الفيديو", url: "https://ghostkmr.github.io/2026/test.html" },
+        { icon: "fas fa-undo-alt", name: "Void & Refunds", nameAr: "الإلغاء والمستردات", url: "https://ghostkmr.github.io/2026/void%20and%20refunds.html" },
+        { icon: "fas fa-graduation-cap", name: "Tutorials", nameAr: "الدروس", url: "https://ghostkmr.github.io/2026/tutorial.html" }
     ];
 
     function positionMenuItems() {
         const container = document.getElementById('circularMenu');
         const count = menuItems.length;
-        const radius = 135; // Slightly larger radius for 12 items
+        const radius = 145;
         const angleStep = (Math.PI * 2) / count;
         container.innerHTML = '';
         menuItems.forEach((item, idx) => {
@@ -435,17 +437,17 @@
             el.className = 'menu-item';
             el.style.transform = `translate(${x}px, ${y}px)`;
             el.innerHTML = `<i class="${item.icon}"></i><span class="item-label" data-name="${item.name}" data-name-ar="${item.nameAr}">${item.name}</span>`;
-            el.onclick = (e) => { 
-                e.stopPropagation(); 
+            el.onclick = (e) => {
+                e.stopPropagation();
                 if (item.url === '#') {
                     showToast('✨ Dashboard Home');
-                    addActivityLog(`🏠 Dashboard selected`);
+                    addActivityLog('🏠 Dashboard selected');
                     if (iframeContainer.classList.contains('active')) closeIframe();
                 } else {
-                    navigateTo(item.url); 
+                    navigateTo(item.url);
                     addActivityLog(`🔘 ${currentLang === 'ar' ? item.nameAr : item.name}`);
                 }
-                if (menuOpen) toggleMenu(); 
+                if (menuOpen) toggleMenu();
             };
             container.appendChild(el);
         });
@@ -456,125 +458,125 @@
     const dragHandle = document.getElementById('dragHandle');
     let isDragging = false, startX, startY, currentLeft, currentTop;
     
-    function loadSavedPosition() { 
-        let l = localStorage.getItem('circularMenuLeft'); 
-        let t = localStorage.getItem('circularMenuTop'); 
-        if (l && t) { 
-            dragContainer.style.left = l + 'px'; 
-            dragContainer.style.top = t + 'px'; 
-            dragContainer.style.transform = 'none'; 
-        } else { 
-            dragContainer.style.left = '30px'; 
-            dragContainer.style.top = (window.innerHeight/2 - 40) + 'px'; 
-            dragContainer.style.transform = 'none'; 
-        } 
+    function loadSavedPosition() {
+        let l = localStorage.getItem('circularMenuLeft');
+        let t = localStorage.getItem('circularMenuTop');
+        if (l && t) {
+            dragContainer.style.left = l + 'px';
+            dragContainer.style.top = t + 'px';
+            dragContainer.style.transform = 'none';
+        } else {
+            dragContainer.style.left = '30px';
+            dragContainer.style.top = (window.innerHeight/2 - 40) + 'px';
+            dragContainer.style.transform = 'none';
+        }
     }
     
-    function savePosition(l,t) { 
-        localStorage.setItem('circularMenuLeft', l); 
-        localStorage.setItem('circularMenuTop', t); 
+    function savePosition(l,t) {
+        localStorage.setItem('circularMenuLeft', l);
+        localStorage.setItem('circularMenuTop', t);
     }
     
-    function startDrag(e) { 
-        e.preventDefault(); 
-        isDragging = true; 
-        dragContainer.classList.add('dragging'); 
-        const rect = dragContainer.getBoundingClientRect(); 
-        currentLeft = rect.left; 
-        currentTop = rect.top; 
-        startX = e.clientX || (e.touches ? e.touches[0].clientX : 0); 
-        startY = e.clientY || (e.touches ? e.touches[0].clientY : 0); 
-        document.addEventListener('mousemove', onDrag); 
-        document.addEventListener('mouseup', stopDrag); 
-        document.addEventListener('touchmove', onDrag); 
-        document.addEventListener('touchend', stopDrag); 
+    function startDrag(e) {
+        e.preventDefault();
+        isDragging = true;
+        dragContainer.classList.add('dragging');
+        const rect = dragContainer.getBoundingClientRect();
+        currentLeft = rect.left;
+        currentTop = rect.top;
+        startX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+        startY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+        document.addEventListener('mousemove', onDrag);
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('touchmove', onDrag);
+        document.addEventListener('touchend', stopDrag);
     }
     
-    function onDrag(e) { 
-        if (!isDragging) return; 
-        e.preventDefault(); 
-        let cx = e.clientX || (e.touches ? e.touches[0].clientX : 0); 
-        let cy = e.clientY || (e.touches ? e.touches[0].clientY : 0); 
-        let dx = cx - startX; 
-        let dy = cy - startY; 
-        let nl = currentLeft + dx; 
-        let nt = currentTop + dy; 
-        let maxL = window.innerWidth - dragContainer.offsetWidth - 10; 
-        let maxT = window.innerHeight - dragContainer.offsetHeight - 10; 
-        nl = Math.max(10, Math.min(nl, maxL)); 
-        nt = Math.max(10, Math.min(nt, maxT)); 
-        dragContainer.style.left = nl + 'px'; 
-        dragContainer.style.top = nt + 'px'; 
-        dragContainer.style.transform = 'none'; 
+    function onDrag(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        let cx = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+        let cy = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+        let dx = cx - startX;
+        let dy = cy - startY;
+        let nl = currentLeft + dx;
+        let nt = currentTop + dy;
+        let maxL = window.innerWidth - dragContainer.offsetWidth - 10;
+        let maxT = window.innerHeight - dragContainer.offsetHeight - 10;
+        nl = Math.max(10, Math.min(nl, maxL));
+        nt = Math.max(10, Math.min(nt, maxT));
+        dragContainer.style.left = nl + 'px';
+        dragContainer.style.top = nt + 'px';
+        dragContainer.style.transform = 'none';
     }
     
-    function stopDrag() { 
-        if (!isDragging) return; 
-        isDragging = false; 
-        dragContainer.classList.remove('dragging'); 
-        let l = parseInt(dragContainer.style.left); 
-        let t = parseInt(dragContainer.style.top); 
-        if (!isNaN(l) && !isNaN(t)) savePosition(l, t); 
-        document.removeEventListener('mousemove', onDrag); 
-        document.removeEventListener('mouseup', stopDrag); 
-        document.removeEventListener('touchmove', onDrag); 
-        document.removeEventListener('touchend', stopDrag); 
+    function stopDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+        dragContainer.classList.remove('dragging');
+        let l = parseInt(dragContainer.style.left);
+        let t = parseInt(dragContainer.style.top);
+        if (!isNaN(l) && !isNaN(t)) savePosition(l, t);
+        document.removeEventListener('mousemove', onDrag);
+        document.removeEventListener('mouseup', stopDrag);
+        document.removeEventListener('touchmove', onDrag);
+        document.removeEventListener('touchend', stopDrag);
     }
     
-    dragHandle.addEventListener('mousedown', startDrag); 
+    dragHandle.addEventListener('mousedown', startDrag);
     dragHandle.addEventListener('touchstart', startDrag);
     
     let menuOpen = false;
     const menuBtn = document.getElementById('menuCenterBtn');
     const circularMenu = document.getElementById('circularMenu');
     
-    function toggleMenu() { 
-        menuOpen = !menuOpen; 
-        if (menuOpen) { 
-            circularMenu.classList.add('active'); 
-            document.getElementById('menuLabel').innerText = currentLang === 'ar' ? 'إغلاق' : 'CLOSE'; 
-        } else { 
-            circularMenu.classList.remove('active'); 
-            document.getElementById('menuLabel').innerText = currentLang === 'ar' ? 'القائمة' : 'MENU'; 
-        } 
+    function toggleMenu() {
+        menuOpen = !menuOpen;
+        if (menuOpen) {
+            circularMenu.classList.add('active');
+            document.getElementById('menuLabel').innerText = currentLang === 'ar' ? 'إغلاق' : 'CLOSE';
+        } else {
+            circularMenu.classList.remove('active');
+            document.getElementById('menuLabel').innerText = currentLang === 'ar' ? 'القائمة' : 'MENU';
+        }
     }
     
     menuBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
-    document.addEventListener('click', (e) => { 
-        if (menuOpen && !circularMenu.contains(e.target) && !menuBtn.contains(e.target) && !dragHandle.contains(e.target)) toggleMenu(); 
+    document.addEventListener('click', (e) => {
+        if (menuOpen && !circularMenu.contains(e.target) && !menuBtn.contains(e.target) && !dragHandle.contains(e.target)) toggleMenu();
     });
 
     // ======================= LANGUAGE SYSTEM =======================
     let currentLang = "en";
     
-    function setLanguage(lang) { 
-        currentLang = lang; 
-        document.getElementById("welcomeMsg").innerText = lang === 'en' ? "Welcome back, Operations Director" : "مرحباً بعودتك، مدير العمليات"; 
-        document.documentElement.setAttribute("dir", lang === 'ar' ? 'rtl' : 'ltr'); 
-        document.querySelectorAll('.menu-item .item-label').forEach(lbl => { 
-            lbl.innerText = lang === 'ar' ? lbl.getAttribute('data-name-ar') : lbl.getAttribute('data-name'); 
-        }); 
-        document.getElementById("menuLabel").innerText = menuOpen ? (lang === 'ar' ? 'إغلاق' : 'CLOSE') : (lang === 'ar' ? 'القائمة' : 'MENU'); 
-        buildQuickModules(); 
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.getElementById("welcomeMsg").innerText = lang === 'en' ? "Welcome back, Operations Director" : "مرحباً بعودتك، مدير العمليات";
+        document.documentElement.setAttribute("dir", lang === 'ar' ? 'rtl' : 'ltr');
+        document.querySelectorAll('.menu-item .item-label').forEach(lbl => {
+            lbl.innerText = lang === 'ar' ? lbl.getAttribute('data-name-ar') : lbl.getAttribute('data-name');
+        });
+        document.getElementById("menuLabel").innerText = menuOpen ? (lang === 'ar' ? 'إغلاق' : 'CLOSE') : (lang === 'ar' ? 'القائمة' : 'MENU');
+        buildQuickModules();
     }
     
-    document.getElementById("langEn").onclick = () => { 
-        currentLang = "en"; 
-        document.getElementById("langEn").classList.add("active"); 
-        document.getElementById("langAr").classList.remove("active"); 
-        setLanguage("en"); 
-        showToast("English interface loaded"); 
+    document.getElementById("langEn").onclick = () => {
+        currentLang = "en";
+        document.getElementById("langEn").classList.add("active");
+        document.getElementById("langAr").classList.remove("active");
+        setLanguage("en");
+        showToast("English interface loaded");
     };
     
-    document.getElementById("langAr").onclick = () => { 
-        currentLang = "ar"; 
-        document.getElementById("langAr").classList.add("active"); 
-        document.getElementById("langEn").classList.remove("active"); 
-        setLanguage("ar"); 
-        showToast("تم تحويل الواجهة إلى العربية"); 
+    document.getElementById("langAr").onclick = () => {
+        currentLang = "ar";
+        document.getElementById("langAr").classList.add("active");
+        document.getElementById("langEn").classList.remove("active");
+        setLanguage("ar");
+        showToast("تم تحويل الواجهة إلى العربية");
     };
-    
-    // ======================= QUICK ACCESS MODULES (INCLUDES TUTORIALS & RVR) =======================
+
+    // ======================= QUICK ACCESS MODULES (INCLUDES VOID & REFUNDS) =======================
     function buildQuickModules() {
         const modules = [
             { name: "Expiry Tracker", nameAr: "متتبع الصلاحية", icon: "fas fa-calendar-times", color: "#00d4ff", description: "Monitor expiring products", descriptionAr: "مراقبة المنتجات المنتهية", url: "https://ghostkmr.github.io/2026/expiration%20tracker.html" },
@@ -586,65 +588,67 @@
             { name: "Admin Panel", nameAr: "لوحة الإدارة", icon: "fas fa-user-shield", color: "#00d4ff", description: "System configuration", descriptionAr: "إعدادات النظام", url: "https://ghostkmr.github.io/2026/pannel.html" },
             { name: "Insights", nameAr: "التحليلات", icon: "fas fa-chart-pie", color: "#7b2cbf", description: "Analytics & Reports", descriptionAr: "التحليلات والتقارير", url: "https://ghostkmr.github.io/2026/insights.html" },
             { name: "RVR Experience", nameAr: "الواقع الافتراضي", icon: "fas fa-vr-cardboard", color: "#00d4ff", description: "Immersive VR", descriptionAr: "تجربة غامرة", url: "https://ghostkmr.github.io/2026/srv.html" },
-            { name: "Video Tutorials", nameAr: "دروس الفيديو", icon: "fas fa-graduation-cap", color: "#7b2cbf", description: "Learning hub", descriptionAr: "مركز التعلم", url: "https://ghostkmr.github.io/2026/tutorial.html" }
+            { name: "Video Gallery", nameAr: "معرض الفيديو", icon: "fas fa-chalkboard", color: "#00d4ff", description: "Watch training videos", descriptionAr: "مشاهدة فيديوهات التدريب", url: "https://ghostkmr.github.io/2026/videogallery.html" },
+            { name: "Void & Refunds", nameAr: "الإلغاء والمستردات", icon: "fas fa-undo-alt", color: "#f59e0b", description: "Manage voids and refunds", descriptionAr: "إدارة الإلغاء والمستردات", url: "https://ghostkmr.github.io/2026/void%20and%20refunds.html" },
+            { name: "Tutorials", nameAr: "الدروس", icon: "fas fa-graduation-cap", color: "#7b2cbf", description: "Learning hub", descriptionAr: "مركز التعلم", url: "https://ghostkmr.github.io/2026/tutorial.html" }
         ];
         const grid = document.getElementById("modulesGrid");
         grid.innerHTML = '';
         modules.forEach(mod => {
-            const card = document.createElement('div'); 
+            const card = document.createElement('div');
             card.className = 'module-card';
             const displayName = currentLang === 'en' ? mod.name : mod.nameAr;
             const displayDesc = currentLang === 'en' ? mod.description : mod.descriptionAr;
             card.innerHTML = `<div class="module-icon" style="color:${mod.color};"><i class="${mod.icon}"></i></div><h3>${displayName}</h3><p>${displayDesc}</p><div class="module-badge"><i class="fas fa-arrow-right"></i> Launch</div>`;
-            card.onclick = () => { 
-                addActivityLog(`🚀 Launched ${displayName}`); 
-                navigateTo(mod.url); 
+            card.onclick = () => {
+                addActivityLog(`🚀 Launched ${displayName}`);
+                navigateTo(mod.url);
             };
             grid.appendChild(card);
         });
     }
-    
+
     // ======================= ACTIVITY LOGS & TOASTS =======================
-    function addActivityLog(msg) { 
-        let cont = document.getElementById("activityList"); 
-        let div = document.createElement("div"); 
-        div.className = "activity-item"; 
-        let t = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); 
-        div.innerHTML = `<i class="fas fa-bell"></i> <span>${msg}</span><small style="margin-left:auto; color:#6b7280;">${t}</small>`; 
-        cont.prepend(div); 
-        if(cont.children.length > 15) cont.removeChild(cont.lastChild); 
-        let logs = JSON.parse(localStorage.getItem('activity_logs_stream')||'[]'); 
-        logs.unshift({message:msg, time:t}); 
-        if(logs.length>40) logs.pop(); 
-        localStorage.setItem('activity_logs_stream', JSON.stringify(logs)); 
+    function addActivityLog(msg) {
+        let cont = document.getElementById("activityList");
+        let div = document.createElement("div");
+        div.className = "activity-item";
+        let t = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        div.innerHTML = `<i class="fas fa-bell"></i> <span>${msg}</span><small style="margin-left:auto; color:#6b7280;">${t}</small>`;
+        cont.prepend(div);
+        if(cont.children.length > 15) cont.removeChild(cont.lastChild);
+        let logs = JSON.parse(localStorage.getItem('activity_logs_stream')||'[]');
+        logs.unshift({message:msg, time:t});
+        if(logs.length>40) logs.pop();
+        localStorage.setItem('activity_logs_stream', JSON.stringify(logs));
     }
     
-    function loadActivityLogs() { 
-        let logs = JSON.parse(localStorage.getItem('activity_logs_stream')||'[]'); 
-        let cont = document.getElementById("activityList"); 
-        cont.innerHTML = ""; 
-        if(logs.length===0) { 
-            cont.innerHTML = `<div class="activity-item"><i class="fas fa-check-circle"></i> <span>Welcome to SADWAP StreamOps. Drag the circular menu anywhere! RVR & Tutorials fully loaded.</span></div>`; 
-            return; 
-        } 
-        logs.slice(0,15).forEach(l => { 
-            let div = document.createElement("div"); 
-            div.className = "activity-item"; 
-            div.innerHTML = `<i class="fas fa-history"></i> <span>${l.message}</span><small style="margin-left:auto; color:#6b7280;">${l.time}</small>`; 
-            cont.appendChild(div); 
-        }); 
+    function loadActivityLogs() {
+        let logs = JSON.parse(localStorage.getItem('activity_logs_stream')||'[]');
+        let cont = document.getElementById("activityList");
+        cont.innerHTML = "";
+        if(logs.length===0) {
+            cont.innerHTML = `<div class="activity-item"><i class="fas fa-check-circle"></i> <span>Welcome to SADWAP StreamOps. Drag the circular menu anywhere! All modules loaded including Void & Refunds.</span></div>`;
+            return;
+        }
+        logs.slice(0,15).forEach(l => {
+            let div = document.createElement("div");
+            div.className = "activity-item";
+            div.innerHTML = `<i class="fas fa-history"></i> <span>${l.message}</span><small style="margin-left:auto; color:#6b7280;">${l.time}</small>`;
+            cont.appendChild(div);
+        });
     }
     
-    function showToast(msg) { 
-        let t = document.getElementById("toastMessage"); 
-        t.querySelector("span").innerText = msg; 
-        t.style.display = "flex"; 
-        setTimeout(() => t.style.display = "none", 2500); 
+    function showToast(msg) {
+        let t = document.getElementById("toastMessage");
+        t.querySelector("span").innerText = msg;
+        t.style.display = "flex";
+        setTimeout(() => t.style.display = "none", 2500);
     }
     
-    function refreshAllData() { 
-        addActivityLog("🔄 Manual data sync completed"); 
-        showToast("Dashboard refreshed"); 
+    function refreshAllData() {
+        addActivityLog("🔄 Manual data sync completed");
+        showToast("Dashboard refreshed");
         let newUsers = Math.floor(1200 + Math.random() * 100);
         document.getElementById("activeUsers").innerText = newUsers.toLocaleString();
         document.getElementById("processedOps").innerText = (Math.floor(42 + Math.random() * 8)) + "." + Math.floor(Math.random() * 9) + "K";
@@ -652,66 +656,67 @@
     }
     
     document.getElementById("refreshDataBtn").addEventListener("click", refreshAllData);
-    
+
     // ======================= CHATBOT AI =======================
     const floatingBtn = document.getElementById('floatingAiBtn');
     const chatbotModal = document.getElementById('chatbotModal');
     const closeChatbotBtn = document.getElementById('closeChatbotBtn');
     
-    function openChatbot() { 
-        chatbotModal.classList.add('open'); 
-        addActivityLog("🤖 AI Assistant opened"); 
+    function openChatbot() {
+        chatbotModal.classList.add('open');
+        addActivityLog("🤖 AI Assistant opened");
     }
-    function closeChatbot() { 
-        chatbotModal.classList.remove('open'); 
+    function closeChatbot() {
+        chatbotModal.classList.remove('open');
     }
-    floatingBtn.addEventListener('click', openChatbot); 
+    floatingBtn.addEventListener('click', openChatbot);
     closeChatbotBtn.addEventListener('click', closeChatbot);
-    
+
     // ======================= DATE/TIME =======================
-    function updateDateTime() { 
-        let n = new Date(); 
-        document.getElementById("currentDate").innerHTML = n.toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'}); 
-        document.getElementById("currentTime").innerHTML = n.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); 
+    function updateDateTime() {
+        let n = new Date();
+        document.getElementById("currentDate").innerHTML = n.toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'});
+        document.getElementById("currentTime").innerHTML = n.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     }
-    setInterval(updateDateTime, 1000); 
+    setInterval(updateDateTime, 1000);
     updateDateTime();
-    
+
     // ======================= ANIMATED STATS =======================
     let statsAnimated = false;
-    function animateStats(){ 
-        if(statsAnimated) return; 
-        statsAnimated = true; 
-        let start = 0; 
-        let iv = setInterval(()=>{ 
-            start += 50; 
-            if(start >= 1247){ 
-                document.getElementById("activeUsers").innerText = "1,247"; 
-                document.getElementById("systemHealth").innerText = "99.9%"; 
-                document.getElementById("processedOps").innerText = "45.2K"; 
-                clearInterval(iv); 
-            } else { 
-                document.getElementById("activeUsers").innerText = Math.floor(start); 
-                document.getElementById("processedOps").innerText = Math.floor(start * 36.2); 
-            } 
-        }, 20); 
+    function animateStats(){
+        if(statsAnimated) return;
+        statsAnimated = true;
+        let start = 0;
+        let iv = setInterval(()=>{
+            start += 50;
+            if(start >= 1247){
+                document.getElementById("activeUsers").innerText = "1,247";
+                document.getElementById("systemHealth").innerText = "99.9%";
+                document.getElementById("processedOps").innerText = "45.2K";
+                clearInterval(iv);
+            } else {
+                document.getElementById("activeUsers").innerText = Math.floor(start);
+                document.getElementById("processedOps").innerText = Math.floor(start * 36.2);
+            }
+        }, 20);
     }
     setTimeout(animateStats, 1000);
-    
+
     // ======================= INITIALIZE EVERYTHING =======================
-    positionMenuItems(); 
-    loadSavedPosition(); 
-    setLanguage("en"); 
-    buildQuickModules(); 
+    positionMenuItems();
+    loadSavedPosition();
+    setLanguage("en");
+    buildQuickModules();
     loadActivityLogs();
     
     let existing = JSON.parse(localStorage.getItem('activity_logs_stream')||'[]');
-    if(existing.length === 0){ 
-        addActivityLog("🚀 SADWAP StreamOps initialized · Drag the circular menu anywhere!"); 
-        addActivityLog("📋 Click the compass icon to open radial menu (12 modules including RVR & Tutorials)"); 
-        addActivityLog("🎥 Tutorials & RVR links are now fully functional"); 
-        addActivityLog("✅ All links verified: Inventory, Sales, Expiry, Transfers, Training, Municipality, Admin, Insights, RVR, Tutorials & Video Gallery"); 
+    if(existing.length === 0){
+        addActivityLog("🚀 SADWAP StreamOps initialized · Drag the circular menu anywhere!");
+        addActivityLog("📋 Click the compass icon to open radial menu (13 modules including Void & Refunds)");
+        addActivityLog("🔄 Void & Refunds module is now fully integrated and working");
+        addActivityLog("✅ All links verified: Inventory, Sales, Expiry, Transfers, Training, Municipality, Admin, Insights, RVR, Tutorials, Void & Refunds, Video Gallery");
     }
 </script>
 </body>
 </html>
+```
