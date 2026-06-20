@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,6 +20,11 @@
             padding: 12px;
             position: relative;
             background: #000;
+            transition: background 0.3s;
+        }
+
+        body.dark-mode {
+            background: #0a0a0f;
         }
 
         .chat-container {
@@ -35,6 +39,7 @@
             z-index: 1;
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5), 0 0 0 8px rgba(40, 40, 45, 0.8);
+            transition: background 0.3s, border-color 0.3s;
         }
 
         .video-background {
@@ -66,6 +71,7 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.15);
             backdrop-filter: blur(1px);
+            transition: background 0.3s;
         }
 
         .video-controls {
@@ -172,6 +178,7 @@
             align-items: center;
             gap: 8px;
             margin-top: 8px;
+            flex-wrap: wrap;
         }
 
         .header-title h1 {
@@ -195,18 +202,45 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
+        .test-badge {
+            background: linear-gradient(135deg, #ff6b35, #e63946);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 30px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 12px rgba(230, 57, 70, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: pulse-badge 2s infinite;
+        }
+
+        @keyframes pulse-badge {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .header-title-top {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+
         .action-buttons {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             margin-top: 12px;
             padding-top: 8px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
         }
 
         .action-btn {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            font-size: 14px;
+            font-size: 13px;
             color: #fff;
             font-weight: 500;
             padding: 6px 12px;
@@ -264,6 +298,7 @@
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             font-weight: 450;
+            white-space: pre-wrap;
         }
 
         .user .message-content {
@@ -561,6 +596,108 @@
             0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
             40% { transform: scale(1); opacity: 1; }
         }
+
+        /* language toggle */
+        .lang-toggle {
+            display: flex;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .lang-toggle button {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .lang-toggle button.active {
+            background: rgba(10, 132, 255, 0.6);
+            color: white;
+            box-shadow: 0 2px 8px rgba(10, 132, 255, 0.3);
+        }
+
+        .lang-toggle button:hover {
+            color: white;
+        }
+
+        /* dark mode toggle in header */
+        .dark-toggle-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .dark-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        @media (max-width: 500px) {
+            .chat-container {
+                height: 95vh;
+                max-height: 650px;
+                border-radius: 24px;
+            }
+            .chat-header {
+                padding: 12px 14px 8px;
+            }
+            .header-title h1 {
+                font-size: 20px;
+            }
+            .action-btn {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+            .message-content {
+                font-size: 14px;
+                padding: 10px 14px;
+            }
+            .chat-input-area {
+                padding: 10px 14px 16px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .header-title h1 {
+                font-size: 18px;
+            }
+            .ai-badge {
+                font-size: 10px;
+                padding: 2px 8px;
+            }
+            .action-btn {
+                font-size: 10px;
+                padding: 3px 8px;
+            }
+            .suggestion-chip {
+                font-size: 12px;
+                padding: 6px 14px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -592,38 +729,36 @@
                     </div>
                 </div>
                 <div class="header-title">
-                    <h1>Kudu AI</h1>
-                    <span class="ai-badge">Complete Menu</span>
+                    <div class="header-title-top">
+                        <h1 id="botTitle">Kudu AI</h1>
+                        <span class="ai-badge" id="badgeText">Complete Menu</span>
+                        <span class="test-badge">🧪 Test Bot</span>
+                    </div>
+                    <div class="header-controls">
+                        <div class="lang-toggle" id="langToggle">
+                            <button class="active" data-lang="en" onclick="setLanguage('en')">EN</button>
+                            <button data-lang="ar" onclick="setLanguage('ar')">AR</button>
+                        </div>
+                        <button class="dark-toggle-btn" onclick="toggleDarkMode()">🌙</button>
+                    </div>
                 </div>
                 <div class="action-buttons">
                     <button class="action-btn" onclick="newChat()">
-                        <span>+</span> New Chat
+                        <span>+</span> <span id="newChatLabel">New Chat</span>
                     </button>
                     <button class="action-btn" onclick="clearChat()">
-                        <span>🗑️</span> Clear
+                        <span>🗑️</span> <span id="clearLabel">Clear</span>
                     </button>
                     <button class="action-btn" onclick="exportChat()">
-                        <span>📤</span> Export
+                        <span>📤</span> <span id="exportLabel">Export</span>
                     </button>
                     <button class="action-btn" onclick="showHistory()">
-                        <span>📋</span> History
+                        <span>📋</span> <span id="historyLabel">History</span>
                     </button>
                 </div>
             </div>
 
-            <div class="chat-messages" id="chatMessages">
-                <div class="message bot">
-                    <div class="message-content">
-                        👋 Welcome to Kudu AI! I can help with our complete menu including 🍳 Breakfast (10), 🍔 Burger Station (13), 🥩 Steak Station (5), 🍨 Desserts (7), 🎯 Promos (19), and 🍟 Sides (13) - 67 items total! Try asking about any menu item or SOP number!
-                    </div>
-                </div>
-                <div class="feedback-buttons" data-message-id="welcome">
-                    <button class="feedback-btn" onclick="giveFeedback('welcome', 'like')">👍</button>
-                    <button class="feedback-btn" onclick="giveFeedback('welcome', 'dislike')">👎</button>
-                    <button class="feedback-btn" onclick="giveFeedback('welcome', 'ok')">👌</button>
-                    <button class="feedback-btn" onclick="giveFeedback('welcome', 'smile')">😊</button>
-                </div>
-            </div>
+            <div class="chat-messages" id="chatMessages"></div>
 
             <div class="match-suggestions" id="matchSuggestions" style="display: none;">
                 <span id="matchText"></span>
@@ -641,7 +776,7 @@
 
             <div class="history-panel" id="historyPanel">
                 <div class="history-header">
-                    <h2>Chat History</h2>
+                    <h2 id="historyTitle">Chat History</h2>
                     <button class="close-btn" onclick="hideHistory()">✕</button>
                 </div>
                 <div id="historyList"></div>
@@ -650,6 +785,78 @@
     </div>
 
     <script>
+        // ============================================
+        // LANGUAGE SUPPORT
+        // ============================================
+        const translations = {
+            en: {
+                title: 'Kudu AI',
+                badge: 'Complete Menu',
+                newChat: 'New Chat',
+                clear: 'Clear',
+                export: 'Export',
+                history: 'History',
+                historyTitle: 'Chat History',
+                inputPlaceholder: 'Ask about breakfast, burgers, steak, desserts, promos, sides...',
+                welcome: '🧪 **TEST BOT** 👋 Welcome to Kudu AI Test Version! I can help with our complete menu including 🍳 Breakfast (10), 🍔 Burger Station (13), 🥩 Steak Station (5), 🍨 Desserts (7), 🎯 Promos (19), and 🍟 Sides (13) - 67 items total! Try asking about any menu item, SOP number, abbreviations, job profiles, or food safety!',
+                noHistory: 'No chat history yet',
+                tryThese: '💡 Try these:'
+            },
+            ar: {
+                title: 'كودو AI',
+                badge: 'القائمة الكاملة',
+                newChat: 'محادثة جديدة',
+                clear: 'مسح',
+                export: 'تصدير',
+                history: 'السجل',
+                historyTitle: 'سجل المحادثات',
+                inputPlaceholder: 'اسأل عن الإفطار، البرجر، الستيك، الحلويات، العروض، الأطباق الجانبية...',
+                welcome: '🧪 **بوت تجريبي** 👋 مرحباً بك في نسخة اختبار كودو AI! يمكنني مساعدتك في قائمتنا الكاملة التي تشمل 🍳 الإفطار (10)، 🍔 محطة البرجر (13)، 🥩 محطة الستيك (5)، 🍨 الحلويات (7)، 🎯 العروض (19)، و 🍟 الأطباق الجانبية (13) - إجمالي 67 صنف! جرب السؤال عن أي صنف، رقم SOP، الاختصارات، الملفات الوظيفية، أو سلامة الطعام!',
+                noHistory: 'لا يوجد سجل محادثات بعد',
+                tryThese: '💡 جرب هذه:'
+            }
+        };
+
+        let currentLang = 'en';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-toggle button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            updateUI();
+            // Update welcome message
+            document.getElementById('chatMessages').innerHTML = '';
+            displayWelcomeMessage();
+        }
+
+        function updateUI() {
+            const t = translations[currentLang];
+            document.getElementById('botTitle').textContent = t.title;
+            document.getElementById('badgeText').textContent = t.badge;
+            document.getElementById('newChatLabel').textContent = t.newChat;
+            document.getElementById('clearLabel').textContent = t.clear;
+            document.getElementById('exportLabel').textContent = t.export;
+            document.getElementById('historyLabel').textContent = t.history;
+            document.getElementById('historyTitle').textContent = t.historyTitle;
+            document.getElementById('userInput').placeholder = t.inputPlaceholder;
+        }
+
+        // ============================================
+        // DARK MODE
+        // ============================================
+        let darkMode = false;
+
+        function toggleDarkMode() {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark-mode', darkMode);
+            const btn = document.querySelector('.dark-toggle-btn');
+            btn.textContent = darkMode ? '☀️' : '🌙';
+        }
+
+        // ============================================
+        // VIDEO CONTROLS
+        // ============================================
         const video = document.getElementById('backgroundVideo');
         let isMuted = true;
         let isPlaying = true;
@@ -660,10 +867,8 @@
         function toggleMute() {
             video.muted = !video.muted;
             isMuted = video.muted;
-            
             const muteBtn = document.getElementById('muteToggle');
             const soundWave = document.getElementById('soundWave');
-            
             if (video.muted) {
                 muteBtn.innerHTML = '🔇';
                 soundWave.style.display = 'none';
@@ -688,726 +893,344 @@
         }
 
         // ============================================
-        // COMPLETE MENU KNOWLEDGE BASE
+        // COMPLETE KNOWLEDGE BASE (Menu + Abbreviations + Topics + Job Profiles)
         // ============================================
-        
         const knowledgeBase = {
             text: {
-                // ===== BREAKFAST ITEMS (10) =====
-                'kudu breakfast': {
-                    'description': '🍳 KUDU Breakfast (BKF|SOP# 311) - Classic breakfast with omelet, hotdog, 2 hash browns, multigrain toast, cherry tomatoes, and cucumber. Served with coffee/tea and juice. 753-765 Kcal.',
-                    'ingredients': '2 Eggs, 1 Dash Salt, 1 Slice Yellow Cheese, 2 Hash Browns, 1 Hotdog, 2 Slices Multigrain Toast, 3 Cherry Tomatoes, 3 Cucumber Slices, Coffee/Tea, Orange/Apple Juice.',
-                    'preparation': 'Cook hash browns at 350°F for 3 min. Whisk 2 eggs with salt, pour on 250°F grill. Add yellow cheese, fold eggs from 4 sides. Turn over. Toast bread. Serve with hotdog, hash browns, tomatoes, cucumbers.',
-                    'launch_date': '10th Jan 2021',
-                    'station': 'Burger Station',
-                    'calories': '753-765 Kcal',
-                    'sop': 'BKF|SOP# 311'
-                },
-                'club breakfast': {
-                    'description': '🥪 Club Breakfast (BKF|SOP# 312) - Omelet with smoked chicken and beef, yellow cheese, 2 hash browns, multigrain toast, cherry tomatoes, and cucumber. Served with coffee/tea and juice. 685-697 Kcal.',
-                    'ingredients': '2 Eggs, 1 Dash Salt, ½ Slice Chicken, ½ Slice Beef, 1 Slice Yellow Cheese, 14g Chopped Onion & Green Pepper, 2 Hash Browns, 2 Slices Multigrain Toast, 3 Cherry Tomatoes, 3 Cucumber Slices.',
-                    'preparation': 'Cook hash browns 3 min at 350°F. Whisk eggs with salt, onions, peppers. Pour on 250°F grill. Add chicken and beef, then cheese. Fold eggs. Toast bread. Serve with hash browns, tomatoes, cucumbers.',
-                    'launch_date': '10th Jan 2021',
-                    'station': 'Burger Station',
-                    'calories': '685-697 Kcal',
-                    'sop': 'BKF|SOP# 312'
-                },
-                'steak & eggs': {
-                    'description': '🥩 Steak & Eggs (BKF|SOP# 313) - KUDU beef steak with 2 eggs sunny side up, hash brown, multigrain toast, cherry tomatoes, and cucumber. Served with coffee/tea and juice. 620-632 Kcal.',
-                    'ingredients': '1 Order Beef Steak, 2 Eggs, 1 Dash Salt, 1 Dash KUDU Seasoning, 1 Hash Brown, 2 Slices Multigrain Toast, 3 Cherry Tomatoes, 3 Cucumber Slices, Coffee/Tea, Orange/Apple Juice.',
-                    'preparation': 'Cook beef steak 4 min at 350°F with KUDU seasoning. Cook hash brown 3 min at 350°F. Cook eggs sunny side up at 250°F. Toast bread. Serve eggs in middle, beef and hash brown on side, toast with tomatoes and cucumbers.',
-                    'launch_date': '10th Jan 2021',
-                    'station': 'Burger Station',
-                    'calories': '620-632 Kcal',
-                    'sop': 'BKF|SOP# 313'
-                },
-                'omelet sandwich': {
-                    'description': '🥪 Omelet Sandwich (BKF|SOP# 314) - Steak bread with egg omelet, yellow & white cheese, mayonnaise, lettuce, and tomato. 756-762 Kcal.',
-                    'ingredients': '1 Steak Bread (Brown or White), 2 Eggs, 1 Dash Salt, 1 oz Mayonnaise, 35g Lettuce, 2 Half Moon Tomatoes, 1 Slice Yellow Cheese (Triangular), ½ Slice White Cheese (Triangular)',
-                    'preparation': 'Place bread on flat grill, remove inner part. Cook 2 whisked eggs with salt at 250°F. Fold eggs to 2"x8". Add yellow and white cheese. Transfer to bread heel. Garnish crown with mayo, lettuce, tomato. Slice in half.',
-                    'launch_date': '10th Jan 2021',
-                    'station': 'Burger Station',
-                    'calories': '756-762 Kcal',
-                    'sop': 'BKF|SOP# 314'
-                },
-                'chicken & eggs': {
-                    'description': '🍗 Chicken & Eggs (BKF|SOP# 315) - KUDU chicken steak with 2 eggs sunny side up, hash brown, multigrain toast, cherry tomatoes, and cucumber. Served with coffee/tea and juice. 754 Kcal.',
-                    'ingredients': '1 Order Chicken Steak, 2 Eggs, 1 Dash Salt, 1 Dash KUDU Seasoning, 1 Hash Brown, 2 Slices Multigrain Toast, 3 Cherry Tomatoes, 3 Cucumber Slices, Coffee/Tea, Orange/Apple Juice.',
-                    'preparation': 'Cook chicken steak 4 min at 350°F with KUDU seasoning. Cook hash brown 3 min at 350°F. Cook eggs sunny side up at 250°F. Toast bread. Serve eggs in middle, chicken and hash brown on side, toast with tomatoes and cucumbers.',
-                    'launch_date': '7th Sep 2023',
-                    'station': 'Burger Station',
-                    'calories': '754 Kcal',
-                    'sop': 'BKF|SOP# 315'
-                },
-                'hot dog wrap': {
-                    'description': '🌭 Egg & Hot Dog Wrap (BKF|SOP# 322) - Scrambled egg with hot dog, cheese sauce, yellow cheese in 8" tortilla. 579 Kcal.',
-                    'ingredients': '1 Egg, 1 Dash KUDU Seasoning, 1 Piece 8" Tortilla Bread, 1 Hot Dog, 20g Cheese Sauce, 1 Slice Yellow Cheese',
-                    'preparation': 'Cook hot dog in panini toaster 3:30 min. Scramble egg with seasoning on 250°F grill for 2 min. Place egg on tortilla, add cheese sauce, hot dog, yellow cheese. Fold and toast 30 sec in panini toaster.',
-                    'station': 'Burger Station',
-                    'calories': '579 Kcal',
-                    'sop': 'BKF|SOP# 322',
-                    'phu': 'HDOG - 300 min holding time'
-                },
-                'pancake': {
-                    'description': '🥞 KUDU Pancake (BKF|SOP# 390) - 3 fluffy pancakes served with butter blade and 2 oz pancake syrup (maple or strawberry). 646 Kcal.',
-                    'ingredients': '165ml Milk, 1 Egg, 5g Oil, 150g Pancake Powder, 1 Butter Blade, 2 oz Pancake Syrup',
-                    'preparation': 'Mix pancake powder, oil, egg, milk until smooth. Spray grill at 350°F. Use 4 oz ladle for 3 pancakes. Cook 2 min until bubbles form, flip and cook 1 min until golden. Stack 3 pieces.',
-                    'launch_date': '10th Jan 2021',
-                    'station': 'Steak Station',
-                    'calories': '646 Kcal',
-                    'sop': 'BKF|SOP# 390'
-                },
-                'waffle': {
-                    'description': '🧇 KUDU Waffle (BKF|SOP# 391) - Crispy waffle served with butter blade and 2 oz syrup (maple or strawberry). 269 Kcal.',
-                    'ingredients': '165ml Milk, 1 Egg, 5g Oil, 150g Pancake Powder, 1 Butter Blade, 2 oz Pancake Syrup',
-                    'preparation': 'Mix pancake powder, oil, egg, milk until smooth. Spray waffle iron. Pour batter and cook 3 min until golden.',
-                    'launch_date': '10th Jan 2021',
-                    'station': 'Steak Station',
-                    'calories': '269 Kcal',
-                    'sop': 'BKF|SOP# 391'
-                },
-                'egg wrap': {
-                    'description': '🌯 Egg Wrap (BKF|SOP# 393) - Scrambled egg with yellow cheese, crushed hash brown in 8" tortilla. Served with Hollandaise sauce. 335 Kcal.',
-                    'ingredients': '1 Egg, 1 Dash KUDU Seasoning, 1 Piece 8" Tortilla Bread, 1 Hash Brown, 1 Slice Yellow Cheese, 1 Portion KUDU Hollandaise Sauce',
-                    'preparation': 'Cook hash brown 3 min at 350°F. Scramble egg with seasoning on 250°F grill for 2 min. Place egg on tortilla, add cheese, crushed hash brown. Fold and wrap.',
-                    'launch_date': '9th October 2025',
-                    'station': 'Burger Station',
-                    'calories': '335 Kcal',
-                    'sop': 'BKF|SOP# 393'
-                },
-                'chicken wrap': {
-                    'description': '🌯 Egg & Chicken Wrap (BKF|SOP# 394) - Scrambled egg with chicken strip, cheese sauce, yellow cheese in 8" tortilla.',
-                    'ingredients': '1 Egg, 1 Dash KUDU Seasoning, 1 Piece 8" Tortilla Bread, 1 Chicken Strip, 20g Cheese Sauce, 1 Slice Yellow Cheese',
-                    'preparation': 'Cook chicken strips 5 min. Scramble egg with seasoning on 250°F grill for 2 min. Place egg on tortilla, add cheese sauce, chicken strip, yellow cheese. Fold and toast 30 sec.',
-                    'launch_date': 'February 2026',
-                    'station': 'Burger Station',
-                    'sop': 'BKF|SOP# 394',
-                    'phu': 'STR - 30 min holding time'
-                },
-                
-                // ===== BURGER STATION ITEMS (13) =====
-                'philly beef': {
-                    'description': '🥩 Philly Beef (BUS|SOP# 431) - Classic KUDU sandwich with Philly beef meat, mixed mushroom & onion, white cheese, on caramelized steak bread. 1042 Kcal. Launched April 1988.',
-                    'ingredients': '1 Philly Beef Meat, 1 Dash KUDU Seasoning, 112g Mixed Mushroom & Onion, 1 Philly Bread, 1½ Slices White Cheese, 14g Melted Butter',
-                    'preparation': 'Toast buttered bread 2:30 min at 350°F. Cook beef at 250°F, separate pieces. Add seasoning when half cooked. Add mushroom & onion mix for 30 sec. Add cheese until melted. Line meat 8" long, place in bread.',
-                    'calories': '1042 Kcal',
-                    'launch_date': 'April 1988',
-                    'station': 'Burger Station',
-                    'sop': 'BUS|SOP# 431',
-                    'cooking_time': '2-3 minutes',
-                    'phu': 'PHBF - 30 minutes holding time'
-                },
-                'quattro chicken': {
-                    'description': '🍗 Quattro Chicken (BUS|SOP# 421) - Spicy chicken fillet patty with mayonnaise, thousand island sauce, shredded lettuce on big bun. 1076 Kcal. Launched April 2007.',
-                    'ingredients': '1 Spicy Chicken Fillet Patty, 28g Mayonnaise, 28g Thousand Island Sauce, 20g Shredded Lettuce, 1 Big Bun',
-                    'preparation': 'Cook patty 6 min at 350°F. Toast bun. Place on wrapper. Squeeze mayo spiral on crown, add lettuce, thousand island sauce. Place patty, close burger.',
-                    'calories': '1076 Kcal',
-                    'launch_date': 'April 2007',
-                    'station': 'Burger Station',
-                    'sop': 'BUS|SOP# 421',
-                    'cooking_time': '6:00 minutes',
-                    'phu': 'QTR - Max 4 patties per pan, 30 min holding time'
-                },
-                'veggie sandwich': {
-                    'description': '🥬 Veggie Sandwich (BUS|SOP# 418) - Veggie patty with thousand island sauce, shredded lettuce on kiddie bread. 942 Kcal. Launched April 1988.',
-                    'ingredients': '1 Veggie Patty, 28g Thousand Island Sauce, 20g Shredded Lettuce, 1 Kiddie Bread',
-                    'preparation': 'Cook veggie patty 5 min at 350°F. Toast kiddie bread. Squeeze 14g thousand island on crown and heel. Add lettuce on crown, place patty, close.',
-                    'calories': '942 Kcal',
-                    'launch_date': 'April 1988',
-                    'station': 'Burger Station',
-                    'sop': 'BUS|SOP# 418',
-                    'cooking_time': '5:00 minutes',
-                    'category': 'Khafayef'
-                },
-                'chicken burger': {
-                    'description': '🍔 Chicken Burger (BUS|SOP# 419) - Chicken burger patty with mayonnaise, shredded lettuce on big bun. 978 Kcal. Launched April 1988.',
-                    'ingredients': '1 Chicken Burger Patty (90g), 28g Mayonnaise, 20g Shredded Lettuce, 1 Big Bun',
-                    'preparation': 'Cook patty 3:30 min at 350°F. Toast bun. Squeeze 14g mayo on crown and heel. Add lettuce on crown, place patty, close.',
-                    'calories': '978 Kcal',
-                    'launch_date': 'April 1988',
-                    'station': 'Burger Station',
-                    'sop': 'BUS|SOP# 419',
-                    'cooking_time': '3:30 minutes'
-                },
-                'club sandwich': {
-                    'description': '🥪 KUDU Club Sandwich (BUS|SOP# 417) - Triple-decker with beef, chicken, turkey club meat, omelet egg, white & yellow cheese, multigrain toast. 885 Kcal. Launched Jan 10, 2021.',
-                    'ingredients': '1 Slice Beef Club Meat, 1 Slice Chicken Club Meat, 1 Slice Turkey Club Meat, 1 Egg, 1 Slice White Cheese, 1 Slice Yellow Cheese, 4 Slices Multigrain Toast, 28g Mayonnaise, 20g Shredded Lettuce, 1 Tomato Wheel, 4 Pickle Slices',
-                    'preparation': 'Cook omelet at 250°F. Toast bread. Apply 7g mayo on each slice. Build layers: bread+lettuce+chicken+white cheese, bread+tomato+beef+yellow cheese, bread+turkey+egg, top with bread. Cut diagonally.',
-                    'calories': '885 Kcal',
-                    'launch_date': 'January 10, 2021',
-                    'station': 'Burger Station',
-                    'sop': 'BUS|SOP# 417',
-                    'phu': 'EGG - Omelet in PHU for 30 minutes'
-                },
-                'extra spicy quattro': {
-                    'description': '🔥 Extra Spicy Quattro Chicken (BUS|SOP# 498) - Spicy chicken fillet with chipotle sauce, jalapenos, shredded lettuce on big bun. 720 Kcal. Launched December 2025.',
-                    'ingredients': '1 Spicy Chicken Fillet Patty, 40g Chipotle Sauce, 20g Shredded Lettuce, 4 Pcs Jalapeno, 1 Big Bun',
-                    'preparation': 'Cook patty 6 min. Toast bun. Place on wrapper. Squeeze 20g chipotle on crown, add lettuce, 20g chipotle, jalapenos, patty, close.',
-                    'calories': '720 Kcal',
-                    'launch_date': 'December 2025',
-                    'station': 'Burger Station',
-                    'sop': 'BUS|SOP# 498',
-                    'cooking_time': '6:00 minutes'
-                },
-                'non-spicy quattro': {
-                    'description': '🍔 Non-Spicy Quattro Chicken (BUS|SOP# 497) - Regular chicken fillet with mayonnaise, thousand island sauce, shredded lettuce on big bun. 911 Kcal. Launched December 2025.',
-                    'ingredients': '1 Regular Quatro Fillet, 28g Mayonnaise, 28g Thousand Island Sauce, 20g Shredded Lettuce, 1 Big Bun',
-                    'preparation': 'Cook patty 7 min. Toast bun. Place on wrapper. Squeeze mayo on crown, add lettuce, thousand island, patty, close.',
-                    'calories': '911 Kcal',
-                    'launch_date': 'December 2025',
-                    'station': 'Burger Station',
-                    'sop': 'BUS|SOP# 497',
-                    'cooking_time': '7:00 minutes',
-                    'phu': 'QTRR - Max 4 patties per pan, 30 min holding time'
-                },
-                'grilled chicken meal': {
-                    'description': '🍗 Grilled Chicken Meal (BUS|SOP# 426) - Grilled chicken big with mushroom & onion, green salad, sweet corn, criss cut potatoes. 790 Kcal. Launched April 1988.',
-                    'ingredients': '1 Grilled Chicken Big, 28g Italian Dressing, 56g Mushroom & Onion, 70g Green Salad, 20g Sweet Corn, 10g Green Pepper, 4 Cherry Tomatoes, 3 Cucumber Slices, ½ Kiddie Bread, 6 Criss Cut Potatoes, 7g Shredded Yellow Cheese',
-                    'preparation': 'Cook chicken 6 min on char-grill with Italian dressing. Cook criss cut potatoes. Heat mushroom & onion. Toast kiddie bread with butter. Assemble on plate.',
-                    'calories': '790 Kcal',
-                    'launch_date': 'April 1988',
-                    'station': 'Burger Station',
-                    'sop': 'BUS|SOP# 426',
-                    'phu': 'GRLB - 30 minutes holding time'
-                },
-                'diet grilled chicken': {
-                    'description': '🥗 Diet Grilled Chicken Meal (BUS|SOP# 690) - Grilled chicken big with mushroom & onion, green salad, sweet corn, brown bread. 450 Kcal. Launched April 1988.',
-                    'ingredients': '1 Grilled Chicken Big, 28g Italian Dressing, 56g Mushroom & Onion, 100g Green Salad, 20g Sweet Corn, 10g Green Pepper, 4 Cherry Tomatoes, 3 Cucumber Slices, ¼ Brown Bread, 7g Shredded Yellow Cheese',
-                    'preparation': 'Cook chicken 6 min on char-grill with Italian dressing. Heat mushroom & onion. Toast brown bread (no butter). Assemble on plate.',
-                    'calories': '450 Kcal',
-                    'launch_date': 'April 1988',
-                    'station': 'Burger Station',
-                    'sop': 'BUS|SOP# 690'
-                },
-                'hot dog cooking': {
-                    'description': '🌭 Hot Dog Cooking Procedure (BUS|SOP# 424) - For KUDU Breakfast. Cooked on Panini Toaster.',
-                    'preparation': 'Thaw 24 hrs in chiller. Set panini toaster 280°C. Place max 10 hotdogs, 1cm apart. Cook 3:30 min until >150°F.',
-                    'launch_date': 'April 1989',
-                    'station': 'Burger Station',
-                    'sop': 'BUS|SOP# 424',
-                    'phu': 'HDOG - 5 hours holding time'
-                },
-                'kiddie chicken burger': {
-                    'description': '🍔 Kiddie Chicken Burger (BUS|SOP# 492) - Junior chicken patty with mayonnaise, shredded lettuce on small bun. 666 Kcal. Launched April 1988.',
-                    'ingredients': '1 Junior Chicken Patty, 14g Mayonnaise, 10g Shredded Lettuce, 1 Small Bun',
-                    'preparation': 'Cook patty 3 min at 350°F. Toast small bun. Squeeze 7g mayo on crown and heel. Add lettuce on crown, place patty, close.',
-                    'calories': '666 Kcal',
-                    'launch_date': 'April 1988',
-                    'station': 'Burger Station',
-                    'sop': 'BUS|SOP# 492',
-                    'cooking_time': '3:00 minutes',
-                    'category': "Kid's Meals"
-                },
-                'kiddie chicken nuggets': {
-                    'description': '🍗 Kiddie Chicken Nuggets (BUS|SOP# 493) - 4 pieces chicken nuggets. 414 Kcal. Launched April 1988.',
-                    'ingredients': '4 Pieces Chicken Nuggets',
-                    'preparation': 'Cook 3:30 min at 350°F. Shake after 30 sec. Drain 10 sec. Place in small fries bag in kiddie box.',
-                    'calories': '414 Kcal',
-                    'launch_date': 'April 1988',
-                    'station': 'Fryer Station',
-                    'sop': 'BUS|SOP# 493',
-                    'cooking_time': '3:30 minutes',
-                    'category': "Kid's Meals"
-                },
-                'kids chicken strips': {
-                    'description': '🐔 Kids Chicken Strips (BUS|SOP# 496) - 3 chicken strips with fries and kids drink.',
-                    'ingredients': '3 Chicken Strips, 97g French Fries, Kids Drink',
-                    'preparation': 'Cook strips 5 min at 350°F. Hold in PHU (STR) max 30 min. Place in kiddie box with fries.',
-                    'station': 'Burger Station',
-                    'sop': 'BUS|SOP# 496',
-                    'cooking_time': '5:00 minutes',
-                    'phu': 'STR - 30 minutes holding time',
-                    'category': "Kid's Meals"
-                },
-                
-                // ===== STEAK STATION ITEMS (5) =====
-                'kudu beef': {
-                    'description': '🥩 KUDU Beef (STK|SOP# 512) - Classic steak sandwich with KUDU beef, diced onions & peppers, soy sauce, yellow cheese on steak bread. 715 Kcal. Launched April 1988.',
-                    'ingredients': '110g KUDU Beef, 14g Diced Onion, 7g Diced Green Pepper, 7g Soy Sauce, 1 Steak Bread, 28g Mayonnaise, 35g Lettuce, 2 Half-moon Tomatoes, 1 Slice Yellow Cheese, 1 Dash KUDU Seasoning',
-                    'preparation': 'Cook beef 4-5 min at 300-350°F. Remove bread inner part, add mayo, lettuce, tomato, heat bread. Cook beef with onion, seasoning, pepper, soy sauce. Add cheese, line meat 8" long, place on heel.',
-                    'calories': '715 Kcal',
-                    'launch_date': 'April 1988',
-                    'station': 'Steak Station',
-                    'sop': 'STK|SOP# 512',
-                    'cooking_time': '4-5 minutes',
-                    'phu': 'KDBF - 30 min holding, cook 4 min before PHU, 1:30 min when cooking from PHU',
-                    'storage': 'Frozen 6 months, thawed 72 hours (use within 48 hours after thaw)'
-                },
-                'kudu chicken': {
-                    'description': '🍗 KUDU Chicken (STK|SOP# 511) - Classic chicken steak sandwich with diced onions & peppers, soy sauce on steak bread. 609 Kcal. Launched April 1988.',
-                    'ingredients': '110g KUDU Chicken, 14g Diced Onion, 7g Diced Green Pepper, 7g Soy Sauce, 1 Steak Bread, 28g Mayonnaise, 35g Lettuce, 2 Half-moon Tomatoes, 1 Dash KUDU Seasoning',
-                    'preparation': 'Cook chicken 3-4 min at 300-350°F. Remove bread inner part, add mayo, lettuce, tomato, heat bread 45 sec each side. Cook chicken with onion, seasoning, pepper, soy sauce. Line meat 8" long, place on heel.',
-                    'calories': '609 Kcal',
-                    'launch_date': 'April 1988',
-                    'station': 'Steak Station',
-                    'sop': 'STK|SOP# 511',
-                    'cooking_time': '3-4 minutes',
-                    'phu': 'KDCH - 30 min holding, cook 3 min before PHU, 1:30 min when cooking from PHU',
-                    'storage': 'Frozen 6 months, thawed 72 hours (use within 48 hours after thaw)',
-                    'conformance': 'Weight with box: 340g ±5g, Temperature: ≥140°F'
-                },
-                'spicy kudu chicken': {
-                    'description': '🔥 Spicy KUDU Chicken (STK|SOP# 515) - Spicy chicken steak with harissa mayo, white cheese on steak bread. 690 Kcal. Launched April 2017.',
-                    'ingredients': '1 Spicy Chicken Steak, 14g Diced Onion, 7g Diced Green Pepper, 1 Slice White Cheese, 1 Steak Bread, 28g Harissa Mayo, 35g Shredded Lettuce, 2 Half-moon Tomatoes',
-                    'preparation': 'Cook chicken 3-4 min at 300-350°F. Remove bread inner part, add harissa mayo, lettuce, tomato, heat bread at 250°F. Cook chicken with onion, pepper. Add cheese, line meat, place on heel.',
-                    'calories': '690 Kcal',
-                    'launch_date': 'April 2017',
-                    'station': 'Steak Station',
-                    'sop': 'STK|SOP# 515',
-                    'cooking_time': '3-4 minutes',
-                    'phu': 'SPCH - 30 min holding, cook 3 min before PHU, 1:30 min when cooking from PHU',
-                    'storage': 'Frozen 9 months, thawed 72 hours (use within 48 hours after thaw)'
-                },
-                'lafino kudu chicken': {
-                    'description': '🌯 Lafino KUDU Chicken (STK|SOP# 517) - KUDU chicken with burrito sauce, yellow cheese in tortilla wrap. 575 Kcal. Launched April 2009.',
-                    'ingredients': '110g KUDU Chicken, 14g Diced Onion, 7g Diced Green Pepper, 7g Soy Sauce, 1 Tortilla Bread, 28g Burrito Sauce, 35g Lettuce, 2 Half-moon Tomatoes, 1 Slice Yellow Cheese, 1 Dash KUDU Seasoning',
-                    'preparation': 'Cook chicken 3-4 min at 300-350°F with onion, seasoning, pepper, soy sauce. Line chicken 8" long. Place on tortilla with lettuce, tomato. Add burrito sauce, cheese. Fold, roll tight, toast 30 sec in panini toaster.',
-                    'calories': '575 Kcal',
-                    'launch_date': 'April 2009',
-                    'station': 'Steak Station',
-                    'sop': 'STK|SOP# 517',
-                    'cooking_time': '3-4 minutes',
-                    'note': 'Toast in Panini Toaster for 30 seconds, sauce applied on top of chicken'
-                },
-                
-                // ===== DESSERT ITEMS (7) =====
-                'san sebastian cheesecake': {
-                    'description': '🍰 San Sebastian Cheesecake (DST|SOP# 729) - Burnt Basque style cheesecake served with chocolate or strawberry sauce. 502/443 Kcal. Launched 22nd September 2024.',
-                    'ingredients': '1 Cheesecake, 40-45g Chocolate or Strawberry Sauce',
-                    'preparation': 'Thaw 6 hours in chiller. Place in container with space for sauce cup. Add sauce on order.',
-                    'launch_date': '22nd September 2024',
-                    'station': 'Dessert',
-                    'sop': 'DST|SOP# 729',
-                    'calories': '502 Kcal (chocolate) / 443 Kcal (strawberry)',
-                    'storage': 'Frozen 0°F, 18 months. Thawed 72 hours @ chiller'
-                },
-                'brownies cheesecake': {
-                    'description': '🍫 Brownies Cheesecake (DST|SOP# 730) - Rich brownie base with creamy cheesecake topping. 355 Kcal. Launched 21st November 2024.',
-                    'ingredients': '1 Brownies Cheesecake slice',
-                    'preparation': 'Thaw 6 hours in chiller. Place in sugarcane container.',
-                    'launch_date': '21st November 2024',
-                    'station': 'Dessert',
-                    'sop': 'DST|SOP# 730',
-                    'calories': '355 Kcal',
-                    'storage': 'Frozen 0°F, 6 months. Thawed 72 hours @ chiller'
-                },
-                'sundae passion fruit': {
-                    'description': '🥭 Sundae Passion Fruit (DST|SOP# 731) - Soft ice cream with passion fruit topping and crushed waffle. 299 Kcal. Launched 1st July 2025.',
-                    'ingredients': '140g Ice Cream, 30g Passion Fruit Topping, 4g Crushed Waffle',
-                    'preparation': 'Dispense 5 spirals ice cream. Add topping and crushed waffle.',
-                    'launch_date': '1st July 2025',
-                    'station': 'Front Counter Service',
-                    'sop': 'DST|SOP# 731',
-                    'calories': '299 Kcal'
-                },
-                'kudu muffins': {
-                    'description': '🧁 KUDU Muffins (DST|SOP# 732) - Walnut (545 Kcal) or Chocolate Chip (573 Kcal). Launched August 2025.',
-                    'ingredients': '1 Muffin (Walnut or Chocolate Chip)',
-                    'preparation': 'Thaw 3 hours at room temperature. Heat only by request.',
-                    'launch_date': 'August 2025',
-                    'station': 'Counter',
-                    'sop': 'DST|SOP# 732',
-                    'calories': '545/573 Kcal',
-                    'storage': 'Frozen 5 months, thawed 7 days'
-                },
-                'ice cream sundae': {
-                    'description': '🍨 Ice Cream Sundae (DST|SOP# 715) - Soft ice cream with chocolate (250 Kcal) or strawberry (257 Kcal) topping. Launched April 2015.',
-                    'ingredients': '140g Ice Cream, 28g Chocolate or Strawberry Topping',
-                    'preparation': 'Dispense 5 spirals ice cream. Add topping.',
-                    'launch_date': 'April 2015',
-                    'station': 'Front Counter Service',
-                    'sop': 'DST|SOP# 715',
-                    'calories': '250/257 Kcal'
-                },
-                'ice cream cone': {
-                    'description': '🍦 Ice Cream Cone (PRP|DST# 714) - Soft ice cream in crispy cone. 114 Kcal. Launched April 2015.',
-                    'ingredients': '80g Ice Cream, 1 Ice Cream Cone',
-                    'preparation': 'Dispense 2½ spirals, starting from cone edge.',
-                    'launch_date': 'April 2015',
-                    'station': 'Front Counter Service',
-                    'sop': 'PRP|DST# 714',
-                    'calories': '114 Kcal'
-                },
-                'waffle ice cream cone': {
-                    'description': '🧇 Waffle Ice Cream Cone (PRP|DST# 722) - Waffle cone with soft ice cream. 190 Kcal. Launched 1st June 2021.',
-                    'ingredients': '140g Ice Cream, 1 Waffle Cone',
-                    'preparation': 'Dispense 5 spirals (1½ inside cone).',
-                    'launch_date': '1st June 2021',
-                    'station': 'Front Counter Service',
-                    'sop': 'PRP|DST# 722',
-                    'calories': '190 Kcal'
-                },
-                
-                // ===== PROMO ITEMS (19) =====
-                'og burger e-gamers bundle': {
-                    'description': '🎮 OG Burger E-Gamers Bundle (PRM|SOP# 997) - Chicken burger with cheese, lettuce, Khafeef sauce, medium fries, chicken nuggets, and figurine. Launched February 2026.',
-                    'ingredients': '1 Big Bun, 1 Chicken Burger, 1 Yellow Cheese, 20g Mayonnaise, 20g Lettuce, 20g Khafeef Sauce, Medium Fries, 4 Chicken Nuggets, 1 Figurine',
-                    'preparation': 'Cook nuggets 3:30 min, burger 3:30 min. Toast bun. Build burger with mayo on crown, lettuce, cheese, patty, Khafeef sauce on heel. Wrap. Portion nuggets in bag.',
-                    'launch_date': 'February 2026',
-                    'station': 'Burger Station',
-                    'sop': 'PRM|SOP# 997',
-                    'phu': 'NUGG - 30 min, CHBU - 30 min',
-                    'condiments': '2 ketchup, 2 napkins, straw, KUDU dressing dip'
-                },
-                'smokey': {
-                    'description': '🔥 Smokey (PRM|SOP# 973) - Philly beef with mozzarella, white cheese, caramelized peppers & onions, smokey sauce on potato steak bread. 959 Kcal. Launched April 25, 2024.',
-                    'ingredients': '1 Order Philly Beef, 40g Mozzarella, 60g Caramelized Pepper Onion, 1 Potato Steak Bread, 56g Smokey Sauce, 2 Slices White Cheese, 1 Dash KUDU Seasoning',
-                    'preparation': 'Cook beef at 250°F with caramelized veg. Add mozzarella, then white cheese. Toast bread with smokey sauce. Place meat on heel, cut in half. Serve in premium box.',
-                    'launch_date': 'April 25, 2024',
-                    'station': 'Burger Station',
-                    'sop': 'PRM|SOP# 973',
-                    'calories': '959 Kcal',
-                    'storage': 'Smokey sauce: 6 months frozen, 7 days chilled'
-                },
-                'sweet potato': {
-                    'description': '🍠 Sweet Potato (PRM|SOP# 990) - Sweet potato fries served with chipotle sauce. 220-319 Kcal. Launched 2nd November 2025.',
-                    'ingredients': 'Sweet Potato Fries, Chipotle Sauce (45g)',
-                    'preparation': 'Cook 2 min at 350°F. Shake after 30 sec. Drain 10 sec. No salt. Serve with chipotle sauce.',
-                    'launch_date': '2nd November 2025',
-                    'station': 'Fryer',
-                    'sop': 'PRM|SOP# 990',
-                    'calories': '220/272/319 Kcal (Reg/Med/Lge)',
-                    'storage': 'Frozen 16 months, holding 3 min'
-                },
-                'al muthalatha sandwich': {
-                    'description': '🌯 Al Muthalatha Sandwich (PRM|SOP# 971) - KUDU chicken with caramelized peppers & onions, mozzarella, white cheese, sauces in spicy tortilla. 798 Kcal. Launched January 2024.',
-                    'ingredients': '1 Order KUDU Chicken, 1 Spicy Tortilla, 40g Caramelized Pepper Onion, 56g Mozzarella, 28g Mayonnaise, 14g Tabasco Siracha, 1 Slice White Cheese, 56g Cilantro Sauce',
-                    'preparation': 'Cook chicken with caramelized veg. Add mozzarella. Place on tortilla with white cheese. Add sauces, fold, toast 30 sec. Serve with cilantro sauce.',
-                    'launch_date': 'January 2024',
-                    'station': 'Steak Station',
-                    'sop': 'PRM|SOP# 971',
-                    'calories': '798 Kcal'
-                },
-                'cheesy bacon fries': {
-                    'description': '🧀 Cheesy Bacon Fries (PRM|SOP# 986) - Loaded fries with cheese sauce, burrito sauce, crispy bits, jalapenos. 313 Kcal (reg), 798 Kcal (double). Launched 15th July 2025.',
-                    'ingredients': '89-216g Fries, 20-60g Cheddar Cheese Sauce, 20-60g Burrito Sauce, 20-40g Crispy Bits, 4-8 Jalapeno Slices',
-                    'preparation': 'Cook crispy bits 3 min at 250°F. Portion fries, add sauces, crispy bits, jalapenos.',
-                    'launch_date': '15th July 2025',
-                    'station': 'Fryer',
-                    'sop': 'PRM|SOP# 986',
-                    'calories': '313/798 Kcal',
-                    'phu': 'BITS - 30 min holding'
-                },
-                'double cheesy bacon fries': {
-                    'description': '🧀🧀 Double Cheesy Bacon Fries (PRM|SOP# 986) - Double portion loaded fries with extra toppings. 798 Kcal. Launched 15th July 2025.',
-                    'ingredients': '216g Fries, 60g Cheddar Cheese Sauce, 60g Burrito Sauce, 40g Crispy Bits, 8 Jalapeno Slices',
-                    'preparation': 'Portion 2 medium fries in salad bowl. Add sauces, crispy bits, jalapenos.',
-                    'launch_date': '15th July 2025',
-                    'station': 'Fryer',
-                    'sop': 'PRM|SOP# 986',
-                    'calories': '798 Kcal'
-                },
-                'chicken caesar salad': {
-                    'description': '🥗 Chicken Caesar Salad (PRM|SOP# 969) - Fresh salad with grilled chicken, parmesan, croutons, Caesar dressing. 571 Kcal. Launched June 26, 2024.',
-                    'ingredients': '150g Green Salad, 15g Parmesan Cheese, 110g Grilled Chicken, Croutons, 2 portions Caesar Dressing, 28g Italian Dressing',
-                    'preparation': 'Cook chicken. Place salad in bowl, add parmesan on 50%. Slice chicken, place on other half. Serve with dressing and croutons.',
-                    'launch_date': 'June 26, 2024',
-                    'station': 'Burger',
-                    'sop': 'PRM|SOP# 969',
-                    'calories': '571 Kcal'
-                },
-                'iced americano': {
-                    'description': '☕ Iced Americano (PRM|SOP# 962) - Double espresso over ice with water. 0 Kcal. Launched June 2023.',
-                    'ingredients': '1 Double Espresso, Ice, Water',
-                    'preparation': 'Fill cup with ice. Add iced water to middle of K letter. Brew espresso. Serve with straw.',
-                    'launch_date': 'June 2023',
-                    'station': 'Front Counter Service',
-                    'sop': 'PRM|SOP# 962',
-                    'calories': '0 Kcal'
-                },
-                'iced latte': {
-                    'description': '🥤 Iced Latte (PRM|SOP# 963) - Caramel latte over ice. 190 Kcal. Launched June 2023.',
-                    'ingredients': '250ml Caramel Latte, Ice',
-                    'preparation': 'Fill cup with ice. Shake tetra pack, pour to top line. Serve with straw.',
-                    'launch_date': 'June 2023',
-                    'station': 'Front Counter Service',
-                    'sop': 'PRM|SOP# 963',
-                    'calories': '190 Kcal',
-                    'storage': 'Chilled 9 months, 3 days after opening'
-                },
-                'jalapeno cheese melt': {
-                    'description': '🌶️ Jalapeno Cheese Melt (BRM|SOP# 960) - Junior burger with cheese sauce, jalapenos, yellow cheese on small bun. 574 Kcal. Launched Feb 11, 2023.',
-                    'ingredients': '1 Junior Patty, 28g Cheese Sauce, 5 Jalapeno Slices, 1 Small Bun, 1 Slice Yellow Cheese',
-                    'preparation': 'Cook patty 3 min. Toast bun. Add cheese sauce, patty, yellow cheese, jalapenos. Close.',
-                    'launch_date': 'Feb 11, 2023',
-                    'station': 'Burger Station',
-                    'sop': 'BRM|SOP# 960',
-                    'calories': '574 Kcal',
-                    'category': 'Khafayef'
-                },
-                'kudu burger box': {
-                    'description': '📦 KUDU Burger Box (BUS|SOP# 993) - 8 junior burgers with fries, crisscut, sauces. Launched 10th December 2025.',
-                    'ingredients': '8 Junior Burgers, 2 Med Fries, 2 Med Crisscut, 2 Chipotle Sauce, 2 Khafeef Sauce',
-                    'preparation': 'Prepare 8 burgers, bag in sandbag wraps. Assemble in gathering box: sauces in holder, 4 burgers top left, 4 bottom right, fries bottom left, crisscut top right.',
-                    'launch_date': '10th December 2025',
-                    'station': 'Burger Station',
-                    'sop': 'BUS|SOP# 993',
-                    'condiments': '8 ketchup, 4 napkins'
-                },
-                'kudu karkade': {
-                    'description': '🌸 KUDU KARKADE (PRM|SOP# 972) - Hibiscus iced tea with 7up Zero. 76 Kcal. Launched April 2, 2024.',
-                    'ingredients': '2 pumps Hibiscus Syrup, 1 Can 7up Zero, Ice',
-                    'preparation': 'Fill cup 50% ice. Add syrup slowly. Pour 7up Zero. Stir 8 times. Serve.',
-                    'launch_date': 'April 2, 2024',
-                    'station': 'Front Counter Service',
-                    'sop': 'PRM|SOP# 972',
-                    'calories': '76 Kcal',
-                    'storage': 'Syrup 18 months, 6 months after opening'
-                },
-                'kudu matcha latte': {
-                    'description': '🍵 KUDU Matcha Latte (PRM|SOP# 985) - Matcha latte with milk over ice. 95 Kcal. Launched 15th July 2025.',
-                    'ingredients': '184ml Matcha Latte, 130ml Milk, Ice',
-                    'preparation': 'Fill cup with ice. Add milk to between KUDU and triangles. Add Matcha Latte, stir.',
-                    'launch_date': '15th July 2025',
-                    'station': 'Front Counter Service',
-                    'sop': 'PRM|SOP# 985',
-                    'calories': '95 Kcal',
-                    'storage': 'Chilled 9 months, 3 days after opening'
-                },
-                'kudu nachos platter': {
-                    'description': '🇲🇽 KUDU Nachos Platter (PRM|SOP# 995) - Nachos with beef, cheese sauce, burrito sauce, toppings. Launched January 2026.',
-                    'ingredients': '60g Doritos, ½ KUDU Beef Patty, 28g Burrito Sauce, 28g Cheese Sauce, 40g Guacamole, 3 Jalapenos, 4g Diced Tomato, 2g Onion Chives',
-                    'preparation': 'Cook beef 3 min, chop. Place Doritos, add burrito sauce, beef, cheese sauce, tomato, onion, jalapenos. For take-out, guacamole on side.',
-                    'launch_date': 'January 2026',
-                    'station': 'Burger Station',
-                    'sop': 'PRM|SOP# 995'
-                },
-                'large kudu nachos platter': {
-                    'description': '🇲🇽 Large KUDU Nachos Platter (PRM|SOP# 994) - Large nachos with beef, double cheese sauce, double toppings. Launched January 2026.',
-                    'ingredients': '120g Doritos, 1 KUDU Beef Patty, 45g Burrito Sauce, 45g Cheese Sauce, 80g Guacamole, 7 Jalapenos, 7g Diced Tomato, 4g Onion Chives',
-                    'preparation': 'Cook beef 3 min, chop. Place Doritos, add burrito sauce, beef, cheese sauce, tomato, onion, jalapenos. For take-out, guacamole in 2 cups.',
-                    'launch_date': 'January 2026',
-                    'station': 'Burger Station',
-                    'sop': 'PRM|SOP# 994',
-                    'storage': 'Beef: frozen 9 months, thawed 72 hours'
-                },
-                'kudu passion': {
-                    'description': '😋 KUDU PASSION (PRM|SOP# 984) - Passion fruit drink with 7up Zero. 74 Kcal. Launched May 17, 2025.',
-                    'ingredients': '2 pumps Passion Fruit Syrup, 1 Can 7up Zero, Ice',
-                    'preparation': 'Fill cup 50% ice. Add syrup slowly. Pour 7up Zero. Stir 8 times. Serve.',
-                    'launch_date': 'May 17, 2025',
-                    'station': 'Front Counter Service',
-                    'sop': 'PRM|SOP# 984',
-                    'calories': '74 Kcal',
-                    'storage': 'Syrup 18 months, 6 months after opening'
-                },
-                'kudu tortilla': {
-                    'description': '🌮 KUDU Tortilla (PRM|SOP# 991) - Spicy chicken burger with premium tortilla sauce, lettuce, tomato in tortilla. 847 Kcal. Launched 6th November 2025.',
-                    'ingredients': '1 Spicy Chicken Burger, 1 Spicy Tortilla, 56g Premium Tortilla Sauce, 35g Lettuce, 2 Half-moon Tomatoes',
-                    'preparation': 'Cook patty 3:30 min. Cut into 4 strips. Spread sauce on tortilla, add lettuce, tomato, patty strips. Fold, toast 30 sec.',
-                    'launch_date': '6th November 2025',
-                    'station': 'Steak Station',
-                    'sop': 'PRM|SOP# 991',
-                    'calories': '847 Kcal',
-                    'phu': 'SCB - 30 min holding'
-                },
-                'kudulicious chicken': {
-                    'description': '🐔 KUDULICIOUS Chicken (PRM|SOP# 958) - KUDU chicken with garlic parmesan, veggies on kiddie bread. 236 Kcal. Launched 14th Jan 2023.',
-                    'ingredients': '55g KUDU Chicken, 7g Diced Onion, 3.5g Diced Green Pepper, 1/8 oz Soy Sauce, 1 Kiddie Bread, 28g Garlic Parmesan, 10g Lettuce, 2 Half-moon Tomatoes',
-                    'preparation': 'Cook chicken. Remove bread inner part, add garlic parmesan, lettuce, tomato. Heat bread. Cook chicken with onion, pepper, seasoning, soy sauce. Place on bread.',
-                    'launch_date': '14th Jan 2023',
-                    'station': 'Steak Station',
-                    'sop': 'PRM|SOP# 958',
-                    'calories': '236 Kcal',
-                    'category': 'Khafayef'
-                },
-                'lafino philly steak': {
-                    'description': '🥩 Lafino Philly Steak (STK|SOP# 956) - Philly beef with sliced onions, cheese sauce, cheeses in tortilla. 528 Kcal. Launched April 2022.',
-                    'ingredients': '1 Philly Beef, 2 Dashes KUDU Seasoning, 28g Sliced Onion, 12" Tortilla, 36g Mayonnaise, 21g Cheese Sauce, 2 halves Yellow Cheese, 2 halves White Cheese',
-                    'preparation': 'Cook beef, add onions. Add seasoning. Spread mayo and cheese sauce on tortilla. Add meat, cheeses. Fold, roll tight, toast 30 sec.',
-                    'launch_date': 'April 2022',
-                    'station': 'Burger Station',
-                    'sop': 'STK|SOP# 956',
-                    'calories': '528 Kcal'
-                },
-                
-                // ===== SIDE ITEMS (13) =====
-                'kudu chicken bites': {
-                    'description': '🍗 KUDU Chicken Bites (SID|SOP# 692) - 6 pieces of chicken bites served with choice of sauce (1000 Island, BBQ, or KUDU Dressing). 256 Kcal. Launched 4th May 2020.',
-                    'ingredients': '6 Chicken Bites, 56g Choice of Sauce',
-                    'preparation': 'Cook 4:15 min at 350°F. Shake after 30 sec. Drain 10 sec. Hold in PHU (BITE) max 30 min, 36 pieces per pan. Serve 6 pieces in designated cup with sauce.',
-                    'launch_date': '4th May 2020',
-                    'station': 'Fryer',
-                    'sop': 'SID|SOP# 692',
-                    'calories': '256 Kcal',
-                    'phu': 'BITE - 30 min, max 36 pieces',
-                    'storage': 'Frozen 12 months, sauces: 10 days after opening (BBQ/1000 Island), 2 days (KUDU Dressing)'
-                },
-                'spicy chicken bites': {
-                    'description': '🔥 Spicy Chicken Bites (SID|SOP# 693) - 6 pieces of spicy chicken bites served with 1000 Island sauce. 247 Kcal. Launched 15th Dec 2020.',
-                    'ingredients': '6 Spicy Chicken Bites, 56g 1000 Island Sauce',
-                    'preparation': 'Cook 4:00 min at 350°F. Shake after 30 sec. Drain 10 sec. Hold in PHU (BITE) max 30 min, 36 pieces per pan. Serve 6 pieces in designated cup with sauce.',
-                    'launch_date': '15th Dec 2020',
-                    'station': 'Fryer',
-                    'sop': 'SID|SOP# 693',
-                    'calories': '247 Kcal',
-                    'phu': 'BITE - 30 min, max 36 pieces',
-                    'storage': 'Frozen 12 months, 1000 Island: 10 days after opening'
-                },
-                'kudu salad': {
-                    'description': '🥗 KUDU Salad (SID|SOP# 691) - Fresh green salad with cherry tomatoes, cucumber, sweet corn, green pepper, croutons. 196 Kcal. Launched 20th Feb 2019.',
-                    'ingredients': '125g Green Salad, 4 Cherry Tomatoes, 4 Cucumber Slices, 20g Green Pepper Julienne, 35g Sweet Corn, Croutons, Italian Dressing, KUDU Dressing',
-                    'preparation': 'Place green salad in container. Add tomatoes, cucumber, sweet corn, green pepper. Cover. Serve with dressings and croutons.',
-                    'launch_date': '20th Feb 2019',
-                    'station': 'Burger',
-                    'sop': 'SID|SOP# 691',
-                    'calories': '196 Kcal',
-                    'storage': 'Green salad: 4 days chilled, 18 hours after opening'
-                },
-                'chicken salad': {
-                    'description': '🥗 Chicken Salad (SID|SOP# 691) - KUDU salad with grilled chicken strips. 368 Kcal. Launched 20th Feb 2019.',
-                    'ingredients': '125g Green Salad, 4 Cherry Tomatoes, 4 Cucumber Slices, 20g Green Pepper Julienne, 35g Sweet Corn, 110g Grilled Chicken, Croutons, Dressings',
-                    'preparation': 'Cook grilled chicken, cut into strips. Place on salad. Serve with dressings and croutons.',
-                    'launch_date': '20th Feb 2019',
-                    'station': 'Burger',
-                    'sop': 'SID|SOP# 691',
-                    'calories': '368 Kcal'
-                },
-                'cheese fries': {
-                    'description': '🧀 Cheese Fries (SID|SOP# 612) - Regular fries topped with Tiffani cheese sauce and onion chives. 350 Kcal. Launched April 2015.',
-                    'ingredients': '89g Cooked Fries, 56g Tiffani Cheese Sauce, 3g Onion Chives',
-                    'preparation': 'Cook fries, add salt. Portion into cup. Squeeze 3 spirals cheese sauce. Garnish with onion chives.',
-                    'launch_date': 'April 2015',
-                    'station': 'Fryer',
-                    'sop': 'SID|SOP# 612',
-                    'calories': '350 Kcal',
-                    'storage': 'Fries: frozen 12 months, cook 2:30 min, hold 7 min'
-                },
-                'cheese nachos': {
-                    'description': '🧀 Cheese Nachos (SID|SOP# 619) - 3 pieces of cheese nachos served with tortilla sauce. 294 Kcal. Launched April 1988.',
-                    'ingredients': '3 Cheese Nachos, 1 Portion Tortilla Sauce',
-                    'preparation': 'Cook 2:30 min at 350°F. Shake after 30 sec. Drain 10 sec. Hold in PHU (NACH) max 30 min, 12 pieces per pan. Place in designated box.',
-                    'launch_date': 'April 1988',
-                    'station': 'Fryer',
-                    'sop': 'SID|SOP# 619',
-                    'calories': '294 Kcal',
-                    'phu': 'NACH - 30 min, max 12 pieces',
-                    'storage': 'Frozen 9 months'
-                },
-                'chicken nuggets': {
-                    'description': '🍗 Chicken Nuggets (SID|SOP# 620) - 6 pieces chicken nuggets served with tortilla sauce. 294 Kcal. Launched April 1988.',
-                    'ingredients': '6 Chicken Nuggets, 1 Portion Tortilla Sauce',
-                    'preparation': 'Cook 3:30 min at 350°F. Shake after 30 sec. Drain 10 sec. Hold in PHU (NUGG) max 30 min. Place in nugget box.',
-                    'launch_date': 'April 1988',
-                    'station': 'Fryer',
-                    'sop': 'SID|SOP# 620',
-                    'calories': '294 Kcal',
-                    'phu': 'NUGG - 30 min',
-                    'storage': 'Frozen 12 months'
-                },
-                'chicken strips': {
-                    'description': '🐔 Chicken Strips (SID|SOP# 697) - 2 pieces chicken strips served with Pepper Mayo sauce. 92 Kcal. Launched Oct 2022.',
-                    'ingredients': '2 Chicken Strips, 45g Pepper Mayo Sauce',
-                    'preparation': 'Cook 5 min at 350°F. Shake after 30 sec. Drain 10 sec. Hold in PHU (STR) max 30 min, 10 pieces per pan. Place in kids fry bag.',
-                    'launch_date': 'Oct 2022',
-                    'station': 'Fryer',
-                    'sop': 'SID|SOP# 697',
-                    'calories': '92 Kcal',
-                    'phu': 'STR - 30 min, max 10 pieces',
-                    'storage': 'Frozen 12 months'
-                },
-                'criss cut potato': {
-                    'description': '🥔 Criss Cut Potato (SID|SOP# 617) - Crispy criss-cut potatoes. Regular (6 pcs), Medium (8 pcs), Large (10 pcs). Launched April 1988.',
-                    'ingredients': 'Criss Cut Potatoes',
-                    'preparation': 'Cook 3 min at 350°F. Shake after 30 sec. Drain 10 sec. Portion according to size: Reg 6 pcs (3 small/3 large), Med 8 pcs (4 small/4 large), Lge 10 pcs (5 small/5 large).',
-                    'launch_date': 'April 1988',
-                    'station': 'Fryer',
-                    'sop': 'SID|SOP# 617',
-                    'calories': 'Varies by size',
-                    'storage': 'Frozen 12 months'
-                },
-                'french fries cooking': {
-                    'description': '🍟 French Fries Cooking & Holding (SID|SOP# 611) - Standard procedure for cooking and holding French fries.',
-                    'preparation': 'Cook 2:30 min at 350°F. Shake after 30 sec. Drain 10 sec. Hold max 7 min. Salt after cooking.',
-                    'launch_date': 'April 1988',
-                    'station': 'Fryer',
-                    'sop': 'SID|SOP# 611',
-                    'weights': 'Raw: Kids 97g, Reg 118g, Med 144g, Lge 172g. Cooked: Kids 73g, Reg 89g, Med 108g, Lge 129g'
-                },
-                'french fries weights': {
-                    'description': '📊 French Fries Weights & Yields - Raw and cooked weights for all sizes.',
-                    'raw_weights': 'Kids: 97g, Regular: 118g, Medium: 144g, Large: 172g',
-                    'cooked_weights': 'Kids: 73g, Regular: 89g, Medium: 108g, Large: 129g',
-                    'yields_per_bag': 'Kiddie: 20.5 orders, Regular: 17.75 orders, Medium: 13.75 orders, Large: 11.00 orders'
-                },
-                'hash brown': {
-                    'description': '🥔 Hash Brown (SID|SOP# 618) - Golden brown hash brown. Used in breakfast meals or as side. Launched April 1988.',
-                    'ingredients': '1 Hash Brown',
-                    'preparation': 'Cook 3 min at 350°F. Shake after 30 sec. Drain 10 sec. Hold in PHU (HASH) max 30 min, 12 pieces per pan. Serve in kids fry bag.',
-                    'launch_date': 'April 1988',
-                    'station': 'Fryer',
-                    'sop': 'SID|SOP# 618',
-                    'phu': 'HASH - 30 min, max 12 pieces',
-                    'storage': 'Frozen 18 months'
-                },
-                'criss cut potato sizes': {
-                    'description': '📏 Criss Cut Potato Sizes - Regular: 6 pieces (3 small, 3 large), Medium: 8 pieces (4 small, 4 large), Large: 10 pieces (5 small, 5 large)'
-                },
-                
+                // ===== MENU ITEMS =====
+                // Breakfast
+                'kudu breakfast': { 'description': '🍳 KUDU Breakfast (BKF|SOP# 311) - Classic breakfast with omelet, hotdog, 2 hash browns, multigrain toast, cherry tomatoes, and cucumber. Served with coffee/tea and juice. 753-765 Kcal.', 'ingredients': '2 Eggs, 1 Dash Salt, 1 Slice Yellow Cheese, 2 Hash Browns, 1 Hotdog, 2 Slices Multigrain Toast, 3 Cherry Tomatoes, 3 Cucumber Slices, Coffee/Tea, Orange/Apple Juice.', 'preparation': 'Cook hash browns at 350°F for 3 min. Whisk 2 eggs with salt, pour on 250°F grill. Add yellow cheese, fold eggs from 4 sides. Turn over. Toast bread. Serve with hotdog, hash browns, tomatoes, cucumbers.', 'launch_date': '10th Jan 2021', 'station': 'Burger Station', 'calories': '753-765 Kcal', 'sop': 'BKF|SOP# 311' },
+                'club breakfast': { 'description': '🥪 Club Breakfast (BKF|SOP# 312) - Omelet with smoked chicken and beef, yellow cheese, 2 hash browns, multigrain toast, cherry tomatoes, and cucumber. Served with coffee/tea and juice. 685-697 Kcal.', 'ingredients': '2 Eggs, 1 Dash Salt, ½ Slice Chicken, ½ Slice Beef, 1 Slice Yellow Cheese, 14g Chopped Onion & Green Pepper, 2 Hash Browns, 2 Slices Multigrain Toast, 3 Cherry Tomatoes, 3 Cucumber Slices.', 'preparation': 'Cook hash browns 3 min at 350°F. Whisk eggs with salt, onions, peppers. Pour on 250°F grill. Add chicken and beef, then cheese. Fold eggs. Toast bread. Serve with hash browns, tomatoes, cucumbers.', 'launch_date': '10th Jan 2021', 'station': 'Burger Station', 'calories': '685-697 Kcal', 'sop': 'BKF|SOP# 312' },
+                'steak & eggs': { 'description': '🥩 Steak & Eggs (BKF|SOP# 313) - KUDU beef steak with 2 eggs sunny side up, hash brown, multigrain toast, cherry tomatoes, and cucumber. Served with coffee/tea and juice. 620-632 Kcal.', 'ingredients': '1 Order Beef Steak, 2 Eggs, 1 Dash Salt, 1 Dash KUDU Seasoning, 1 Hash Brown, 2 Slices Multigrain Toast, 3 Cherry Tomatoes, 3 Cucumber Slices, Coffee/Tea, Orange/Apple Juice.', 'preparation': 'Cook beef steak 4 min at 350°F with KUDU seasoning. Cook hash brown 3 min at 350°F. Cook eggs sunny side up at 250°F. Toast bread. Serve eggs in middle, beef and hash brown on side, toast with tomatoes and cucumbers.', 'launch_date': '10th Jan 2021', 'station': 'Burger Station', 'calories': '620-632 Kcal', 'sop': 'BKF|SOP# 313' },
+                'omelet sandwich': { 'description': '🥪 Omelet Sandwich (BKF|SOP# 314) - Steak bread with egg omelet, yellow & white cheese, mayonnaise, lettuce, and tomato. 756-762 Kcal.', 'ingredients': '1 Steak Bread (Brown or White), 2 Eggs, 1 Dash Salt, 1 oz Mayonnaise, 35g Lettuce, 2 Half Moon Tomatoes, 1 Slice Yellow Cheese (Triangular), ½ Slice White Cheese (Triangular)', 'preparation': 'Place bread on flat grill, remove inner part. Cook 2 whisked eggs with salt at 250°F. Fold eggs to 2"x8". Add yellow and white cheese. Transfer to bread heel. Garnish crown with mayo, lettuce, tomato. Slice in half.', 'launch_date': '10th Jan 2021', 'station': 'Burger Station', 'calories': '756-762 Kcal', 'sop': 'BKF|SOP# 314' },
+                'chicken & eggs': { 'description': '🍗 Chicken & Eggs (BKF|SOP# 315) - KUDU chicken steak with 2 eggs sunny side up, hash brown, multigrain toast, cherry tomatoes, and cucumber. Served with coffee/tea and juice. 754 Kcal.', 'ingredients': '1 Order Chicken Steak, 2 Eggs, 1 Dash Salt, 1 Dash KUDU Seasoning, 1 Hash Brown, 2 Slices Multigrain Toast, 3 Cherry Tomatoes, 3 Cucumber Slices, Coffee/Tea, Orange/Apple Juice.', 'preparation': 'Cook chicken steak 4 min at 350°F with KUDU seasoning. Cook hash brown 3 min at 350°F. Cook eggs sunny side up at 250°F. Toast bread. Serve eggs in middle, chicken and hash brown on side, toast with tomatoes and cucumbers.', 'launch_date': '7th Sep 2023', 'station': 'Burger Station', 'calories': '754 Kcal', 'sop': 'BKF|SOP# 315' },
+                'hot dog wrap': { 'description': '🌭 Egg & Hot Dog Wrap (BKF|SOP# 322) - Scrambled egg with hot dog, cheese sauce, yellow cheese in 8" tortilla. 579 Kcal.', 'ingredients': '1 Egg, 1 Dash KUDU Seasoning, 1 Piece 8" Tortilla Bread, 1 Hot Dog, 20g Cheese Sauce, 1 Slice Yellow Cheese', 'preparation': 'Cook hot dog in panini toaster 3:30 min. Scramble egg with seasoning on 250°F grill for 2 min. Place egg on tortilla, add cheese sauce, hot dog, yellow cheese. Fold and toast 30 sec in panini toaster.', 'station': 'Burger Station', 'calories': '579 Kcal', 'sop': 'BKF|SOP# 322', 'phu': 'HDOG - 300 min holding time' },
+                'pancake': { 'description': '🥞 KUDU Pancake (BKF|SOP# 390) - 3 fluffy pancakes served with butter blade and 2 oz pancake syrup (maple or strawberry). 646 Kcal.', 'ingredients': '165ml Milk, 1 Egg, 5g Oil, 150g Pancake Powder, 1 Butter Blade, 2 oz Pancake Syrup', 'preparation': 'Mix pancake powder, oil, egg, milk until smooth. Spray grill at 350°F. Use 4 oz ladle for 3 pancakes. Cook 2 min until bubbles form, flip and cook 1 min until golden. Stack 3 pieces.', 'launch_date': '10th Jan 2021', 'station': 'Steak Station', 'calories': '646 Kcal', 'sop': 'BKF|SOP# 390' },
+                'waffle': { 'description': '🧇 KUDU Waffle (BKF|SOP# 391) - Crispy waffle served with butter blade and 2 oz syrup (maple or strawberry). 269 Kcal.', 'ingredients': '165ml Milk, 1 Egg, 5g Oil, 150g Pancake Powder, 1 Butter Blade, 2 oz Pancake Syrup', 'preparation': 'Mix pancake powder, oil, egg, milk until smooth. Spray waffle iron. Pour batter and cook 3 min until golden.', 'launch_date': '10th Jan 2021', 'station': 'Steak Station', 'calories': '269 Kcal', 'sop': 'BKF|SOP# 391' },
+                'egg wrap': { 'description': '🌯 Egg Wrap (BKF|SOP# 393) - Scrambled egg with yellow cheese, crushed hash brown in 8" tortilla. Served with Hollandaise sauce. 335 Kcal.', 'ingredients': '1 Egg, 1 Dash KUDU Seasoning, 1 Piece 8" Tortilla Bread, 1 Hash Brown, 1 Slice Yellow Cheese, 1 Portion KUDU Hollandaise Sauce', 'preparation': 'Cook hash brown 3 min at 350°F. Scramble egg with seasoning on 250°F grill for 2 min. Place egg on tortilla, add cheese, crushed hash brown. Fold and wrap.', 'launch_date': '9th October 2025', 'station': 'Burger Station', 'calories': '335 Kcal', 'sop': 'BKF|SOP# 393' },
+                'chicken wrap': { 'description': '🌯 Egg & Chicken Wrap (BKF|SOP# 394) - Scrambled egg with chicken strip, cheese sauce, yellow cheese in 8" tortilla.', 'ingredients': '1 Egg, 1 Dash KUDU Seasoning, 1 Piece 8" Tortilla Bread, 1 Chicken Strip, 20g Cheese Sauce, 1 Slice Yellow Cheese', 'preparation': 'Cook chicken strips 5 min. Scramble egg with seasoning on 250°F grill for 2 min. Place egg on tortilla, add cheese sauce, chicken strip, yellow cheese. Fold and toast 30 sec.', 'launch_date': 'February 2026', 'station': 'Burger Station', 'sop': 'BKF|SOP# 394', 'phu': 'STR - 30 min holding time' },
+                // Burger Station
+                'philly beef': { 'description': '🥩 Philly Beef (BUS|SOP# 431) - Classic KUDU sandwich with Philly beef meat, mixed mushroom & onion, white cheese, on caramelized steak bread. 1042 Kcal. Launched April 1988.', 'ingredients': '1 Philly Beef Meat, 1 Dash KUDU Seasoning, 112g Mixed Mushroom & Onion, 1 Philly Bread, 1½ Slices White Cheese, 14g Melted Butter', 'preparation': 'Toast buttered bread 2:30 min at 350°F. Cook beef at 250°F, separate pieces. Add seasoning when half cooked. Add mushroom & onion mix for 30 sec. Add cheese until melted. Line meat 8" long, place in bread.', 'calories': '1042 Kcal', 'launch_date': 'April 1988', 'station': 'Burger Station', 'sop': 'BUS|SOP# 431', 'cooking_time': '2-3 minutes', 'phu': 'PHBF - 30 minutes holding time' },
+                'quattro chicken': { 'description': '🍗 Quattro Chicken (BUS|SOP# 421) - Spicy chicken fillet patty with mayonnaise, thousand island sauce, shredded lettuce on big bun. 1076 Kcal. Launched April 2007.', 'ingredients': '1 Spicy Chicken Fillet Patty, 28g Mayonnaise, 28g Thousand Island Sauce, 20g Shredded Lettuce, 1 Big Bun', 'preparation': 'Cook patty 6 min at 350°F. Toast bun. Place on wrapper. Squeeze mayo spiral on crown, add lettuce, thousand island sauce. Place patty, close burger.', 'calories': '1076 Kcal', 'launch_date': 'April 2007', 'station': 'Burger Station', 'sop': 'BUS|SOP# 421', 'cooking_time': '6:00 minutes', 'phu': 'QTR - Max 4 patties per pan, 30 min holding time' },
+                'veggie sandwich': { 'description': '🥬 Veggie Sandwich (BUS|SOP# 418) - Veggie patty with thousand island sauce, shredded lettuce on kiddie bread. 942 Kcal. Launched April 1988.', 'ingredients': '1 Veggie Patty, 28g Thousand Island Sauce, 20g Shredded Lettuce, 1 Kiddie Bread', 'preparation': 'Cook veggie patty 5 min at 350°F. Toast kiddie bread. Squeeze 14g thousand island on crown and heel. Add lettuce on crown, place patty, close.', 'calories': '942 Kcal', 'launch_date': 'April 1988', 'station': 'Burger Station', 'sop': 'BUS|SOP# 418', 'cooking_time': '5:00 minutes', 'category': 'Khafayef' },
+                'chicken burger': { 'description': '🍔 Chicken Burger (BUS|SOP# 419) - Chicken burger patty with mayonnaise, shredded lettuce on big bun. 978 Kcal. Launched April 1988.', 'ingredients': '1 Chicken Burger Patty (90g), 28g Mayonnaise, 20g Shredded Lettuce, 1 Big Bun', 'preparation': 'Cook patty 3:30 min at 350°F. Toast bun. Squeeze 14g mayo on crown and heel. Add lettuce on crown, place patty, close.', 'calories': '978 Kcal', 'launch_date': 'April 1988', 'station': 'Burger Station', 'sop': 'BUS|SOP# 419', 'cooking_time': '3:30 minutes' },
+                'club sandwich': { 'description': '🥪 KUDU Club Sandwich (BUS|SOP# 417) - Triple-decker with beef, chicken, turkey club meat, omelet egg, white & yellow cheese, multigrain toast. 885 Kcal. Launched Jan 10, 2021.', 'ingredients': '1 Slice Beef Club Meat, 1 Slice Chicken Club Meat, 1 Slice Turkey Club Meat, 1 Egg, 1 Slice White Cheese, 1 Slice Yellow Cheese, 4 Slices Multigrain Toast, 28g Mayonnaise, 20g Shredded Lettuce, 1 Tomato Wheel, 4 Pickle Slices', 'preparation': 'Cook omelet at 250°F. Toast bread. Apply 7g mayo on each slice. Build layers: bread+lettuce+chicken+white cheese, bread+tomato+beef+yellow cheese, bread+turkey+egg, top with bread. Cut diagonally.', 'calories': '885 Kcal', 'launch_date': 'January 10, 2021', 'station': 'Burger Station', 'sop': 'BUS|SOP# 417', 'phu': 'EGG - Omelet in PHU for 30 minutes' },
+                'extra spicy quattro': { 'description': '🔥 Extra Spicy Quattro Chicken (BUS|SOP# 498) - Spicy chicken fillet with chipotle sauce, jalapenos, shredded lettuce on big bun. 720 Kcal. Launched December 2025.', 'ingredients': '1 Spicy Chicken Fillet Patty, 40g Chipotle Sauce, 20g Shredded Lettuce, 4 Pcs Jalapeno, 1 Big Bun', 'preparation': 'Cook patty 6 min. Toast bun. Place on wrapper. Squeeze 20g chipotle on crown, add lettuce, 20g chipotle, jalapenos, patty, close.', 'calories': '720 Kcal', 'launch_date': 'December 2025', 'station': 'Burger Station', 'sop': 'BUS|SOP# 498', 'cooking_time': '6:00 minutes' },
+                'non-spicy quattro': { 'description': '🍔 Non-Spicy Quattro Chicken (BUS|SOP# 497) - Regular chicken fillet with mayonnaise, thousand island sauce, shredded lettuce on big bun. 911 Kcal. Launched December 2025.', 'ingredients': '1 Regular Quatro Fillet, 28g Mayonnaise, 28g Thousand Island Sauce, 20g Shredded Lettuce, 1 Big Bun', 'preparation': 'Cook patty 7 min. Toast bun. Place on wrapper. Squeeze mayo on crown, add lettuce, thousand island, patty, close.', 'calories': '911 Kcal', 'launch_date': 'December 2025', 'station': 'Burger Station', 'sop': 'BUS|SOP# 497', 'cooking_time': '7:00 minutes', 'phu': 'QTRR - Max 4 patties per pan, 30 min holding time' },
+                'grilled chicken meal': { 'description': '🍗 Grilled Chicken Meal (BUS|SOP# 426) - Grilled chicken big with mushroom & onion, green salad, sweet corn, criss cut potatoes. 790 Kcal. Launched April 1988.', 'ingredients': '1 Grilled Chicken Big, 28g Italian Dressing, 56g Mushroom & Onion, 70g Green Salad, 20g Sweet Corn, 10g Green Pepper, 4 Cherry Tomatoes, 3 Cucumber Slices, ½ Kiddie Bread, 6 Criss Cut Potatoes, 7g Shredded Yellow Cheese', 'preparation': 'Cook chicken 6 min on char-grill with Italian dressing. Cook criss cut potatoes. Heat mushroom & onion. Toast kiddie bread with butter. Assemble on plate.', 'calories': '790 Kcal', 'launch_date': 'April 1988', 'station': 'Burger Station', 'sop': 'BUS|SOP# 426', 'phu': 'GRLB - 30 minutes holding time' },
+                'diet grilled chicken': { 'description': '🥗 Diet Grilled Chicken Meal (BUS|SOP# 690) - Grilled chicken big with mushroom & onion, green salad, sweet corn, brown bread. 450 Kcal. Launched April 1988.', 'ingredients': '1 Grilled Chicken Big, 28g Italian Dressing, 56g Mushroom & Onion, 100g Green Salad, 20g Sweet Corn, 10g Green Pepper, 4 Cherry Tomatoes, 3 Cucumber Slices, ¼ Brown Bread, 7g Shredded Yellow Cheese', 'preparation': 'Cook chicken 6 min on char-grill with Italian dressing. Heat mushroom & onion. Toast brown bread (no butter). Assemble on plate.', 'calories': '450 Kcal', 'launch_date': 'April 1988', 'station': 'Burger Station', 'sop': 'BUS|SOP# 690' },
+                'hot dog cooking': { 'description': '🌭 Hot Dog Cooking Procedure (BUS|SOP# 424) - For KUDU Breakfast. Cooked on Panini Toaster.', 'preparation': 'Thaw 24 hrs in chiller. Set panini toaster 280°C. Place max 10 hotdogs, 1cm apart. Cook 3:30 min until >150°F.', 'launch_date': 'April 1989', 'station': 'Burger Station', 'sop': 'BUS|SOP# 424', 'phu': 'HDOG - 5 hours holding time' },
+                'kiddie chicken burger': { 'description': '🍔 Kiddie Chicken Burger (BUS|SOP# 492) - Junior chicken patty with mayonnaise, shredded lettuce on small bun. 666 Kcal. Launched April 1988.', 'ingredients': '1 Junior Chicken Patty, 14g Mayonnaise, 10g Shredded Lettuce, 1 Small Bun', 'preparation': 'Cook patty 3 min at 350°F. Toast small bun. Squeeze 7g mayo on crown and heel. Add lettuce on crown, place patty, close.', 'calories': '666 Kcal', 'launch_date': 'April 1988', 'station': 'Burger Station', 'sop': 'BUS|SOP# 492', 'cooking_time': '3:00 minutes', 'category': "Kid's Meals" },
+                'kiddie chicken nuggets': { 'description': '🍗 Kiddie Chicken Nuggets (BUS|SOP# 493) - 4 pieces chicken nuggets. 414 Kcal. Launched April 1988.', 'ingredients': '4 Pieces Chicken Nuggets', 'preparation': 'Cook 3:30 min at 350°F. Shake after 30 sec. Drain 10 sec. Place in small fries bag in kiddie box.', 'calories': '414 Kcal', 'launch_date': 'April 1988', 'station': 'Fryer Station', 'sop': 'BUS|SOP# 493', 'cooking_time': '3:30 minutes', 'category': "Kid's Meals" },
+                'kids chicken strips': { 'description': '🐔 Kids Chicken Strips (BUS|SOP# 496) - 3 chicken strips with fries and kids drink.', 'ingredients': '3 Chicken Strips, 97g French Fries, Kids Drink', 'preparation': 'Cook strips 5 min at 350°F. Hold in PHU (STR) max 30 min. Place in kiddie box with fries.', 'station': 'Burger Station', 'sop': 'BUS|SOP# 496', 'cooking_time': '5:00 minutes', 'phu': 'STR - 30 minutes holding time', 'category': "Kid's Meals" },
+                // Steak Station
+                'kudu beef': { 'description': '🥩 KUDU Beef (STK|SOP# 512) - Classic steak sandwich with KUDU beef, diced onions & peppers, soy sauce, yellow cheese on steak bread. 715 Kcal. Launched April 1988.', 'ingredients': '110g KUDU Beef, 14g Diced Onion, 7g Diced Green Pepper, 7g Soy Sauce, 1 Steak Bread, 28g Mayonnaise, 35g Lettuce, 2 Half-moon Tomatoes, 1 Slice Yellow Cheese, 1 Dash KUDU Seasoning', 'preparation': 'Cook beef 4-5 min at 300-350°F. Remove bread inner part, add mayo, lettuce, tomato, heat bread. Cook beef with onion, seasoning, pepper, soy sauce. Add cheese, line meat 8" long, place on heel.', 'calories': '715 Kcal', 'launch_date': 'April 1988', 'station': 'Steak Station', 'sop': 'STK|SOP# 512', 'cooking_time': '4-5 minutes', 'phu': 'KDBF - 30 min holding, cook 4 min before PHU, 1:30 min when cooking from PHU', 'storage': 'Frozen 6 months, thawed 72 hours (use within 48 hours after thaw)' },
+                'kudu chicken': { 'description': '🍗 KUDU Chicken (STK|SOP# 511) - Classic chicken steak sandwich with diced onions & peppers, soy sauce on steak bread. 609 Kcal. Launched April 1988.', 'ingredients': '110g KUDU Chicken, 14g Diced Onion, 7g Diced Green Pepper, 7g Soy Sauce, 1 Steak Bread, 28g Mayonnaise, 35g Lettuce, 2 Half-moon Tomatoes, 1 Dash KUDU Seasoning', 'preparation': 'Cook chicken 3-4 min at 300-350°F. Remove bread inner part, add mayo, lettuce, tomato, heat bread 45 sec each side. Cook chicken with onion, seasoning, pepper, soy sauce. Line meat 8" long, place on heel.', 'calories': '609 Kcal', 'launch_date': 'April 1988', 'station': 'Steak Station', 'sop': 'STK|SOP# 511', 'cooking_time': '3-4 minutes', 'phu': 'KDCH - 30 min holding, cook 3 min before PHU, 1:30 min when cooking from PHU', 'storage': 'Frozen 6 months, thawed 72 hours (use within 48 hours after thaw)', 'conformance': 'Weight with box: 340g ±5g, Temperature: ≥140°F' },
+                'spicy kudu chicken': { 'description': '🔥 Spicy KUDU Chicken (STK|SOP# 515) - Spicy chicken steak with harissa mayo, white cheese on steak bread. 690 Kcal. Launched April 2017.', 'ingredients': '1 Spicy Chicken Steak, 14g Diced Onion, 7g Diced Green Pepper, 1 Slice White Cheese, 1 Steak Bread, 28g Harissa Mayo, 35g Shredded Lettuce, 2 Half-moon Tomatoes', 'preparation': 'Cook chicken 3-4 min at 300-350°F. Remove bread inner part, add harissa mayo, lettuce, tomato, heat bread at 250°F. Cook chicken with onion, pepper. Add cheese, line meat, place on heel.', 'calories': '690 Kcal', 'launch_date': 'April 2017', 'station': 'Steak Station', 'sop': 'STK|SOP# 515', 'cooking_time': '3-4 minutes', 'phu': 'SPCH - 30 min holding, cook 3 min before PHU, 1:30 min when cooking from PHU', 'storage': 'Frozen 9 months, thawed 72 hours (use within 48 hours after thaw)' },
+                'lafino kudu chicken': { 'description': '🌯 Lafino KUDU Chicken (STK|SOP# 517) - KUDU chicken with burrito sauce, yellow cheese in tortilla wrap. 575 Kcal. Launched April 2009.', 'ingredients': '110g KUDU Chicken, 14g Diced Onion, 7g Diced Green Pepper, 7g Soy Sauce, 1 Tortilla Bread, 28g Burrito Sauce, 35g Lettuce, 2 Half-moon Tomatoes, 1 Slice Yellow Cheese, 1 Dash KUDU Seasoning', 'preparation': 'Cook chicken 3-4 min at 300-350°F with onion, seasoning, pepper, soy sauce. Line chicken 8" long. Place on tortilla with lettuce, tomato. Add burrito sauce, cheese. Fold, roll tight, toast 30 sec in panini toaster.', 'calories': '575 Kcal', 'launch_date': 'April 2009', 'station': 'Steak Station', 'sop': 'STK|SOP# 517', 'cooking_time': '3-4 minutes', 'note': 'Toast in Panini Toaster for 30 seconds, sauce applied on top of chicken' },
+                // Desserts
+                'san sebastian cheesecake': { 'description': '🍰 San Sebastian Cheesecake (DST|SOP# 729) - Burnt Basque style cheesecake served with chocolate or strawberry sauce. 502/443 Kcal. Launched 22nd September 2024.', 'ingredients': '1 Cheesecake, 40-45g Chocolate or Strawberry Sauce', 'preparation': 'Thaw 6 hours in chiller. Place in container with space for sauce cup. Add sauce on order.', 'launch_date': '22nd September 2024', 'station': 'Dessert', 'sop': 'DST|SOP# 729', 'calories': '502 Kcal (chocolate) / 443 Kcal (strawberry)', 'storage': 'Frozen 0°F, 18 months. Thawed 72 hours @ chiller' },
+                'brownies cheesecake': { 'description': '🍫 Brownies Cheesecake (DST|SOP# 730) - Rich brownie base with creamy cheesecake topping. 355 Kcal. Launched 21st November 2024.', 'ingredients': '1 Brownies Cheesecake slice', 'preparation': 'Thaw 6 hours in chiller. Place in sugarcane container.', 'launch_date': '21st November 2024', 'station': 'Dessert', 'sop': 'DST|SOP# 730', 'calories': '355 Kcal', 'storage': 'Frozen 0°F, 6 months. Thawed 72 hours @ chiller' },
+                'sundae passion fruit': { 'description': '🥭 Sundae Passion Fruit (DST|SOP# 731) - Soft ice cream with passion fruit topping and crushed waffle. 299 Kcal. Launched 1st July 2025.', 'ingredients': '140g Ice Cream, 30g Passion Fruit Topping, 4g Crushed Waffle', 'preparation': 'Dispense 5 spirals ice cream. Add topping and crushed waffle.', 'launch_date': '1st July 2025', 'station': 'Front Counter Service', 'sop': 'DST|SOP# 731', 'calories': '299 Kcal' },
+                'kudu muffins': { 'description': '🧁 KUDU Muffins (DST|SOP# 732) - Walnut (545 Kcal) or Chocolate Chip (573 Kcal). Launched August 2025.', 'ingredients': '1 Muffin (Walnut or Chocolate Chip)', 'preparation': 'Thaw 3 hours at room temperature. Heat only by request.', 'launch_date': 'August 2025', 'station': 'Counter', 'sop': 'DST|SOP# 732', 'calories': '545/573 Kcal', 'storage': 'Frozen 5 months, thawed 7 days' },
+                'ice cream sundae': { 'description': '🍨 Ice Cream Sundae (DST|SOP# 715) - Soft ice cream with chocolate (250 Kcal) or strawberry (257 Kcal) topping. Launched April 2015.', 'ingredients': '140g Ice Cream, 28g Chocolate or Strawberry Topping', 'preparation': 'Dispense 5 spirals ice cream. Add topping.', 'launch_date': 'April 2015', 'station': 'Front Counter Service', 'sop': 'DST|SOP# 715', 'calories': '250/257 Kcal' },
+                'ice cream cone': { 'description': '🍦 Ice Cream Cone (PRP|DST# 714) - Soft ice cream in crispy cone. 114 Kcal. Launched April 2015.', 'ingredients': '80g Ice Cream, 1 Ice Cream Cone', 'preparation': 'Dispense 2½ spirals, starting from cone edge.', 'launch_date': 'April 2015', 'station': 'Front Counter Service', 'sop': 'PRP|DST# 714', 'calories': '114 Kcal' },
+                'waffle ice cream cone': { 'description': '🧇 Waffle Ice Cream Cone (PRP|DST# 722) - Waffle cone with soft ice cream. 190 Kcal. Launched 1st June 2021.', 'ingredients': '140g Ice Cream, 1 Waffle Cone', 'preparation': 'Dispense 5 spirals (1½ inside cone).', 'launch_date': '1st June 2021', 'station': 'Front Counter Service', 'sop': 'PRP|DST# 722', 'calories': '190 Kcal' },
+                // Promos
+                'og burger e-gamers bundle': { 'description': '🎮 OG Burger E-Gamers Bundle (PRM|SOP# 997) - Chicken burger with cheese, lettuce, Khafeef sauce, medium fries, chicken nuggets, and figurine. Launched February 2026.', 'ingredients': '1 Big Bun, 1 Chicken Burger, 1 Yellow Cheese, 20g Mayonnaise, 20g Lettuce, 20g Khafeef Sauce, Medium Fries, 4 Chicken Nuggets, 1 Figurine', 'preparation': 'Cook nuggets 3:30 min, burger 3:30 min. Toast bun. Build burger with mayo on crown, lettuce, cheese, patty, Khafeef sauce on heel. Wrap. Portion nuggets in bag.', 'launch_date': 'February 2026', 'station': 'Burger Station', 'sop': 'PRM|SOP# 997', 'phu': 'NUGG - 30 min, CHBU - 30 min', 'condiments': '2 ketchup, 2 napkins, straw, KUDU dressing dip' },
+                'smokey': { 'description': '🔥 Smokey (PRM|SOP# 973) - Philly beef with mozzarella, white cheese, caramelized peppers & onions, smokey sauce on potato steak bread. 959 Kcal. Launched April 25, 2024.', 'ingredients': '1 Order Philly Beef, 40g Mozzarella, 60g Caramelized Pepper Onion, 1 Potato Steak Bread, 56g Smokey Sauce, 2 Slices White Cheese, 1 Dash KUDU Seasoning', 'preparation': 'Cook beef at 250°F with caramelized veg. Add mozzarella, then white cheese. Toast bread with smokey sauce. Place meat on heel, cut in half. Serve in premium box.', 'launch_date': 'April 25, 2024', 'station': 'Burger Station', 'sop': 'PRM|SOP# 973', 'calories': '959 Kcal', 'storage': 'Smokey sauce: 6 months frozen, 7 days chilled' },
+                'sweet potato': { 'description': '🍠 Sweet Potato (PRM|SOP# 990) - Sweet potato fries served with chipotle sauce. 220-319 Kcal. Launched 2nd November 2025.', 'ingredients': 'Sweet Potato Fries, Chipotle Sauce (45g)', 'preparation': 'Cook 2 min at 350°F. Shake after 30 sec. Drain 10 sec. No salt. Serve with chipotle sauce.', 'launch_date': '2nd November 2025', 'station': 'Fryer', 'sop': 'PRM|SOP# 990', 'calories': '220/272/319 Kcal (Reg/Med/Lge)', 'storage': 'Frozen 16 months, holding 3 min' },
+                'al muthalatha sandwich': { 'description': '🌯 Al Muthalatha Sandwich (PRM|SOP# 971) - KUDU chicken with caramelized peppers & onions, mozzarella, white cheese, sauces in spicy tortilla. 798 Kcal. Launched January 2024.', 'ingredients': '1 Order KUDU Chicken, 1 Spicy Tortilla, 40g Caramelized Pepper Onion, 56g Mozzarella, 28g Mayonnaise, 14g Tabasco Siracha, 1 Slice White Cheese, 56g Cilantro Sauce', 'preparation': 'Cook chicken with caramelized veg. Add mozzarella. Place on tortilla with white cheese. Add sauces, fold, toast 30 sec. Serve with cilantro sauce.', 'launch_date': 'January 2024', 'station': 'Steak Station', 'sop': 'PRM|SOP# 971', 'calories': '798 Kcal' },
+                'cheesy bacon fries': { 'description': '🧀 Cheesy Bacon Fries (PRM|SOP# 986) - Loaded fries with cheese sauce, burrito sauce, crispy bits, jalapenos. 313 Kcal (reg), 798 Kcal (double). Launched 15th July 2025.', 'ingredients': '89-216g Fries, 20-60g Cheddar Cheese Sauce, 20-60g Burrito Sauce, 20-40g Crispy Bits, 4-8 Jalapeno Slices', 'preparation': 'Cook crispy bits 3 min at 250°F. Portion fries, add sauces, crispy bits, jalapenos.', 'launch_date': '15th July 2025', 'station': 'Fryer', 'sop': 'PRM|SOP# 986', 'calories': '313/798 Kcal', 'phu': 'BITS - 30 min holding' },
+                'double cheesy bacon fries': { 'description': '🧀🧀 Double Cheesy Bacon Fries (PRM|SOP# 986) - Double portion loaded fries with extra toppings. 798 Kcal. Launched 15th July 2025.', 'ingredients': '216g Fries, 60g Cheddar Cheese Sauce, 60g Burrito Sauce, 40g Crispy Bits, 8 Jalapeno Slices', 'preparation': 'Portion 2 medium fries in salad bowl. Add sauces, crispy bits, jalapenos.', 'launch_date': '15th July 2025', 'station': 'Fryer', 'sop': 'PRM|SOP# 986', 'calories': '798 Kcal' },
+                'chicken caesar salad': { 'description': '🥗 Chicken Caesar Salad (PRM|SOP# 969) - Fresh salad with grilled chicken, parmesan, croutons, Caesar dressing. 571 Kcal. Launched June 26, 2024.', 'ingredients': '150g Green Salad, 15g Parmesan Cheese, 110g Grilled Chicken, Croutons, 2 portions Caesar Dressing, 28g Italian Dressing', 'preparation': 'Cook chicken. Place salad in bowl, add parmesan on 50%. Slice chicken, place on other half. Serve with dressing and croutons.', 'launch_date': 'June 26, 2024', 'station': 'Burger', 'sop': 'PRM|SOP# 969', 'calories': '571 Kcal' },
+                'iced americano': { 'description': '☕ Iced Americano (PRM|SOP# 962) - Double espresso over ice with water. 0 Kcal. Launched June 2023.', 'ingredients': '1 Double Espresso, Ice, Water', 'preparation': 'Fill cup with ice. Add iced water to middle of K letter. Brew espresso. Serve with straw.', 'launch_date': 'June 2023', 'station': 'Front Counter Service', 'sop': 'PRM|SOP# 962', 'calories': '0 Kcal' },
+                'iced latte': { 'description': '🥤 Iced Latte (PRM|SOP# 963) - Caramel latte over ice. 190 Kcal. Launched June 2023.', 'ingredients': '250ml Caramel Latte, Ice', 'preparation': 'Fill cup with ice. Shake tetra pack, pour to top line. Serve with straw.', 'launch_date': 'June 2023', 'station': 'Front Counter Service', 'sop': 'PRM|SOP# 963', 'calories': '190 Kcal', 'storage': 'Chilled 9 months, 3 days after opening' },
+                'jalapeno cheese melt': { 'description': '🌶️ Jalapeno Cheese Melt (BRM|SOP# 960) - Junior burger with cheese sauce, jalapenos, yellow cheese on small bun. 574 Kcal. Launched Feb 11, 2023.', 'ingredients': '1 Junior Patty, 28g Cheese Sauce, 5 Jalapeno Slices, 1 Small Bun, 1 Slice Yellow Cheese', 'preparation': 'Cook patty 3 min. Toast bun. Add cheese sauce, patty, yellow cheese, jalapenos. Close.', 'launch_date': 'Feb 11, 2023', 'station': 'Burger Station', 'sop': 'BRM|SOP# 960', 'calories': '574 Kcal', 'category': 'Khafayef' },
+                'kudu burger box': { 'description': '📦 KUDU Burger Box (BUS|SOP# 993) - 8 junior burgers with fries, crisscut, sauces. Launched 10th December 2025.', 'ingredients': '8 Junior Burgers, 2 Med Fries, 2 Med Crisscut, 2 Chipotle Sauce, 2 Khafeef Sauce', 'preparation': 'Prepare 8 burgers, bag in sandbag wraps. Assemble in gathering box: sauces in holder, 4 burgers top left, 4 bottom right, fries bottom left, crisscut top right.', 'launch_date': '10th December 2025', 'station': 'Burger Station', 'sop': 'BUS|SOP# 993', 'condiments': '8 ketchup, 4 napkins' },
+                'kudu karkade': { 'description': '🌸 KUDU KARKADE (PRM|SOP# 972) - Hibiscus iced tea with 7up Zero. 76 Kcal. Launched April 2, 2024.', 'ingredients': '2 pumps Hibiscus Syrup, 1 Can 7up Zero, Ice', 'preparation': 'Fill cup 50% ice. Add syrup slowly. Pour 7up Zero. Stir 8 times. Serve.', 'launch_date': 'April 2, 2024', 'station': 'Front Counter Service', 'sop': 'PRM|SOP# 972', 'calories': '76 Kcal', 'storage': 'Syrup 18 months, 6 months after opening' },
+                'kudu matcha latte': { 'description': '🍵 KUDU Matcha Latte (PRM|SOP# 985) - Matcha latte with milk over ice. 95 Kcal. Launched 15th July 2025.', 'ingredients': '184ml Matcha Latte, 130ml Milk, Ice', 'preparation': 'Fill cup with ice. Add milk to between KUDU and triangles. Add Matcha Latte, stir.', 'launch_date': '15th July 2025', 'station': 'Front Counter Service', 'sop': 'PRM|SOP# 985', 'calories': '95 Kcal', 'storage': 'Chilled 9 months, 3 days after opening' },
+                'kudu nachos platter': { 'description': '🇲🇽 KUDU Nachos Platter (PRM|SOP# 995) - Nachos with beef, cheese sauce, burrito sauce, toppings. Launched January 2026.', 'ingredients': '60g Doritos, ½ KUDU Beef Patty, 28g Burrito Sauce, 28g Cheese Sauce, 40g Guacamole, 3 Jalapenos, 4g Diced Tomato, 2g Onion Chives', 'preparation': 'Cook beef 3 min, chop. Place Doritos, add burrito sauce, beef, cheese sauce, tomato, onion, jalapenos. For take-out, guacamole on side.', 'launch_date': 'January 2026', 'station': 'Burger Station', 'sop': 'PRM|SOP# 995' },
+                'large kudu nachos platter': { 'description': '🇲🇽 Large KUDU Nachos Platter (PRM|SOP# 994) - Large nachos with beef, double cheese sauce, double toppings. Launched January 2026.', 'ingredients': '120g Doritos, 1 KUDU Beef Patty, 45g Burrito Sauce, 45g Cheese Sauce, 80g Guacamole, 7 Jalapenos, 7g Diced Tomato, 4g Onion Chives', 'preparation': 'Cook beef 3 min, chop. Place Doritos, add burrito sauce, beef, cheese sauce, tomato, onion, jalapenos. For take-out, guacamole in 2 cups.', 'launch_date': 'January 2026', 'station': 'Burger Station', 'sop': 'PRM|SOP# 994', 'storage': 'Beef: frozen 9 months, thawed 72 hours' },
+                'kudu passion': { 'description': '😋 KUDU PASSION (PRM|SOP# 984) - Passion fruit drink with 7up Zero. 74 Kcal. Launched May 17, 2025.', 'ingredients': '2 pumps Passion Fruit Syrup, 1 Can 7up Zero, Ice', 'preparation': 'Fill cup 50% ice. Add syrup slowly. Pour 7up Zero. Stir 8 times. Serve.', 'launch_date': 'May 17, 2025', 'station': 'Front Counter Service', 'sop': 'PRM|SOP# 984', 'calories': '74 Kcal', 'storage': 'Syrup 18 months, 6 months after opening' },
+                'kudu tortilla': { 'description': '🌮 KUDU Tortilla (PRM|SOP# 991) - Spicy chicken burger with premium tortilla sauce, lettuce, tomato in tortilla. 847 Kcal. Launched 6th November 2025.', 'ingredients': '1 Spicy Chicken Burger, 1 Spicy Tortilla, 56g Premium Tortilla Sauce, 35g Lettuce, 2 Half-moon Tomatoes', 'preparation': 'Cook patty 3:30 min. Cut into 4 strips. Spread sauce on tortilla, add lettuce, tomato, patty strips. Fold, toast 30 sec.', 'launch_date': '6th November 2025', 'station': 'Steak Station', 'sop': 'PRM|SOP# 991', 'calories': '847 Kcal', 'phu': 'SCB - 30 min holding' },
+                'kudulicious chicken': { 'description': '🐔 KUDULICIOUS Chicken (PRM|SOP# 958) - KUDU chicken with garlic parmesan, veggies on kiddie bread. 236 Kcal. Launched 14th Jan 2023.', 'ingredients': '55g KUDU Chicken, 7g Diced Onion, 3.5g Diced Green Pepper, 1/8 oz Soy Sauce, 1 Kiddie Bread, 28g Garlic Parmesan, 10g Lettuce, 2 Half-moon Tomatoes', 'preparation': 'Cook chicken. Remove bread inner part, add garlic parmesan, lettuce, tomato. Heat bread. Cook chicken with onion, pepper, seasoning, soy sauce. Place on bread.', 'launch_date': '14th Jan 2023', 'station': 'Steak Station', 'sop': 'PRM|SOP# 958', 'calories': '236 Kcal', 'category': 'Khafayef' },
+                'lafino philly steak': { 'description': '🥩 Lafino Philly Steak (STK|SOP# 956) - Philly beef with sliced onions, cheese sauce, cheeses in tortilla. 528 Kcal. Launched April 2022.', 'ingredients': '1 Philly Beef, 2 Dashes KUDU Seasoning, 28g Sliced Onion, 12" Tortilla, 36g Mayonnaise, 21g Cheese Sauce, 2 halves Yellow Cheese, 2 halves White Cheese', 'preparation': 'Cook beef, add onions. Add seasoning. Spread mayo and cheese sauce on tortilla. Add meat, cheeses. Fold, roll tight, toast 30 sec.', 'launch_date': 'April 2022', 'station': 'Burger Station', 'sop': 'STK|SOP# 956', 'calories': '528 Kcal' },
+                // Sides
+                'kudu chicken bites': { 'description': '🍗 KUDU Chicken Bites (SID|SOP# 692) - 6 pieces of chicken bites served with choice of sauce (1000 Island, BBQ, or KUDU Dressing). 256 Kcal. Launched 4th May 2020.', 'ingredients': '6 Chicken Bites, 56g Choice of Sauce', 'preparation': 'Cook 4:15 min at 350°F. Shake after 30 sec. Drain 10 sec. Hold in PHU (BITE) max 30 min, 36 pieces per pan. Serve 6 pieces in designated cup with sauce.', 'launch_date': '4th May 2020', 'station': 'Fryer', 'sop': 'SID|SOP# 692', 'calories': '256 Kcal', 'phu': 'BITE - 30 min, max 36 pieces', 'storage': 'Frozen 12 months, sauces: 10 days after opening (BBQ/1000 Island), 2 days (KUDU Dressing)' },
+                'spicy chicken bites': { 'description': '🔥 Spicy Chicken Bites (SID|SOP# 693) - 6 pieces of spicy chicken bites served with 1000 Island sauce. 247 Kcal. Launched 15th Dec 2020.', 'ingredients': '6 Spicy Chicken Bites, 56g 1000 Island Sauce', 'preparation': 'Cook 4:00 min at 350°F. Shake after 30 sec. Drain 10 sec. Hold in PHU (BITE) max 30 min, 36 pieces per pan. Serve 6 pieces in designated cup with sauce.', 'launch_date': '15th Dec 2020', 'station': 'Fryer', 'sop': 'SID|SOP# 693', 'calories': '247 Kcal', 'phu': 'BITE - 30 min, max 36 pieces', 'storage': 'Frozen 12 months, 1000 Island: 10 days after opening' },
+                'kudu salad': { 'description': '🥗 KUDU Salad (SID|SOP# 691) - Fresh green salad with cherry tomatoes, cucumber, sweet corn, green pepper, croutons. 196 Kcal. Launched 20th Feb 2019.', 'ingredients': '125g Green Salad, 4 Cherry Tomatoes, 4 Cucumber Slices, 20g Green Pepper Julienne, 35g Sweet Corn, Croutons, Italian Dressing, KUDU Dressing', 'preparation': 'Place green salad in container. Add tomatoes, cucumber, sweet corn, green pepper. Cover. Serve with dressings and croutons.', 'launch_date': '20th Feb 2019', 'station': 'Burger', 'sop': 'SID|SOP# 691', 'calories': '196 Kcal', 'storage': 'Green salad: 4 days chilled, 18 hours after opening' },
+                'chicken salad': { 'description': '🥗 Chicken Salad (SID|SOP# 691) - KUDU salad with grilled chicken strips. 368 Kcal. Launched 20th Feb 2019.', 'ingredients': '125g Green Salad, 4 Cherry Tomatoes, 4 Cucumber Slices, 20g Green Pepper Julienne, 35g Sweet Corn, 110g Grilled Chicken, Croutons, Dressings', 'preparation': 'Cook grilled chicken, cut into strips. Place on salad. Serve with dressings and croutons.', 'launch_date': '20th Feb 2019', 'station': 'Burger', 'sop': 'SID|SOP# 691', 'calories': '368 Kcal' },
+                'cheese fries': { 'description': '🧀 Cheese Fries (SID|SOP# 612) - Regular fries topped with Tiffani cheese sauce and onion chives. 350 Kcal. Launched April 2015.', 'ingredients': '89g Cooked Fries, 56g Tiffani Cheese Sauce, 3g Onion Chives', 'preparation': 'Cook fries, add salt. Portion into cup. Squeeze 3 spirals cheese sauce. Garnish with onion chives.', 'launch_date': 'April 2015', 'station': 'Fryer', 'sop': 'SID|SOP# 612', 'calories': '350 Kcal', 'storage': 'Fries: frozen 12 months, cook 2:30 min, hold 7 min' },
+                'cheese nachos': { 'description': '🧀 Cheese Nachos (SID|SOP# 619) - 3 pieces of cheese nachos served with tortilla sauce. 294 Kcal. Launched April 1988.', 'ingredients': '3 Cheese Nachos, 1 Portion Tortilla Sauce', 'preparation': 'Cook 2:30 min at 350°F. Shake after 30 sec. Drain 10 sec. Hold in PHU (NACH) max 30 min, 12 pieces per pan. Place in designated box.', 'launch_date': 'April 1988', 'station': 'Fryer', 'sop': 'SID|SOP# 619', 'calories': '294 Kcal', 'phu': 'NACH - 30 min, max 12 pieces', 'storage': 'Frozen 9 months' },
+                'chicken nuggets': { 'description': '🍗 Chicken Nuggets (SID|SOP# 620) - 6 pieces chicken nuggets served with tortilla sauce. 294 Kcal. Launched April 1988.', 'ingredients': '6 Chicken Nuggets, 1 Portion Tortilla Sauce', 'preparation': 'Cook 3:30 min at 350°F. Shake after 30 sec. Drain 10 sec. Hold in PHU (NUGG) max 30 min. Place in nugget box.', 'launch_date': 'April 1988', 'station': 'Fryer', 'sop': 'SID|SOP# 620', 'calories': '294 Kcal', 'phu': 'NUGG - 30 min', 'storage': 'Frozen 12 months' },
+                'chicken strips': { 'description': '🐔 Chicken Strips (SID|SOP# 697) - 2 pieces chicken strips served with Pepper Mayo sauce. 92 Kcal. Launched Oct 2022.', 'ingredients': '2 Chicken Strips, 45g Pepper Mayo Sauce', 'preparation': 'Cook 5 min at 350°F. Shake after 30 sec. Drain 10 sec. Hold in PHU (STR) max 30 min, 10 pieces per pan. Place in kids fry bag.', 'launch_date': 'Oct 2022', 'station': 'Fryer', 'sop': 'SID|SOP# 697', 'calories': '92 Kcal', 'phu': 'STR - 30 min, max 10 pieces', 'storage': 'Frozen 12 months' },
+                'criss cut potato': { 'description': '🥔 Criss Cut Potato (SID|SOP# 617) - Crispy criss-cut potatoes. Regular (6 pcs), Medium (8 pcs), Large (10 pcs). Launched April 1988.', 'ingredients': 'Criss Cut Potatoes', 'preparation': 'Cook 3 min at 350°F. Shake after 30 sec. Drain 10 sec. Portion according to size: Reg 6 pcs (3 small/3 large), Med 8 pcs (4 small/4 large), Lge 10 pcs (5 small/5 large).', 'launch_date': 'April 1988', 'station': 'Fryer', 'sop': 'SID|SOP# 617', 'calories': 'Varies by size', 'storage': 'Frozen 12 months' },
+                'french fries cooking': { 'description': '🍟 French Fries Cooking & Holding (SID|SOP# 611) - Standard procedure for cooking and holding French fries.', 'preparation': 'Cook 2:30 min at 350°F. Shake after 30 sec. Drain 10 sec. Hold max 7 min. Salt after cooking.', 'launch_date': 'April 1988', 'station': 'Fryer', 'sop': 'SID|SOP# 611', 'weights': 'Raw: Kids 97g, Reg 118g, Med 144g, Lge 172g. Cooked: Kids 73g, Reg 89g, Med 108g, Lge 129g' },
+                'french fries weights': { 'description': '📊 French Fries Weights & Yields - Raw and cooked weights for all sizes.', 'raw_weights': 'Kids: 97g, Regular: 118g, Medium: 144g, Large: 172g', 'cooked_weights': 'Kids: 73g, Regular: 89g, Medium: 108g, Large: 129g', 'yields_per_bag': 'Kiddie: 20.5 orders, Regular: 17.75 orders, Medium: 13.75 orders, Large: 11.00 orders' },
+                'hash brown': { 'description': '🥔 Hash Brown (SID|SOP# 618) - Golden brown hash brown. Used in breakfast meals or as side. Launched April 1988.', 'ingredients': '1 Hash Brown', 'preparation': 'Cook 3 min at 350°F. Shake after 30 sec. Drain 10 sec. Hold in PHU (HASH) max 30 min, 12 pieces per pan. Serve in kids fry bag.', 'launch_date': 'April 1988', 'station': 'Fryer', 'sop': 'SID|SOP# 618', 'phu': 'HASH - 30 min, max 12 pieces', 'storage': 'Frozen 18 months' },
+                'criss cut potato sizes': { 'description': '📏 Criss Cut Potato Sizes - Regular: 6 pieces (3 small, 3 large), Medium: 8 pieces (4 small, 4 large), Large: 10 pieces (5 small, 5 large)' },
+
                 // ===== CATEGORIES =====
-                'breakfast': {
-                    'items': 'KUDU Breakfast (311), Club Breakfast (312), Steak & Eggs (313), Omelet Sandwich (314), Chicken & Eggs (315), Egg & Hot Dog Wrap (322), KUDU Pancake (390), KUDU Waffle (391), Egg Wrap (393), Egg & Chicken Wrap (394)',
-                    'description': '10 breakfast items served with coffee/tea and juice'
+                'breakfast': { 'items': 'KUDU Breakfast (311), Club Breakfast (312), Steak & Eggs (313), Omelet Sandwich (314), Chicken & Eggs (315), Egg & Hot Dog Wrap (322), KUDU Pancake (390), KUDU Waffle (391), Egg Wrap (393), Egg & Chicken Wrap (394)', 'description': '10 breakfast items served with coffee/tea and juice' },
+                'burgers': { 'items': 'Chicken Burger (419), Quattro Chicken (421), Extra Spicy Quattro (498), Non-Spicy Quattro (497), Kiddie Chicken Burger (492)', 'description': 'Classic burgers on big bun with various sauces' },
+                'steak sandwiches': { 'items': 'KUDU Beef (512), KUDU Chicken (511), Spicy KUDU Chicken (515), Lafino KUDU Chicken (517)', 'description': 'Signature steak station sandwiches with fresh ingredients' },
+                'sandwiches': { 'items': 'Philly Beef (431), Veggie Sandwich (418), Club Sandwich (417), Smokey (973), Al Muthalatha (971), Lafino Philly Steak (956), KUDU Beef (512), KUDU Chicken (511), Spicy KUDU Chicken (515), Lafino KUDU Chicken (517)', 'description': 'Complete selection of KUDU sandwiches' },
+                'grilled meals': { 'items': 'Grilled Chicken Meal (426), Diet Grilled Chicken Meal (690)', 'description': 'Healthy grilled chicken with salads' },
+                'kids meals': { 'items': 'Kiddie Chicken Burger (492), Kiddie Chicken Nuggets (493), Kids Chicken Strips (496)', 'description': 'Kids meals with toy and drink' },
+                'wraps': { 'items': 'Egg Wrap (393), Chicken Wrap (394), Hot Dog Wrap (322), KUDU Tortilla (991), Lafino KUDU Chicken (517), Lafino Philly Steak (956)', 'description': 'Tortilla wraps with various fillings' },
+                'desserts': { 'items': 'San Sebastian Cheesecake (729), Brownies Cheesecake (730), Sundae Passion Fruit (731), KUDU Muffins (732), Ice Cream Sundae (715), Ice Cream Cone (714), Waffle Ice Cream Cone (722)', 'description': '7 delicious dessert options' },
+                'ice cream': { 'items': 'Ice Cream Cone (714), Waffle Cone (722), Sundae (715), Passion Fruit Sundae (731)', 'description': 'Soft serve ice cream treats' },
+                'promos': { 'items': 'OG Burger E-Gamers Bundle (997), Smokey (973), Sweet Potato (990), Al Muthalatha (971), Cheesy Bacon Fries (986), Double Cheesy Bacon Fries (986), Chicken Caesar Salad (969), Iced Americano (962), Iced Latte (963), Jalapeno Cheese Melt (960), KUDU Burger Box (993), KUDU KARKADE (972), KUDU Matcha Latte (985), KUDU Nachos Platter (995), Large KUDU Nachos Platter (994), KUDU Passion (984), KUDU Tortilla (991), KUDULICIOUS Chicken (958), Lafino Philly Steak (956)', 'description': '19 limited time offers and promotional items' },
+                'drinks': { 'items': 'Iced Americano (962), Iced Latte (963), KUDU KARKADE (972), KUDU Matcha Latte (985), KUDU Passion (984)', 'description': 'Refreshing beverages' },
+                'loaded fries': { 'items': 'Cheesy Bacon Fries (986), Double Cheesy Bacon Fries (986), Sweet Potato (990), Cheese Fries (612)', 'description': 'Loaded fries with various toppings' },
+                'nachos': { 'items': 'KUDU Nachos Platter (995), Large KUDU Nachos Platter (994), Cheese Nachos (619)', 'description': 'Nachos with cheese, beef, and toppings' },
+                'sides': { 'items': 'KUDU Chicken Bites (692), Spicy Chicken Bites (693), KUDU Salad (691), Chicken Salad (691), Cheese Fries (612), Cheese Nachos (619), Chicken Nuggets (620), Chicken Strips (697), Criss Cut Potato (617), French Fries (611), Hash Brown (618)', 'description': '13 delicious side items to complete your meal' },
+                'bites': { 'items': 'KUDU Chicken Bites (692), Spicy Chicken Bites (693), Chicken Nuggets (620), Chicken Strips (697)', 'description': 'Bite-sized chicken options' },
+                'salads': { 'items': 'KUDU Salad (691), Chicken Salad (691), Chicken Caesar Salad (969)', 'description': 'Fresh and healthy salad options' },
+
+                // ===== ABBREVIATIONS (flat strings) =====
+                'ac': '📊 **AC – Average Check**\nAverage money guests spend per transaction.',
+                'ads': '📈 **ADS – Average Daily Sales**\nAverage daily sales for each restaurant.',
+                'afsm': '📘 **AFSM – Advanced Food Safety Management Course**',
+                'amdp': '📌 **AMDP – Area Manager Development Program**',
+                'bogo': '🎁 **BOGO – Buy One Get One (Free)**',
+                'boh': '🏠 **BOH – Back of House**',
+                'ccp': '⚠️ **CCP – Critical Control Point**',
+                'cctv': '📹 **CCTV – Closed Circuit Television**',
+                'cer': '⭐ **CER – Cares Excellence Review**',
+                'cfs': '🛡️ **CFS – Critical Food Safety**',
+                'comp sales': '📅 **Comp. Sales – Sales comparison same period this year vs last year**',
+                'daypart': '⏰ **Daypart – Distinguishable period (breakfast, lunch, dinner)**',
+                'dt': '🚗 **DT – Drive Thru**',
+                'e2e': '🔁 **E2E – Excellence To Experience (system coaching visit)**',
+                'ebitda': '💰 **EBITDA – Earnings Before Interest, Tax, Depreciation, Amortization**',
+                'esm': '📋 **ESM – Effective Shift Management Course**',
+                'fc': '🧑‍🍳 **FC – Front Counter**',
+                'fcr': '🏬 **FCR – Food Court Restaurant**',
+                'fefo': '📆 **FEFO – First Expired First Out**',
+                'fifo': '🔄 **FIFO – First In First Out**',
+                'foh': '🚪 **FOH – Front of House**',
+                'fs': '🏢 **FS – Free Stand (restaurant type)**',
+                'fs&pq': '🧪 **FS&PQ – Food Safety & Product Quality Course**',
+                'fs/dt': '🚗 **FS/DT – Free Stand/Drive Thru**',
+                'g&a': '📑 **G&A – General and Administrative Expenses**',
+                'gp': '📊 **GP – Gross Profit**',
+                'haccp': '⚠️ **HACCP – Hazard Analysis Critical Control Point**',
+                'hvac': '❄️ **HVAC – Heating, Ventilation & Air Conditioning**',
+                'il': '🏢 **IL – In‑Line Restaurant**',
+                'il/dt': '🚗 **IL/DT – In‑Line Restaurant/Drive Thru**',
+                'isp': '⚙️ **ISP – In Store Process**',
+                'kds': '🖥️ **KDS – Kitchen Display System**',
+                'kpi': '📊 **KPI – Key Performance Indicator**',
+                'krbp': '📋 **KRBP – KUDU Restaurant Business Plan**',
+                'lfl': '📉 **LFL – Like For Like (sales comparison)**',
+                'lsm': '🏪 **LSM – Local Store Marketing**',
+                'lto': '⏳ **LTO – Limited Time Offer**',
+                'mbo': '🎯 **MBO – Management by Objectives**',
+                'msds': '🧪 **MSDS – Material Safety Data Sheet (describes each chemical type)**',
+                'mtd': '📅 **MTD – Month To Date sales accumulation**',
+                'ocu': '✅ **OCU – Order Confirmation Unit**',
+                'oz': '⚖️ **Oz. – Ounce**',
+                'p&l': '📉 **P&L – Profit and Loss Statement**',
+                'pa': '📋 **PA – Performance Appraisal**',
+                'pd': '♻️ **PD – Pull – Discard**',
+                'pem': '📘 **PEM – Promotion Execution Manual**',
+                'phf': '⚠️ **PHF – Potentially Hazardous Food**',
+                'phu': '📦 **PHU – Product Holding Unit**',
+                'pls': '📦 **PLS – Product Level System**',
+                'pop': '🛒 **POP – Point Of Purchase (merchandising tools)**',
+                'pos': '💳 **POS – Point Of Sale**',
+                'ppe': '🧤 **PPE – Personal Preventive Equipment**',
+                'ppm': '🧪 **PPM – Parts Per Million**',
+                'ptd': '❄️ **PTD – Pull - Temper/Thaw - Discard**',
+                'qa': '🔬 **QA – Quality Assurance**',
+                'qsc': '⭐ **QSC – Quality, Service & Cleanliness**',
+                'qsr': '🍔 **QSR – Quick Service Restaurants**',
+                'r&d': '🔬 **R&D – Research & Development**',
+                'r&m': '🔧 **R&M – Repair & Maintenance**',
+                'rcp': '📊 **RCP – Restaurant Controllable Profit**',
+                'roi': '💰 **ROI – Return on Investment**',
+                's2s': '🤝 **S2S – Shoulder To Shoulder (personal coaching visit)**',
+                'soc': '📋 **SOC – Standard Observation Checklist**',
+                'sop': '📄 **SOP – Standard Operation Procedure**',
+                'sos': '⚡ **SOS – Speed Of Service**',
+                'swot': '📊 **SWOT – Strengths, Weaknesses, Opportunities, Threats**',
+                'tc': '🧾 **TC – Number of transactions**',
+                'te': '📋 **TE – Training Evaluation Visit**',
+                'tna': '📚 **TNA – Training Needs Analysis**',
+                'u/1000': '📊 **U/1000 – Unit per 1000 sales (order calculation formula)**',
+                'uom': '📏 **UOM – Unit Of Measure**',
+                'wrg': '📘 **WRG – Work Right Guide Chart (training tool)**',
+                'wrs': '🧼 **WRS – Wash - Rinse - Sanitize**',
+                'ytd': '📅 **YTD – Year To Date sales accumulation**',
+
+                'all abbreviations': '📚 **KUDU COMPLETE ABBREVIATIONS (A–Z)**\n\n' +
+                    '**AC** Average Check · **ADS** Average Daily Sales · **AFSM** Advanced Food Safety · **AMDP** Area Manager Development · **BOGO** Buy One Get One · **BOH** Back of House · **CCP** Critical Control Point · **CCTV** Closed Circuit TV · **CER** Cares Excellence · **CFS** Critical Food Safety · **Comp Sales** comparison · **Daypart** period · **DT** Drive Thru · **E2E** Excellence to Experience · **EBITDA** earnings · **ESM** Effective Shift Management · **FC** Front Counter · **FCR** Food Court · **FEFO** First Expired First Out · **FIFO** First In First Out · **FOH** Front of House · **FS** Free Stand · **FS&PQ** Food Safety course · **FS/DT** Free Stand+DT · **G&A** General & Admin · **GP** Gross Profit · **HACCP** hazard control · **HVAC** heating/cooling · **IL** In‑Line · **IL/DT** In‑Line+DT · **ISP** In Store Process · **KDS** Kitchen Display · **KPI** Key Performance Indicator · **KRBP** Kudu Business Plan · **LFL** Like For Like · **LSM** Local Store Marketing · **LTO** Limited Time Offer · **MBO** Management by Objectives · **MSDS** Material Safety Data Sheet · **MTD** Month to date · **OCU** Order Confirmation Unit · **Oz** Ounce · **P&L** Profit & Loss · **PA** Performance Appraisal · **PD** Pull‑Discard · **PEM** Promotion Execution Manual · **PHF** Potentially Hazardous Food · **PHU** Product Holding Unit · **PLS** Product Level System · **POP** Point of Purchase · **POS** Point of Sale · **PPE** Personal Protective Equipment · **PPM** Parts per million · **PTD** Pull‑Thaw‑Discard · **QA** Quality Assurance · **QSC** Quality Service Cleanliness · **QSR** Quick Service Restaurant · **R&D** Research & Development · **R&M** Repair & Maintenance · **RCP** Restaurant Controllable Profit · **ROI** Return on Investment · **S2S** Shoulder to Shoulder · **SOC** Standard Observation Checklist · **SOP** Standard Operating Procedure · **SOS** Speed of Service · **SWOT** Strengths Weaknesses Opportunities Threats · **TC** Transaction count · **TE** Training Evaluation · **TNA** Training Needs Analysis · **U/1000** Unit per 1000 sales · **UOM** Unit of Measure · **WRG** Work Right Guide · **WRS** Wash‑Rinse‑Sanitize · **YTD** Year to date.',
+
+                // ===== DETAILED TOPICS =====
+                'food safety criticals': {
+                    'list': '🔬 **THE 10 FOOD SAFETY CRITICALS** 🔬\n\n**1️⃣ CROSS-CONTAMINATION**\nTransfer of contaminants from surfaces/substances to food\n• All utensils available and used correctly\n• Ice cream machine brushes present, clean\n• No cracks/scratches on boards/containers\n• No rusted equipment\n• Cooked/raw products kept separate\n\n**2️⃣ HOT WATER**\n• Hand sinks >100°F\n• Non-hand sinks >120°F\n• 3-compartment sink ready\n\n**3️⃣ TIME CONTROL**\n• Condiments marked with holding times\n• PHU products correct indicators\n• Follow cooking times\n\n**4️⃣ TEMPERATURE CONTROL**\n• PHF checks in freezers/chillers\n• Walk-in, upright within ranges\n• No products in danger zone\n• No thawing and re-freezing\n• Approved thermometers only\n\n**5️⃣ HAND WASHING**\n• Sink unobstructed\n• Antibacterial soap\n• Sanitizer solution\n• Paper towels\n• Hot water\n• 20-second scrub, sanitize\n• Minimum once per hour\n\n**6️⃣ SANITIZING & CHEMICALS**\n• Sanitizer 50-100 ppm\n• Spray bottles labelled\n• Test strips available\n• Veggie wash 25 ppm\n• Chemicals >30cm from food\n• Not stored above food\n\n**7️⃣ MANAGER FOOD SAFETY**\n• Manager executing procedures\n• Quality temperature checklists\n• Manager certification\n• Team certification\n\n**8️⃣ PEST CONTROL**\n• No infestation evidence\n• No droppings or nesting\n• Monthly pest control visits\n\n**9️⃣ COOKOUT**\n• Follow cook-out procedures\n• Maintain record logs\n\n**🔟 OTHER CRITICALS**\n• Health department cards\n• Facility safety compliance\n• No damaged cans\n• Grease trap maintained\n• Floor drains closed, not backed-up'
                 },
-                'burgers': {
-                    'items': 'Chicken Burger (419), Quattro Chicken (421), Extra Spicy Quattro (498), Non-Spicy Quattro (497), Kiddie Chicken Burger (492)',
-                    'description': 'Classic burgers on big bun with various sauces'
+                'chemical handling': {
+                    'sink detergent': '🧼 **MULTI-PURPOSE SINK DETERGENT**\n\n• Use as needed - no need to make 40 liters\n• Water at room temperature\n• Don\'t leave while refilling - prevents waste\n• Change only gallons when finished\n• Keep dispensing caps attached',
+                    'quart sanitizer': '🧪 **QUART SANITIZER**\n\n• Ammonia-based - kills germs effectively\n• Refill sink as needed only\n• Sink shelf life: Minimum 8 hours\n• Bottle shelf life: 7 days\n• Acceptable PPM: 150-400\n• If PPM issues, call maintenance - don\'t touch\n• Refill bottle directly from dispenser',
+                    'degreaser': '💧 **DEGREASER**\n\n• Refill bottle directly from dispenser\n• Use only as needed\n• For buildup areas, spray and remove\n• Don\'t use huge amounts',
+                    'tile cleaner': '🧹 **QUARRY TILE FLOOR CLEANER**\n\n• Use only as needed (small area = small amount)\n• Use once per day at closing time only\n• Helps save chemicals, no wastage',
+                    'general notes': '📌 **CHEMICAL HANDLING NOTES**\n\n• Change only chemical gallons when finished\n• DO NOT throw dispensing caps\n• Never leave chemicals while refilling\n• Refill only as needed - no extra amounts\n• Prevent chemical waste at all times'
                 },
-                'steak sandwiches': {
-                    'items': 'KUDU Beef (512), KUDU Chicken (511), Spicy KUDU Chicken (515), Lafino KUDU Chicken (517)',
-                    'description': 'Signature steak station sandwiches with fresh ingredients'
+                'eggs sanitization': {
+                    'overview': '🥚 **EGGS SANITIZATION PROCEDURE**\n\n**Category:** Preparation\n**Last Modified:** 18th Jan 2024',
+                    'receiving': '📦 **RECEIVING & STORAGE:**\n\n1 case = 360 pcs, chilled 34‑40°F',
+                    'procedure': '📋 **SANITIZATION PROCEDURE:**\n\n1️⃣ Discard cracked/soiled eggs\n2️⃣ 12qt container: 10L water + 1 packet Vegi Wash (or 2 Sanichlor tabs)\n3️⃣ Soak eggs MAX 3 MINUTES (timer)\n4️⃣ Drain, air dry\n5️⃣ Transfer to sanitized container, label "Sanitized Egg", store chilled\n6️⃣ Room temp max 2 hours – never return to chiller'
                 },
-                'sandwiches': {
-                    'items': 'Philly Beef (431), Veggie Sandwich (418), Club Sandwich (417), Smokey (973), Al Muthalatha (971), Lafino Philly Steak (956), KUDU Beef (512), KUDU Chicken (511), Spicy KUDU Chicken (515), Lafino KUDU Chicken (517)',
-                    'description': 'Complete selection of KUDU sandwiches'
+                'green pepper': {
+                    'overview': '🫑 **GREEN PEPPER PREPARATION**\nSOP #214',
+                    'storage': '📦 **Storage:** Chilled 34‑40°F, primary 5d, secondary 18h',
+                    'procedure': '📋 **PREPARATION:**\nWash/sanitize, remove core. Dice (¼"): use slicer. Fine chop: cut ⅛" strips then dice. Julienne: ⅛" strips max 6cm.'
                 },
-                'grilled meals': {
-                    'items': 'Grilled Chicken Meal (426), Diet Grilled Chicken Meal (690)',
-                    'description': 'Healthy grilled chicken with salads'
+                'onion': {
+                    'overview': '🧅 **ONION PREPARATION**\nSOP #213',
+                    'storage': '📦 **Storage:** Chilled 34‑40°F, primary 5d, secondary 18h',
+                    'sliced onion': '🔪 **SLICED:** Wear gloves, cut in half, remove inner pulp, cut ¼" strips',
+                    'diced onion': '🔪 **DICED:** Use slicer (¼" dice). Prepare one shift only.'
                 },
-                'kids meals': {
-                    'items': 'Kiddie Chicken Burger (492), Kiddie Chicken Nuggets (493), Kids Chicken Strips (496)',
-                    'description': 'Kids meals with toy and drink'
+                'tomato': {
+                    'overview': '🍅 **TOMATO PREPARATION**',
+                    'round tomato': '🔪 **ROUND (WHEELS):** wash/sanitize, core, slice on slicer',
+                    'half moon': '🌗 **HALF MOON:** stack wheels, cut in half',
+                    'diced': '🧊 **DICED:** remove seeds, cut into ¼" strips then dice'
                 },
-                'wraps': {
-                    'items': 'Egg Wrap (393), Chicken Wrap (394), Hot Dog Wrap (322), KUDU Tortilla (991), Lafino KUDU Chicken (517), Lafino Philly Steak (956)',
-                    'description': 'Tortilla wraps with various fillings'
+                'mushroom': {
+                    'overview': '🍄 **MUSHROOM & ONION MIX**',
+                    'storage': '📦 **Shelf life:** 24h',
+                    'procedure': '📋 **PREPARATION:** Grill 350°F, ½ tbsp butter, cook onion limp, heat mushroom, add seasoning. Cool 15min then refrigerate.'
                 },
-                'desserts': {
-                    'items': 'San Sebastian Cheesecake (729), Brownies Cheesecake (730), Sundae Passion Fruit (731), KUDU Muffins (732), Ice Cream Sundae (715), Ice Cream Cone (714), Waffle Ice Cream Cone (722)',
-                    'description': '7 delicious dessert options'
+                'onion chives': {
+                    'overview': '🌱 **ONION CHIVES**',
+                    'storage': '📦 **Storage:** chilled, secondary 18h',
+                    'procedure': '📋 Wash/sanitize, cut off white bulb, slice ⅛" thickness.'
                 },
-                'ice cream': {
-                    'items': 'Ice Cream Cone (714), Waffle Cone (722), Sundae (715), Passion Fruit Sundae (731)',
-                    'description': 'Soft serve ice cream treats'
+                'cucumber': {
+                    'overview': '🥒 **CUCUMBER**',
+                    'storage': '📦 Storage chilled, secondary 18h',
+                    'procedure': '📋 Wash/sanitize, cut head/tail, slice ¼" rounds.'
                 },
-                'promos': {
-                    'items': 'OG Burger E-Gamers Bundle (997), Smokey (973), Sweet Potato (990), Al Muthalatha (971), Cheesy Bacon Fries (986), Double Cheesy Bacon Fries (986), Chicken Caesar Salad (969), Iced Americano (962), Iced Latte (963), Jalapeno Cheese Melt (960), KUDU Burger Box (993), KUDU KARKADE (972), KUDU Matcha Latte (985), KUDU Nachos Platter (995), Large KUDU Nachos Platter (994), KUDU Passion (984), KUDU Tortilla (991), KUDULICIOUS Chicken (958), Lafino Philly Steak (956)',
-                    'description': '19 limited time offers and promotional items'
+                'cheese': {
+                    'overview': '🧀 **CHEESE PREPARATION**',
+                    'storage': '📦 Primary 1y, secondary 7d',
+                    'procedure': '📋 Shred using shredder inside container, thick size, wash immediately.'
                 },
-                'drinks': {
-                    'items': 'Iced Americano (962), Iced Latte (963), KUDU KARKADE (972), KUDU Matcha Latte (985), KUDU Passion (984)',
-                    'description': 'Refreshing beverages'
+                'club meat': {
+                    'overview': '🥩 **CLUB MEAT (beef/chicken/turkey)**',
+                    'storage': '📦 Frozen 0°F, thaw 12h in chiller, use 84h (total 96h)',
+                    'procedure': '📋 Drain juice, transfer to clean container, label.'
                 },
-                'loaded fries': {
-                    'items': 'Cheesy Bacon Fries (986), Double Cheesy Bacon Fries (986), Sweet Potato (990), Cheese Fries (612)',
-                    'description': 'Loaded fries with various toppings'
+                'thawing guide': {
+                    'overview': '❄️ **THAWING GUIDE (complete)**\n```\nItem                        Thaw time  Shelf life\nFrozen Pressed Beef 30g       12h        96h\nFrozen Pressed Chicken 30g    12h        96h\nFrozen Beef Steak             24h        72h\nFrozen Philly Steak           24h        72h\nKUDU Chicken Steak            24h        72h\nMarinated Chicken 110g        12h        72h\nHot Dog Meat                  24h        96h\nFrozen Juice                  48h        14 days\n```'
                 },
-                'nachos': {
-                    'items': 'KUDU Nachos Platter (995), Large KUDU Nachos Platter (994), Cheese Nachos (619)',
-                    'description': 'Nachos with cheese, beef, and toppings'
+                'service steps': {
+                    '6 steps': '📋 **6 SERVICE STEPS**\n\n1️⃣ **Welcome**: smile, "Welcome to KUDU / Ahlan fi KUDU"\n2️⃣ **Loyalty**: ask for app\n3️⃣ **Take order**: attentive, suggestive selling\n4️⃣ **Payment**: inform total, count change\n5️⃣ **Assemble**: quick, accurate\n6️⃣ **Deliver**: check completeness, "Enjoy your meal"'
                 },
-                'sides': {
-                    'items': 'KUDU Chicken Bites (692), Spicy Chicken Bites (693), KUDU Salad (691), Chicken Salad (691), Cheese Fries (612), Cheese Nachos (619), Chicken Nuggets (620), Chicken Strips (697), Criss Cut Potato (617), French Fries (611), Hash Brown (618)',
-                    'description': '13 delicious side items to complete your meal'
+                'code of conduct': {
+                    'purpose': '📋 **KUDU CODE OF CONDUCT - PURPOSE**\n\n• Represents rules, ethics and behavioral traits all must follow\n• KUDU strives to make operations environmentally and socially responsible\n• Sets guidance for expected standards',
+                    'ceo message': '👔 **MESSAGE FROM CEO - MURAT UNGUN**\n\n"We are in food and service sector involving direct human touch. Our goal is to be a leading restaurant chain serving food customers love and great service they love to experience.\n\nIt starts with people. That comes with responsibility, accountability, care and respect. We should always aspire for good, learn from differences, respect each other, hold standards high."',
+                    'core values': '💎 **KUDU CORE VALUES**\n\n• **Customer First**: Strive for exceptional customer experience\n• **Teamwork**: Work together to achieve common goals\n• **Transparency**: Work with honesty and moral\n• **Excellence**: Work with best quality & standard of performance',
+                    'human rights': '👥 **HUMAN RIGHTS**\n\n• KUDU condemns all forms of bullying, harassment, intimidation\n• Every employee deserves fairness, respect and dignity\n• Zero tolerance against human trafficking and slavery\n• No employment below legal working age',
+                    'safe workplace': '🛡️ **SAFE WORKPLACE**\n\n• Abide by health and safety instructions\n• Report accidents or contagious infections\n• KUDU committed to providing safe environment',
+                    'smoking': '🚭 **SMOKING POLICY**\n\n• Non-smoking policy within offices, restaurants, facilities\n• Smoke only in designated areas\n• Dispose cigarette stubs properly',
+                    'alcohol drugs': '🚫 **ALCOHOL & DRUGS**\n\n• Cannot work under effect of alcohol or drugs\n• Alcohol and drugs illegal in Saudi Arabia\n• Company may perform drug tests at any time',
+                    'dress code': '👔 **DRESS, CLOTHING & HYGIENE**\n\n• Present clean and professional appearance\n• Daily showers, proper shaving, haircut, nail care\n• No excessive makeup\n• Restaurant employees have specific dress requirements',
+                    'confidentiality': '🔒 **CONFIDENTIALITY & INFORMATION SECURITY**\n\n• No moving documents, research, code from offices\n• Protect confidential company information\n• Breaches grounds for immediate dismissal\n• Respect customer and employee privacy',
+                    'gifts': '🎁 **GIFTS, ENTERTAINMENT & BRIBERY**\n\n• Prohibited from offering/soliciting/accepting gifts\n• No cash gifts or equivalents\n• Occasional gifts under 150 SAR allowed with HR notification\n• Donations require CEO and board approval',
+                    'conflict interest': '⚖️ **CONFLICT OF INTERESTS**\n\n• Report any conflict immediately\n• Prohibited from acts causing conflict\n• Declare personal relationships to avoid favoritism',
+                    'company assets': '🏢 **COMPANY ASSETS & PROPERTY**\n\n• Use only for legitimate business purposes\n• Protect tangible and intangible assets\n• Theft and waste impact profitability',
+                    'communication': '📱 **COMMUNICATION PROTOCOL**\n\n• Maintain positive attitude on social media\n• Email official during work hours\n• WhatsApp/SMS after hours - no phone calls\n• Professionalism at all times'
                 },
-                'bites': {
-                    'items': 'KUDU Chicken Bites (692), Spicy Chicken Bites (693), Chicken Nuggets (620), Chicken Strips (697)',
-                    'description': 'Bite-sized chicken options'
+                'service crew': {
+                    'overview': '👤 **SERVICE CREW - ROLE PROFILE**\n\n**Position Purpose:** Prepare food, serve guests, maintain cleanliness standards.\n\n**9 Workstations:**\n1️⃣ Receiving & Storage\n2️⃣ Preparation\n3️⃣ Breakfast\n4️⃣ Burger Station\n5️⃣ Steak Station\n6️⃣ Side Items\n7️⃣ Dessert\n8️⃣ Equipment\n9️⃣ Guest Service',
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n• Follow appearance and hygiene standards\n• Follow QSC procedures\n• Arrive on time for shifts\n• Receive and store supplies properly\n• Follow manager instructions\n• Learn all workstation procedures\n• Greet guests and ask for feedback\n• Maintain speed of service\n• Recommend LTOs and deals\n• Respond to guest complaints\n• Rotate food items for freshness\n• Assemble orders correctly\n• Assist colleagues when not busy\n• Follow safety procedures'
                 },
-                'salads': {
-                    'items': 'KUDU Salad (691), Chicken Salad (691), Chicken Caesar Salad (969)',
-                    'description': 'Fresh and healthy salad options'
+                'crew leader': {
+                    'overview': '👥 **CREW LEADER - ROLE PROFILE**\n\n**Position Purpose:** Assist management with training, support MOD, potential Shift Manager pipeline.',
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**Training Support:**\n• Assist with training plans\n• Complete Academy modules\n• Conduct in-store induction\n• Ensure training materials available\n• Lead by example (hygiene, uniform)\n• Train on equipment and chemicals\n• Reinforce hand washing\n\n**Service Delivery:**\n• Work with crew to prepare orders\n• Respond to guest complaints\n• Communicate Mystery Shopper results\n• Brief staff on promotions\n• Ensure workstations stocked\n\n**Assist MOD:**\n• Receive deliveries\n• Figure 8 walk\n• Product temp checks\n• Monitor holding times\n• Assign cleaning tasks\n• Report hazards'
+                },
+                'shift manager': {
+                    'overview': '👨‍💼 **SHIFT MANAGER - ROLE PROFILE**\n\n**Position Purpose:** Lead assigned shifts with smooth operations and great guest experience.',
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**People:**\n• Welcome new employees\n• Provide training & coaching\n• Create motivational climate\n• Assign cleaning tasks\n• Conduct staff briefings\n• Ensure HR policy compliance\n\n**Guest Focus:**\n• Put Guest first\n• Interact with guests\n• Take corrective actions\n• Ensure staff positioning\n• Complete KUDU Routine tasks\n• Monitor SOS\n• Resolve complaints\n\n**Business Results:**\n• Control cash, stocks, assets\n• Train on promotions\n• Control P&L items\n• Report hazards\n• Maintain hygiene standards\n• Equipment maintenance\n• Take inventory'
+                },
+                'assistant manager': {
+                    'overview': '👔 **ASSISTANT RESTAURANT MANAGER**\n\n**Position Purpose:** Assist RM with daily operations, replace RM in absence.',
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**People:**\n• Provide training & development\n• Create motivational climate\n• Supervise cleaning\n• Assist with appraisals\n• Conduct briefings\n• Delegate tasks\n• Ensure employee files updated\n\n**Guest Focus:**\n• Interact with guests\n• Ensure team delivers experience\n• Follow KUDU Routine\n• Monitor SOS\n• Resolve complaints\n• Monitor sales targets\n• Execute promotions\n\n**Business Results:**\n• Control P&L items\n• Make operational decisions\n• Maintain hygiene, safety\n• Equipment maintenance\n• Take inventory\n• Handle audits (mystery shopper, CERs)'
+                },
+                'restaurant manager': {
+                    'overview': '👔 **RESTAURANT MANAGER**\n\n**Position Purpose:** Lead restaurant to deliver great guest experience and maximize sales and profits.',
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**People:**\n• Lead subordinates with clear expectations\n• Ensure team trained to standards\n• Provide development plans\n• Create motivational climate\n• Conduct appraisals and IDPs\n• Conduct staff meetings\n• Delegate tasks\n\n**Guest Focus:**\n• Put Guest first\n• Represent KUDU brand\n• Execute KUDU Routine\n• Monitor SOS\n• Ensure promotions executed\n• Solve complaints quickly\n\n**Business Results:**\n• Make sales projections\n• Set team targets\n• Enhance sales through KRPB\n• Ensure security measures\n• Monitor P&L reports\n• Maintain hygiene, safety\n• Complete all audits'
+                },
+                'area manager': {
+                    'overview': '👔 **AREA MANAGER**\n\n**Position Purpose:** Lead restaurant cluster through people development and improved operations.',
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**People:**\n• Champion People Promise\n• Ensure respect and recognition\n• Provide resources\n• Support learning and development\n• Ensure adequate staffing\n• Set performance targets\n• Conduct reviews\n\n**Guest Focus:**\n• Put Guest first\n• Collaborate on improvements\n• Protect brand through QSC\n• Observe operations\n\n**Sales Building:**\n• Coach managers on QSC\n• Partner on assessments\n• Develop action plans\n• Ensure execution\n\n**Business Results:**\n• Collaborate on business plan\n• Identify opportunities\n• Adjust tactics\n• Complete audits'
+                },
+                'area supervisor': {
+                    'overview': '👔 **AREA SUPERVISOR**\n\n**Position Purpose:** Lead batch of 3 restaurants through people development and operations.',
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**People:**\n• Champion People Promise\n• Ensure respect and recognition\n• Provide resources\n• Support learning and development\n• Ensure adequate staffing\n• Partner with Training\n\n**Guest Focus:**\n• Put Guest first\n• Help teams take corrective actions\n• Protect brand through QSC\n\n**Sales Building:**\n• Teach and coach managers\n• Partner on assessments\n• Develop action plans\n• Ensure LSM execution\n\n**Business Results:**\n• Collaborate on business plan\n• Identify opportunities\n• Create positive environment\n• Complete audits'
+                },
+                'loyalty program': {
+                    'overview': '💳 **KUDU REWARDS PROGRAM**\n\n**Membership:**\n• Free download from app\n• 18+ years\n• Register through app or website\n\n**Earning Points:**\n• In-store: 20 points per 1 SAR\n• App Pick Up: 20 points per 1 SAR\n• App Delivery: 10 points per 1 SAR\n• Website same as app\n• Points credited 1 hour after transaction\n\n**Redemption:**\n• Minimum 3,000 points = 10 SAR voucher\n• Maximum 15,000 points = 50 SAR voucher\n• Redeem through app or in-store\n• Food items only (not services/delivery)\n\n**Expiry:**\n• Points expire 6 months from receipt\n• Vouchers expire 6 months from conversion\n• Account deactivated after 1 year inactivity'
+                },
+                'cooking times': {
+                    'burger station': '⏲️ **COOKING TIMES**\nSpicy Quattro 5:00 · Veggie 5:00 · Grilled 140g 6:00 · Chicken burger 3:30 · Hash brown 3:30 · Fries 3:00 · Nuggets 3:30 · Regular bites 4:15 · Criss cut 3:30 · Quattro chicken 7:00 · Cheese nacho 2:30 · Chicken strips 5:00'
+                },
+                'food allergens': {
+                    'notice': '⚠️ **FOOD ALLERGY NOTICE** ⚠️\n\nFood prepared here may contain:\n\n• Sesame (بذور السمسم)\n• Mustard (الخردل)\n• Egg (البيض)\n• Wheat (الحبوب التي تحتوي على مادة الجلوتين)\n• Shellfish (القشريات)\n• Sulphates (الكبريتيت)\n• Fish (الأسماك)\n• Celery (الكرفس)\n• Lupinus (لوبين/الترمس)\n• Molluscs (الرخويات)\n• Nuts (المكسرات)\n• Peanuts (الفول السوداني)\n• Dairy (الحليب)\n• Soybeans (فول الصويا)'
+                },
+                'training': {
+                    'overview': '📚 **TRAINING PROGRAMS**\n\n**Fast Track Phase 1 (Months 1-6):**\n• Month 1: Induction, Operations, Service Crew\n• Month 2: SOC Certification, Crew Leader training\n• Month 3: Post-CL activities, TE review\n• Month 4: Equipment workshop\n• Month 5: Shift Management\n• Month 6: Shift Certification\n\n**Fast Track Phase 2 (Months 1-4):**\n• Month 1: Job Description, Coaching\n• Month 2: SOC follow-up, P&L activities\n• Month 3: Post-P&L, Time Management\n• Month 4: RM practice, Performance Management\n\n**Fast Track Phase 3:**\n• Phase 1: Handle 1 store with AM\n• Phase 2: Handle 2 stores with AM\n• Phase 3: Handle 2-3 stores independently\n\n**9-Month Program:**\nComplete path from Service Crew to Restaurant Manager'
+                },
+                'menu': {
+                    'beef': '🥩 **BEEF** · Kudu beef (grass‑fed), Philly steak, Lalino, beef steak with mushroom.',
+                    'chicken': '🍗 **CHICKEN** · Grilled 110/140g, spicy/regular Quattro, strips, nuggets, bites.',
+                    'sides': '🍟 **SIDES** · French fries, hash brown, criss cut, nachos.'
+                },
+                'conformance check': {
+                    'kudu chicken sandwich': '✅ **KUDU CHICKEN SANDWICH CHECK**\nWeight 340g±5g, temp ≥140°F, bread golden, chicken golden, onion/pepper mixed, lettuce fresh, tomato firm, mayo edge‑to‑edge.'
+                },
+                'mission vision': {
+                    'mission': '🎯 **MISSION** · Leading Saudi brand, delicious fresh high‑quality foods with unique experience.',
+                    'vision': '👁️ **VISION** · Leading Saudi company with strong international multi‑format franchised partnerships.'
+                },
+
+                // ===== JOB PROFILES (new) =====
+                'job profiles': {
+                    'overview': '👔 **KUDU JOB PROFILES**\n\nComplete list of career paths at KUDU:\n\n• **Service Crew** - Entry level, food preparation & guest service\n• **Crew Leader** - Team support, training, shift assistance\n• **Shift Manager** - Lead shifts, operations management\n• **Assistant Manager** - Support RM, daily operations\n• **Restaurant Manager** - Full restaurant leadership\n• **Area Manager** - Lead restaurant cluster\n• **Area Supervisor** - Lead 3 restaurants cluster\n\nType any job title for detailed information!'
+                },
+                'service crew job': {
+                    'overview': '👤 **SERVICE CREW**\n\n**Position Purpose:** Prepare food, serve guests, maintain cleanliness standards.\n\n**9 Workstations:**\n1️⃣ Receiving & Storage\n2️⃣ Preparation\n3️⃣ Breakfast\n4️⃣ Burger Station\n5️⃣ Steak Station\n6️⃣ Side Items\n7️⃣ Dessert\n8️⃣ Equipment\n9️⃣ Guest Service',
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n• Follow appearance and hygiene standards\n• Follow QSC procedures\n• Arrive on time for shifts\n• Receive and store supplies properly\n• Follow manager instructions\n• Learn all workstation procedures\n• Greet guests and ask for feedback\n• Maintain speed of service\n• Recommend LTOs and deals\n• Respond to guest complaints\n• Rotate food items for freshness\n• Assemble orders correctly\n• Assist colleagues when not busy\n• Follow safety procedures'
+                },
+                'crew leader job': {
+                    'overview': '👥 **CREW LEADER**\n\n**Position Purpose:** Assist management with training, support MOD, potential Shift Manager pipeline.',
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**Training Support:**\n• Assist with training plans\n• Complete Academy modules\n• Conduct in-store induction\n• Ensure training materials available\n• Lead by example (hygiene, uniform)\n• Train on equipment and chemicals\n• Reinforce hand washing\n\n**Service Delivery:**\n• Work with crew to prepare orders\n• Respond to guest complaints\n• Communicate Mystery Shopper results\n• Brief staff on promotions\n• Ensure workstations stocked\n\n**Assist MOD:**\n• Receive deliveries\n• Figure 8 walk\n• Product temp checks\n• Monitor holding times\n• Assign cleaning tasks\n• Report hazards'
+                },
+                'shift manager job': {
+                    'overview': '👨‍💼 **SHIFT MANAGER**\n\n**Position Purpose:** Lead assigned shifts with smooth operations and great guest experience.',
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**People:**\n• Welcome new employees\n• Provide training & coaching\n• Create motivational climate\n• Assign cleaning tasks\n• Conduct staff briefings\n• Ensure HR policy compliance\n\n**Guest Focus:**\n• Put Guest first\n• Interact with guests\n• Take corrective actions\n• Ensure staff positioning\n• Complete KUDU Routine tasks\n• Monitor SOS\n• Resolve complaints\n\n**Business Results:**\n• Control cash, stocks, assets\n• Train on promotions\n• Control P&L items\n• Report hazards\n• Maintain hygiene standards\n• Equipment maintenance\n• Take inventory'
+                },
+                'assistant manager job': {
+                    'overview': '👔 **ASSISTANT RESTAURANT MANAGER**\n\n**Position Purpose:** Assist RM with daily operations, replace RM in absence.',
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**People:**\n• Provide training & development\n• Create motivational climate\n• Supervise cleaning\n• Assist with appraisals\n• Conduct briefings\n• Delegate tasks\n• Ensure employee files updated\n\n**Guest Focus:**\n• Interact with guests\n• Ensure team delivers experience\n• Follow KUDU Routine\n• Monitor SOS\n• Resolve complaints\n• Monitor sales targets\n• Execute promotions\n\n**Business Results:**\n• Control P&L items\n• Make operational decisions\n• Maintain hygiene, safety\n• Equipment maintenance\n• Take inventory\n• Handle audits (mystery shopper, CERs)'
+                },
+                'restaurant manager job': {
+                    'overview': '👔 **RESTAURANT MANAGER**\n\n**Position Purpose:** Lead restaurant to deliver great guest experience and maximize sales and profits.',
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**People:**\n• Lead subordinates with clear expectations\n• Ensure team trained to standards\n• Provide development plans\n• Create motivational climate\n• Conduct appraisals and IDPs\n• Conduct staff meetings\n• Delegate tasks\n\n**Guest Focus:**\n• Put Guest first\n• Represent KUDU brand\n• Execute KUDU Routine\n• Monitor SOS\n• Ensure promotions executed\n• Solve complaints quickly\n\n**Business Results:**\n• Make sales projections\n• Set team targets\n• Enhance sales through KRPB\n• Ensure security measures\n• Monitor P&L reports\n• Maintain hygiene, safety\n• Complete all audits'
+                },
+                'area manager job': {
+                    'overview': '👔 **AREA MANAGER**\n\n**Position Purpose:** Lead restaurant cluster through people development and improved operations.',
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**People:**\n• Champion People Promise\n• Ensure respect and recognition\n• Provide resources\n• Support learning and development\n• Ensure adequate staffing\n• Set performance targets\n• Conduct reviews\n\n**Guest Focus:**\n• Put Guest first\n• Collaborate on improvements\n• Protect brand through QSC\n• Observe operations\n\n**Sales Building:**\n• Coach managers on QSC\n• Partner on assessments\n• Develop action plans\n• Ensure execution\n\n**Business Results:**\n• Collaborate on business plan\n• Identify opportunities\n• Adjust tactics\n• Complete audits'
+                },
+                'area supervisor job': {
+                    'overview': '👔 **AREA SUPERVISOR**\n\n**Position Purpose:** Lead batch of 3 restaurants through people development and operations.',
+                    'accountabilities': '📋 **ACCOUNTABILITIES:**\n\n**People:**\n• Champion People Promise\n• Ensure respect and recognition\n• Provide resources\n• Support learning and development\n• Ensure adequate staffing\n• Partner with Training\n\n**Guest Focus:**\n• Put Guest first\n• Help teams take corrective actions\n• Protect brand through QSC\n\n**Sales Building:**\n• Teach and coach managers\n• Partner on assessments\n• Develop action plans\n• Ensure LSM execution\n\n**Business Results:**\n• Collaborate on business plan\n• Identify opportunities\n• Create positive environment\n• Complete audits'
                 }
             },
             
@@ -1570,10 +1393,27 @@
             }
         };
 
+        // List of abbreviation keys (for quick lookup)
+        const abbrKeys = [
+            'ac','ads','afsm','amdp','bogo','boh','ccp','cctv','cer','cfs','comp sales','daypart','dt','e2e',
+            'ebitda','esm','fc','fcr','fefo','fifo','foh','fs','fs&pq','fs/dt','g&a','gp','haccp','hvac','il',
+            'il/dt','isp','kds','kpi','krbp','lfl','lsm','lto','mbo','msds','mtd','ocu','oz','p&l','pa','pd',
+            'pem','phf','phu','pls','pop','pos','ppe','ppm','ptd','qa','qsc','qsr','r&d','r&m','rcp','roi',
+            's2s','soc','sop','sos','swot','tc','te','tna','u/1000','uom','wrg','wrs','ytd'
+        ];
+
+        // Job profile keywords
+        const jobKeys = [
+            'service crew', 'crew leader', 'shift manager', 'assistant manager', 
+            'restaurant manager', 'area manager', 'area supervisor',
+            'service crew job', 'crew leader job', 'shift manager job', 
+            'assistant manager job', 'restaurant manager job', 
+            'area manager job', 'area supervisor job'
+        ];
+
         // ============================================
-        // COMPLETE MENU SUGGESTIONS
+        // COMPLETE MENU SUGGESTIONS (including job profiles)
         // ============================================
-        
         const defaultSuggestions = [
             // Breakfast Items
             { text: '🍳 KUDU Breakfast', keyword: 'kudu breakfast' },
@@ -1603,7 +1443,22 @@
             // Side Items
             { text: '🍗 KUDU Chicken Bites', keyword: 'kudu chicken bites' },
             { text: '🧀 Cheese Fries', keyword: 'cheese fries' },
-            { text: '🥔 Criss Cut Potato', keyword: 'criss cut potato' }
+            { text: '🥔 Criss Cut Potato', keyword: 'criss cut potato' },
+            
+            // Abbreviations
+            { text: '📚 Abbreviations', keyword: 'all abbreviations' },
+            { text: '🔬 Food Safety', keyword: 'food safety criticals' },
+            { text: '👔 Code of Conduct', keyword: 'code of conduct' },
+            
+            // Job Profiles
+            { text: '👤 Service Crew', keyword: 'service crew job' },
+            { text: '👥 Crew Leader', keyword: 'crew leader job' },
+            { text: '👨‍💼 Shift Manager', keyword: 'shift manager job' },
+            { text: '👔 Assistant Manager', keyword: 'assistant manager job' },
+            { text: '👔 Restaurant Manager', keyword: 'restaurant manager job' },
+            { text: '👔 Area Manager', keyword: 'area manager job' },
+            { text: '👔 Area Supervisor', keyword: 'area supervisor job' },
+            { text: '📋 All Job Profiles', keyword: 'job profiles' }
         ];
 
         function initializeSuggestions() {
@@ -1626,6 +1481,7 @@
             initializeSuggestions();
             displayWelcomeMessage();
             updateHistoryList();
+            updateUI();
         }
 
         function autoResize(textarea) {
@@ -1657,81 +1513,113 @@
         function processMessage(query) {
             query = query.toLowerCase();
             let response = [];
-            let matches = [];
 
-            // Search in knowledge base
+            // --- Check Job Profiles first ---
+            const jobMatch = jobKeys.find(key => query === key || query.includes(key.replace(' job', '')));
+            if (jobMatch && knowledgeBase.text[jobMatch]) {
+                const jobData = knowledgeBase.text[jobMatch];
+                if (typeof jobData === 'object') {
+                    for (let sub in jobData) {
+                        if (typeof jobData[sub] === 'string') {
+                            response.push(jobData[sub]);
+                        }
+                    }
+                    return response.join('\n\n');
+                }
+            }
+
+            // Check for 'job profiles' overview
+            if (query.includes('job profile') || query.includes('all jobs') || query.includes('career')) {
+                if (knowledgeBase.text['job profiles'] && knowledgeBase.text['job profiles'].overview) {
+                    response.push(knowledgeBase.text['job profiles'].overview);
+                    return response.join('\n');
+                }
+            }
+
+            // --- Check Abbreviations ---
+            const abbrMatch = abbrKeys.find(key => query === key || query.includes(key));
+            if (abbrMatch && knowledgeBase.text[abbrMatch]) {
+                response.push(knowledgeBase.text[abbrMatch]);
+                return response.join('\n');
+            }
+
+            // Check for 'all abbreviations'
+            if (query.includes('all abbreviations') || query.includes('abbreviations list') || query.includes('all abbr')) {
+                if (knowledgeBase.text['all abbreviations']) {
+                    response.push(knowledgeBase.text['all abbreviations']);
+                    return response.join('\n');
+                }
+            }
+
+            // --- Check Menu Items ---
             for (let category in knowledgeBase.text) {
                 if (query.includes(category) || category.includes(query)) {
-                    for (let subcategory in knowledgeBase.text[category]) {
-                        if (subcategory === 'description' || subcategory === 'ingredients' || subcategory === 'preparation' || subcategory === 'calories' || subcategory === 'launch_date' || subcategory === 'station' || subcategory === 'sop' || subcategory === 'note' || subcategory === 'phu' || subcategory === 'cooking_time' || subcategory === 'condiments' || subcategory === 'category' || subcategory === 'storage' || subcategory === 'raw_weights' || subcategory === 'cooked_weights' || subcategory === 'yields_per_bag' || subcategory === 'conformance') {
-                            if (!['breakfast', 'burgers', 'steak sandwiches', 'sandwiches', 'grilled meals', 'kids meals', 'wraps', 'desserts', 'ice cream', 'promos', 'drinks', 'loaded fries', 'nachos', 'sides', 'bites', 'salads'].includes(category)) {
-                                if (subcategory === 'description') response.push(`📋 ${knowledgeBase.text[category][subcategory]}`);
-                                else if (subcategory === 'ingredients') response.push(`🥘 Ingredients: ${knowledgeBase.text[category][subcategory]}`);
-                                else if (subcategory === 'preparation') response.push(`👨‍🍳 Preparation: ${knowledgeBase.text[category][subcategory]}`);
-                                else if (subcategory === 'calories') response.push(`🔥 Calories: ${knowledgeBase.text[category][subcategory]}`);
-                                else if (subcategory === 'launch_date') response.push(`📅 Launch Date: ${knowledgeBase.text[category][subcategory]}`);
-                                else if (subcategory === 'station') response.push(`⚙️ Station: ${knowledgeBase.text[category][subcategory]}`);
-                                else if (subcategory === 'sop') response.push(`📄 SOP: ${knowledgeBase.text[category][subcategory]}`);
-                                else if (subcategory === 'note') response.push(`📝 Note: ${knowledgeBase.text[category][subcategory]}`);
-                                else if (subcategory === 'phu') response.push(`⏲️ PHU: ${knowledgeBase.text[category][subcategory]}`);
-                                else if (subcategory === 'cooking_time') response.push(`⏱️ Cooking Time: ${knowledgeBase.text[category][subcategory]}`);
-                                else if (subcategory === 'condiments') response.push(`🧂 Condiments: ${knowledgeBase.text[category][subcategory]}`);
-                                else if (subcategory === 'storage') response.push(`📦 Storage: ${knowledgeBase.text[category][subcategory]}`);
-                                else if (subcategory === 'raw_weights') response.push(`⚖️ Raw Weights: ${knowledgeBase.text[category][subcategory]}`);
-                                else if (subcategory === 'cooked_weights') response.push(`⚖️ Cooked Weights: ${knowledgeBase.text[category][subcategory]}`);
-                                else if (subcategory === 'yields_per_bag') response.push(`📊 Yields per Bag: ${knowledgeBase.text[category][subcategory]}`);
-                                else if (subcategory === 'conformance') response.push(`✅ Conformance: ${knowledgeBase.text[category][subcategory]}`);
-                            }
+                    const item = knowledgeBase.text[category];
+                    if (typeof item === 'object' && !item.list && !item.overview && !item.purpose) {
+                        for (let subcategory in item) {
+                            if (subcategory === 'description') response.push(`📋 ${item[subcategory]}`);
+                            else if (subcategory === 'ingredients') response.push(`🥘 Ingredients: ${item[subcategory]}`);
+                            else if (subcategory === 'preparation') response.push(`👨‍🍳 Preparation: ${item[subcategory]}`);
+                            else if (subcategory === 'calories') response.push(`🔥 Calories: ${item[subcategory]}`);
+                            else if (subcategory === 'launch_date') response.push(`📅 Launch Date: ${item[subcategory]}`);
+                            else if (subcategory === 'station') response.push(`⚙️ Station: ${item[subcategory]}`);
+                            else if (subcategory === 'sop') response.push(`📄 SOP: ${item[subcategory]}`);
+                            else if (subcategory === 'phu') response.push(`⏲️ PHU: ${item[subcategory]}`);
+                            else if (subcategory === 'cooking_time') response.push(`⏱️ Cooking Time: ${item[subcategory]}`);
+                            else if (subcategory === 'storage') response.push(`📦 Storage: ${item[subcategory]}`);
+                            else if (subcategory === 'condiments') response.push(`🧂 Condiments: ${item[subcategory]}`);
+                            else if (subcategory === 'category') response.push(`📂 Category: ${item[subcategory]}`);
+                            else if (subcategory === 'note') response.push(`📝 Note: ${item[subcategory]}`);
+                            else if (subcategory === 'conformance') response.push(`✅ Conformance: ${item[subcategory]}`);
                         }
+                        if (response.length > 0) return response.join('\n');
                     }
                 }
             }
 
-            // Check for general categories
-            if (query.includes('breakfast menu') || query.includes('breakfast items')) {
-                response.push('🍳 Breakfast Menu (10 items):');
-                response.push('• KUDU Breakfast (311) • Club Breakfast (312)');
-                response.push('• Steak & Eggs (313) • Chicken & Eggs (315)');
-                response.push('• Omelet Sandwich (314) • Pancakes (390)');
-                response.push('• Waffles (391) • Wraps (322,393,394)');
-            }
-            
-            if (query.includes('burger menu') || query.includes('burger station')) {
-                response.push('🍔 Burger Station Menu (13 items):');
-                response.push('• Philly Beef (431) • Quattro Chicken (421)');
-                response.push('• Extra/Non-Spicy Quattro (497,498)');
-                response.push('• Chicken Burger (419) • Veggie Sandwich (418)');
-                response.push('• Club Sandwich (417) • Grilled Meals (426,690)');
-                response.push('• Kids Meals (492,493,496)');
+            // --- Check Detailed Topics ---
+            for (let topic in knowledgeBase.text) {
+                const item = knowledgeBase.text[topic];
+                if (typeof item === 'object' && (item.list || item.overview || item.purpose)) {
+                    if (query.includes(topic) || topic.includes(query)) {
+                        for (let sub in item) {
+                            if (typeof item[sub] === 'string') {
+                                response.push(item[sub]);
+                            }
+                        }
+                        if (response.length > 0) return response.join('\n\n');
+                    }
+                }
             }
 
-            if (query.includes('steak station') || query.includes('steak menu')) {
-                response.push('🥩 Steak Station Menu (5 items):');
-                response.push('• KUDU Beef (512) - Classic beef steak');
-                response.push('• KUDU Chicken (511) - Classic chicken steak');
-                response.push('• Spicy KUDU Chicken (515) - With harissa mayo');
-                response.push('• Lafino KUDU Chicken (517) - Tortilla wrap');
+            // --- Check Categories ---
+            const categories = ['breakfast','burgers','steak sandwiches','sandwiches','grilled meals','kids meals','wraps','desserts','ice cream','promos','drinks','loaded fries','nachos','sides','bites','salads'];
+            for (let cat of categories) {
+                if (query.includes(cat) || cat.includes(query)) {
+                    const catData = knowledgeBase.text[cat];
+                    if (catData) {
+                        if (catData.items) response.push(`📋 **${cat.toUpperCase()}**\nItems: ${catData.items}`);
+                        if (catData.description) response.push(`📝 ${catData.description}`);
+                        return response.join('\n');
+                    }
+                }
             }
 
-            if (query.includes('dessert menu') || query.includes('desserts')) {
-                response.push('🍨 Dessert Menu (7 items):');
-                response.push('• San Sebastian Cheesecake (729)');
-                response.push('• Brownies Cheesecake (730)');
-                response.push('• Sundae Passion Fruit (731)');
-                response.push('• KUDU Muffins (732)');
-                response.push('• Ice Cream Sundae (715)');
-                response.push('• Ice Cream Cone (714)');
-                response.push('• Waffle Cone (722)');
+            // --- Search by SOP ---
+            const sopMatch = query.match(/sop[#\s]*(\d+)/i) || query.match(/#\s*(\d+)/);
+            if (sopMatch) {
+                const sopNum = sopMatch[1];
+                for (let category in knowledgeBase.text) {
+                    const item = knowledgeBase.text[category];
+                    if (typeof item === 'object' && item.sop && item.sop.includes(sopNum)) {
+                        if (item.description) response.push(`🔍 Found SOP# ${sopNum}: ${item.description}`);
+                        else response.push(`🔍 Found SOP# ${sopNum}: ${category}`);
+                        return response.join('\n');
+                    }
+                }
             }
 
-            if (query.includes('promo menu') || query.includes('promos')) {
-                response.push('🎯 Promo Items (19 items)');
-            }
-
-            if (query.includes('side menu') || query.includes('sides')) {
-                response.push('🍟 Side Items Menu (13 items)');
-            }
-
+            // --- Full menu request ---
             if (query.includes('full menu') || query.includes('all items') || query.includes('what do you have')) {
                 response.push('📋 KUDU Complete Menu:');
                 response.push('🍳 BREAKFAST - 10 items');
@@ -1743,36 +1631,26 @@
                 response.push('━━━━━━━━━━━━━━━━');
                 response.push('Total: 67 menu items');
                 response.push('');
-                response.push('Try: "breakfast", "burger", "steak", "dessert", "promo", or "sides" menu!');
+                response.push('Try: "breakfast", "burger", "steak", "dessert", "promo", "sides", "abbreviations", "job profiles", or "food safety"!');
+                return response.join('\n');
             }
 
-            // Search by SOP
-            const sopMatch = query.match(/sop[#\s]*(\d+)/i) || query.match(/#\s*(\d+)/);
-            if (sopMatch) {
-                const sopNum = sopMatch[1];
-                for (let category in knowledgeBase.text) {
-                    if (knowledgeBase.text[category].sop && knowledgeBase.text[category].sop.includes(sopNum)) {
-                        response.push(`🔍 Found SOP# ${sopNum}: ${knowledgeBase.text[category].description}`);
-                    }
-                }
+            // --- No match: provide helpful suggestions ---
+            const related = getRelatedQueries(query);
+            if (related.length > 0) {
+                response.push('🔎 Try these items:');
+                related.forEach(r => response.push(`   • ${r}`));
+            } else {
+                response.push('📝 I can help with:');
+                response.push('🍳 Breakfast (10) • 🍔 Burger Station (13)');
+                response.push('🥩 Steak Station (5) • 🍨 Desserts (7)');
+                response.push('🎯 Promos (19) • 🍟 Sides (13)');
+                response.push('📚 Abbreviations (A-Z)');
+                response.push('👔 Job Profiles (7 roles)');
+                response.push('🔬 Food Safety • 👔 Code of Conduct');
+                response.push('━━━━━━━━━━━━━━━━');
+                response.push('Try "breakfast", "burger", "steak", "dessert", "promo", "sides", "abbreviations", "job profiles", or "food safety"!');
             }
-
-            if (response.length === 0) {
-                const related = getRelatedQueries(query);
-                if (related.length > 0) {
-                    response.push('🔎 Try these items:');
-                    related.forEach(r => response.push(`   • ${r}`));
-                } else {
-                    response.push('📝 I can help with our complete menu including:');
-                    response.push('🍳 Breakfast (10) • 🍔 Burger Station (13)');
-                    response.push('🥩 Steak Station (5) • 🍨 Desserts (7)');
-                    response.push('🎯 Promos (19) • 🍟 Sides (13)');
-                    response.push('━━━━━━━━━━━━━━━━');
-                    response.push('Total: 67 items');
-                    response.push('Try "breakfast", "burger", "steak", "dessert", "promo", or "sides" menu!');
-                }
-            }
-
             return response.join('\n');
         }
 
@@ -1780,14 +1658,12 @@
             let related = [];
             query = query.toLowerCase();
             
-            // Breakfast related
+            // Menu related
             if (query.includes('breakfast') || query.includes('morning')) {
                 related.push('kudu breakfast', 'club breakfast', 'steak & eggs', 'pancake');
             }
-            
-            // Burger Station related
             if (query.includes('chicken')) {
-                related.push('quattro chicken', 'chicken burger', 'grilled chicken meal', 'kudulicious chicken', 'kudu chicken', 'spicy kudu chicken');
+                related.push('quattro chicken', 'chicken burger', 'grilled chicken meal', 'kudu chicken', 'spicy kudu chicken');
             }
             if (query.includes('beef')) {
                 related.push('philly beef', 'steak & eggs', 'club sandwich', 'smokey', 'kudu beef');
@@ -1795,21 +1671,15 @@
             if (query.includes('spicy')) {
                 related.push('extra spicy quattro', 'spicy kudu chicken', 'spicy chicken bites');
             }
-            
-            // Steak Station related
             if (query.includes('steak')) {
                 related.push('kudu beef', 'kudu chicken', 'spicy kudu chicken', 'lafino kudu chicken');
             }
-            
-            // Dessert related
             if (query.includes('cheesecake')) {
                 related.push('san sebastian cheesecake', 'brownies cheesecake');
             }
             if (query.includes('ice cream')) {
                 related.push('ice cream sundae', 'ice cream cone', 'waffle ice cream cone', 'sundae passion fruit');
             }
-            
-            // Side items related
             if (query.includes('bites')) {
                 related.push('kudu chicken bites', 'spicy chicken bites');
             }
@@ -1823,6 +1693,43 @@
                 related.push('kudu salad', 'chicken salad', 'chicken caesar salad');
             }
             
+            // Abbreviations related
+            if (query.includes('abbreviation') || query.includes('abbr')) {
+                related.push('all abbreviations');
+            }
+            
+            // Topics related
+            if (query.includes('food safety') || query.includes('safety critical')) {
+                related.push('food safety criticals');
+            }
+            if (query.includes('conduct') || query.includes('ethics') || query.includes('code')) {
+                related.push('code of conduct');
+            }
+            if (query.includes('chemical')) {
+                related.push('chemical handling');
+            }
+            if (query.includes('training')) {
+                related.push('training');
+            }
+            if (query.includes('loyalty') || query.includes('reward')) {
+                related.push('loyalty program');
+            }
+            
+            // Job profiles related
+            if (query.includes('job') || query.includes('profile') || query.includes('career') || query.includes('position')) {
+                related.push('job profiles', 'service crew job', 'crew leader job', 'shift manager job', 
+                            'assistant manager job', 'restaurant manager job', 'area manager job', 'area supervisor job');
+            }
+            if (query.includes('crew')) {
+                related.push('service crew job', 'crew leader job');
+            }
+            if (query.includes('manager')) {
+                related.push('shift manager job', 'assistant manager job', 'restaurant manager job', 'area manager job');
+            }
+            if (query.includes('supervisor')) {
+                related.push('area supervisor job');
+            }
+            
             return related;
         }
 
@@ -1834,7 +1741,7 @@
             const related = getRelatedQueries(query);
             
             if (related.length > 0) {
-                matchText.innerHTML = '💡 Try these:';
+                matchText.textContent = translations[currentLang].tryThese;
                 matchTags.innerHTML = related.map(q => 
                     `<span class="match-tag" onclick="useSuggestion('${q}')">${q}</span>`
                 ).join('');
@@ -1961,7 +1868,7 @@
         function updateHistoryList() {
             const historyList = document.getElementById('historyList');
             if (chatHistory.length === 0) {
-                historyList.innerHTML = '<div style="color: rgba(255,255,255,0.5); text-align: center; padding: 20px;">No chat history yet</div>';
+                historyList.innerHTML = `<div style="color: rgba(255,255,255,0.5); text-align: center; padding: 20px;">${translations[currentLang].noHistory}</div>`;
                 return;
             }
             
@@ -2001,7 +1908,7 @@
         }
 
         function displayWelcomeMessage() {
-            addMessage('👋 Welcome to Kudu AI! I can help with our complete menu including 🍳 Breakfast (10), 🍔 Burger Station (13), 🥩 Steak Station (5), 🍨 Desserts (7), 🎯 Promos (19), and 🍟 Sides (13) - 67 items total! Try asking about any menu item or SOP number!', 'bot');
+            addMessage(translations[currentLang].welcome, 'bot');
         }
 
         document.getElementById('userInput').addEventListener('keypress', function(e) {
@@ -2020,5 +1927,3 @@
     </script>
 </body>
 </html>
-
-
