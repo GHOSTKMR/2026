@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>SADWAP | بث · تحكم · إدارة | STREAM · MANAGE · CONTROL</title>
+    <title>SADWAP | Stream · Manage · Control</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Google Fonts + Arabic font -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
@@ -21,17 +21,16 @@
         }
 
         :root {
-            --accent-red: #e50914;
-            --accent-red-glow: #ff0f1f;
+            --accent-blue: #1a6bff;
             --text-primary: #ffffff;
-            --text-muted: #b3b3b3;
+            --text-muted: #a0b0d0;
             --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
             --font-arabic: 'Cairo', 'Inter', sans-serif;
         }
 
         body {
             font-family: var(--font-sans);
-            background: #0a0a0a;
+            background: #07090f;
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
@@ -44,7 +43,6 @@
             text-align: right;
         }
 
-        /* VIDEO BACKGROUND - REPLACES IMAGE CAROUSEL */
         .video-backdrop {
             position: fixed;
             top: 0;
@@ -64,11 +62,9 @@
             height: 100%;
             object-fit: cover;
             transform: translate(-50%, -50%);
-            transition: opacity 0.3s ease;
             will-change: transform;
         }
 
-        /* Subtle zoom animation for cinematic feel */
         @keyframes slowZoom {
             0% { transform: translate(-50%, -50%) scale(1); }
             100% { transform: translate(-50%, -50%) scale(1.08); }
@@ -83,41 +79,36 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.85) 100%);
+            background: radial-gradient(circle at 20% 30%, rgba(10,15,40,0.65) 0%, rgba(7,9,15,0.92) 100%);
             z-index: 1;
             pointer-events: none;
         }
 
-        /* Audio Control Button - Stylish & Prominent */
         .audio-control-btn {
             position: fixed;
             bottom: 24px;
             left: 24px;
             z-index: 1000;
-            background: rgba(0,0,0,0.7);
+            background: rgba(10,14,30,0.8);
             backdrop-filter: blur(12px);
             border-radius: 60px;
             padding: 10px 22px;
-            border: 1px solid rgba(229,9,20,0.6);
+            border: 1px solid rgba(26,107,255,0.5);
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             gap: 10px;
-            font-family: var(--font-sans);
             font-weight: 600;
             font-size: 0.8rem;
             color: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 20px rgba(0,20,80,0.5);
         }
         .audio-control-btn:hover {
-            background: #e50914;
-            border-color: #e50914;
+            background: #1a6bff;
+            border-color: #1a6bff;
             transform: scale(1.03);
-            box-shadow: 0 0 15px rgba(229,9,20,0.5);
-        }
-        .audio-control-btn i {
-            font-size: 1.2rem;
+            box-shadow: 0 0 25px rgba(26,107,255,0.4);
         }
         body.rtl .audio-control-btn {
             left: auto;
@@ -136,7 +127,6 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            backdrop-filter: blur(1px);
         }
 
         .app-main {
@@ -166,42 +156,44 @@
         .s-logo {
             width: 56px;
             height: 56px;
-            background: linear-gradient(135deg, #e50914 0%, #b81d24 100%);
-            border-radius: 12px;
+            background: linear-gradient(145deg, #0b0e1a, #141b2b);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.2rem;
             font-weight: 800;
-            color: white;
-            box-shadow: 0 8px 20px rgba(229, 9, 20, 0.4);
+            color: #1a6bff;
+            border: 1.5px solid rgba(26,107,255,0.5);
+            box-shadow: 0 8px 24px rgba(26,107,255,0.15);
+            text-shadow: 0 0 20px rgba(26,107,255,0.3);
         }
 
         .brand-text {
             font-size: 1.5rem;
             font-weight: 700;
             letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+            background: linear-gradient(135deg, #e8eeff 0%, #b0c8ff 100%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
 
         .badge-manager {
-            background: rgba(229, 9, 20, 0.25);
+            background: rgba(26,107,255,0.15);
             border-radius: 40px;
-            padding: 4px 12px;
+            padding: 4px 14px;
             font-size: 0.65rem;
             font-weight: 600;
-            color: #e50914;
-            border: 1px solid rgba(229, 9, 20, 0.4);
+            color: #5a8aff;
+            border: 1px solid rgba(26,107,255,0.25);
             margin-left: 8px;
         }
         body.rtl .badge-manager { margin-left: 0; margin-right: 8px; }
 
         .nav-links {
             display: flex;
-            gap: 28px;
+            gap: 20px;
             align-items: center;
             flex-wrap: wrap;
         }
@@ -218,61 +210,140 @@
         .nav-links a:hover { color: var(--text-primary); }
 
         .social-icon {
-            background: rgba(20,20,20,0.7);
+            background: rgba(10,14,30,0.7);
             border-radius: 48px;
             padding: 8px 18px;
             backdrop-filter: blur(6px);
-            border: 1px solid rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.06);
             transition: all 0.2s;
         }
-        .social-icon i, .social-icon img {
-            width: 18px;
-            height: 18px;
-            margin-right: 6px;
-        }
-        body.rtl .social-icon i, body.rtl .social-icon img {
-            margin-left: 6px;
-            margin-right: 0;
-        }
         .social-icon:hover {
-            background: rgba(229,9,20,0.35);
-            border-color: #e50914;
+            background: rgba(26,107,255,0.2);
+            border-color: #1a6bff;
             transform: translateY(-2px);
         }
 
         .lang-toggle {
-            background: rgba(229,9,20,0.2);
-            border: 1px solid rgba(229,9,20,0.5);
+            background: rgba(26,107,255,0.12);
+            border: 1px solid rgba(26,107,255,0.3);
             border-radius: 40px;
             padding: 8px 18px;
             font-size: 0.8rem;
             font-weight: 600;
-            color: #fff;
+            color: #b0c8ff;
             cursor: pointer;
             transition: all 0.2s;
         }
         .lang-toggle:hover {
-            background: #e50914;
-            border-color: #e50914;
+            background: #1a6bff;
+            border-color: #1a6bff;
+            color: #fff;
+        }
+
+        /* DateTime Widget - Clean & Simple */
+        .info-widget {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 10px 24px;
+            background: rgba(10,14,30,0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 60px;
+            border: 1px solid rgba(26,107,255,0.12);
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        .info-widget .time-date {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: #b0c8ff;
+        }
+        .info-widget .time-date .time {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        .info-widget .time-date .date {
+            color: #8aafff;
+            font-size: 0.85rem;
+        }
+        .info-widget .time-date .separator {
+            color: rgba(255,255,255,0.15);
+            font-size: 1.2rem;
+        }
+        @media (max-width: 600px) {
+            .info-widget {
+                padding: 8px 16px;
+                border-radius: 40px;
+            }
+            .info-widget .time-date {
+                font-size: 0.75rem;
+                gap: 10px;
+            }
+            .info-widget .time-date .time {
+                font-size: 0.9rem;
+            }
+            .info-widget .time-date .separator {
+                display: none;
+            }
+            .info-widget .time-date .date {
+                font-size: 0.75rem;
+            }
         }
 
         .hero-section { margin-bottom: 30px; padding: 20px 0 10px; }
-        .hero-title { font-size: 2.6rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, #ffffff, #e0e0e0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .hero-title { font-size: 2.6rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, #e8eeff, #8aafff); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .hero-subtitle { font-size: 1rem; color: var(--text-muted); max-width: 500px; margin-bottom: 20px; }
 
         .login-card {
-            background: linear-gradient(135deg, rgba(20,20,20,0.85) 0%, rgba(10,10,10,0.9) 100%);
+            background: linear-gradient(145deg, rgba(12,16,30,0.88) 0%, rgba(7,9,18,0.95) 100%);
             backdrop-filter: blur(14px);
             border-radius: 28px;
             padding: 36px 32px;
-            border: 1px solid rgba(229,9,20,0.4);
-            box-shadow: 0 25px 40px rgba(0,0,0,0.5);
+            border: 1px solid rgba(26,107,255,0.25);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7), 0 0 0 1px rgba(26,107,255,0.05) inset;
             margin: 20px 0 40px;
         }
-        .login-heading { font-weight: 700; font-size: 0.85rem; letter-spacing: 2px; color: #e50914; text-transform: uppercase; margin-bottom: 28px; text-align: center; }
+        .login-heading { 
+            font-weight: 700; 
+            font-size: 0.75rem; 
+            letter-spacing: 2px; 
+            color: #5a8aff; 
+            text-transform: uppercase; 
+            margin-bottom: 28px; 
+            text-align: center;
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 40px;
+            background: rgba(26,107,255,0.08);
+            border: 1px solid rgba(26,107,255,0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .login-heading.impact {
+            animation: headingImpact 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-color: #1a6bff;
+            box-shadow: 0 0 30px rgba(26,107,255,0.2);
+        }
+        @keyframes headingImpact {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.12); color: #8aafff; }
+            60% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+
         .custom-input {
-            background: #1e1e1e !important;
-            border: 1px solid #3a3a3a !important;
+            background: #0b0f1e !important;
+            border: 1px solid #1f2a44 !important;
             border-radius: 16px !important;
             color: white !important;
             padding: 14px 18px !important;
@@ -282,19 +353,32 @@
             text-align: center;
             letter-spacing: 2px;
         }
+        .custom-input:focus {
+            border-color: #1a6bff !important;
+            box-shadow: 0 0 0 3px rgba(26,107,255,0.2) !important;
+        }
         .btn-login {
-            background: linear-gradient(95deg, #e50914, #b81d24);
+            background: linear-gradient(95deg, #1a6bff, #0f4bc0);
             border: none;
             border-radius: 48px;
             padding: 14px;
             font-weight: 700;
             transition: 0.25s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(26,107,255,0.25);
         }
-        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(229,9,20,0.4); }
-        .forgot-link { color: #e50914; font-size: 0.7rem; text-decoration: none; cursor: pointer; }
-        .footer-note { text-align: center; margin-top: 40px; font-size: 0.7rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 32px rgba(26,107,255,0.35);
+        }
+        .btn-login:active {
+            transform: scale(0.96);
+        }
 
-        /* Developer Badge Container - sleek & modern */
+        .forgot-link { color: #5a8aff; font-size: 0.7rem; text-decoration: none; cursor: pointer; }
+        .footer-note { text-align: center; margin-top: 40px; font-size: 0.7rem; color: var(--text-muted); border-top: 1px solid rgba(26,107,255,0.1); padding-top: 24px; }
+
         .dev-badge-container {
             position: fixed;
             bottom: 24px;
@@ -302,8 +386,8 @@
             z-index: 999;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            opacity: 0.85;
-            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));
+            opacity: 0.9;
+            filter: drop-shadow(0 6px 16px rgba(0,0,0,0.6));
         }
         body.rtl .dev-badge-container {
             right: auto;
@@ -311,8 +395,8 @@
         }
         .dev-badge-container:hover {
             opacity: 1;
-            transform: scale(1.05) translateY(-3px);
-            filter: drop-shadow(0 12px 18px rgba(229,9,20,0.3));
+            transform: scale(1.08) translateY(-3px);
+            filter: drop-shadow(0 10px 24px rgba(26,107,255,0.3));
         }
         .dev-badge-link {
             display: block;
@@ -322,38 +406,40 @@
             width: 64px;
             height: 64px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #1e1e2a, #0a0a0f);
-            border: 2.5px solid #e50914;
+            background: #0b0e1a;
+            border: 2.5px solid #1a6bff;
             padding: 4px;
-            transition: border-color 0.2s;
-            box-shadow: 0 0 12px rgba(229,9,20,0.3);
-            backdrop-filter: blur(2px);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 20px rgba(26,107,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .dev-avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #111;
+        .dev-avatar span {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #1a6bff;
+            letter-spacing: -1px;
+            font-family: 'Inter', sans-serif;
+            text-shadow: 0 0 16px rgba(26,107,255,0.2);
         }
         .dev-tooltip {
             position: absolute;
             bottom: 80px;
             right: 0;
-            background: rgba(0,0,0,0.85);
+            background: rgba(7,9,18,0.92);
             backdrop-filter: blur(12px);
-            padding: 8px 16px;
+            padding: 6px 16px;
             border-radius: 40px;
             font-size: 0.7rem;
             font-weight: 600;
-            color: #e50914;
+            color: #8aafff;
             white-space: nowrap;
-            border: 1px solid rgba(229,9,20,0.5);
+            border: 1px solid rgba(26,107,255,0.25);
             pointer-events: none;
             transition: opacity 0.2s;
             opacity: 0;
             transform: translateX(5px);
-            font-family: var(--font-sans);
         }
         body.rtl .dev-tooltip {
             right: auto;
@@ -368,7 +454,8 @@
             .dev-badge-container { bottom: 18px; right: 18px; }
             body.rtl .dev-badge-container { left: 18px; right: auto; }
             .dev-avatar { width: 52px; height: 52px; }
-            .dev-tooltip { bottom: 66px; font-size: 0.6rem; padding: 4px 12px; white-space: nowrap; }
+            .dev-avatar span { font-size: 1.8rem; }
+            .dev-tooltip { bottom: 66px; font-size: 0.6rem; padding: 4px 12px; }
         }
 
         .security-toast {
@@ -376,9 +463,9 @@
             bottom: 32px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: #1f1f1f;
-            border-left: 4px solid #e50914;
-            color: #ff8a8a;
+            background: #0b0f1e;
+            border-left: 4px solid #1a6bff;
+            color: #b0c8ff;
             padding: 12px 28px;
             border-radius: 60px;
             backdrop-filter: blur(18px);
@@ -389,6 +476,7 @@
             font-weight: 500;
             white-space: nowrap;
             pointer-events: none;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
         .security-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
@@ -404,30 +492,39 @@
         }
         @media (max-width: 550px) {
             .netflix-nav { flex-direction: column; align-items: flex-start; }
-            .nav-links { width: 100%; justify-content: space-between; gap: 12px; }
+            .nav-links { width: 100%; justify-content: space-between; gap: 10px; }
             .social-icon { padding: 6px 12px; font-size: 0.75rem; }
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            background: none;
+            border: none;
+            color: #5a7aaa;
+            padding: 0;
+            cursor: pointer;
+        }
+        body.rtl .toggle-password {
+            right: auto;
+            left: 16px;
         }
     </style>
 </head>
 <body>
 
-<!-- VIDEO BACKGROUND WITH LOOP AND AUDIO -->
 <div class="video-backdrop" id="videoBackdrop">
     <video id="bgVideo" class="bg-video" autoplay loop muted playsinline>
-        <!-- HIGH QUALITY BACKGROUND VIDEO (CINEMATIC / TECH / NATURE / CYBER) -->
-        <!-- Replace this src with your own video URL. Current is a stunning 4K tech/cityscape loop -->
         <source src="https://assets.mixkit.co/videos/preview/mixkit-digital-particles-in-a-dark-room-1378-large.mp4" type="video/mp4">
-        <!-- Fallback: another epic loop -->
         <source src="https://ghostkmr.github.io/2026/1.mp4" type="video/mp4">
-        Your browser does not support HTML5 video.
     </video>
 </div>
 <div class="gradient-overlay"></div>
 
-<!-- AUDIO CONTROL BUTTON (VISIBLE, ALLOWS USER TO ENABLE SOUND) -->
 <div id="audioControlBtn" class="audio-control-btn">
     <i class="bi bi-volume-mute-fill" id="audioIcon"></i>
-    <span id="audioStatusText">SOUND OFF · CLICK TO ENABLE</span>
+    <span id="audioStatusText">Sound Off</span>
 </div>
 
 <div class="corporate-container">
@@ -436,14 +533,21 @@
             <div class="logo-area" id="sLogoDashboard">
                 <div class="s-logo">S</div>
                 <div>
-                    <div class="brand-text">SADWAP <span class="badge-manager" id="badgeLabel">STREAM CONSOLE</span></div>
+                    <div class="brand-text">SADWAP <span class="badge-manager" id="badgeLabel">Stand Alone Dynamic Web Application</span></div>
                 </div>
             </div>
             <div class="nav-links">
-                <a href="#" id="whatsappLink" class="social-icon"><i class="bi bi-whatsapp"></i> <span id="whatsappTxt">WhatsApp</span></a>
-                <a href="#" id="linkedinLink" class="social-icon"><i class="bi bi-linkedin"></i> <span id="linkedinTxt">LinkedIn</span></a>
-                <a href="#" id="gmailLink" class="social-icon"><i class="bi bi-envelope-fill"></i> <span id="gmailTxt">Gmail</span></a>
+                <a href="#" id="gmailLink" class="social-icon"><i class="bi bi-envelope-fill"></i> <span id="gmailTxt">Contact</span></a>
                 <div class="lang-toggle" id="langToggleBtn"><i class="bi bi-globe2 me-1"></i> <span id="langText">العربية</span></div>
+            </div>
+        </div>
+
+        <!-- DateTime Widget - Clean & Simple -->
+        <div class="info-widget" id="infoWidget">
+            <div class="time-date">
+                <span class="time" id="currentTime">--:--:--</span>
+                <span class="separator">|</span>
+                <span class="date" id="currentDate">Loading...</span>
             </div>
         </div>
 
@@ -453,46 +557,41 @@
         </div>
 
         <div class="login-card">
-             <div class="login-heading" id="loginHeading"><i class="bi bi-shield-lock-fill me-2"></i>AUTHORIZED ACCESS · PIN PROTECTED</div>
+            <div class="login-heading" id="loginHeading">
+                <i class="bi bi-shield-lock-fill me-2"></i>Authorized Access · PIN Protected
+            </div>
             <form id="loginForm">
                 <div class="form-floating mb-4 position-relative">
-                    <input type="password" class="form-control custom-input" id="password" placeholder="SECURE PIN" autocomplete="off" inputmode="numeric">
-                    <label id="pinLabel"><i class="bi bi-key me-2"></i>ENTER 5-DIGIT PIN</label>
-                    <button type="button" class="btn toggle-password" id="togglePassword" tabindex="-1" style="position: absolute; right: 16px; top: 16px; background: none; border: none; color: #9ca3af; padding: 0;"><i class="bi bi-eye-fill"></i></button>
+                    <input type="password" class="form-control custom-input" id="password" placeholder="Secure PIN" autocomplete="off" inputmode="numeric">
+                    <label id="pinLabel"><i class="bi bi-key me-2"></i>Enter your PIN</label>
+                    <button type="button" class="toggle-password" id="togglePassword" tabindex="-1"><i class="bi bi-eye-fill"></i></button>
                 </div>
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="rememberMe" style="background:#2a2a2a; border-color:#e50914;">
-                        <label class="form-check-label" id="trustDeviceLabel" style="color:#b3b3b3; font-size:0.75rem;">Trust this device</label>
-                    </div>
+                <div class="d-flex justify-content-end align-items-center mb-4">
                     <a href="#" class="forgot-link" id="resetHint"><i class="bi bi-database-lock me-1"></i><span id="resetLinkText">Reset credentials</span></a>
                 </div>
                 <button type="submit" class="btn btn-login w-100" id="loginBtn">
-                    <span class="btn-text"><i class="bi bi-unlock-fill me-2"></i><span id="loginBtnText">UNLOCK DASHBOARD</span></span>
-                    <span class="btn-loader d-none"><span class="spinner-border spinner-border-sm me-2"></span><span id="verifyingText">VERIFYING...</span></span>
+                    <span class="btn-text"><i class="bi bi-unlock-fill me-2"></i><span id="loginBtnText">Unlock Dashboard</span></span>
+                    <span class="btn-loader d-none"><span class="spinner-border spinner-border-sm me-2"></span><span id="verifyingText">Verifying...</span></span>
                 </button>
             </form>
             <div class="text-center mt-3">
-                <small class="text-muted" style="font-size: 0.65rem;" id="aiFooter"><i class="bi bi-robot"></i> AI-driven efficiency · reducing human effort across all modules</small>
+                <small class="text-muted" style="font-size: 0.65rem;" id="aiFooter"><i class="bi bi-robot"></i> AI-driven efficiency · reducing human effort</small>
             </div>
         </div>
 
         <div class="footer-note" id="footerNote">
-            <i class="bi bi-c-circle"></i> 2026 SADWAP · Human Effort Reduction Program · Mueen Ul Islam
+            <i class="bi bi-c-circle"></i> 2026 SADWAP · Human Effort Reduction Program
         </div>
     </div>
 </div>
 
-<!-- DEVELOPER HYPERLINK IMAGE BADGE -->
+<!-- Developer Badge - Links to GitHub Repo -->
 <div class="dev-badge-container" id="developerBadge">
-    <a href="https://ghostkmr.github.io/2026/aboutdeveloper.html" id="devProfileLink" class="dev-badge-link" target="_blank">
+    <a href="https://github.com/GHOSTKMR/2026" id="devProfileLink" class="dev-badge-link" target="_blank">
         <div class="dev-avatar">
-            <img src="https://ghostkmr.github.io/2026/mueen.jpeg" 
-                 alt="Developer Profile - Mueen Ul Islam"
-                 id="devAvatarImg"
-                 onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'48\' fill=\'%2314141a\' stroke=\'%23e50914\' stroke-width=\'2\'/%3E%3Ctext x=\'50\' y=\'68\' font-size=\'42\' text-anchor=\'middle\' fill=\'%23e50914\' font-family=\'monospace\' font-weight=\'bold\'%3EM%3C/text%3E%3C/svg%3E';">
+            <span>S</span>
         </div>
-        <span class="dev-tooltip" id="devTooltipText">Mueen Ul Islam · Lead Developer</span>
+        <span class="dev-tooltip" id="devTooltipText">GitHub Repository</span>
     </a>
 </div>
 
@@ -501,7 +600,7 @@
 <script>
     (function(){
         // ============================================================
-        // VIDEO BACKGROUND WITH SOUND (LOOPING)
+        // VIDEO BACKGROUND WITH SOUND
         // ============================================================
         const videoElement = document.getElementById('bgVideo');
         const audioBtn = document.getElementById('audioControlBtn');
@@ -510,35 +609,31 @@
         
         let isSoundEnabled = false;
         
-        // Function to enable sound
         function enableSound() {
             if (videoElement) {
                 videoElement.muted = false;
                 isSoundEnabled = true;
                 audioIcon.className = 'bi bi-volume-up-fill';
-                audioStatusSpan.innerText = 'SOUND ON · LOOPING';
-                audioBtn.style.background = '#e50914';
-                audioBtn.style.borderColor = '#e50914';
-                // Ensure video continues playing with sound
+                audioStatusSpan.innerText = 'Sound On';
+                audioBtn.style.background = '#1a6bff';
+                audioBtn.style.borderColor = '#1a6bff';
                 videoElement.play().catch(e => console.log("Video play with sound:", e));
-                showToast("🔊 Background audio enabled · cinematic experience", false);
+                showToast("Audio enabled", false);
             }
         }
         
-        // Function to disable sound
         function disableSound() {
             if (videoElement) {
                 videoElement.muted = true;
                 isSoundEnabled = false;
                 audioIcon.className = 'bi bi-volume-mute-fill';
-                audioStatusSpan.innerText = 'SOUND OFF · CLICK TO ENABLE';
-                audioBtn.style.background = 'rgba(0,0,0,0.7)';
-                audioBtn.style.borderColor = 'rgba(229,9,20,0.6)';
-                showToast("🔇 Sound disabled", false);
+                audioStatusSpan.innerText = 'Sound Off';
+                audioBtn.style.background = 'rgba(10,14,30,0.8)';
+                audioBtn.style.borderColor = 'rgba(26,107,255,0.5)';
+                showToast("Audio disabled", false);
             }
         }
         
-        // Toggle sound on button click
         audioBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             if (isSoundEnabled) {
@@ -548,51 +643,76 @@
             }
         });
         
-        // Initialize video: starts muted (autoplay policy), loop enabled
         if (videoElement) {
             videoElement.muted = true;
             videoElement.loop = true;
             videoElement.setAttribute('playsinline', 'true');
-            // Attempt to play (will work muted)
             videoElement.play().catch(err => console.log("Autoplay prevented:", err));
-            
-            // Optional: preload metadata for smoother playback
             videoElement.preload = 'auto';
         }
-        
+
         // ============================================================
-        // TRANSLATIONS (all original functionality preserved)
+        // DATE & TIME
+        // ============================================================
+        function updateDateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+            document.getElementById('currentTime').textContent = timeStr;
+            document.getElementById('currentDate').textContent = dateStr;
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // ============================================================
+        // TRANSLATIONS
         // ============================================================
         const translations = {
             en: {
-                badge: "STREAM CONSOLE", whatsapp: "WhatsApp", linkedin: "LinkedIn", gmail: "Gmail",
-                langToggle: "العربية", heroTitle: "Reduce Human Effort.<br>Smart Stream Control.",
+                badge: "Stand Alone Dynamic Web Application",
+                gmail: "Contact",
+                langToggle: "العربية",
+                heroTitle: "Reduce Human Effort.<br>Smart Stream Control.",
                 heroSub: "Enterprise-grade IT asset management, scheduling automation, and intelligent alerts — all unified.",
-                loginHead: "AUTHORIZED ACCESS · PIN PROTECTED", pinLabel: "ENTER 5-DIGIT PIN",
-                trustDevice: "Trust this device", resetLink: "Reset credentials", loginBtn: "UNLOCK DASHBOARD",
-                verifying: "VERIFYING...", aiFooter: "🤖 AI-driven efficiency · reducing human effort across all modules",
-                footer: "© 2026 SADWAP · Human Effort Reduction Program · Mueen Ul Islam",
-                toastDenied: "Access Denied", toastInvalid: "❌ Invalid PIN · Access denied",
-                toastEmpty: "❌ Please enter your secure PIN", toastGranted: "✅ Access granted · Redirecting to dashboard",
-                toastWhatsapp: "📱 Opening WhatsApp support (+966567341924)", toastLinkedin: "🔗 LinkedIn profile will be added soon",
-                toastGmail: "✉️ Compose email to moinranzao2@gmail.com", toastReset: "🔑 Contact IT Admin: reset PIN via secure channel",
-                toastRightClick: "🛡️ Right-click disabled for security", toastDevtools: "🚫 Developer tools restricted",
-                toastDevProfile: "👨‍💻 Opening developer profile — Mueen Ul Islam"
+                loginHead: "Authorized Access · PIN Protected",
+                pinLabel: "Enter your PIN",
+                resetLink: "Reset credentials",
+                loginBtn: "Unlock Dashboard",
+                verifying: "Verifying...",
+                aiFooter: "AI-driven efficiency · reducing human effort",
+                footer: "© 2026 SADWAP · Human Effort Reduction Program",
+                toastDenied: "Access Denied",
+                toastInvalid: "Invalid PIN · Access denied",
+                toastEmpty: "Please enter your secure PIN",
+                toastGranted: "Access granted · Redirecting to dashboard",
+                toastGmail: "Compose email to moinranzao2@gmail.com",
+                toastReset: "Contact IT Admin: reset PIN via secure channel",
+                toastRightClick: "Right-click disabled for security",
+                toastDevtools: "Developer tools restricted",
+                toastDevProfile: "Opening GitHub repository"
             },
             ar: {
-                badge: "وحدة التحكم السحابية", whatsapp: "واتساب", linkedin: "لينكد إن", gmail: "جيميل",
-                langToggle: "English", heroTitle: "تقليل الجهد البشري.<br>تحكم ذكي في البث.",
-                heroSub: "إدارة أصول تكنولوجيا المعلومات على مستوى المؤسسات، وجدولة آلية، وتنبيهات ذكية — كل ذلك في مكان واحد.",
-                loginHead: "وصول مصرح به · حماية برمز PIN", pinLabel: "أدخل رمز PIN المكون من 5 أرقام",
-                trustDevice: "ثق بهذا الجهاز", resetLink: "إعادة تعيين بيانات الدخول", loginBtn: "فتح لوحة التحكم",
-                verifying: "جاري التحقق...", aiFooter: "🤖 كفاءة تعمل بالذكاء الاصطناعي · تقليل الجهد البشري عبر جميع الوحدات",
-                footer: "© 2026 سادواب · برنامج تقليل الجهد البشري · مؤيد الإسلام",
-                toastDenied: "تم رفض الوصول", toastInvalid: "❌ رمز PIN غير صحيح · تم الرفض",
-                toastEmpty: "❌ الرجاء إدخال رمز PIN الآمن", toastGranted: "✅ تم منح الوصول · جاري التوجيه إلى لوحة التحكم",
-                toastWhatsapp: "📱 فتح واتساب للدعم (+966567341924)", toastLinkedin: "🔗 سيتم إضافة رابط لينكد إن قريبًا",
-                toastGmail: "✉️ فتح البريد الإلكتروني: moinranzao2@gmail.com", toastReset: "🔑 اتصل بمسؤول تكنولوجيا المعلومات: إعادة تعيين PIN عبر قناة آمنة",
-                toastRightClick: "🛡️ تم تعطيل النقر بزر الماوس الأيمن للأمان", toastDevtools: "🚫 أدوات المطور مقيدة للأمان",
-                toastDevProfile: "👨‍💻 فتح ملف المطور — مؤيد الإسلام"
+                badge: "تطبيق ويب ديناميكي مستقل",
+                gmail: "اتصل",
+                langToggle: "English",
+                heroTitle: "تقليل الجهد البشري.<br>تحكم ذكي في البث.",
+                heroSub: "إدارة أصول تكنولوجيا المعلومات، جدولة آلية، وتنبيهات ذكية — كل ذلك في مكان واحد",
+                loginHead: "وصول مصرح به · حماية برمز PIN",
+                pinLabel: "أدخل رمز PIN",
+                resetLink: "إعادة تعيين",
+                loginBtn: "فتح لوحة التحكم",
+                verifying: "جاري التحقق...",
+                aiFooter: "كفاءة تعمل بالذكاء الاصطناعي · تقليل الجهد البشري",
+                footer: "© 2026 سادواب · برنامج تقليل الجهد البشري",
+                toastDenied: "تم رفض الوصول",
+                toastInvalid: "رمز PIN غير صحيح",
+                toastEmpty: "الرجاء إدخال رمز PIN",
+                toastGranted: "تم منح الوصول · جاري التوجيه",
+                toastGmail: "فتح البريد الإلكتروني",
+                toastReset: "اتصل بمسؤول تكنولوجيا المعلومات",
+                toastRightClick: "تعطيل النقر بزر الماوس الأيمن",
+                toastDevtools: "أدوات المطور مقيدة",
+                toastDevProfile: "فتح مستودع GitHub"
             }
         };
         
@@ -604,22 +724,19 @@
             currentLang = lang;
             const t = translations[lang];
             document.getElementById('badgeLabel').innerText = t.badge;
-            document.getElementById('whatsappTxt').innerText = t.whatsapp;
-            document.getElementById('linkedinTxt').innerText = t.linkedin;
             document.getElementById('gmailTxt').innerText = t.gmail;
             document.getElementById('langText').innerText = t.langToggle;
             document.getElementById('heroTitle').innerHTML = t.heroTitle;
             document.getElementById('heroSubtitle').innerText = t.heroSub;
             document.getElementById('loginHeading').innerHTML = `<i class="bi bi-shield-lock-fill me-2"></i>${t.loginHead}`;
             document.getElementById('pinLabel').innerHTML = `<i class="bi bi-key me-2"></i>${t.pinLabel}`;
-            document.querySelector('label[for="rememberMe"]').innerText = t.trustDevice;
             document.getElementById('resetLinkText').innerText = t.resetLink;
             document.getElementById('loginBtnText').innerText = t.loginBtn;
             document.getElementById('verifyingText').innerText = t.verifying;
             document.getElementById('aiFooter').innerHTML = t.aiFooter;
             document.getElementById('footerNote').innerHTML = `<i class="bi bi-c-circle"></i> ${t.footer}`;
             const devTooltipSpan = document.getElementById('devTooltipText');
-            if (devTooltipSpan) devTooltipSpan.innerText = currentLang === 'en' ? "Mueen Ul Islam · Lead Developer" : "مؤيد الإسلام · المطور الرئيسي";
+            if (devTooltipSpan) devTooltipSpan.innerText = currentLang === 'en' ? "GitHub Repository" : "مستودع GitHub";
             if(lang === 'ar') {
                 bodyElem.classList.add('rtl');
                 bodyElem.style.fontFamily = "'Cairo', 'Inter', sans-serif";
@@ -649,16 +766,22 @@
         }
 
         // ============================================================
-        // AUTHENTICATION LOGIC (preserved)
+        // AUTHENTICATION LOGIC
         // ============================================================
-        const CORRECT_PIN = "12345";
+        const CORRECT_PIN = "kudu12345";
         const REDIRECT_URL = "https://ghostkmr.github.io/2026/welcome.html";
         
         const loginForm = document.getElementById('loginForm');
         const pwdField = document.getElementById('password');
         const toggleBtn = document.getElementById('togglePassword');
         const loginBtnElem = document.getElementById('loginBtn');
-        const rememberCheck = document.getElementById('rememberMe');
+        const headingElem = document.getElementById('loginHeading');
+
+        function triggerHeadingImpact() {
+            headingElem.classList.remove('impact');
+            void headingElem.offsetWidth;
+            headingElem.classList.add('impact');
+        }
 
         toggleBtn.addEventListener('click', () => {
             let type = pwdField.type === 'password' ? 'text' : 'password';
@@ -670,6 +793,8 @@
 
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            triggerHeadingImpact();
+            
             let pin = pwdField.value.trim();
             if (!pin) {
                 loginForm.classList.add('shake-animation');
@@ -678,7 +803,7 @@
                 return;
             }
             if (pin !== CORRECT_PIN) {
-                pwdField.style.borderColor = '#e50914';
+                pwdField.style.borderColor = '#1a6bff';
                 loginForm.classList.add('shake-animation');
                 showToast(translations[currentLang].toastInvalid, true);
                 setTimeout(() => { pwdField.style.borderColor = ''; loginForm.classList.remove('shake-animation'); }, 600);
@@ -694,41 +819,25 @@
         });
 
         document.getElementById('sLogoDashboard').addEventListener('click', () => {
-            if (confirm(currentLang === 'ar' ? "⚡ الانتقال إلى لوحة تحكم SADWAP؟" : "⚡ Jump to SADWAP IT Manager Dashboard?")) {
+            if (confirm(currentLang === 'ar' ? "الانتقال إلى لوحة التحكم؟" : "Jump to Dashboard?")) {
                 window.location.href = REDIRECT_URL;
-            } else {
-                showToast(currentLang === 'ar' ? "🔐 أدخل الرمز السري أولاً" : "🔐 Please enter PIN to access dashboard", false);
             }
         });
 
-        const whatsappLink = document.getElementById('whatsappLink');
-        whatsappLink.addEventListener('click', (e) => {
+        // Contact Developer - moinranzao2@gmail.com
+        document.getElementById('gmailLink').addEventListener('click', (e) => {
             e.preventDefault();
-            window.open('https://wa.me/966567341924?text=Hello%20SADWAP%20Support%20I%20need%20assistance', '_blank');
-            showToast(translations[currentLang].toastWhatsapp, false);
-        });
-        
-        const gmailLink = document.getElementById('gmailLink');
-        gmailLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = 'mailto:moinranzao2@gmail.com?subject=SADWAP%20Console%20Inquiry&body=Hello%20Team%2C%20I%20would%20like%20to%20request%20support';
+            window.location.href = 'mailto:moinranzao2@gmail.com?subject=SADWAP%20Inquiry';
             showToast(translations[currentLang].toastGmail, false);
         });
         
-        const linkedinLink = document.getElementById('linkedinLink');
-        linkedinLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            showToast(translations[currentLang].toastLinkedin, false);
-        });
-        
-        const resetHint = document.getElementById('resetHint');
-        resetHint.addEventListener('click', (e) => {
+        document.getElementById('resetHint').addEventListener('click', (e) => {
             e.preventDefault();
             showToast(translations[currentLang].toastReset, false);
         });
 
-        const devBadgeLink = document.getElementById('devProfileLink');
-        devBadgeLink.addEventListener('click', (e) => {
+        // Developer badge - GitHub link (already set in href)
+        document.getElementById('devProfileLink').addEventListener('click', (e) => {
             showToast(translations[currentLang].toastDevProfile, false);
         });
         
@@ -742,19 +851,6 @@
                 e.preventDefault(); 
                 showToast(translations[currentLang].toastDevtools, true);
             } 
-        });
-
-        if (localStorage.getItem('trustDevice') === 'true') { 
-            rememberCheck.checked = true; 
-            pwdField.value = CORRECT_PIN; 
-        }
-        
-        rememberCheck.addEventListener('change', (e) => { 
-            if (e.target.checked) {
-                localStorage.setItem('trustDevice', 'true');
-            } else { 
-                localStorage.removeItem('trustDevice'); 
-            }
         });
         
         applyLanguage('en');
