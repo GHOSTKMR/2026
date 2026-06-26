@@ -183,11 +183,12 @@
             background: rgba(26,107,255,0.15);
             border-radius: 40px;
             padding: 4px 14px;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: 600;
             color: #5a8aff;
             border: 1px solid rgba(26,107,255,0.25);
             margin-left: 8px;
+            white-space: nowrap;
         }
         body.rtl .badge-manager { margin-left: 0; margin-right: 8px; }
 
@@ -357,6 +358,15 @@
             border-color: #1a6bff !important;
             box-shadow: 0 0 0 3px rgba(26,107,255,0.2) !important;
         }
+        /* Allow text input for PIN (alphanumeric) */
+        .custom-input[type="text"],
+        .custom-input[type="password"] {
+            -webkit-text-security: disc;
+        }
+        .custom-input[type="text"].show-pin {
+            -webkit-text-security: none;
+        }
+
         .btn-login {
             background: linear-gradient(95deg, #1a6bff, #0f4bc0);
             border: none;
@@ -489,11 +499,22 @@
             .hero-title { font-size: 1.8rem; }
             .login-card { padding: 28px 20px; }
             .security-toast { white-space: normal; width: 90%; text-align: center; }
+            .brand-text { font-size: 1.2rem; }
+            .badge-manager { font-size: 0.5rem; padding: 3px 10px; }
+            .s-logo { width: 46px; height: 46px; font-size: 1.8rem; }
         }
-        @media (max-width: 550px) {
-            .netflix-nav { flex-direction: column; align-items: flex-start; }
-            .nav-links { width: 100%; justify-content: space-between; gap: 10px; }
-            .social-icon { padding: 6px 12px; font-size: 0.75rem; }
+        @media (max-width: 480px) {
+            .netflix-nav { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .nav-links { width: 100%; justify-content: space-between; gap: 8px; }
+            .social-icon { padding: 6px 12px; font-size: 0.7rem; }
+            .lang-toggle { padding: 6px 14px; font-size: 0.7rem; }
+            .brand-text { font-size: 1rem; }
+            .badge-manager { font-size: 0.45rem; padding: 2px 8px; }
+            .s-logo { width: 40px; height: 40px; font-size: 1.5rem; }
+            .hero-title { font-size: 1.5rem; }
+            .login-card { padding: 20px 16px; }
+            .custom-input { height: 48px; font-size: 0.9rem; padding: 10px 14px !important; }
+            .btn-login { padding: 12px; font-size: 0.9rem; }
         }
 
         .toggle-password {
@@ -533,10 +554,11 @@
             <div class="logo-area" id="sLogoDashboard">
                 <div class="s-logo">S</div>
                 <div>
-                    <div class="brand-text">SADWAP <span class="badge-manager" id="badgeLabel">Stand Alone Dynamic Web Application</span></div>
+                    <div class="brand-text">SADWAP</div>
                 </div>
             </div>
             <div class="nav-links">
+                <span class="badge-manager" id="badgeLabel">Stand Alone Dynamic Web Application Program</span>
                 <a href="#" id="gmailLink" class="social-icon"><i class="bi bi-envelope-fill"></i> <span id="gmailTxt">Contact</span></a>
                 <div class="lang-toggle" id="langToggleBtn"><i class="bi bi-globe2 me-1"></i> <span id="langText">العربية</span></div>
             </div>
@@ -562,7 +584,7 @@
             </div>
             <form id="loginForm">
                 <div class="form-floating mb-4 position-relative">
-                    <input type="password" class="form-control custom-input" id="password" placeholder="Secure PIN" autocomplete="off" inputmode="numeric">
+                    <input type="password" class="form-control custom-input" id="password" placeholder="Secure PIN" autocomplete="off" inputmode="text">
                     <label id="pinLabel"><i class="bi bi-key me-2"></i>Enter your PIN</label>
                     <button type="button" class="toggle-password" id="togglePassword" tabindex="-1"><i class="bi bi-eye-fill"></i></button>
                 </div>
@@ -669,7 +691,7 @@
         // ============================================================
         const translations = {
             en: {
-                badge: "Stand Alone Dynamic Web Application",
+                badge: "Stand Alone Dynamic Web Application Program",
                 gmail: "Contact",
                 langToggle: "العربية",
                 heroTitle: "Reduce Human Effort.<br>Smart Stream Control.",
@@ -766,7 +788,7 @@
         }
 
         // ============================================================
-        // AUTHENTICATION LOGIC
+        // AUTHENTICATION LOGIC - Password: kudu12345
         // ============================================================
         const CORRECT_PIN = "kudu12345";
         const REDIRECT_URL = "https://ghostkmr.github.io/2026/welcome.html";
@@ -777,19 +799,26 @@
         const loginBtnElem = document.getElementById('loginBtn');
         const headingElem = document.getElementById('loginHeading');
 
+        // Toggle password visibility
+        let isPasswordVisible = false;
+        toggleBtn.addEventListener('click', () => {
+            isPasswordVisible = !isPasswordVisible;
+            if (isPasswordVisible) {
+                pwdField.type = 'text';
+                pwdField.classList.add('show-pin');
+                toggleBtn.querySelector('i').className = 'bi bi-eye-slash-fill';
+            } else {
+                pwdField.type = 'password';
+                pwdField.classList.remove('show-pin');
+                toggleBtn.querySelector('i').className = 'bi bi-eye-fill';
+            }
+        });
+
         function triggerHeadingImpact() {
             headingElem.classList.remove('impact');
             void headingElem.offsetWidth;
             headingElem.classList.add('impact');
         }
-
-        toggleBtn.addEventListener('click', () => {
-            let type = pwdField.type === 'password' ? 'text' : 'password';
-            pwdField.type = type;
-            let icon = toggleBtn.querySelector('i');
-            icon.classList.toggle('bi-eye-fill');
-            icon.classList.toggle('bi-eye-slash-fill');
-        });
 
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -836,7 +865,6 @@
             showToast(translations[currentLang].toastReset, false);
         });
 
-        // Developer badge - GitHub link (already set in href)
         document.getElementById('devProfileLink').addEventListener('click', (e) => {
             showToast(translations[currentLang].toastDevProfile, false);
         });
