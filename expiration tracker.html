@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,9 +23,37 @@
         .btn-outline-corporate:hover { background: #1E2A3A; }
         .table-dark th, .table-dark td { border-color: #2A2E3A; color: #EFF1F3; vertical-align: middle; }
         .status-badge { padding: 5px 12px; border-radius: 40px; font-size: 0.75rem; font-weight: 600; display: inline-block; white-space: nowrap; }
-        .blink-red { animation: blinkWarning 0.9s step-start infinite; background-color: #C62828 !important; color: white; font-weight: bold; }
-        @keyframes blinkWarning { 50% { background-color: #FF5722; box-shadow: 0 0 6px red; } }
-        .critical-row { background-color: rgba(220, 53, 69, 0.18); border-left: 4px solid #dc3545; }
+        
+        /* COLOR SCHEME UPDATES */
+        .status-badge.safe { background: #1B5E20 !important; color: #A5D6A7; border: 1px solid #388E3C; }
+        .status-badge.danger { background: #7F1D1D !important; color: #FCA5A5; border: 1px solid #DC2626; }
+        .status-badge.check { background: #92400E !important; color: #FBD38D; border: 1px solid #F59E0B; }
+        .status-badge.critical { 
+            font-weight: bold;
+            border: 2px solid #EF4444;
+            animation: criticalBlink 0.9s step-start infinite;
+            box-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
+        }
+        /* RED -> BLUE -> YELLOW -> RED blink cycle */
+        @keyframes criticalBlink {
+            0% { background: #DC2626; color: white; border-color: #EF4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.7); }
+            25% { background: #2563EB; color: white; border-color: #3B82F6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.7); }
+            50% { background: #D97706; color: #FEF3C7; border-color: #F59E0B; box-shadow: 0 0 20px rgba(245, 158, 11, 0.7); }
+            75% { background: #DC2626; color: white; border-color: #EF4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.7); }
+            100% { background: #2563EB; color: white; border-color: #3B82F6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.7); }
+        }
+        .status-badge.expired { background: #374151 !important; color: #9CA3AF; border: 1px solid #4B5563; opacity: 0.7; }
+        
+        .critical-row { background-color: rgba(220, 38, 38, 0.12); border-left: 4px solid #DC2626; animation: rowCritical 0.9s step-start infinite; }
+        @keyframes rowCritical {
+            0% { background-color: rgba(220, 38, 38, 0.12); border-left-color: #DC2626; }
+            25% { background-color: rgba(37, 99, 235, 0.12); border-left-color: #3B82F6; }
+            50% { background-color: rgba(217, 119, 6, 0.12); border-left-color: #F59E0B; }
+            75% { background-color: rgba(220, 38, 38, 0.12); border-left-color: #DC2626; }
+            100% { background-color: rgba(37, 99, 235, 0.12); border-left-color: #3B82F6; }
+        }
+        .expired-row { background-color: rgba(55, 65, 81, 0.15); border-left: 4px solid #4B5563; opacity: 0.7; }
+        
         .lang-pill { cursor: pointer; background: #1E2A3A; border-radius: 40px; padding: 6px 18px; font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px; }
         [dir="rtl"] { text-align: right; }
         [dir="rtl"] .me-2 { margin-right: 0 !important; margin-left: 0.5rem !important; }
@@ -34,7 +61,6 @@
         input, input[type="date"] { background-color: #1A1E26 !important; border: 1px solid #2F3A48 !important; color: white !important; border-radius: 14px !important; padding: 10px 14px !important; }
         [dir="rtl"] input, [dir="rtl"] input::placeholder { text-align: right; font-family: 'Cairo', sans-serif; }
         label { font-weight: 500; margin-bottom: 0.3rem; font-size: 0.85rem; letter-spacing: 0.3px; }
-        /* SIDEBAR GRAPH STYLES */
         .dashboard-grid {
             display: flex;
             flex-wrap: wrap;
@@ -95,20 +121,11 @@
             border-radius: 30px;
         }
         @media (max-width: 768px) {
-            .stats-sidebar {
-                max-width: 100%;
-                order: 2;
-            }
-            .table-section {
-                order: 1;
-            }
-            .dashboard-grid {
-                flex-direction: column;
-            }
+            .stats-sidebar { max-width: 100%; order: 2; }
+            .table-section { order: 1; }
+            .dashboard-grid { flex-direction: column; }
         }
-        [dir="rtl"] .stat-item {
-            direction: rtl;
-        }
+        [dir="rtl"] .stat-item { direction: rtl; }
         .toast-container { z-index: 1060; }
         [dir="rtl"] input[type="date"]::-webkit-calendar-picker-indicator { margin-left: 0; margin-right: auto; filter: invert(0.8); }
     </style>
@@ -180,37 +197,36 @@
                     <canvas id="expiryChart" width="200" height="200"></canvas>
                 </div>
                 <div class="stats-list" id="statsList">
-                    <!-- dynamic stats injected via JS but we'll populate with spans for language updates -->
                     <div class="stat-item" id="statCritical">
-                        <span class="stat-badge bg-danger blink-red" id="criticalLabel">Critical (&lt;7d)</span>
+                        <span class="stat-badge" id="criticalLabel" style="background:#DC2626; color:white; border:1px solid #EF4444; animation:criticalBlink 0.9s step-start infinite; box-shadow:0 0 12px rgba(239,68,68,0.4);">Critical (&lt;7d)</span>
                         <span class="stat-number" id="criticalCount">0</span>
                     </div>
                     <div class="stat-item" id="statDanger">
-                        <span class="stat-badge bg-warning text-dark" id="dangerLabel">Danger (7-10d)</span>
+                        <span class="stat-badge" id="dangerLabel" style="background:#7F1D1D; color:#FCA5A5; border:1px solid #DC2626;">Danger (7-10d)</span>
                         <span class="stat-number" id="dangerCount">0</span>
                     </div>
                     <div class="stat-item" id="statCheck">
-                        <span class="stat-badge bg-success" style="background:#2E7D32 !important;" id="checkLabel">Check (10-15d)</span>
+                        <span class="stat-badge" id="checkLabel" style="background:#92400E; color:#FBD38D; border:1px solid #F59E0B;">Check (10-15d)</span>
                         <span class="stat-number" id="checkCount">0</span>
                     </div>
                     <div class="stat-item" id="statSafe">
-                        <span class="stat-badge bg-info" style="background:#1B5E20 !important;" id="safeLabel">Safe (&gt;15d)</span>
+                        <span class="stat-badge" id="safeLabel" style="background:#1B5E20; color:#A5D6A7; border:1px solid #388E3C;">Safe (>15d)</span>
                         <span class="stat-number" id="safeCount">0</span>
                     </div>
                     <div class="stat-item" id="statExpired">
-                        <span class="stat-badge bg-secondary" id="expiredLabel">Expired</span>
+                        <span class="stat-badge" id="expiredLabel" style="background:#374151; color:#9CA3AF; border:1px solid #4B5563; opacity:0.7;">Expired</span>
                         <span class="stat-number" id="expiredCount">0</span>
                     </div>
                 </div>
                 <div class="mt-3 text-center small text-muted" id="lastUpdatedHint">
-                    <i class="fas fa-sync-alt"></i>实时更新
+                    <i class="fas fa-sync-alt"></i> Live updates
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- MODAL POPUP with loop sound + 30sec cooldown, fully bilingual -->
+<!-- MODAL POPUP -->
 <div class="modal fade" id="criticalModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content bg-dark text-white border-danger">
@@ -230,18 +246,17 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
     // ---------- PERSISTENT DATA ----------
-    let products = [];          // each: { id, name, expiryDate }
+    let products = [];
     let isListHidden = false;
-    let currentLang = 'en';     // 'en' or 'ar'
+    let currentLang = 'en';
     let chart = null;
-    
-    // --- ALERT SOUND & POPUP COOLDOWN LOGIC (30 seconds after close)---
+
+    // --- ALERT SOUND & POPUP ---
     let audioContext = null;
     let soundInterval = null;
     let popupModal = null;
-    let popupCooldownUntil = 0;          // timestamp (ms) until next popup can appear
-    
-    // Play a single beep sound (loud)
+    let popupCooldownUntil = 0;
+
     function playBeepSound() {
         try {
             if (!audioContext) {
@@ -261,7 +276,7 @@
             if (ctx.state === 'suspended') ctx.resume();
         } catch(e) { console.warn("audio error", e); }
     }
-    
+
     function startSoundLoop() {
         if (soundInterval) clearInterval(soundInterval);
         playBeepSound();
@@ -271,13 +286,13 @@
             } else if (!hasCriticalOrExpired()) {
                 stopSoundLoop();
             }
-        }, 2000); // loop every 2 sec while modal visible
+        }, 2000);
     }
-    
+
     function stopSoundLoop() {
         if (soundInterval) { clearInterval(soundInterval); soundInterval = null; }
     }
-    
+
     function hasCriticalOrExpired() {
         for (let p of products) {
             const info = getStatusInfo(p.expiryDate);
@@ -285,13 +300,13 @@
         }
         return false;
     }
-    
+
     function getCriticalAndExpiredList() {
         const critical = products.filter(p => getStatusInfo(p.expiryDate).category === 'critical');
         const expired = products.filter(p => getStatusInfo(p.expiryDate).status === 'expired');
         return { critical, expired };
     }
-    
+
     function buildPopupMessage() {
         const { critical, expired } = getCriticalAndExpiredList();
         let msg = '';
@@ -306,7 +321,7 @@
         }
         return msg;
     }
-    
+
     function showAlertPopupIfNeeded() {
         if (!hasCriticalOrExpired()) {
             if (popupModal && popupModal._isShown) popupModal.hide();
@@ -333,18 +348,18 @@
         popupModal.show();
         startSoundLoop();
     }
-    
+
     function onModalClosedManually() {
         if (popupModal) popupModal.hide();
         stopSoundLoop();
-        popupCooldownUntil = Date.now() + 30000; // 30 seconds cooldown
+        popupCooldownUntil = Date.now() + 30000;
         setTimeout(() => {
             if (hasCriticalOrExpired() && popupCooldownUntil <= Date.now()) {
                 showAlertPopupIfNeeded();
             }
         }, 30500);
     }
-    
+
     function initAlertWatcher() {
         setInterval(() => {
             if (hasCriticalOrExpired()) {
@@ -357,20 +372,20 @@
             }
         }, 5000);
     }
-    
+
     // --- Helper: Product Status Calculation ---
     function getStatusInfo(expiryDateStr) {
         const today = new Date(); today.setHours(0,0,0,0);
         const expDate = new Date(expiryDateStr); expDate.setHours(0,0,0,0);
         const diffDays = Math.ceil((expDate - today) / (1000*3600*24));
-        if (expDate < today) return { status: 'expired', category: 'expired', textEn: 'Expired', textAr: 'منتهي', class: 'bg-secondary', blink: false };
-        if (diffDays <= 7) return { status: 'critical', category: 'critical', textEn: 'Critical (<7d)', textAr: 'حرج (<7 أيام)', class: 'bg-danger blink-red', blink: true };
-        if (diffDays <= 10) return { status: 'danger', category: 'danger', textEn: 'Danger (7-10d)', textAr: 'خطر (7-10 أيام)', class: 'bg-warning text-dark', blink: false };
-        if (diffDays <= 15) return { status: 'check', category: 'check', textEn: 'Need Check (10-15d)', textAr: 'بحاجة مراجعة (10-15 يوم)', class: 'bg-success', blink: false };
-        return { status: 'safe', category: 'safe', textEn: 'Safe (>15d)', textAr: 'آمن (>15 يوم)', class: 'bg-info', blink: false };
+        if (expDate < today) return { status: 'expired', category: 'expired', textEn: 'Expired', textAr: 'منتهي', class: 'expired' };
+        if (diffDays <= 7) return { status: 'critical', category: 'critical', textEn: 'Critical (<7d)', textAr: 'حرج (<7 أيام)', class: 'critical' };
+        if (diffDays <= 10) return { status: 'danger', category: 'danger', textEn: 'Danger (7-10d)', textAr: 'خطر (7-10 أيام)', class: 'danger' };
+        if (diffDays <= 15) return { status: 'check', category: 'check', textEn: 'Need Check (10-15d)', textAr: 'بحاجة مراجعة (10-15 يوم)', class: 'check' };
+        return { status: 'safe', category: 'safe', textEn: 'Safe (>15d)', textAr: 'آمن (>15 يوم)', class: 'safe' };
     }
-    
-    // --- LocalStorage Load/Save (persist on reload)---
+
+    // --- LocalStorage Load/Save ---
     function loadFromStorage() {
         const stored = localStorage.getItem('expiration_tracker_data');
         if (stored) {
@@ -379,12 +394,12 @@
         const hiddenPref = localStorage.getItem('expiration_list_hidden');
         isListHidden = (hiddenPref === 'true');
     }
-    
+
     function saveToStorage() {
         localStorage.setItem('expiration_tracker_data', JSON.stringify(products));
         localStorage.setItem('expiration_list_hidden', isListHidden);
     }
-    
+
     // Render table with bilingual status
     function renderTable() {
         const tbody = document.getElementById('productTableBody');
@@ -400,6 +415,7 @@
             const displayStatus = currentLang === 'en' ? info.textEn : info.textAr;
             const row = tbody.insertRow();
             if (info.category === 'critical') row.classList.add('critical-row');
+            if (info.status === 'expired') row.classList.add('expired-row');
             row.insertCell(0).innerText = prod.name;
             row.insertCell(1).innerText = prod.expiryDate;
             row.insertCell(2).innerHTML = `<span class="status-badge ${info.class}">${displayStatus}</span>`;
@@ -412,7 +428,7 @@
         document.querySelectorAll('.edit-product').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); editProduct(parseInt(btn.dataset.id)); }));
         document.querySelectorAll('.delete-product').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); deleteProduct(parseInt(btn.dataset.id)); }));
     }
-    
+
     function updateChartAndCounters() {
         let counts = { critical:0, danger:0, check:0, safe:0, expired:0 };
         products.forEach(p => {
@@ -435,11 +451,18 @@
             : ['حرج (<7 أيام)','خطر (7-10 أيام)','مراجعة (10-15)','آمن (>15 يوم)','منتهي'];
         chart = new Chart(ctx, {
             type: 'doughnut',
-            data: { labels: chartLabels, datasets: [{ data: [counts.critical, counts.danger, counts.check, counts.safe, counts.expired], backgroundColor: ['#dc3545','#ffc107','#2E7D32','#17a2b8','#6c757d'], borderWidth: 0 }] },
+            data: { 
+                labels: chartLabels, 
+                datasets: [{ 
+                    data: [counts.critical, counts.danger, counts.check, counts.safe, counts.expired], 
+                    backgroundColor: ['#DC2626', '#7F1D1D', '#92400E', '#1B5E20', '#374151'], 
+                    borderWidth: 0 
+                }] 
+            },
             options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { color: '#ddd', font: { size: 9 } } } } }
         });
     }
-    
+
     // Refresh UI completely (language aware)
     function refreshUI() {
         renderTable();
@@ -449,16 +472,23 @@
         document.getElementById('listStatus').innerText = isListHidden ? (currentLang === 'en' ? '📋 List hidden' : 'القائمة مخفية') : '';
         const hideBtnSpan = document.getElementById('hideListText');
         hideBtnSpan.innerText = currentLang === 'en' ? (isListHidden ? 'Show List' : 'Hide List') : (isListHidden ? 'إظهار القائمة' : 'إخفاء القائمة');
-        // Update side labels
-        document.getElementById('criticalLabel').innerText = currentLang === 'en' ? 'Critical (<7d)' : 'حرج (<7 أيام)';
-        document.getElementById('dangerLabel').innerText = currentLang === 'en' ? 'Danger (7-10d)' : 'خطر (7-10 أيام)';
-        document.getElementById('checkLabel').innerText = currentLang === 'en' ? 'Check (10-15d)' : 'مراجعة (10-15 يوم)';
-        document.getElementById('safeLabel').innerText = currentLang === 'en' ? 'Safe (>15d)' : 'آمن (>15 يوم)';
-        document.getElementById('expiredLabel').innerText = currentLang === 'en' ? 'Expired' : 'منتهي';
+        
+        // Update side labels with correct colors
+        document.getElementById('criticalLabel').innerHTML = currentLang === 'en' ? 'Critical (&lt;7d)' : 'حرج (&lt;7 أيام)';
+        document.getElementById('criticalLabel').style.cssText = 'background:#DC2626; color:white; border:1px solid #EF4444; padding:4px 12px; border-radius:30px; font-size:0.8rem; font-weight:600; animation:criticalBlink 0.9s step-start infinite; box-shadow:0 0 12px rgba(239,68,68,0.4);';
+        document.getElementById('dangerLabel').innerHTML = currentLang === 'en' ? 'Danger (7-10d)' : 'خطر (7-10 أيام)';
+        document.getElementById('dangerLabel').style.cssText = 'background:#7F1D1D; color:#FCA5A5; border:1px solid #DC2626; padding:4px 12px; border-radius:30px; font-size:0.8rem; font-weight:600;';
+        document.getElementById('checkLabel').innerHTML = currentLang === 'en' ? 'Check (10-15d)' : 'مراجعة (10-15 يوم)';
+        document.getElementById('checkLabel').style.cssText = 'background:#92400E; color:#FBD38D; border:1px solid #F59E0B; padding:4px 12px; border-radius:30px; font-size:0.8rem; font-weight:600;';
+        document.getElementById('safeLabel').innerHTML = currentLang === 'en' ? 'Safe (>15d)' : 'آمن (>15 يوم)';
+        document.getElementById('safeLabel').style.cssText = 'background:#1B5E20; color:#A5D6A7; border:1px solid #388E3C; padding:4px 12px; border-radius:30px; font-size:0.8rem; font-weight:600;';
+        document.getElementById('expiredLabel').innerHTML = currentLang === 'en' ? 'Expired' : 'منتهي';
+        document.getElementById('expiredLabel').style.cssText = 'background:#374151; color:#9CA3AF; border:1px solid #4B5563; padding:4px 12px; border-radius:30px; font-size:0.8rem; font-weight:600; opacity:0.7;';
+        
         document.getElementById('chartTitleText').innerText = currentLang === 'en' ? 'Inventory Health' : 'صحة المخزون';
         document.getElementById('lastUpdatedHint').innerHTML = currentLang === 'en' ? '<i class="fas fa-sync-alt"></i> Live updates' : '<i class="fas fa-sync-alt"></i> تحديث مباشر';
     }
-    
+
     // Data mutations
     function addProduct() {
         let name = document.getElementById('productName').value.trim();
@@ -478,7 +508,7 @@
         document.getElementById('expiryDate').value = '';
         setTimeout(() => { if(hasCriticalOrExpired()) showAlertPopupIfNeeded(); }, 200);
     }
-    
+
     function deleteProduct(id) {
         products = products.filter(p => p.id !== id);
         saveToStorage();
@@ -486,7 +516,7 @@
         if (!hasCriticalOrExpired()) { if(popupModal && popupModal._isShown) popupModal.hide(); stopSoundLoop(); }
         else showAlertPopupIfNeeded();
     }
-    
+
     function editProduct(id) {
         const prod = products.find(p => p.id === id);
         if (!prod) return;
@@ -499,7 +529,7 @@
         if(hasCriticalOrExpired()) showAlertPopupIfNeeded();
         else { if(popupModal && popupModal._isShown) popupModal.hide(); stopSoundLoop(); }
     }
-    
+
     function deleteEntireList() {
         const confirmMsg = currentLang === 'en' ? 'Delete ALL products permanently?' : 'هل تريد حذف جميع المنتجات نهائياً؟';
         if (confirm(confirmMsg)) {
@@ -510,17 +540,18 @@
             stopSoundLoop();
         }
     }
-    
+
     function toggleHideList() {
         isListHidden = !isListHidden;
         saveToStorage();
         refreshUI();
     }
-    
+
     function exportToPDF() {
         if(!products.length) { alert(currentLang === 'en' ? 'No data to export' : 'لا توجد بيانات للتصدير'); return; }
         html2pdf().set({ margin: 0.5, filename: 'expiry_report.pdf' }).from(document.getElementById('productTableWrapper')).save();
     }
+    
     function exportToExcel() {
         if(!products.length) { alert(currentLang === 'en' ? 'No data' : 'لا توجد بيانات'); return; }
         let sheetData = products.map(p => ({ 
@@ -533,8 +564,8 @@
         XLSX.utils.book_append_sheet(wb, ws, 'ExpirationTracker');
         XLSX.writeFile(wb, `expiration_${new Date().toISOString().slice(0,10)}.xlsx`);
     }
-    
-    // --- FULL BILINGUAL UI (everything on page)---
+
+    // --- FULL BILINGUAL UI ---
     function applyLanguage() {
         const isAr = currentLang === 'ar';
         document.body.setAttribute('dir', isAr ? 'rtl' : 'ltr');
@@ -562,13 +593,13 @@
         document.getElementById('langToggleText').innerHTML = isAr ? '🇸🇦 English / عربي' : '🇸🇦 العربية / EN';
         refreshUI();
     }
-    
+
     function toggleLanguage() { 
         currentLang = currentLang === 'en' ? 'ar' : 'en'; 
         applyLanguage();
         if(hasCriticalOrExpired() && (!popupModal || !popupModal._isShown)) showAlertPopupIfNeeded();
     }
-    
+
     // --- Event Binding & Initialization ---
     document.getElementById('addBtn').addEventListener('click', addProduct);
     document.getElementById('deleteEntireListBtn').addEventListener('click', deleteEntireList);
@@ -578,7 +609,7 @@
     document.getElementById('langToggleBtn').addEventListener('click', toggleLanguage);
     document.getElementById('closeModalBtn').addEventListener('click', onModalClosedManually);
     document.getElementById('closeModalCrossBtn').addEventListener('click', onModalClosedManually);
-    
+
     loadFromStorage();
     applyLanguage();
     initAlertWatcher();
