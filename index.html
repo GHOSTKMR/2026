@@ -148,10 +148,8 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            cursor: pointer;
-            transition: transform 0.2s;
+            cursor: default;
         }
-        .logo-area:hover { transform: scale(1.02); }
 
         .s-logo {
             width: 56px;
@@ -167,6 +165,10 @@
             border: 1.5px solid rgba(26,107,255,0.5);
             box-shadow: 0 8px 24px rgba(26,107,255,0.15);
             text-shadow: 0 0 20px rgba(26,107,255,0.3);
+            transition: transform 0.2s;
+        }
+        .s-logo:hover {
+            transform: scale(1.02);
         }
 
         .brand-text {
@@ -551,7 +553,7 @@
 <div class="corporate-container">
     <div class="app-main">
         <div class="netflix-nav">
-            <div class="logo-area" id="sLogoDashboard">
+            <div class="logo-area">
                 <div class="s-logo">S</div>
                 <div>
                     <div class="brand-text">SADWAP</div>
@@ -847,11 +849,7 @@
             setTimeout(() => { window.location.href = REDIRECT_URL; }, 1300);
         });
 
-        document.getElementById('sLogoDashboard').addEventListener('click', () => {
-            if (confirm(currentLang === 'ar' ? "الانتقال إلى لوحة التحكم؟" : "Jump to Dashboard?")) {
-                window.location.href = REDIRECT_URL;
-            }
-        });
+        // LOGO CLICK REMOVED - No longer redirects to dashboard
 
         // Contact Developer - moinranzao2@gmail.com
         document.getElementById('gmailLink').addEventListener('click', (e) => {
