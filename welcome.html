@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -194,6 +193,8 @@
         .lang-btn { background: transparent; border: none; padding: 0.4rem 1rem; border-radius: 2rem; font-weight: 600; font-size: 0.75rem; cursor: pointer; color: var(--text-secondary); }
         .lang-btn.active { background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); color: white; }
         .user-badge { display: flex; align-items: center; gap: 0.6rem; background: rgba(0, 212, 255, 0.08); padding: 0.4rem 1rem; border-radius: 2rem; border: 1px solid var(--border-glow); font-size: 0.85rem; }
+        .user-badge a { color: inherit; text-decoration: none; display: flex; align-items: center; gap: 0.6rem; }
+        .user-badge a:hover { color: var(--accent-cyan); }
         .refresh-btn { background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border: none; border-radius: 2rem; padding: 0.4rem 1.2rem; color: white; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
         .dashboard-inner { padding: 2rem; max-width: 1400px; margin: 0 auto; }
         .hero-futuristic {
@@ -537,7 +538,12 @@
         <div class="top-navbar">
             <div class="nav-actions">
                 <div class="lang-switch"><button class="lang-btn active" id="langEn">EN</button><button class="lang-btn" id="langAr">AR</button></div>
-                <div class="user-badge"><i class="fas fa-user-circle"></i> <span id="userBadgeText">SADWAP Admin</span></div>
+                <div class="user-badge" id="adminBadge">
+                    <a href="https://ghostkmr.github.io/2026/" target="_blank" rel="noopener noreferrer">
+                        <i class="fas fa-user-circle"></i> <span id="userBadgeText">SADWAP Admin</span>
+                        <i class="fas fa-external-link-alt" style="font-size:0.6rem; opacity:0.6;"></i>
+                    </a>
+                </div>
                 <button class="refresh-btn" id="refreshDataBtn"><i class="fas fa-sync-alt"></i> <span id="refreshBtnText">Refresh</span></button>
             </div>
         </div>
@@ -625,7 +631,6 @@
     let audioPlayed = false;
     let voicesLoaded = false;
 
-    // Preload voices
     function loadVoices() {
         if (window.speechSynthesis) {
             window.speechSynthesis.getVoices();
@@ -633,7 +638,6 @@
                 window.speechSynthesis.getVoices();
                 voicesLoaded = true;
             };
-            // Also try after a delay
             setTimeout(() => {
                 window.speechSynthesis.getVoices();
                 voicesLoaded = true;
@@ -644,16 +648,12 @@
 
     function playAIAudio() {
         try {
-            // Cancel any previous speech
             window.speechSynthesis.cancel();
-            
             const utterance = new SpeechSynthesisUtterance("Hello! I am your SADWAP AI assistant. How can I help you today?");
             utterance.lang = 'en-US';
             utterance.rate = 0.9;
             utterance.pitch = 1.3;
             utterance.volume = 1;
-            
-            // Try to find a female voice
             const voices = window.speechSynthesis.getVoices();
             const femaleVoice = voices.find(v => 
                 v.name.toLowerCase().includes('samantha') || 
@@ -662,17 +662,12 @@
                 v.name.toLowerCase().includes('google uk female') ||
                 v.name.toLowerCase().includes('siri')
             );
-            if (femaleVoice) {
-                utterance.voice = femaleVoice;
-            }
-            
+            if (femaleVoice) utterance.voice = femaleVoice;
             window.speechSynthesis.speak(utterance);
             audioPlayed = true;
             audioIndicator.classList.add('hidden');
             document.getElementById('aiBubble').innerText = '🔊 Hello! I am your AI assistant!';
             addActivityLog("🤖 AI Assistant: 'Hello! I am your SADWAP AI assistant. How can I help you today?'");
-            
-            // Reset bubble after 5 seconds
             setTimeout(() => {
                 document.getElementById('aiBubble').innerText = 'Click me for AI voice!';
             }, 5000);
@@ -682,17 +677,14 @@
         }
     }
 
-    // Click on Pikachu plays audio
     aiBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         playAIAudio();
     });
 
-    // Also play when opening chatbot
     function openChatbot() {
         chatbotModal.classList.add('open');
         addActivityLog(getText('activityAIOpened'));
-        // Play audio when opening chatbot
         playAIAudio();
     }
 
@@ -733,10 +725,10 @@
         { icon: "fas fa-exchange-alt", name: "Transfers", nameAr: "التحويلات", url: "https://ghostkmr.github.io/2026/transferrecords.html" },
         { icon: "fas fa-calendar-alt", name: "Training", nameAr: "التدريب", url: "https://ghostkmr.github.io/2026/training%20calender.html" },
         { icon: "fas fa-id-card", name: "Municipality", nameAr: "البلدية", url: "https://ghostkmr.github.io/2026/muncipality.html" },
-        { icon: "fas fa-user-shield", name: "Admin Panel", nameAr: "لوحة الإدارة", url: "https://ghostkmr.github.io/2026/pannel.html" },
+        { icon: "fas fa-user-shield", name: "Admin Panel", nameAr: "لوحة الإدارة", url: "https://ghostkmr.github.io/2026/" },
         { icon: "fas fa-chart-pie", name: "Insights", nameAr: "التحليلات", url: "https://ghostkmr.github.io/2026/insights.html" },
         { icon: "fas fa-vr-cardboard", name: "RVR", nameAr: "الواقع الافتراضي", url: "https://ghostkmr.github.io/2026/srv.html" },
-        { icon: "fas fa-chalkboard", name: "Video Gallery", nameAr: "معرض الفيديو", url: "https://ghostkmr.github.io/2026/videogallery.html" },
+        { icon: "fas fa-tools", name: "Maintenance Reports", nameAr: "تقارير الصيانة", url: "https://ghostkmr.github.io/2026/maintenance.html" },
         { icon: "fas fa-undo-alt", name: "Void & Refunds", nameAr: "الإلغاء والمستردات", url: "https://ghostkmr.github.io/2026/void%20and%20refunds.html" },
         { icon: "fas fa-graduation-cap", name: "Tutorials", nameAr: "الدروس", url: "https://ghostkmr.github.io/2026/tutorial.html" },
         { icon: "fas fa-robot", name: "Coming Soon", nameAr: "قريباً", url: "#", comingSoon: true },
@@ -1026,10 +1018,10 @@
             { name: "Transfers", nameAr: "التحويلات", icon: "fas fa-exchange-alt", color: "#7b2cbf", description: "Stock movements", descriptionAr: "حركات المخزون", url: "https://ghostkmr.github.io/2026/transferrecords.html" },
             { name: "Training", nameAr: "التدريب", icon: "fas fa-calendar-alt", color: "#00d4ff", description: "Staff training schedule", descriptionAr: "جدول تدريب الموظفين", url: "https://ghostkmr.github.io/2026/training%20calender.html" },
             { name: "Municipality", nameAr: "البلدية", icon: "fas fa-id-card", color: "#7b2cbf", description: "License management", descriptionAr: "إدارة الرخص", url: "https://ghostkmr.github.io/2026/muncipality.html" },
-            { name: "Admin Panel", nameAr: "لوحة الإدارة", icon: "fas fa-user-shield", color: "#00d4ff", description: "System configuration", descriptionAr: "إعدادات النظام", url: "https://ghostkmr.github.io/2026/pannel.html" },
+            { name: "Admin Panel", nameAr: "لوحة الإدارة", icon: "fas fa-user-shield", color: "#00d4ff", description: "System configuration", descriptionAr: "إعدادات النظام", url: "https://ghostkmr.github.io/2026/" },
             { name: "Insights", nameAr: "التحليلات", icon: "fas fa-chart-pie", color: "#7b2cbf", description: "Analytics & Reports", descriptionAr: "التحليلات والتقارير", url: "https://ghostkmr.github.io/2026/insights.html" },
             { name: "RVR Experience", nameAr: "الواقع الافتراضي", icon: "fas fa-vr-cardboard", color: "#00d4ff", description: "Immersive VR", descriptionAr: "تجربة غامرة", url: "https://ghostkmr.github.io/2026/srv.html" },
-            { name: "Video Gallery", nameAr: "معرض الفيديو", icon: "fas fa-chalkboard", color: "#00d4ff", description: "Watch training videos", descriptionAr: "مشاهدة فيديوهات التدريب", url: "https://ghostkmr.github.io/2026/videogallery.html" },
+            { name: "Maintenance Reports", nameAr: "تقارير الصيانة", icon: "fas fa-tools", color: "#f59e0b", description: "Track maintenance & issues", descriptionAr: "تتبع الصيانة والإصلاحات", url: "https://ghostkmr.github.io/2026/maintenance.html" },
             { name: "Void & Refunds", nameAr: "الإلغاء والمستردات", icon: "fas fa-undo-alt", color: "#f59e0b", description: "Manage voids and refunds", descriptionAr: "إدارة الإلغاء والمستردات", url: "https://ghostkmr.github.io/2026/void%20and%20refunds.html" },
             { name: "Tutorials", nameAr: "الدروس", icon: "fas fa-graduation-cap", color: "#7b2cbf", description: "Learning hub", descriptionAr: "مركز التعلم", url: "https://ghostkmr.github.io/2026/tutorial.html" }
         ];
@@ -1152,7 +1144,7 @@
         addActivityLog("🚀 SADWAP StreamOps initialized · Drag the circular menu anywhere!");
         addActivityLog("📊 Active users: 5 (1 PC, 3 Mobile, 1 Tablet) · System Health: 99.9% · Ops: 10K+");
         addActivityLog("📋 Click the compass icon to open radial menu (15 modules including 2 Coming Soon)");
-        addActivityLog("✅ All links verified: Inventory, Sales, Expiry, Transfers, Training, Municipality, Admin, Insights, RVR, Tutorials, Void & Refunds, Video Gallery");
+        addActivityLog("✅ All links verified: Inventory, Sales, Expiry, Transfers, Training, Municipality, Admin, Insights, RVR, Tutorials, Void & Refunds, Maintenance Reports");
         addActivityLog("🔊 Click the Pikachu icon or open the AI Assistant to hear the voice message!");
     }
 </script>
