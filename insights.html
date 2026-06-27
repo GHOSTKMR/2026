@@ -7,9 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         :root {
             --bg-primary: #0a0c15;
             --bg-secondary: #0f111a;
@@ -19,23 +19,21 @@
             --accent-red: #e50914;
             --accent-green: #10b981;
             --accent-yellow: #f59e0b;
+            --highlight-yellow: #f5c842;
             --text-primary: #ffffff;
             --text-secondary: #a0a8c0;
             --text-muted: #6b7280;
             --border-glow: rgba(0, 212, 255, 0.15);
             --card-radius: 20px;
         }
-
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             padding: 20px;
         }
-
         .container { max-width: 1600px; margin: 0 auto; }
 
-        /* Header */
         .header {
             background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(123,44,191,0.1));
             border-radius: var(--card-radius);
@@ -49,9 +47,41 @@
             gap: 16px;
         }
         .logo h1 { font-size: 1.6rem; font-weight: 800; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); background-clip: text; -webkit-background-clip: text; color: transparent; }
-        .ai-badge { background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); padding: 8px 16px; border-radius: 40px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .lang-switch { display: flex; gap: 6px; background: var(--bg-secondary); padding: 4px; border-radius: 40px; border: 1px solid var(--border-glow); }
+        .lang-btn { background: transparent; border: none; padding: 6px 18px; border-radius: 32px; font-weight: 600; font-size: 0.75rem; cursor: pointer; color: var(--text-muted); transition: all 0.2s; }
+        .lang-btn.active { background: var(--accent-cyan); color: #0b121f; }
+        .export-btn { background: var(--bg-secondary); border: 1px solid var(--border-glow); padding: 8px 16px; border-radius: 40px; color: var(--text-secondary); cursor: pointer; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .export-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
 
-        /* KPI Cards */
+        .guide-section {
+            background: var(--bg-card);
+            border-radius: var(--card-radius);
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            border: 2px solid var(--highlight-yellow);
+            box-shadow: 0 0 30px rgba(245,200,66,0.08);
+            position: relative;
+        }
+        .guide-section::before {
+            content: "📌 TIP";
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: var(--highlight-yellow);
+            color: #0b121f;
+            padding: 2px 16px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .guide-title { color: var(--highlight-yellow); font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        .guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 10px; }
+        .guide-item { background: var(--bg-secondary); border-radius: 12px; padding: 12px 16px; border-left: 3px solid var(--accent-yellow); }
+        .guide-item .label { font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted); }
+        .guide-item .value { font-size: 1.1rem; font-weight: 700; color: var(--accent-yellow); }
+
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -69,12 +99,29 @@
         }
         .kpi-card:hover { transform: translateY(-2px); border-color: var(--accent-cyan); }
         .kpi-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; }
-        .kpi-value { font-size: 2rem; font-weight: 700; margin-top: 8px; }
+        .kpi-value { font-size: 1.8rem; font-weight: 700; margin-top: 8px; }
         .kpi-value.good { color: var(--accent-green); }
         .kpi-value.warning { color: var(--accent-yellow); }
         .kpi-value.bad { color: var(--accent-red); }
 
-        /* AI Insights Panel */
+        .viz-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 992px) { .viz-grid { grid-template-columns: 1fr; } }
+
+        .viz-card {
+            background: var(--bg-card);
+            border-radius: var(--card-radius);
+            padding: 20px;
+            border: 1px solid var(--border-glow);
+        }
+        .viz-card h4 { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px; font-weight: 500; letter-spacing: 0.5px; }
+        .chart-container { height: 300px; position: relative; }
+        .chart-container-sm { height: 280px; position: relative; }
+
         .ai-insights {
             background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(123,44,191,0.08));
             border-radius: var(--card-radius);
@@ -97,7 +144,6 @@
         .insight-text { font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary); }
         .suggestion-badge { background: rgba(0,212,255,0.15); padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; display: inline-block; margin-right: 8px; margin-top: 8px; }
 
-        /* Month Selector */
         .month-selector {
             display: flex;
             gap: 8px;
@@ -116,8 +162,8 @@
         }
         .month-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
         .month-btn.active { background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-color: transparent; color: white; }
+        .month-btn.highlight { border-color: var(--highlight-yellow); color: var(--highlight-yellow); }
 
-        /* Data Entry Panel */
         .data-panel {
             background: var(--bg-card);
             border-radius: var(--card-radius);
@@ -127,25 +173,25 @@
         }
         .data-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
         }
-        .input-group label { display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; }
-        .input-group input {
+        .input-group label { display: block; font-size: 0.65rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .input-group input, .input-group select {
             width: 100%;
-            padding: 12px 16px;
+            padding: 10px 14px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-glow);
             border-radius: 12px;
             color: var(--text-primary);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         .input-group input:focus { outline: none; border-color: var(--accent-cyan); }
         .btn-save {
             background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
             border: none;
-            padding: 12px 28px;
+            padding: 10px 24px;
             border-radius: 40px;
             color: white;
             font-weight: 600;
@@ -154,18 +200,6 @@
         }
         .btn-save:hover { transform: scale(0.98); }
 
-        /* Chart Section */
-        .chart-section {
-            background: var(--bg-card);
-            border-radius: var(--card-radius);
-            padding: 24px;
-            margin-bottom: 24px;
-            border: 1px solid var(--border-glow);
-        }
-        .chart-container { height: 400px; position: relative; }
-        canvas { max-height: 400px; width: 100%; }
-
-        /* Data Table */
         .table-container {
             background: var(--bg-card);
             border-radius: var(--card-radius);
@@ -176,26 +210,31 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 24px;
+            padding: 16px 24px;
             border-bottom: 1px solid var(--border-glow);
             flex-wrap: wrap;
             gap: 12px;
         }
-        .toggle-all { cursor: pointer; color: var(--accent-cyan); font-size: 0.8rem; }
         .data-table {
             width: 100%;
             border-collapse: collapse;
             min-width: 800px;
+            font-size: 0.8rem;
         }
         .data-table th, .data-table td {
-            padding: 12px 16px;
+            padding: 10px 14px;
             text-align: left;
             border-bottom: 1px solid var(--border-glow);
         }
-        .data-table th { color: var(--text-muted); font-size: 0.7rem; font-weight: 600; background: var(--bg-secondary); }
+        .data-table th { color: var(--text-muted); font-size: 0.65rem; font-weight: 600; background: var(--bg-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .data-table tr.highlight-row { background: rgba(245,200,66,0.06); border-left: 3px solid var(--highlight-yellow); }
+        .data-table tr.highlight-row td:first-child { border-left: 3px solid var(--highlight-yellow); }
+        .data-table tr { cursor: pointer; transition: background 0.2s; }
+        .data-table tr:hover { background: rgba(0,212,255,0.04); }
+
         .foodcost-badge {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 3px 12px;
             border-radius: 40px;
             font-size: 0.7rem;
             font-weight: 600;
@@ -205,27 +244,67 @@
         .fc-bad { background: rgba(229,9,20,0.15); color: #e50914; }
 
         .footer-note { text-align: center; margin-top: 20px; font-size: 0.7rem; color: var(--text-muted); }
+
+        @media (max-width: 640px) {
+            body { padding: 12px; }
+            .guide-grid { grid-template-columns: 1fr; }
+            .kpi-grid { grid-template-columns: 1fr 1fr; }
+            .viz-grid { grid-template-columns: 1fr; }
+            .chart-container { height: 220px; }
+            .chart-container-sm { height: 200px; }
+        }
+        [dir="rtl"] .guide-section::before { right: auto; left: 20px; }
     </style>
 </head>
 <body>
 <div class="container">
     <!-- Header -->
     <div class="header">
-        <div class="logo"><h1><i class="fas fa-utensils"></i> Food Cost Intelligence</h1></div>
-        <div class="ai-badge"><i class="fas fa-brain"></i> AI-Powered Analytics</div>
+        <div class="logo"><h1><i class="fas fa-utensils"></i> <span id="titleMain">Food Cost Intelligence</span></h1></div>
+        <div class="controls">
+            <div class="lang-switch">
+                <button class="lang-btn active" id="langEn">EN</button>
+                <button class="lang-btn" id="langAr">AR</button>
+            </div>
+            <button class="export-btn" id="exportExcelBtn"><i class="fas fa-file-excel"></i> Excel</button>
+            <button class="export-btn" id="exportPdfBtn"><i class="fas fa-file-pdf"></i> PDF</button>
+        </div>
+    </div>
+
+    <!-- Guide Section -->
+    <div class="guide-section">
+        <div class="guide-title"><i class="fas fa-graduation-cap"></i> <span id="guideTitle">Quick Start Guide — January & February Highlighted as Examples</span></div>
+        <div class="guide-grid">
+            <div class="guide-item"><div class="label" data-key="targetLabel">🎯 Food Cost Target</div><div class="value">28-32%</div></div>
+            <div class="guide-item"><div class="label" data-key="janLabel">✅ Jan Food Cost</div><div class="value" id="janGuide">—</div></div>
+            <div class="guide-item"><div class="label" data-key="febLabel">✅ Feb Food Cost</div><div class="value" id="febGuide">—</div></div>
+            <div class="guide-item"><div class="label" data-key="tipLabel">💡 Pro Tip</div><div class="value" style="font-size:0.8rem;color:var(--text-secondary);" data-key="tipText">Click any row → AI insights</div></div>
+        </div>
     </div>
 
     <!-- KPI Cards -->
     <div class="kpi-grid">
-        <div class="kpi-card"><div class="kpi-label">Avg Food Cost %</div><div class="kpi-value" id="avgFoodCost">0%</div></div>
-        <div class="kpi-card"><div class="kpi-label">Total Sales (YTD)</div><div class="kpi-value" id="totalSales">SAR 0</div></div>
-        <div class="kpi-card"><div class="kpi-label">Total Food Cost</div><div class="kpi-value" id="totalFoodCost">SAR 0</div></div>
-        <div class="kpi-card"><div class="kpi-label">Best Month</div><div class="kpi-value" id="bestMonth">-</div></div>
+        <div class="kpi-card"><div class="kpi-label" data-key="avgFoodCost">Avg Food Cost %</div><div class="kpi-value" id="avgFoodCost">0%</div></div>
+        <div class="kpi-card"><div class="kpi-label" data-key="totalSales">Total Sales (YTD)</div><div class="kpi-value" id="totalSales">SAR 0</div></div>
+        <div class="kpi-card"><div class="kpi-label" data-key="totalFoodCost">Total Food Cost</div><div class="kpi-value" id="totalFoodCost">SAR 0</div></div>
+        <div class="kpi-card"><div class="kpi-label" data-key="bestMonth">Best Month</div><div class="kpi-value" id="bestMonth">-</div></div>
+    </div>
+
+    <!-- Power BI Style Visualizations -->
+    <div class="viz-grid">
+        <div class="viz-card">
+            <h4><i class="fas fa-chart-pie"></i> <span data-key="costBreakdown">Cost Breakdown by Category</span></h4>
+            <div class="chart-container"><canvas id="pieChart"></canvas></div>
+        </div>
+        <div class="viz-card">
+            <h4><i class="fas fa-chart-bar"></i> <span data-key="monthlyTrend">Monthly Food Cost Trend</span></h4>
+            <div class="chart-container-sm"><canvas id="barChart"></canvas></div>
+        </div>
     </div>
 
     <!-- AI Insights Panel -->
     <div class="ai-insights">
-        <div class="insight-title"><i class="fas fa-robot"></i> AI Insights & Recommendations</div>
+        <div class="insight-title"><i class="fas fa-robot"></i> <span data-key="aiTitle">AI Insights & Recommendations</span></div>
         <div class="insight-text" id="aiInsights">Loading insights...</div>
         <div id="suggestions"></div>
     </div>
@@ -236,67 +315,204 @@
     <!-- Data Entry Panel -->
     <div class="data-panel">
         <div class="data-grid">
-            <div class="input-group"><label>Select Month</label><select id="dataMonth" class="month-select-dropdown"></select></div>
-            <div class="input-group"><label>Total Sales (SAR)</label><input type="number" id="salesInput" placeholder="Enter sales amount" step="any"></div>
-            <div class="input-group"><label>Food Cost (SAR)</label><input type="number" id="foodCostInput" placeholder="Enter food cost amount" step="any"></div>
+            <div class="input-group"><label data-key="selectMonth">Select Month</label><select id="dataMonth" class="month-select-dropdown"></select></div>
+            <div class="input-group"><label data-key="salesLabel">Total Sales (SAR)</label><input type="number" id="salesInput" placeholder="0" step="any"></div>
+            <div class="input-group"><label data-key="foodCostLabel">Food Cost (SAR)</label><input type="number" id="foodCostInput" placeholder="0" step="any"></div>
+            <div class="input-group"><label data-key="beverageLabel">Beverage Cost (SAR)</label><input type="number" id="beverageCostInput" placeholder="0" step="any"></div>
+            <div class="input-group"><label data-key="packagingLabel">Packaging Cost (SAR)</label><input type="number" id="packagingCostInput" placeholder="0" step="any"></div>
+            <div class="input-group"><label data-key="otherLabel">Other Materials (SAR)</label><input type="number" id="otherCostInput" placeholder="0" step="any"></div>
         </div>
-        <button class="btn-save" id="saveDataBtn"><i class="fas fa-save"></i> Save Data</button>
-    </div>
-
-    <!-- Chart Section -->
-    <div class="chart-section">
-        <div class="chart-container"><canvas id="foodCostChart"></canvas></div>
+        <button class="btn-save" id="saveDataBtn"><i class="fas fa-save"></i> <span data-key="saveBtn">Save Data</span></button>
     </div>
 
     <!-- Data Table -->
     <div class="table-container">
         <div class="table-header">
-            <span><i class="fas fa-table"></i> Monthly Food Cost Analysis</span>
-            <span class="toggle-all" id="toggleAllBtn"><i class="fas fa-eye"></i> Show All Months</span>
+            <span><i class="fas fa-table"></i> <span data-key="tableTitle">Monthly Cost Analysis</span></span>
+            <span class="toggle-all" id="toggleAllBtn" style="cursor:pointer;color:var(--accent-cyan);font-size:0.8rem;"><i class="fas fa-eye"></i> <span data-key="showAll">Show All Months</span></span>
         </div>
         <div style="overflow-x: auto;">
             <table class="data-table" id="dataTable">
-                <thead><tr><th>Month</th><th>Sales (SAR)</th><th>Food Cost (SAR)</th><th>Food Cost %</th><th>Status</th></tr></thead>
+                <thead><tr>
+                    <th data-key="monthHeader">Month</th>
+                    <th data-key="salesHeader">Sales (SAR)</th>
+                    <th data-key="foodHeader">Food Cost</th>
+                    <th data-key="beverageHeader">Beverage</th>
+                    <th data-key="packagingHeader">Packaging</th>
+                    <th data-key="otherHeader">Other</th>
+                    <th data-key="fcPercentHeader">Food Cost %</th>
+                    <th data-key="statusHeader">Status</th>
+                </tr></thead>
                 <tbody id="tableBody"></tbody>
             </table>
         </div>
     </div>
-    <div class="footer-note">💡 Click on any row to view AI insights for that month | Food Cost % = (Food Cost / Sales) × 100</div>
+    <div class="footer-note" data-key="footerNote">💡 Click on any row to view AI insights for that month | Food Cost % = (Food Cost / Sales) × 100</div>
 </div>
 
 <script>
+    // ======================== TRANSLATIONS ========================
+    const translations = {
+        en: {
+            titleMain: "Food Cost Intelligence",
+            guideTitle: "Quick Start Guide — January & February Highlighted as Examples",
+            targetLabel: "🎯 Food Cost Target",
+            janLabel: "✅ Jan Food Cost",
+            febLabel: "✅ Feb Food Cost",
+            tipLabel: "💡 Pro Tip",
+            tipText: "Click any row → AI insights",
+            avgFoodCost: "Avg Food Cost %",
+            totalSales: "Total Sales (YTD)",
+            totalFoodCost: "Total Food Cost",
+            bestMonth: "Best Month",
+            costBreakdown: "Cost Breakdown by Category",
+            monthlyTrend: "Monthly Food Cost Trend",
+            aiTitle: "AI Insights & Recommendations",
+            selectMonth: "Select Month",
+            salesLabel: "Total Sales (SAR)",
+            foodCostLabel: "Food Cost (SAR)",
+            beverageLabel: "Beverage Cost (SAR)",
+            packagingLabel: "Packaging Cost (SAR)",
+            otherLabel: "Other Materials (SAR)",
+            saveBtn: "Save Data",
+            tableTitle: "Monthly Cost Analysis",
+            showAll: "Show All Months",
+            monthHeader: "Month",
+            salesHeader: "Sales (SAR)",
+            foodHeader: "Food Cost",
+            beverageHeader: "Beverage",
+            packagingHeader: "Packaging",
+            otherHeader: "Other",
+            fcPercentHeader: "Food Cost %",
+            statusHeader: "Status",
+            footerNote: "💡 Click on any row to view AI insights for that month | Food Cost % = (Food Cost / Sales) × 100",
+            // AI Insights English
+            analysisSummary: "Analysis Summary",
+            avgFoodCostText: "Average Food Cost",
+            excellentRange: "Excellent range",
+            acceptableRange: "Acceptable range",
+            aboveTarget: "Above target - needs attention",
+            highestFoodCost: "Highest Food Cost",
+            lowestFoodCost: "Lowest Food Cost",
+            bestPerforming: "Best performing month",
+            beverageCost: "Beverage Cost",
+            benchmark: "Benchmark",
+            packagingCost: "Packaging Cost",
+            trendUp: "Food cost is trending UP by",
+            trendDown: "Food cost is trending DOWN by",
+            reviewSuppliers: "Review supplier pricing and portion control",
+            greatWork: "Great work! Continue these practices",
+            industryBenchmark: "Industry benchmark",
+            optimal: "is considered optimal for food service businesses",
+            actionableRecs: "Actionable Recommendations",
+            urgent: "URGENT",
+            elevated: "food cost is elevated",
+            auditPortions: "Audit portion sizes and check for theft/spoilage",
+            exceptional: "Exceptional performance in",
+            documentWhatWorked: "Document what worked and replicate",
+            beverageHigh: "Beverage cost is above 6% - Review beverage portioning and supplier pricing",
+            packagingHigh: "Packaging cost is above 4% - Explore sustainable alternatives and bulk purchasing",
+            targetFocus: "Focus on cost reduction strategies",
+            maintainPractices: "Maintain current practices",
+            onTrack: "On track - monitor monthly",
+            reviewContracts: "Review supplier contracts quarterly for better pricing",
+            inventoryTracking: "Implement daily inventory tracking to reduce waste by 5-10%"
+        },
+        ar: {
+            titleMain: "ذكاء تكلفة الطعام",
+            guideTitle: "دليل البدء السريع — يناير وفبراير مميزان كأمثلة",
+            targetLabel: "🎯 هدف تكلفة الطعام",
+            janLabel: "✅ تكلفة طعام يناير",
+            febLabel: "✅ تكلفة طعام فبراير",
+            tipLabel: "💡 نصيحة",
+            tipText: "انقر على أي صف → رؤى الذكاء الاصطناعي",
+            avgFoodCost: "متوسط تكلفة الطعام %",
+            totalSales: "إجمالي المبيعات (منذ بداية العام)",
+            totalFoodCost: "إجمالي تكلفة الطعام",
+            bestMonth: "أفضل شهر",
+            costBreakdown: "توزيع التكاليف حسب الفئة",
+            monthlyTrend: "اتجاه تكلفة الطعام الشهري",
+            aiTitle: "رؤى وتوصيات الذكاء الاصطناعي",
+            selectMonth: "اختر الشهر",
+            salesLabel: "إجمالي المبيعات (ر.س)",
+            foodCostLabel: "تكلفة الطعام (ر.س)",
+            beverageLabel: "تكلفة المشروبات (ر.س)",
+            packagingLabel: "تكلفة التغليف (ر.س)",
+            otherLabel: "مواد أخرى (ر.س)",
+            saveBtn: "حفظ البيانات",
+            tableTitle: "تحليل التكلفة الشهري",
+            showAll: "عرض كل الأشهر",
+            monthHeader: "الشهر",
+            salesHeader: "المبيعات (ر.س)",
+            foodHeader: "تكلفة الطعام",
+            beverageHeader: "المشروبات",
+            packagingHeader: "التغليف",
+            otherHeader: "أخرى",
+            fcPercentHeader: "نسبة تكلفة الطعام %",
+            statusHeader: "الحالة",
+            footerNote: "💡 انقر على أي صف لعرض رؤى الذكاء الاصطناعي لذلك الشهر | نسبة تكلفة الطعام = (تكلفة الطعام / المبيعات) × 100",
+            // AI Insights Arabic
+            analysisSummary: "ملخص التحليل",
+            avgFoodCostText: "متوسط تكلفة الطعام",
+            excellentRange: "نطاق ممتاز",
+            acceptableRange: "نطاق مقبول",
+            aboveTarget: "أعلى من الهدف - يحتاج إلى اهتمام",
+            highestFoodCost: "أعلى تكلفة طعام",
+            lowestFoodCost: "أقل تكلفة طعام",
+            bestPerforming: "أفضل شهر أداءً",
+            beverageCost: "تكلفة المشروبات",
+            benchmark: "المعيار",
+            packagingCost: "تكلفة التغليف",
+            trendUp: "تكلفة الطعام في ارتفاع بمقدار",
+            trendDown: "تكلفة الطعام في انخفاض بمقدار",
+            reviewSuppliers: "مراجعة أسعار الموردين والتحكم في الحصص",
+            greatWork: "عمل رائع! استمر في هذه الممارسات",
+            industryBenchmark: "المعيار الصناعي",
+            optimal: "يعتبر مثاليًا لأعمال خدمات الطعام",
+            actionableRecs: "توصيات قابلة للتنفيذ",
+            urgent: "عاجل",
+            elevated: "تكلفة الطعام مرتفعة",
+            auditPortions: "مراجعة أحجام الحصص والتحقق من السرقة/التلف",
+            exceptional: "أداء استثنائي في",
+            documentWhatWorked: "توثيق ما نجح وتكراره",
+            beverageHigh: "تكلفة المشروبات أعلى من 6% - مراجعة توزيع المشروبات وتسعير الموردين",
+            packagingHigh: "تكلفة التغليف أعلى من 4% - استكشاف بدائل مستدامة والشراء بالجملة",
+            targetFocus: "التركيز على استراتيجيات خفض التكاليف",
+            maintainPractices: "الحفاظ على الممارسات الحالية",
+            onTrack: "على المسار الصحيح - مراقبة شهرية",
+            reviewContracts: "مراجعة عقود الموردين كل ثلاثة أشهر للحصول على أسعار أفضل",
+            inventoryTracking: "تنفيذ تتبع يومي للمخزون لتقليل الهدر بنسبة 5-10٪"
+        }
+    };
+    let currentLang = "en";
+
     // Months
-    const months = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const monthKeys = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 
-    // Data Storage
     let monthlyData = {};
-    let chart = null;
-    let currentView = "all"; // 'all' or 'selected'
+    let chartPie = null, chartBar = null;
+    let currentView = "all";
 
-    // Load from localStorage
+    // Load data
     function loadData() {
-        const saved = localStorage.getItem('foodCostData');
+        const saved = localStorage.getItem('foodCostDataFull');
         if (saved) {
             monthlyData = JSON.parse(saved);
         } else {
-            // Sample data
             monthlyData = {
-                jan: { sales: 85000, foodCost: 28000 },
-                feb: { sales: 78000, foodCost: 26500 },
-                mar: { sales: 92000, foodCost: 31000 },
-                apr: { sales: 88000, foodCost: 29500 },
-                may: { sales: 95000, foodCost: 33000 },
-                jun: { sales: 91000, foodCost: 30500 },
-                jul: { sales: 89000, foodCost: 29800 },
-                aug: { sales: 93000, foodCost: 32500 },
-                sep: { sales: 87000, foodCost: 29000 },
-                oct: { sales: 96000, foodCost: 34000 },
-                nov: { sales: 84000, foodCost: 27800 },
-                dec: { sales: 88000, foodCost: 29500 }
+                jan: { sales: 157670.31, foodCost: 40707.12, beverage: 6888.60, packaging: 5780.53, other: 853.31 },
+                feb: { sales: 122224.25, foodCost: 30955.77, beverage: 5575.97, packaging: 4068.42, other: 17508.11 },
+                mar: { sales: 198066.61, foodCost: 46043.30, beverage: 11023.07, packaging: 8854.63, other: 1873.88 },
+                apr: { sales: 232036.64, foodCost: 56296.75, beverage: 13518.64, packaging: 6077.16, other: 2788.44 },
+                may: { sales: 222793.01, foodCost: 54692.61, beverage: 12731.57, packaging: 6379.88, other: 2244.35 },
+                jun: { sales: 0, foodCost: 0, beverage: 0, packaging: 0, other: 0 },
+                jul: { sales: 0, foodCost: 0, beverage: 0, packaging: 0, other: 0 },
+                aug: { sales: 0, foodCost: 0, beverage: 0, packaging: 0, other: 0 },
+                sep: { sales: 0, foodCost: 0, beverage: 0, packaging: 0, other: 0 },
+                oct: { sales: 0, foodCost: 0, beverage: 0, packaging: 0, other: 0 },
+                nov: { sales: 0, foodCost: 0, beverage: 0, packaging: 0, other: 0 },
+                dec: { sales: 0, foodCost: 0, beverage: 0, packaging: 0, other: 0 }
             };
             saveData();
         }
@@ -304,7 +520,7 @@
     }
 
     function saveData() {
-        localStorage.setItem('foodCostData', JSON.stringify(monthlyData));
+        localStorage.setItem('foodCostDataFull', JSON.stringify(monthlyData));
     }
 
     function getFoodCostPercentage(sales, foodCost) {
@@ -313,18 +529,30 @@
     }
 
     function getStatusClass(percentage) {
+        if (percentage === 0 || isNaN(percentage)) return "fc-warning";
         if (percentage <= 28) return "fc-good";
         if (percentage <= 32) return "fc-warning";
         return "fc-bad";
     }
 
     function getStatusText(percentage) {
-        if (percentage <= 28) return "Excellent";
-        if (percentage <= 32) return "Good";
-        return "High - Review Needed";
+        if (percentage === 0 || isNaN(percentage)) return currentLang === 'en' ? "No Data" : "لا توجد بيانات";
+        if (percentage <= 28) return currentLang === 'en' ? "Excellent" : "ممتاز";
+        if (percentage <= 32) return currentLang === 'en' ? "Good" : "جيد";
+        return currentLang === 'en' ? "High - Review" : "مرتفع - مراجعة";
     }
 
-    // Calculate KPIs
+    function updateGuide() {
+        const janData = monthlyData.jan;
+        const febData = monthlyData.feb;
+        const janFC = janData && janData.sales ? getFoodCostPercentage(janData.sales, janData.foodCost) : 0;
+        const febFC = febData && febData.sales ? getFoodCostPercentage(febData.sales, febData.foodCost) : 0;
+        document.getElementById('janGuide').textContent = janFC ? janFC.toFixed(1) + '%' : '—';
+        document.getElementById('febGuide').textContent = febFC ? febFC.toFixed(1) + '%' : '—';
+        document.getElementById('janGuide').style.color = janFC <= 28 ? '#10b981' : (janFC <= 32 ? '#f59e0b' : '#e50914');
+        document.getElementById('febGuide').style.color = febFC <= 28 ? '#10b981' : (febFC <= 32 ? '#f59e0b' : '#e50914');
+    }
+
     function calculateKPIs() {
         let totalSales = 0, totalFoodCost = 0;
         let percentages = [];
@@ -353,7 +581,6 @@
         document.getElementById('totalFoodCost').innerHTML = 'SAR ' + totalFoodCost.toLocaleString();
         document.getElementById('bestMonth').innerHTML = bestMonthName || '-';
 
-        // Apply color classes
         const avgElement = document.getElementById('avgFoodCost');
         if (avgFC <= 28) avgElement.className = "kpi-value good";
         else if (avgFC <= 32) avgElement.className = "kpi-value warning";
@@ -362,69 +589,92 @@
         return { avgFC, totalSales, totalFoodCost, percentages };
     }
 
-    // AI Insights Generation
+    // ======================== AI INSIGHTS WITH ARABIC SUPPORT ========================
     function generateAIInsights() {
+        const t = translations[currentLang];
         let percentages = [];
-        let monthData = [];
-
         for (let i = 0; i < monthKeys.length; i++) {
             const key = monthKeys[i];
             const data = monthlyData[key];
             if (data && data.sales && data.sales > 0) {
                 const fcPercent = getFoodCostPercentage(data.sales, data.foodCost);
-                percentages.push({ month: months[i], percent: fcPercent, sales: data.sales, foodCost: data.foodCost });
-                monthData.push({ month: months[i], percent: fcPercent });
+                percentages.push({ month: months[i], percent: fcPercent, sales: data.sales, foodCost: data.foodCost, beverage: data.beverage || 0, packaging: data.packaging || 0, other: data.other || 0 });
             }
         }
 
         if (percentages.length === 0) {
-            document.getElementById('aiInsights').innerHTML = "No data available. Please add monthly sales and food cost data.";
+            document.getElementById('aiInsights').innerHTML = currentLang === 'en' ? "No data available. Please add monthly sales and cost data." : "لا توجد بيانات متاحة. يرجى إضافة بيانات المبيعات والتكاليف الشهرية.";
             document.getElementById('suggestions').innerHTML = "";
             return;
         }
 
-        // Find min and max
         const maxFC = percentages.reduce((max, p) => p.percent > max.percent ? p : max, percentages[0]);
         const minFC = percentages.reduce((min, p) => p.percent < min.percent ? p : min, percentages[0]);
         const avgFC = percentages.reduce((a, b) => a + b.percent, 0) / percentages.length;
 
-        // Build insights
-        let insights = `<i class="fas fa-chart-line"></i> <strong>Analysis Summary:</strong><br>`;
-        insights += `• Average Food Cost: <strong>${avgFC.toFixed(1)}%</strong> ${avgFC <= 28 ? '(Excellent range)' : (avgFC <= 32 ? '(Acceptable range)' : '(Above target - needs attention)')}<br>`;
-        insights += `• Highest Food Cost: <strong>${maxFC.month}</strong> at ${maxFC.percent.toFixed(1)}% (Sales: ${maxFC.sales.toLocaleString()} SAR | Cost: ${maxFC.foodCost.toLocaleString()} SAR)<br>`;
-        insights += `• Lowest Food Cost: <strong>${minFC.month}</strong> at ${minFC.percent.toFixed(1)}% (Best performing month)<br>`;
+        // Build insights in current language
+        let insights = `<i class="fas fa-chart-line"></i> <strong>${t.analysisSummary}:</strong><br>`;
         
-        // Trend analysis
+        let rangeText = '';
+        if (avgFC <= 28) rangeText = `(${t.excellentRange})`;
+        else if (avgFC <= 32) rangeText = `(${t.acceptableRange})`;
+        else rangeText = `(${t.aboveTarget})`;
+        insights += `• ${t.avgFoodCostText}: <strong>${avgFC.toFixed(1)}%</strong> ${rangeText}<br>`;
+        
+        insights += `• ${t.highestFoodCost}: <strong>${maxFC.month}</strong> بنسبة ${maxFC.percent.toFixed(1)}% (المبيعات: ${maxFC.sales.toLocaleString()} ر.س | التكلفة: ${maxFC.foodCost.toLocaleString()} ر.س)<br>`;
+        insights += `• ${t.lowestFoodCost}: <strong>${minFC.month}</strong> بنسبة ${minFC.percent.toFixed(1)}% (${t.bestPerforming})<br>`;
+        
+        const totalBeverage = percentages.reduce((a, b) => a + (b.beverage || 0), 0);
+        const totalSales = percentages.reduce((a, b) => a + b.sales, 0);
+        const bevPercent = totalSales > 0 ? (totalBeverage / totalSales) * 100 : 0;
+        insights += `• ${t.beverageCost}: <strong>${bevPercent.toFixed(1)}%</strong> من المبيعات (${t.benchmark}: 4-6%)<br>`;
+        
+        const totalPackaging = percentages.reduce((a, b) => a + (b.packaging || 0), 0);
+        const packPercent = totalSales > 0 ? (totalPackaging / totalSales) * 100 : 0;
+        insights += `• ${t.packagingCost}: <strong>${packPercent.toFixed(1)}%</strong> من المبيعات (${t.benchmark}: 2-4%)<br>`;
+
         const recent3 = percentages.slice(-3);
         const trend = recent3.length >= 2 ? (recent3[recent3.length-1].percent - recent3[0].percent).toFixed(1) : 0;
-        if (trend > 0) insights += `• ⚠️ Food cost is trending <strong style="color:#e50914">UP by ${trend}%</strong> over last 3 months. Review supplier pricing and portion control.<br>`;
-        else if (trend < 0) insights += `• ✅ Food cost is trending <strong style="color:#10b981">DOWN by ${Math.abs(trend)}%</strong> - Great work! Continue these practices.<br>`;
+        if (trend > 0) {
+            insights += `• ⚠️ ${t.trendUp} <strong style="color:#e50914">${trend}%</strong> خلال الأشهر الثلاثة الماضية. ${t.reviewSuppliers}<br>`;
+        } else if (trend < 0) {
+            insights += `• ✅ ${t.trendDown} <strong style="color:#10b981">${Math.abs(trend)}%</strong> - ${t.greatWork}<br>`;
+        }
         
-        insights += `• Industry benchmark: <strong>28-32%</strong> is considered optimal for food service businesses.`;
-        
+        insights += `• ${t.industryBenchmark}: <strong>28-32%</strong> ${t.optimal}.`;
         document.getElementById('aiInsights').innerHTML = insights;
 
-        // Suggestions
-        let suggestions = `<div class="insight-title" style="margin-top: 15px;"><i class="fas fa-lightbulb"></i> Actionable Recommendations</div>`;
+        // Suggestions in current language
+        let suggestions = `<div class="insight-title" style="margin-top: 15px;"><i class="fas fa-lightbulb"></i> ${t.actionableRecs}</div>`;
         
         if (maxFC.percent > 35) {
-            suggestions += `<span class="suggestion-badge"><i class="fas fa-exclamation-triangle"></i> 🔴 URGENT: ${maxFC.month} food cost at ${maxFC.percent.toFixed(1)}% - Review inventory, reduce waste, negotiate with suppliers</span>`;
+            suggestions += `<span class="suggestion-badge"><i class="fas fa-exclamation-triangle"></i> 🔴 ${t.urgent}: ${maxFC.month} ${t.elevated} ${maxFC.percent.toFixed(1)}% - ${t.auditPortions}</span>`;
         } else if (maxFC.percent > 32) {
-            suggestions += `<span class="suggestion-badge"><i class="fas fa-chart-line"></i> 🟡 ${maxFC.month} food cost is elevated (${maxFC.percent.toFixed(1)}%) - Audit portion sizes and check for theft/spoilage</span>`;
+            suggestions += `<span class="suggestion-badge"><i class="fas fa-chart-line"></i> 🟡 ${maxFC.month} ${t.elevated} (${maxFC.percent.toFixed(1)}%) - ${t.auditPortions}</span>`;
         }
         
         if (minFC.percent < 25) {
-            suggestions += `<span class="suggestion-badge"><i class="fas fa-star"></i> ⭐ Exceptional performance in ${minFC.month} (${minFC.percent.toFixed(1)}%) - Document what worked and replicate</span>`;
+            suggestions += `<span class="suggestion-badge"><i class="fas fa-star"></i> ⭐ ${t.exceptional} ${minFC.month} (${minFC.percent.toFixed(1)}%) - ${t.documentWhatWorked}</span>`;
+        }
+
+        if (bevPercent > 6) {
+            suggestions += `<span class="suggestion-badge"><i class="fas fa-wine-bottle"></i> 🍷 ${t.beverageHigh}</span>`;
+        }
+        if (packPercent > 4) {
+            suggestions += `<span class="suggestion-badge"><i class="fas fa-box"></i> 📦 ${t.packagingHigh}</span>`;
         }
         
-        suggestions += `<span class="suggestion-badge"><i class="fas fa-chart-simple"></i> 📊 Target food cost: 28-32% - ${avgFC > 32 ? 'Focus on cost reduction strategies' : (avgFC < 28 ? 'Maintain current practices' : 'On track - monitor monthly')}</span>`;
-        suggestions += `<span class="suggestion-badge"><i class="fas fa-calculator"></i> 🧾 Review supplier contracts quarterly for better pricing</span>`;
-        suggestions += `<span class="suggestion-badge"><i class="fas fa-box"></i> 📦 Implement daily inventory tracking to reduce waste by 5-10%</span>`;
+        let targetAdvice = '';
+        if (avgFC > 32) targetAdvice = t.targetFocus;
+        else if (avgFC < 28) targetAdvice = t.maintainPractices;
+        else targetAdvice = t.onTrack;
+        suggestions += `<span class="suggestion-badge"><i class="fas fa-chart-simple"></i> 📊 الهدف: 28-32% - ${targetAdvice}</span>`;
+        suggestions += `<span class="suggestion-badge"><i class="fas fa-calculator"></i> 🧾 ${t.reviewContracts}</span>`;
+        suggestions += `<span class="suggestion-badge"><i class="fas fa-box"></i> 📦 ${t.inventoryTracking}</span>`;
         
         document.getElementById('suggestions').innerHTML = suggestions;
     }
 
-    // Render Table
     function renderTable() {
         const tbody = document.getElementById('tableBody');
         tbody.innerHTML = '';
@@ -444,49 +694,53 @@
         for (let i = 0; i < visibleMonths.length; i++) {
             const month = visibleMonths[i];
             const key = monthKeys[months.indexOf(month)];
-            const data = monthlyData[key] || { sales: 0, foodCost: 0 };
+            const data = monthlyData[key] || { sales: 0, foodCost: 0, beverage: 0, packaging: 0, other: 0 };
             const fcPercent = getFoodCostPercentage(data.sales, data.foodCost);
             const statusClass = getStatusClass(fcPercent);
             const statusText = getStatusText(fcPercent);
             
+            const isHighlight = (month === 'January' || month === 'February') && data.sales > 0;
+            
             const row = tbody.insertRow();
+            if (isHighlight) row.className = 'highlight-row';
             row.style.cursor = 'pointer';
-            row.onclick = () => showMonthInsight(month, fcPercent, data.sales, data.foodCost);
+            row.onclick = () => showMonthInsight(month, fcPercent, data);
             row.innerHTML = `
-                <td><strong>${month}</strong></td>
+                <td><strong>${month}</strong> ${isHighlight ? '<i class="fas fa-star" style="color:#f5c842;font-size:0.7rem;"></i>' : ''}</td>
                 <td>${data.sales ? 'SAR ' + data.sales.toLocaleString() : '-'}</td>
                 <td>${data.foodCost ? 'SAR ' + data.foodCost.toLocaleString() : '-'}</td>
+                <td>${data.beverage ? 'SAR ' + data.beverage.toLocaleString() : '-'}</td>
+                <td>${data.packaging ? 'SAR ' + data.packaging.toLocaleString() : '-'}</td>
+                <td>${data.other ? 'SAR ' + data.other.toLocaleString() : '-'}</td>
                 <td><span class="foodcost-badge ${statusClass}">${fcPercent.toFixed(1)}%</span></td>
                 <td><span class="foodcost-badge ${statusClass}">${statusText}</span></td>
             `;
         }
     }
 
-    function showMonthInsight(month, percent, sales, foodCost) {
-        const key = monthKeys[months.indexOf(month)];
+    function showMonthInsight(month, percent, data) {
+        const t = translations[currentLang];
         const suggestion = document.getElementById('suggestions');
         suggestion.scrollIntoView({ behavior: 'smooth' });
         
-        let insightMsg = `<div class="insight-title"><i class="fas fa-chart-simple"></i> AI Analysis for ${month}</div>`;
-        insightMsg += `<div class="insight-text">`;
-        insightMsg += `📊 Food Cost Percentage: <strong>${percent.toFixed(1)}%</strong><br>`;
-        insightMsg += `💰 Total Sales: SAR ${(sales || 0).toLocaleString()}<br>`;
-        insightMsg += `🍽️ Food Cost: SAR ${(foodCost || 0).toLocaleString()}<br>`;
+        let insightMsg = `<div class="insight-title"><i class="fas fa-chart-simple"></i> ${currentLang === 'en' ? 'AI Analysis for' : 'تحليل الذكاء الاصطناعي لـ'} ${month}</div><div class="insight-text">`;
+        insightMsg += `📊 ${currentLang === 'en' ? 'Food Cost Percentage' : 'نسبة تكلفة الطعام'}: <strong>${percent.toFixed(1)}%</strong><br>`;
+        insightMsg += `💰 ${currentLang === 'en' ? 'Total Sales' : 'إجمالي المبيعات'}: SAR ${(data.sales || 0).toLocaleString()}<br>`;
+        insightMsg += `🍽️ ${currentLang === 'en' ? 'Food Cost' : 'تكلفة الطعام'}: SAR ${(data.foodCost || 0).toLocaleString()}<br>`;
+        insightMsg += `🍷 ${currentLang === 'en' ? 'Beverage Cost' : 'تكلفة المشروبات'}: SAR ${(data.beverage || 0).toLocaleString()} (${data.sales ? ((data.beverage/data.sales)*100).toFixed(1) : 0}%)<br>`;
+        insightMsg += `📦 ${currentLang === 'en' ? 'Packaging Cost' : 'تكلفة التغليف'}: SAR ${(data.packaging || 0).toLocaleString()} (${data.sales ? ((data.packaging/data.sales)*100).toFixed(1) : 0}%)<br>`;
         
         if (percent <= 28) {
-            insightMsg += `✅ <strong style="color:#10b981">Excellent performance!</strong> Your food cost is well below the industry benchmark. Consider if quality can be improved while maintaining this level.<br>`;
+            insightMsg += `✅ <strong style="color:#10b981">${currentLang === 'en' ? 'Excellent performance!' : 'أداء ممتاز!'}</strong> ${currentLang === 'en' ? 'Your food cost is well below the industry benchmark.' : 'تكلفة الطعام أقل بكثير من المعيار الصناعي.'}<br>`;
         } else if (percent <= 32) {
-            insightMsg += `📈 <strong style="color:#f59e0b">Good range.</strong> You're within industry standard (28-32%). Small optimizations could improve profitability.<br>`;
+            insightMsg += `📈 <strong style="color:#f59e0b">${currentLang === 'en' ? 'Good range.' : 'نطاق جيد.'}</strong> ${currentLang === 'en' ? "You're within industry standard (28-32%)." : 'أنت ضمن المعيار الصناعي (28-32%).'}<br>`;
         } else {
-            insightMsg += `⚠️ <strong style="color:#e50914">Above target!</strong> Food cost exceeds 32%. Review portion sizes, supplier pricing, and inventory management.<br>`;
+            insightMsg += `⚠️ <strong style="color:#e50914">${currentLang === 'en' ? 'Above target!' : 'أعلى من الهدف!'}</strong> ${currentLang === 'en' ? 'Food cost exceeds 32%. Review portion sizes, supplier pricing, and inventory management.' : 'تتجاوز تكلفة الطعام 32%. راجع أحجام الحصص وتسعير الموردين وإدارة المخزون.'}<br>`;
         }
-        
         insightMsg += `</div>`;
         
-        const aiPanel = document.querySelector('.ai-insights');
         const originalInsight = document.getElementById('aiInsights').innerHTML;
         const originalSuggest = document.getElementById('suggestions').innerHTML;
-        
         document.getElementById('aiInsights').innerHTML = insightMsg;
         
         setTimeout(() => {
@@ -494,105 +748,102 @@
             document.getElementById('suggestions').innerHTML = originalSuggest;
         }, 5000);
         
-        showToast(`Showing analysis for ${month}. Insights will reset in 5 seconds.`);
+        showToast(currentLang === 'en' ? `Showing analysis for ${month}. Insights will reset in 5 seconds.` : `عرض تحليل ${month}. ستعود الرؤى خلال 5 ثوانٍ.`);
     }
 
-    // Update Chart
-    function updateChart() {
-        const labels = [];
-        const fcData = [];
-        const salesData = [];
-
-        for (let i = 0; i < monthKeys.length; i++) {
+    // Power BI Style Charts
+    function renderCharts() {
+        let latestMonth = null;
+        let latestData = null;
+        for (let i = monthKeys.length - 1; i >= 0; i--) {
             const key = monthKeys[i];
             const data = monthlyData[key];
-            labels.push(months[i].substring(0, 3));
             if (data && data.sales && data.sales > 0) {
-                const fcPercent = getFoodCostPercentage(data.sales, data.foodCost);
-                fcData.push(fcPercent);
-                salesData.push(data.sales);
-            } else {
-                fcData.push(0);
-                salesData.push(0);
+                latestMonth = months[i];
+                latestData = data;
+                break;
             }
         }
 
-        const ctx = document.getElementById('foodCostChart').getContext('2d');
-        if (chart) chart.destroy();
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        if (chartPie) chartPie.destroy();
         
-        chart = new Chart(ctx, {
-            type: 'line',
+        if (latestData) {
+            const total = latestData.foodCost + latestData.beverage + latestData.packaging + latestData.other;
+            const labels = currentLang === 'en' ? ['Food Cost', 'Beverage', 'Packaging', 'Other'] : ['تكلفة الطعام', 'المشروبات', 'التغليف', 'أخرى'];
+            chartPie = new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: [latestData.foodCost, latestData.beverage, latestData.packaging, latestData.other],
+                        backgroundColor: ['#e50914', '#00d4ff', '#f59e0b', '#7b2cbf'],
+                        borderWidth: 2,
+                        borderColor: '#0a0c15'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#a0a8c0', font: { size: 11 } } },
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.label}: SAR ${ctx.raw.toLocaleString()} (${((ctx.raw/total)*100).toFixed(1)}%)` } }
+                    },
+                    cutout: '60%'
+                }
+            });
+        } else {
+            chartPie = new Chart(pieCtx, { type: 'doughnut', data: { labels: ['No Data'], datasets: [{ data: [1], backgroundColor: ['#333'] }] }, options: { responsive: true } });
+        }
+
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        if (chartBar) chartBar.destroy();
+        
+        const labels = months.slice(0, 6).map(m => m.substring(0, 3));
+        const fcData = labels.map((_, idx) => {
+            const key = monthKeys[idx];
+            const data = monthlyData[key];
+            return data && data.sales ? getFoodCostPercentage(data.sales, data.foodCost) : 0;
+        });
+
+        chartBar = new Chart(barCtx, {
+            type: 'bar',
             data: {
                 labels: labels,
-                datasets: [
-                    {
-                        label: 'Food Cost %',
-                        data: fcData,
-                        borderColor: '#e50914',
-                        backgroundColor: 'rgba(229, 9, 20, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 5,
-                        pointBackgroundColor: '#e50914',
-                        pointBorderColor: 'white',
-                        pointBorderWidth: 2,
-                        yAxisID: 'y'
-                    },
-                    {
-                        label: 'Sales (SAR)',
-                        data: salesData,
-                        borderColor: '#00d4ff',
-                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#00d4ff',
-                        pointBorderColor: 'white',
-                        pointBorderWidth: 1,
-                        yAxisID: 'y1'
-                    }
-                ]
+                datasets: [{
+                    label: currentLang === 'en' ? 'Food Cost %' : 'نسبة تكلفة الطعام %',
+                    data: fcData,
+                    backgroundColor: fcData.map(v => v <= 28 ? 'rgba(16,185,129,0.7)' : (v <= 32 ? 'rgba(245,158,11,0.7)' : 'rgba(229,9,20,0.7)')),
+                    borderColor: fcData.map(v => v <= 28 ? '#10b981' : (v <= 32 ? '#f59e0b' : '#e50914')),
+                    borderWidth: 2,
+                    borderRadius: 6
+                }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: true,
-                interaction: { mode: 'index', intersect: false },
+                maintainAspectRatio: false,
                 plugins: {
-                    tooltip: { mode: 'index' },
-                    legend: { position: 'top', labels: { color: '#a0a8c0' } }
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: (ctx) => `${ctx.raw.toFixed(1)}%` } }
                 },
                 scales: {
-                    y: {
-                        title: { display: true, text: 'Food Cost %', color: '#e50914' },
-                        min: 0,
-                        max: 45,
-                        grid: { color: 'rgba(128,128,128,0.1)' },
-                        ticks: { callback: (v) => v + '%' }
-                    },
-                    y1: {
-                        position: 'right',
-                        title: { display: true, text: 'Sales (SAR)', color: '#00d4ff' },
-                        grid: { drawOnChartArea: false },
-                        ticks: { callback: (v) => 'SAR ' + (v / 1000).toFixed(0) + 'K' }
-                    },
-                    x: { ticks: { color: '#a0a8c0' }, grid: { display: false } }
+                    y: { min: 0, max: 45, grid: { color: 'rgba(128,128,128,0.1)' }, ticks: { color: '#a0a8c0', callback: (v) => v + '%' } },
+                    x: { grid: { display: false }, ticks: { color: '#a0a8c0' } }
                 }
             }
         });
     }
 
-    // Render all components
     function renderAll() {
         renderTable();
-        updateChart();
+        renderCharts();
         calculateKPIs();
         generateAIInsights();
         populateMonthDropdown();
+        updateGuide();
+        updateLanguage();
     }
 
-    // Populate month dropdown
     function populateMonthDropdown() {
         const select = document.getElementById('dataMonth');
         select.innerHTML = '';
@@ -604,25 +855,29 @@
         });
     }
 
-    // Save data from input
     function saveCurrentData() {
         const monthKey = document.getElementById('dataMonth').value;
         const sales = parseFloat(document.getElementById('salesInput').value);
         const foodCost = parseFloat(document.getElementById('foodCostInput').value);
+        const beverage = parseFloat(document.getElementById('beverageCostInput').value) || 0;
+        const packaging = parseFloat(document.getElementById('packagingCostInput').value) || 0;
+        const other = parseFloat(document.getElementById('otherCostInput').value) || 0;
         
         if (isNaN(sales) || isNaN(foodCost)) {
-            showToast('Please enter valid numbers for sales and food cost', 'error');
+            showToast(currentLang === 'en' ? 'Please enter valid numbers for sales and food cost' : 'الرجاء إدخال أرقام صحيحة للمبيعات وتكلفة الطعام', 'error');
             return;
         }
         
-        monthlyData[monthKey] = { sales: sales, foodCost: foodCost };
+        monthlyData[monthKey] = { sales, foodCost, beverage, packaging, other };
         saveData();
         renderAll();
-        showToast(`Data saved for ${months[monthKeys.indexOf(monthKey)]}`);
+        showToast(currentLang === 'en' ? `Data saved for ${months[monthKeys.indexOf(monthKey)]}` : `تم حفظ البيانات لـ ${months[monthKeys.indexOf(monthKey)]}`);
         
-        // Clear inputs
         document.getElementById('salesInput').value = '';
         document.getElementById('foodCostInput').value = '';
+        document.getElementById('beverageCostInput').value = '';
+        document.getElementById('packagingCostInput').value = '';
+        document.getElementById('otherCostInput').value = '';
     }
 
     function showToast(msg, type = 'success') {
@@ -639,13 +894,13 @@
         setTimeout(() => toast.remove(), 3000);
     }
 
-    // Build month selector buttons
     function buildMonthSelector() {
         const container = document.getElementById('monthSelector');
         container.innerHTML = '';
         months.forEach((month, idx) => {
             const btn = document.createElement('button');
             btn.className = 'month-btn';
+            if (month === 'January' || month === 'February') btn.classList.add('highlight');
             btn.textContent = month.substring(0, 3);
             btn.dataset.monthIndex = idx;
             btn.onclick = () => {
@@ -653,12 +908,11 @@
                 btn.classList.add('active');
                 currentView = 'selected';
                 renderTable();
-                showToast(`Showing data for ${month}`);
+                showToast(currentLang === 'en' ? `Showing data for ${month}` : `عرض بيانات ${month}`);
             };
             container.appendChild(btn);
         });
         
-        // Add "All Months" button
         const allBtn = document.createElement('button');
         allBtn.className = 'month-btn active';
         allBtn.textContent = 'All';
@@ -667,47 +921,124 @@
             allBtn.classList.add('active');
             currentView = 'all';
             renderTable();
-            showToast('Showing all months');
+            showToast(currentLang === 'en' ? 'Showing all months' : 'عرض كل الأشهر');
         };
         container.insertBefore(allBtn, container.firstChild);
     }
 
-    // Toggle all months view
     function toggleAllMonths() {
         if (currentView === 'all') {
             currentView = 'selected';
             const activeBtn = document.querySelector('.month-btn.active');
             if (activeBtn && activeBtn.dataset.monthIndex !== undefined) {
                 renderTable();
-                showToast('Showing selected month only');
             }
         } else {
             currentView = 'all';
             document.querySelectorAll('.month-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('.month-btn').classList.add('active');
             renderTable();
-            showToast('Showing all months');
         }
     }
 
-    // Event Listeners
-    document.getElementById('saveDataBtn').addEventListener('click', saveCurrentData);
-    document.getElementById('toggleAllBtn').addEventListener('click', toggleAllMonths);
-    
-    // Style for animation
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+    // Export Functions
+    function exportExcel() {
+        const data = [];
+        data.push(['Month', 'Sales (SAR)', 'Food Cost (SAR)', 'Beverage (SAR)', 'Packaging (SAR)', 'Other (SAR)', 'Food Cost %', 'Status']);
+        for (let i = 0; i < monthKeys.length; i++) {
+            const key = monthKeys[i];
+            const d = monthlyData[key];
+            if (d && d.sales && d.sales > 0) {
+                const fcPercent = getFoodCostPercentage(d.sales, d.foodCost);
+                data.push([months[i], d.sales, d.foodCost, d.beverage || 0, d.packaging || 0, d.other || 0, fcPercent.toFixed(1) + '%', getStatusText(fcPercent)]);
+            }
         }
-    `;
-    document.head.appendChild(style);
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Food Cost');
+        XLSX.writeFile(wb, `Food_Cost_Report.xlsx`);
+        showToast(currentLang === 'en' ? 'Excel exported successfully' : 'تم تصدير إكسيل بنجاح');
+    }
 
-    // Initialize
-    loadData();
-    buildMonthSelector();
-    populateMonthDropdown();
+    function exportPdf() {
+        const printWin = window.open('', '_blank', 'width=1200,height=800');
+        let rows = '';
+        for (let i = 0; i < monthKeys.length; i++) {
+            const key = monthKeys[i];
+            const d = monthlyData[key];
+            if (d && d.sales && d.sales > 0) {
+                const fcPercent = getFoodCostPercentage(d.sales, d.foodCost);
+                rows += `<tr><td>${months[i]}</td><td>${d.sales.toLocaleString()}</td><td>${d.foodCost.toLocaleString()}</td><td>${(d.beverage||0).toLocaleString()}</td><td>${(d.packaging||0).toLocaleString()}</td><td>${(d.other||0).toLocaleString()}</td><td>${fcPercent.toFixed(1)}%</td><td>${getStatusText(fcPercent)}</td></tr>`;
+            }
+        }
+        const totalSales = Object.values(monthlyData).reduce((a, b) => a + (b.sales || 0), 0);
+        const totalFood = Object.values(monthlyData).reduce((a, b) => a + (b.foodCost || 0), 0);
+        const avgFC = totalSales > 0 ? (totalFood / totalSales) * 100 : 0;
+
+        printWin.document.write(`
+            <html><head><title>Food Cost Report</title>
+            <style>body{font-family:'Inter',sans-serif;padding:30px;background:#0a0c15;color:#eaf0fa;} h1{color:#00d4ff;} table{width:100%;border-collapse:collapse;margin-top:20px;} th,td{border:1px solid #2b3f5a;padding:10px;text-align:left;} th{background:#1a2538;color:#7ba9d9;} .summary{margin:20px 0;padding:20px;background:#1a2538;border-radius:12px;} .highlight{color:#f5c842;}
+</style></head>
+<body><h1>📊 Food Cost Intelligence Report</h1>
+<div class="summary"><strong>Summary:</strong> Total Sales: SAR ${totalSales.toLocaleString()} | Total Food Cost: SAR ${totalFood.toLocaleString()} | Avg Food Cost: ${avgFC.toFixed(1)}%</div>
+<table><thead><tr><th>Month</th><th>Sales (SAR)</th><th>Food Cost</th><th>Beverage</th><th>Packaging</th><th>Other</th><th>Food Cost %</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>
+<p style="margin-top:20px;color:#6b7280;">Generated: ${new Date().toLocaleString()}</p></body></html>
+`);
+printWin.document.close();
+setTimeout(() => { printWin.print(); }, 500);
+showToast(currentLang === 'en' ? 'PDF generated' : 'تم إنشاء PDF');
+}
+
+// ======================== LANGUAGE ========================
+function updateLanguage() {
+const t = translations[currentLang];
+document.getElementById('titleMain').innerText = t.titleMain;
+document.getElementById('guideTitle').innerText = t.guideTitle;
+document.querySelectorAll('[data-key]').forEach(el => {
+const key = el.getAttribute('data-key');
+if (t[key]) el.innerText = t[key];
+});
+document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+// Update guide labels
+document.querySelectorAll('.guide-item .label').forEach(el => {
+const key = el.getAttribute('data-key');
+if (t[key]) el.innerText = t[key];
+});
+// Re-render AI insights with new language
+generateAIInsights();
+// Update chart labels
+renderCharts();
+}
+
+document.getElementById('langEn').addEventListener('click', () => {
+currentLang = 'en';
+document.getElementById('langEn').classList.add('active');
+document.getElementById('langAr').classList.remove('active');
+updateLanguage();
+renderTable();
+});
+document.getElementById('langAr').addEventListener('click', () => {
+currentLang = 'ar';
+document.getElementById('langAr').classList.add('active');
+document.getElementById('langEn').classList.remove('active');
+updateLanguage();
+renderTable();
+});
+
+// Event Listeners
+document.getElementById('saveDataBtn').addEventListener('click', saveCurrentData);
+document.getElementById('toggleAllBtn').addEventListener('click', toggleAllMonths);
+document.getElementById('exportExcelBtn').addEventListener('click', exportExcel);
+document.getElementById('exportPdfBtn').addEventListener('click', exportPdf);
+
+const style = document.createElement('style');
+style.textContent = `@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`;
+document.head.appendChild(style);
+
+// Initialize
+buildMonthSelector();
+populateMonthDropdown();
+loadData();
 </script>
 </body>
 </html>
