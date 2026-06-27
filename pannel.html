@@ -1,77 +1,44 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>SADWAP | Corporate Phone Book</title>
-    <!-- Google Fonts -->
+    <title>SADWAP | Corporate Phone Book · Dark</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         :root {
-            --primary: #1e4a76;
-            --primary-dark: #0f3b5c;
-            --primary-soft: #eef2f8;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-            --card-bg: #ffffff;
-            --border: #e5e7eb;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --primary: #5b8cbf;
+            --primary-dark: #4a7aaa;
+            --success: #2e9b6e;
+            --danger: #c94a4f;
+            --warning: #d4a02b;
+            --highlight-yellow: #f5c842;
+            --gray-50: #0e1624;
+            --gray-100: #1a2538;
+            --gray-200: #2a3a52;
+            --gray-500: #8a9bb0;
+            --gray-600: #b0c2d6;
+            --gray-700: #d0def0;
+            --gray-800: #eaf0fa;
+            --card-bg: #162033;
+            --border: #2b3f5a;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.6);
             --radius-card: 20px;
-            --radius-element: 12px;
             --touch-target: 44px;
+            --bg-body: #0b121f;
         }
-
-        body.dark {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --primary-soft: #1e293b;
-            --gray-50: #0f172a;
-            --gray-100: #1e293b;
-            --gray-200: #334155;
-            --gray-500: #94a3b8;
-            --gray-600: #cbd5e1;
-            --gray-700: #e2e8f0;
-            --gray-800: #f1f5f9;
-            --card-bg: #1e293b;
-            --border: #334155;
-        }
-
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--gray-100);
+            background: var(--bg-body);
             color: var(--gray-800);
-            transition: background 0.2s, color 0.2s;
             padding: 20px;
             min-height: 100vh;
         }
+        .container { max-width: 1400px; margin: 0 auto; }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Header */
         .header-card {
             background: var(--card-bg);
             border-radius: var(--radius-card);
@@ -85,37 +52,81 @@
             flex-wrap: wrap;
             gap: 16px;
         }
-        .logo-area h1 { font-size: 1.5rem; font-weight: 700; margin: 0; color: var(--primary); }
+        .logo-area h1 { font-size: 1.5rem; font-weight: 700; margin:0; color: var(--primary); }
         .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
         .lang-switch { display: flex; gap: 6px; background: var(--gray-200); padding: 4px; border-radius: 40px; }
-        .lang-btn { background: transparent; border: none; padding: 6px 18px; border-radius: 32px; font-weight: 600; font-size: 0.75rem; cursor: pointer; color: var(--gray-600); transition: all 0.2s; }
-        .lang-btn.active { background: var(--primary); color: white; }
-        .theme-toggle { background: var(--gray-200); border: none; border-radius: 40px; padding: 6px 18px; display: flex; align-items: center; gap: 6px; color: var(--gray-700); font-weight: 500; font-size: 0.75rem; cursor: pointer; }
+        .lang-btn { background: transparent; border: none; padding: 6px 18px; border-radius: 32px; font-weight: 600; font-size: 0.75rem; cursor: pointer; color: var(--gray-500); transition: all 0.2s; }
+        .lang-btn.active { background: var(--primary); color: #0b121f; }
 
-        /* Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        .stat-card {
+        /* HIGHLIGHTED REQUIRED CONTACTS SECTION */
+        .required-section {
             background: var(--card-bg);
             border-radius: var(--radius-card);
-            padding: 16px;
-            border: 1px solid var(--border);
-            text-align: center;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            border: 2px solid var(--highlight-yellow);
+            box-shadow: 0 0 24px rgba(245,200,66,0.12);
+            position: relative;
         }
+        .required-section::before {
+            content: "⭐ PRIORITY";
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: var(--highlight-yellow);
+            color: #0b121f;
+            padding: 2px 14px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .required-title {
+            font-weight: 700;
+            color: var(--highlight-yellow);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+        .required-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }
+        .required-contact {
+            background: var(--gray-50);
+            border-radius: var(--radius-element);
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+        .required-contact:hover { border-color: var(--highlight-yellow); }
+        .required-contact .info { flex: 1; min-width: 0; }
+        .required-contact .name { font-weight: 600; font-size: 0.85rem; color: var(--gray-700); }
+        .required-contact .details { font-size: 0.7rem; color: var(--gray-500); display: flex; gap: 8px; flex-wrap: wrap; }
+        .required-contact .actions { display: flex; gap: 4px; flex-shrink: 0; }
+        .required-contact .actions .btn-sm { padding: 4px 10px; font-size: 0.65rem; border-radius: 30px; border: none; cursor: pointer; }
+        .required-contact .actions .btn-call { background: var(--success); color: #fff; }
+        .required-contact .actions .btn-email { background: var(--primary); color: #0b121f; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--card-bg); border-radius: var(--radius-card); padding: 16px; border: 1px solid var(--border); text-align: center; }
         .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
         .stat-label { font-size: 0.7rem; text-transform: uppercase; color: var(--gray-500); letter-spacing: 0.5px; }
 
-        /* Add Contact Form */
         .form-card {
             background: var(--card-bg);
             border-radius: var(--radius-card);
             padding: 20px;
             margin-bottom: 24px;
             border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
         }
         .form-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: var(--primary); }
         .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px; }
@@ -129,18 +140,27 @@
             width: 100%;
             min-height: var(--touch-target);
         }
-        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30,74,118,0.1); }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91,140,191,0.2); }
+        .form-control::placeholder { color: var(--gray-500); }
         .btn { border-radius: 40px; padding: 12px 24px; font-weight: 600; font-size: 0.8rem; border: none; cursor: pointer; transition: opacity 0.2s; min-height: var(--touch-target); display: inline-flex; align-items: center; gap: 8px; }
-        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary { background: var(--primary); color: #0b121f; }
         .btn-primary:active { opacity: 0.8; }
-        .btn-success { background: var(--success); color: white; }
-        .btn-outline { background: var(--gray-100); border: 1px solid var(--border); color: var(--gray-700); }
+        .btn-outline { background: var(--gray-100); border: 1px solid var(--border); color: var(--gray-600); }
+        .btn-warning { background: var(--warning); color: #0b121f; }
 
-        /* Search */
         .search-bar { margin-bottom: 20px; }
-        .search-input { width: 100%; padding: 14px 20px; border-radius: 40px; border: 1px solid var(--border); background: var(--card-bg); color: var(--gray-800); font-size: 0.9rem; }
+        .search-input {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--gray-800);
+            font-size: 0.9rem;
+        }
+        .search-input::placeholder { color: var(--gray-500); }
+        .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91,140,191,0.15); }
 
-        /* Contact Grid */
         .contacts-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -152,24 +172,26 @@
             border: 1px solid var(--border);
             padding: 20px;
             transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: var(--shadow-sm);
         }
         .contact-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
         .contact-name { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
         .contact-job { font-size: 0.75rem; color: var(--gray-500); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
         .contact-detail { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 0.8rem; }
         .contact-detail i { width: 24px; color: var(--primary); font-size: 1rem; }
-        .contact-detail a { color: var(--gray-700); text-decoration: none; word-break: break-all; }
+        .contact-detail a { color: var(--gray-600); text-decoration: none; word-break: break-all; }
         .contact-detail a:hover { color: var(--primary); text-decoration: underline; }
-        .contact-actions { display: flex; gap: 8px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
-        .action-btn { background: none; border: none; padding: 8px 12px; border-radius: 40px; cursor: pointer; font-size: 0.7rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s; }
-        .action-btn.call { background: var(--success); color: white; }
-        .action-btn.email { background: var(--primary); color: white; }
-        .action-btn.delete { background: var(--danger); color: white; }
+        .contact-actions { display: flex; gap: 8px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+        .action-btn { background: none; border: none; padding: 8px 12px; border-radius: 40px; cursor: pointer; font-size: 0.7rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: opacity 0.2s; color: var(--gray-600); }
+        .action-btn.call { background: var(--success); color: #fff; }
+        .action-btn.email { background: var(--primary); color: #0b121f; }
+        .action-btn.delete { background: var(--danger); color: #fff; }
+        .action-btn.required-toggle { background: var(--warning); color: #0b121f; }
         .action-btn:active { opacity: 0.8; }
 
         .empty-state { text-align: center; padding: 60px 20px; color: var(--gray-500); }
+        .empty-state i { font-size: 3rem; opacity: 0.5; margin-bottom: 12px; display: block; }
 
-        /* Toast */
         .toast-notify {
             position: fixed;
             bottom: 20px;
@@ -187,16 +209,17 @@
             font-size: 0.8rem;
             max-width: 400px;
             margin: 0 auto;
+            color: var(--gray-800);
+            border: 1px solid var(--border);
         }
 
-        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             backdrop-filter: blur(4px);
             display: none;
             align-items: center;
@@ -212,38 +235,43 @@
             width: 100%;
             border: 1px solid var(--border);
         }
-        .modal-content h3 { margin-bottom: 16px; }
+        .modal-content h3 { margin-bottom: 16px; color: var(--gray-800); }
         .modal-buttons { display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end; }
 
         @media (max-width: 640px) {
             body { padding: 12px; }
             .contacts-grid { grid-template-columns: 1fr; }
             .form-row { grid-template-columns: 1fr; }
+            .required-grid { grid-template-columns: 1fr; }
         }
-
         [dir="rtl"] .contact-detail { flex-direction: row-reverse; }
         [dir="rtl"] .contact-detail i { margin-left: 12px; margin-right: 0; }
+        [dir="rtl"] .required-section::before { right: auto; left: 20px; }
+        ::-webkit-scrollbar { width: 6px; background: var(--gray-100); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- Header -->
     <div class="header-card">
         <div class="logo-area"><h1><i class="bi bi-telephone-forward me-2"></i><span id="titleMain">Corporate Phone Book</span></h1></div>
         <div class="controls">
             <div class="lang-switch"><button class="lang-btn active" id="langEn">EN</button><button class="lang-btn" id="langAr">AR</button></div>
-            <button class="theme-toggle" id="themeToggle"><i class="bi bi-moon"></i> <span id="themeText">Dark</span></button>
         </div>
     </div>
 
-    <!-- Stats -->
+    <!-- HIGHLIGHTED REQUIRED CONTACTS SECTION -->
+    <div class="required-section" id="requiredSection">
+        <div class="required-title"><i class="bi bi-star-fill"></i> <span data-key="requiredTitle">Essential Contacts — Always Available</span></div>
+        <div class="required-grid" id="requiredGrid"></div>
+    </div>
+
     <div class="stats-grid">
         <div class="stat-card"><div class="stat-value" id="totalContacts">0</div><div class="stat-label" data-key="totalContacts">TOTAL CONTACTS</div></div>
         <div class="stat-card"><div class="stat-value" id="departments">0</div><div class="stat-label" data-key="departments">DEPARTMENTS</div></div>
         <div class="stat-card"><div class="stat-value" id="lastUpdated">—</div><div class="stat-label" data-key="lastUpdated">LAST UPDATED</div></div>
     </div>
 
-    <!-- Add Contact Form -->
     <div class="form-card">
         <h3><i class="bi bi-person-plus me-2"></i><span data-key="addNewContact">Add New Contact</span></h3>
         <div class="form-row">
@@ -256,32 +284,82 @@
             <input type="email" class="form-control" id="newEmail" placeholder="Email Address">
             <input type="text" class="form-control" id="newLocation" placeholder="Location">
         </div>
-        <div style="display: flex; gap: 12px; margin-top: 12px;">
+        <div style="display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap;">
             <button class="btn btn-primary" id="saveContactBtn"><i class="bi bi-save"></i> <span data-key="saveContact">Save Contact</span></button>
             <button class="btn btn-outline" id="clearFormBtn"><i class="bi bi-arrow-clockwise"></i> <span data-key="clear">Clear</span></button>
+            <button class="btn btn-warning" id="markRequiredBtn"><i class="bi bi-star"></i> <span data-key="markRequired">Mark as Essential</span></button>
         </div>
     </div>
 
-    <!-- Search -->
     <div class="search-bar"><input type="text" class="search-input" id="searchInput" placeholder="🔍 Search by name, job, department or location..."></div>
 
-    <!-- Contacts Grid -->
     <div id="contactsGrid" class="contacts-grid"></div>
-    <div id="emptyState" class="empty-state" style="display: none;"><i class="bi bi-person-circle" style="font-size: 3rem;"></i><p data-key="noContacts">No contacts found</p></div>
+    <div id="emptyState" class="empty-state" style="display: none;"><i class="bi bi-person-circle"></i><p data-key="noContacts">No contacts found</p></div>
 </div>
 
 <div id="toastMsg" class="toast-notify"><i class="bi bi-check-circle-fill"></i> <span id="toastText"></span></div>
 
+<div class="modal-overlay" id="deleteModal"><div class="modal-content"><h3 id="modalTitle">Delete Contact?</h3><p id="modalMessage">Are you sure you want to delete this contact?</p><div class="modal-buttons"><button class="btn btn-outline" id="modalCancel">Cancel</button><button class="btn btn-danger" id="modalConfirm">Delete</button></div></div></div>
+
 <script>
     // ======================== TRANSLATIONS ========================
     const translations = {
-        en: { titleMain: "Corporate Phone Book", totalContacts: "TOTAL CONTACTS", departments: "DEPARTMENTS", lastUpdated: "LAST UPDATED", addNewContact: "Add New Contact", saveContact: "Save Contact", clear: "Clear", noContacts: "No contacts found", call: "Call", email: "Email", delete: "Delete", confirmDelete: "Delete this contact?" },
-        ar: { titleMain: "دفتر الهاتف المؤسسي", totalContacts: "إجمالي جهات الاتصال", departments: "الأقسام", lastUpdated: "آخر تحديث", addNewContact: "إضافة جهة اتصال", saveContact: "حفظ", clear: "مسح", noContacts: "لا توجد جهات اتصال", call: "اتصال", email: "بريد إلكتروني", delete: "حذف", confirmDelete: "حذف جهة الاتصال هذه؟" }
+        en: {
+            titleMain: "Corporate Phone Book",
+            totalContacts: "TOTAL CONTACTS",
+            departments: "DEPARTMENTS",
+            lastUpdated: "LAST UPDATED",
+            addNewContact: "Add New Contact",
+            saveContact: "Save Contact",
+            clear: "Clear",
+            noContacts: "No contacts found",
+            call: "Call",
+            email: "Email",
+            delete: "Delete",
+            confirmDelete: "Delete this contact?",
+            fullName: "Full Name",
+            jobTitle: "Job Title",
+            department: "Department",
+            phoneNumber: "Phone Number",
+            emailAddress: "Email Address",
+            location: "Location",
+            searchPlaceholder: "🔍 Search by name, job, department or location...",
+            requiredTitle: "Essential Contacts — Always Available",
+            markRequired: "Mark as Essential",
+            unmarkRequired: "Remove from Essential"
+        },
+        ar: {
+            titleMain: "دفتر الهاتف المؤسسي",
+            totalContacts: "إجمالي جهات الاتصال",
+            departments: "الأقسام",
+            lastUpdated: "آخر تحديث",
+            addNewContact: "إضافة جهة اتصال جديدة",
+            saveContact: "حفظ",
+            clear: "مسح",
+            noContacts: "لا توجد جهات اتصال",
+            call: "اتصال",
+            email: "بريد إلكتروني",
+            delete: "حذف",
+            confirmDelete: "حذف جهة الاتصال هذه؟",
+            fullName: "الاسم الكامل",
+            jobTitle: "المسمى الوظيفي",
+            department: "القسم",
+            phoneNumber: "رقم الهاتف",
+            emailAddress: "البريد الإلكتروني",
+            location: "الموقع",
+            searchPlaceholder: "🔍 بحث بالاسم أو الوظيفة أو القسم أو الموقع...",
+            requiredTitle: "جهات الاتصال الأساسية — متاحة دائمًا",
+            markRequired: "تحديد كأساسي",
+            unmarkRequired: "إزالة من الأساسي"
+        }
     };
-    let currentLang = "en";
 
-    // Default contacts data
-    let contacts = [
+    let currentLang = "en";
+    let contacts = [];
+    let requiredIds = new Set(); // Track which contacts are marked as essential
+
+    // Default contacts with some marked as essential
+    const defaultContacts = [
         { id: 1, name: "Amal A. Al Enazi", job: "HR Director", dept: "HR", phone: "+966555555551", email: "aalenaizi@kudu.com.sa", location: "HQ" },
         { id: 2, name: "Hani Sowa'ilim", job: "HR Manager", dept: "HR", phone: "+966503404445", email: "hswailim@kudu.com.sa", location: "Riyadh-HO" },
         { id: 3, name: "PPVthran P", job: "Area Manager - Operation", dept: "Operation", phone: "+966561825680", email: "ks-022@kudu.com.sa", location: "Abha" },
@@ -293,21 +371,32 @@
     ];
 
     let nextId = 9;
+    let deleteTargetId = null;
 
-    // Load from localStorage
     function loadData() {
-        const saved = localStorage.getItem('corporate_phonebook');
+        const saved = localStorage.getItem('corporate_phonebook_dark_v3');
         if (saved) {
             const parsed = JSON.parse(saved);
             contacts = parsed.contacts;
             nextId = parsed.nextId;
+            requiredIds = new Set(parsed.requiredIds || []);
+        } else {
+            contacts = defaultContacts.map(c => ({ ...c }));
+            nextId = 9;
+            // Mark first 3 as required by default
+            requiredIds = new Set([1, 2, 5]);
         }
-        renderContacts();
+        renderAll();
         updateStats();
+        updatePlaceholders();
     }
 
     function saveData() {
-        localStorage.setItem('corporate_phonebook', JSON.stringify({ contacts, nextId }));
+        localStorage.setItem('corporate_phonebook_dark_v3', JSON.stringify({
+            contacts,
+            nextId,
+            requiredIds: Array.from(requiredIds)
+        }));
         updateStats();
     }
 
@@ -318,9 +407,51 @@
         document.getElementById('lastUpdated').innerText = new Date().toLocaleDateString();
     }
 
+    function updatePlaceholders() {
+        const t = translations[currentLang];
+        document.getElementById('newName').placeholder = t.fullName;
+        document.getElementById('newJob').placeholder = t.jobTitle;
+        document.getElementById('newDept').placeholder = t.department;
+        document.getElementById('newPhone').placeholder = t.phoneNumber;
+        document.getElementById('newEmail').placeholder = t.emailAddress;
+        document.getElementById('newLocation').placeholder = t.location;
+        document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+    }
+
+    function renderRequiredContacts() {
+        const grid = document.getElementById('requiredGrid');
+        const requiredContacts = contacts.filter(c => requiredIds.has(c.id));
+        
+        if (requiredContacts.length === 0) {
+            grid.innerHTML = `<div style="color:var(--gray-500);font-size:0.8rem;padding:8px 0;" data-key="noRequired">No essential contacts marked yet. Use the ★ button to add.</div>`;
+            applyButtonTexts();
+            return;
+        }
+
+        grid.innerHTML = requiredContacts.map(c => `
+            <div class="required-contact" data-id="${c.id}">
+                <div class="info">
+                    <div class="name">${escapeHtml(c.name)}</div>
+                    <div class="details">
+                        <span>${escapeHtml(c.job || '—')}</span>
+                        <span>•</span>
+                        <span>${escapeHtml(c.dept || '—')}</span>
+                        <span>•</span>
+                        <span>${c.phone}</span>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="btn-sm btn-call" onclick="makeCall('${c.phone}')"><i class="bi bi-telephone-fill"></i></button>
+                    ${c.email ? `<button class="btn-sm btn-email" onclick="sendEmail('${c.email}')"><i class="bi bi-envelope-fill"></i></button>` : ''}
+                    <button class="btn-sm" style="background:var(--danger);color:#fff;padding:4px 8px;" onclick="toggleRequired(${c.id})"><i class="bi bi-star-fill"></i></button>
+                </div>
+            </div>
+        `).join('');
+    }
+
     function renderContacts() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const filtered = contacts.filter(c => 
+        const filtered = contacts.filter(c =>
             c.name.toLowerCase().includes(searchTerm) ||
             (c.job && c.job.toLowerCase().includes(searchTerm)) ||
             (c.dept && c.dept.toLowerCase().includes(searchTerm)) ||
@@ -337,9 +468,11 @@
         }
         emptyState.style.display = 'none';
         
-        grid.innerHTML = filtered.map(c => `
+        grid.innerHTML = filtered.map(c => {
+            const isRequired = requiredIds.has(c.id);
+            return `
             <div class="contact-card" data-id="${c.id}">
-                <div class="contact-name">${escapeHtml(c.name)}</div>
+                <div class="contact-name">${escapeHtml(c.name)} ${isRequired ? '<i class="bi bi-star-fill" style="color:var(--warning);font-size:0.8rem;"></i>' : ''}</div>
                 <div class="contact-job">${escapeHtml(c.job || '—')} • ${escapeHtml(c.dept || '—')}</div>
                 <div class="contact-detail"><i class="bi bi-telephone"></i> <a href="tel:${c.phone}">${c.phone}</a></div>
                 ${c.email ? `<div class="contact-detail"><i class="bi bi-envelope"></i> <a href="mailto:${c.email}">${c.email}</a></div>` : ''}
@@ -347,13 +480,18 @@
                 <div class="contact-actions">
                     <button class="action-btn call" onclick="makeCall('${c.phone}')"><i class="bi bi-telephone-fill"></i> <span data-key="call">Call</span></button>
                     ${c.email ? `<button class="action-btn email" onclick="sendEmail('${c.email}')"><i class="bi bi-envelope-fill"></i> <span data-key="email">Email</span></button>` : ''}
-                    <button class="action-btn delete" onclick="deleteContact(${c.id})"><i class="bi bi-trash-fill"></i> <span data-key="delete">Delete</span></button>
+                    <button class="action-btn required-toggle" onclick="toggleRequired(${c.id})"><i class="bi ${isRequired ? 'bi-star-fill' : 'bi-star'}"></i> <span data-key="${isRequired ? 'unmarkRequired' : 'markRequired'}">${isRequired ? 'Essential' : 'Mark'}</span></button>
+                    <button class="action-btn delete" onclick="showDeleteModal(${c.id})"><i class="bi bi-trash-fill"></i> <span data-key="delete">Delete</span></button>
                 </div>
             </div>
-        `).join('');
-        
-        // Re-apply translations for dynamic buttons
+        `}).join('');
         applyButtonTexts();
+        renderRequiredContacts();
+    }
+
+    function renderAll() {
+        renderContacts();
+        renderRequiredContacts();
     }
 
     function applyButtonTexts() {
@@ -361,7 +499,33 @@
         document.querySelectorAll('.action-btn.call span').forEach(el => el.innerText = t.call);
         document.querySelectorAll('.action-btn.email span').forEach(el => el.innerText = t.email);
         document.querySelectorAll('.action-btn.delete span').forEach(el => el.innerText = t.delete);
+        
+        // Required toggle buttons
+        document.querySelectorAll('.action-btn.required-toggle').forEach(el => {
+            const isRequired = el.querySelector('i').classList.contains('bi-star-fill');
+            el.querySelector('span').innerText = isRequired ? t.unmarkRequired : t.markRequired;
+        });
+        
+        // Update required section text
+        document.querySelectorAll('[data-key="noRequired"]').forEach(el => {
+            if (el) el.innerText = currentLang === 'en' ? 'No essential contacts marked yet. Use the ★ button to add.' : 'لم يتم تحديد جهات اتصال أساسية بعد. استخدم زر ★ للإضافة.';
+        });
     }
+
+    window.toggleRequired = function(id) {
+        const contact = contacts.find(c => c.id === id);
+        if (!contact) return;
+        
+        if (requiredIds.has(id)) {
+            requiredIds.delete(id);
+            showToast(currentLang === 'en' ? `Removed ${contact.name} from essential` : `تم إزالة ${contact.name} من الأساسي`, 'info');
+        } else {
+            requiredIds.add(id);
+            showToast(currentLang === 'en' ? `${contact.name} marked as essential` : `تم تحديد ${contact.name} كأساسي`, 'success');
+        }
+        saveData();
+        renderAll();
+    };
 
     window.makeCall = function(phone) {
         window.location.href = `tel:${phone}`;
@@ -373,14 +537,37 @@
         showToast(`Email to ${email}`, 'success');
     };
 
-    window.deleteContact = function(id) {
-        if (confirm(translations[currentLang].confirmDelete)) {
-            contacts = contacts.filter(c => c.id !== id);
+    function showDeleteModal(id) {
+        deleteTargetId = id;
+        document.getElementById('deleteModal').style.display = 'flex';
+        document.getElementById('modalTitle').innerText = translations[currentLang].confirmDelete;
+        document.getElementById('modalMessage').innerText = currentLang === 'en' ? 'Are you sure you want to delete this contact?' : 'هل أنت متأكد من حذف جهة الاتصال هذه؟';
+    }
+
+    document.getElementById('modalCancel').addEventListener('click', () => {
+        document.getElementById('deleteModal').style.display = 'none';
+        deleteTargetId = null;
+    });
+
+    document.getElementById('modalConfirm').addEventListener('click', () => {
+        if (deleteTargetId !== null) {
+            const contact = contacts.find(c => c.id === deleteTargetId);
+            requiredIds.delete(deleteTargetId);
+            contacts = contacts.filter(c => c.id !== deleteTargetId);
             saveData();
-            renderContacts();
-            showToast(translations[currentLang].delete + ' ' + (currentLang === 'en' ? 'successful' : 'ناجح'), 'info');
+            renderAll();
+            showToast(currentLang === 'en' ? `Deleted ${contact?.name || 'contact'}` : `تم حذف ${contact?.name || 'جهة الاتصال'}`, 'info');
+            deleteTargetId = null;
         }
-    };
+        document.getElementById('deleteModal').style.display = 'none';
+    });
+
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+            deleteTargetId = null;
+        }
+    });
 
     function addNewContact() {
         const name = document.getElementById('newName').value.trim();
@@ -402,7 +589,7 @@
         
         contacts.push(newContact);
         saveData();
-        renderContacts();
+        renderAll();
         clearForm();
         showToast(currentLang === 'en' ? 'Contact added successfully' : 'تم إضافة جهة الاتصال', 'success');
     }
@@ -416,12 +603,45 @@
         document.getElementById('newLocation').value = '';
     }
 
+    // Mark current form as required before saving
+    document.getElementById('markRequiredBtn').addEventListener('click', () => {
+        const name = document.getElementById('newName').value.trim();
+        if (!name) {
+            showToast(currentLang === 'en' ? 'Enter a name first' : 'أدخل اسمًا أولاً', 'error');
+            return;
+        }
+        // Check if contact already exists with this name
+        let existing = contacts.find(c => c.name.toLowerCase() === name.toLowerCase());
+        if (existing) {
+            toggleRequired(existing.id);
+        } else {
+            // Create contact first, then mark as required
+            const phone = document.getElementById('newPhone').value.trim() || '+966000000000';
+            const newContact = {
+                id: nextId++,
+                name: name,
+                job: document.getElementById('newJob').value.trim(),
+                dept: document.getElementById('newDept').value.trim(),
+                phone: phone,
+                email: document.getElementById('newEmail').value.trim(),
+                location: document.getElementById('newLocation').value.trim()
+            };
+            contacts.push(newContact);
+            requiredIds.add(newContact.id);
+            saveData();
+            renderAll();
+            clearForm();
+            showToast(currentLang === 'en' ? `Added ${name} as essential` : `تم إضافة ${name} كأساسي`, 'success');
+        }
+    });
+
     function showToast(msg, type = 'success') {
         const toast = document.getElementById('toastMsg');
         document.getElementById('toastText').innerText = msg;
         toast.style.display = 'flex';
-        toast.style.borderLeftColor = type === 'error' ? '#ef4444' : '#10b981';
-        setTimeout(() => toast.style.display = 'none', 2000);
+        toast.style.borderLeftColor = type === 'error' ? '#c94a4f' : '#2e9b6e';
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => toast.style.display = 'none', 2500);
     }
 
     function escapeHtml(str) {
@@ -434,7 +654,6 @@
         });
     }
 
-    // Language & Theme
     function updateLanguage() {
         const t = translations[currentLang];
         document.getElementById('titleMain').innerText = t.titleMain;
@@ -443,8 +662,12 @@
             if (t[key]) el.innerText = t[key];
         });
         document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
-        applyButtonTexts();
-        renderContacts();
+        updatePlaceholders();
+        renderAll();
+        // Update modal texts
+        if (document.getElementById('deleteModal').style.display === 'flex') {
+            document.getElementById('modalTitle').innerText = t.confirmDelete;
+        }
     }
 
     document.getElementById('langEn').addEventListener('click', () => {
@@ -460,26 +683,28 @@
         updateLanguage();
     });
 
-    let darkMode = localStorage.getItem('phonebookDark') === 'true';
-    function applyDarkMode() {
-        if (darkMode) document.body.classList.add('dark');
-        else document.body.classList.remove('dark');
-        document.getElementById('themeText').innerText = darkMode ? 'Light' : 'Dark';
-        document.getElementById('themeToggle').innerHTML = darkMode ? '<i class="bi bi-sun"></i> Light' : '<i class="bi bi-moon"></i> Dark';
-    }
-    document.getElementById('themeToggle').addEventListener('click', () => {
-        darkMode = !darkMode;
-        localStorage.setItem('phonebookDark', darkMode);
-        applyDarkMode();
-    });
-
-    // Event Listeners
     document.getElementById('saveContactBtn').addEventListener('click', addNewContact);
     document.getElementById('clearFormBtn').addEventListener('click', clearForm);
     document.getElementById('searchInput').addEventListener('input', () => renderContacts());
 
+    // Keyboard shortcut: Enter to save
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && document.activeElement &&
+            (document.activeElement.id === 'newName' ||
+             document.activeElement.id === 'newJob' ||
+             document.activeElement.id === 'newDept' ||
+             document.activeElement.id === 'newPhone' ||
+             document.activeElement.id === 'newEmail' ||
+             document.activeElement.id === 'newLocation')) {
+            addNewContact();
+        }
+        if (e.key === 'Escape') {
+            document.getElementById('deleteModal').style.display = 'none';
+            deleteTargetId = null;
+        }
+    });
+
     // Initialize
-    applyDarkMode();
     updateLanguage();
     loadData();
 </script>
