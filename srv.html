@@ -1,250 +1,347 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>SADWAP | Cleaning Task Manager</title>
-    
-    <!-- Bootstrap 5.3.3 CSS -->
+    <title>SADWAP · Cleaning Manager</title>
+    <!-- Bootstrap 5.3.3 + Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    
-    <!-- PDF Export Library -->
+    <!-- html2pdf -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
     <style>
-        :root {
-            --primary: #2c5f8a;
-            --primary-dark: #1e405e;
-            --primary-soft: #eef2f8;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #3b82f6;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-            --card-bg: #ffffff;
-            --border: #e5e7eb;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --radius-card: 20px;
-            --radius-element: 12px;
-            --touch-target: 44px;
-        }
-
-        body.dark {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --primary-soft: #1e293b;
-            --gray-50: #0f172a;
-            --gray-100: #1e293b;
-            --gray-200: #334155;
-            --gray-300: #475569;
-            --gray-400: #64748b;
-            --gray-500: #94a3b8;
-            --gray-600: #cbd5e1;
-            --gray-700: #e2e8f0;
-            --gray-800: #f1f5f9;
-            --card-bg: #1e293b;
-            --border: #334155;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        /* DARK MODE ONLY — remove light toggle */
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--gray-100);
-            color: var(--gray-800);
+            background: #0f172a; 
+            color: #e2e8f0; 
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 16px; 
             transition: background 0.2s, color 0.2s;
-            padding: 0;
-            margin: 0;
         }
-
-        .app-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
+        body.dark { /* keep dark as default */ }
+        .card {
+            background: #1e293b; 
+            border: 1px solid #334155;
+            border-radius: 24px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         }
-
-        @media (max-width: 768px) {
-            .app-container { padding: 12px; }
+        .card-header {
+            background: #0f2a44; 
+            color: white; 
+            border-radius: 24px 24px 0 0 !important;
+            padding: 16px 20px; 
+            font-weight: 600; 
+            border: none;
         }
-
-        /* Header */
-        .header-card {
-            background: var(--card-bg);
-            border-radius: var(--radius-card);
-            padding: 20px 24px;
-            margin-bottom: 24px;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
+        .btn { 
+            border-radius: 40px; 
+            padding: 10px 20px; 
+            font-weight: 600; 
+            font-size: 0.8rem; 
+            min-height: 44px; 
         }
-        .logo-area h1 { font-size: 1.3rem; font-weight: 700; margin: 0; color: var(--primary); letter-spacing: -0.3px; }
-        .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-        .lang-switch { display: flex; gap: 6px; background: var(--gray-200); padding: 4px; border-radius: 40px; }
-        .lang-btn { background: transparent; border: none; padding: 6px 18px; border-radius: 32px; font-weight: 600; font-size: 0.7rem; cursor: pointer; color: var(--gray-600); transition: all 0.2s; }
-        .lang-btn.active { background: var(--primary); color: white; }
-        .theme-toggle { background: var(--gray-200); border: none; border-radius: 40px; padding: 6px 18px; display: flex; align-items: center; gap: 6px; color: var(--gray-700); font-weight: 500; font-size: 0.7rem; }
-
-        /* Store Info */
-        .store-card {
-            background: var(--primary);
-            border-radius: var(--radius-card);
-            padding: 16px 20px;
-            margin-bottom: 24px;
-            color: white;
+        .btn-primary { background: #2563eb; border: none; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-success { background: #0b7e4b; border: none; }
+        .btn-danger { background: #b91c1c; }
+        .btn-outline-secondary { 
+            background: #1e293b; 
+            border: 1px solid #475569; 
+            color: #e2e8f0; 
         }
-        .store-card .form-control { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: white; border-radius: 40px; padding: 10px 16px; font-size: 0.85rem; }
-        .store-card .form-control::placeholder { color: rgba(255,255,255,0.6); }
-        .store-card .form-label { font-size: 0.7rem; margin-bottom: 4px; opacity: 0.9; }
-
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-        @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
-        .stat-card { background: var(--card-bg); border-radius: var(--radius-card); padding: 16px; border: 1px solid var(--border); text-align: center; transition: transform 0.2s; }
-        .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-        .stat-title { font-size: 0.65rem; text-transform: uppercase; font-weight: 600; color: var(--gray-500); letter-spacing: 0.3px; }
-        .stat-value { font-size: 1.6rem; font-weight: 700; margin: 4px 0; }
-        .stat-icon { font-size: 0.9rem; }
-
-        /* Cards */
-        .card { background: var(--card-bg); border-radius: var(--radius-card); border: 1px solid var(--border); margin-bottom: 24px; overflow: hidden; }
-        .card-header { background: var(--primary); color: white; padding: 16px 20px; font-weight: 600; border: none; }
-        .card-body { padding: 20px; }
-
-        /* Camera */
-        .camera-container { background: var(--gray-900); border-radius: var(--radius-element); overflow: hidden; min-height: 240px; position: relative; }
-        #videoElement { width: 100%; height: 240px; object-fit: cover; display: none; }
-        .camera-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 240px; color: var(--gray-500); }
-        .photo-progress { background: var(--gray-100); border-radius: var(--radius-element); padding: 12px; margin-bottom: 16px; }
-        .progress { height: 8px; border-radius: 10px; }
-
-        /* Photo Gallery */
-        .photo-thumbnails { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px; margin-top: 12px; }
-        .photo-thumbnail { position: relative; aspect-ratio: 1; border-radius: var(--radius-element); overflow: hidden; border: 2px solid var(--border); cursor: pointer; }
+        .btn-outline-secondary:hover { background: #2d3b52; color: white; }
+        .form-control, .form-select {
+            background: #1e293b; 
+            border: 1px solid #475569; 
+            color: #e2e8f0;
+            border-radius: 40px; 
+            padding: 10px 16px; 
+        }
+        .form-control::placeholder { color: #94a3b8; }
+        .form-control:focus, .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+        }
+        .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin: 20px 0; }
+        @media (max-width:600px){ .stats-grid { grid-template-columns: repeat(2,1fr); } }
+        .stat-card { 
+            background: #1e293b; 
+            border-radius: 20px; 
+            padding: 16px; 
+            text-align: center; 
+            border: 1px solid #334155;
+        }
+        .stat-title { 
+            font-size: 0.6rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            color: #94a3b8; 
+        }
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: #f1f5f9; }
+        .camera-container { 
+            background: #0b1a2a; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            min-height: 200px; 
+            position: relative; 
+            border: 1px solid #334155;
+        }
+        #videoElement { width: 100%; height: 200px; object-fit: cover; display: none; }
+        .camera-placeholder { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 200px; 
+            color: #64748b; 
+        }
+        .photo-thumbnails { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(70px,1fr)); 
+            gap: 10px; 
+            margin-top: 12px; 
+        }
+        .photo-thumbnail { 
+            position: relative; 
+            aspect-ratio: 1; 
+            border-radius: 16px; 
+            overflow: hidden; 
+            border: 2px solid #334155; 
+            background: #1e293b; 
+        }
         .photo-thumbnail img { width: 100%; height: 100%; object-fit: cover; }
-        .photo-number { position: absolute; top: 4px; left: 4px; background: var(--primary); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; }
-        .delete-photo { position: absolute; top: 4px; right: 4px; background: var(--danger); color: white; border: none; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-
-        /* Task Cards */
-        .task-card { background: var(--card-bg); border-radius: var(--radius-card); padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); border-left-width: 4px; transition: all 0.2s; }
-        .task-card.high-priority { border-left-color: var(--danger); }
-        .task-card.medium-priority { border-left-color: var(--warning); }
-        .task-card.low-priority { border-left-color: var(--success); }
-        .task-images { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
-        .task-image { width: 60px; height: 60px; object-fit: cover; border-radius: var(--radius-element); cursor: pointer; border: 1px solid var(--border); }
-
-        /* Crew Members */
-        .crew-member, .team-member { display: inline-flex; align-items: center; background: var(--primary-soft); color: var(--primary); padding: 4px 12px; border-radius: 40px; margin: 4px; font-size: 0.75rem; font-weight: 500; gap: 6px; }
-        .remove-crew, .remove-team-member { background: none; border: none; color: inherit; cursor: pointer; font-size: 1rem; display: flex; align-items: center; }
-
-        /* Form Controls */
-        .form-control, .form-select { background: var(--gray-50); border: 1px solid var(--border); border-radius: 40px; padding: 12px 16px; font-size: 0.85rem; color: var(--gray-800); min-height: var(--touch-target); }
-        .form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(44,95,138,0.1); }
-        textarea.form-control { border-radius: 20px; }
-
-        /* Buttons */
-        .btn { border-radius: 40px; padding: 12px 20px; font-weight: 600; font-size: 0.8rem; border: none; transition: all 0.2s; min-height: var(--touch-target); display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
-        .btn-success { background: var(--success); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-outline { background: var(--gray-100); border: 1px solid var(--border); color: var(--gray-700); }
-
-        /* Toast */
-        .toast-notify { position: fixed; bottom: 20px; left: 20px; right: 20px; background: var(--card-bg); border-left: 4px solid var(--success); padding: 12px 16px; border-radius: 12px; box-shadow: var(--shadow-md); z-index: 1100; display: none; align-items: center; gap: 10px; font-size: 0.8rem; max-width: 400px; margin: 0 auto; }
-
-        /* RTL */
-        [dir="rtl"] .task-card { border-left-width: 1px; border-right-width: 4px; }
-        [dir="rtl"] .task-card.high-priority { border-right-color: var(--danger); border-left-color: var(--border); }
-        [dir="rtl"] .task-card.medium-priority { border-right-color: var(--warning); }
-        [dir="rtl"] .task-card.low-priority { border-right-color: var(--success); }
-
-        @media (max-width: 640px) {
-            .card-body { padding: 16px; }
-            .photo-thumbnails { grid-template-columns: repeat(3, 1fr); }
+        .photo-number { 
+            position: absolute; top: 4px; left: 4px; 
+            background: #2563eb; color: white; 
+            width: 22px; height: 22px; border-radius: 30px; 
+            font-size: 0.6rem; font-weight: 700; 
+            display: flex; align-items: center; justify-content: center; 
         }
+        .delete-photo { 
+            position: absolute; top: 4px; right: 4px; 
+            background: #b91c1c; color: white; 
+            border: none; width: 22px; height: 22px; border-radius: 30px; 
+            font-size: 0.8rem; display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; 
+        }
+        .task-card { 
+            background: #1e293b; 
+            border-radius: 20px; 
+            padding: 16px; 
+            margin-bottom: 14px; 
+            border-left: 5px solid #475569; 
+            border: 1px solid #334155;
+            border-left-width: 5px;
+        }
+        .task-card.high-priority { border-left-color: #ef4444; }
+        .task-card.medium-priority { border-left-color: #f59e0b; }
+        .task-card.low-priority { border-left-color: #10b981; }
+        .task-images { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+        .task-image { 
+            width: 56px; height: 56px; object-fit: cover; 
+            border-radius: 14px; border: 1px solid #334155; 
+            cursor: pointer; 
+        }
+        .crew-member, .team-member { 
+            background: #2d3b52; 
+            color: #b9d0f0; 
+            padding: 4px 14px; 
+            border-radius: 40px; 
+            font-size: 0.75rem; 
+            font-weight: 500; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 6px; 
+            margin: 2px; 
+        }
+        .remove-crew, .remove-team-member { 
+            background: none; 
+            border: none; 
+            color: #94a3b8; 
+            cursor: pointer; 
+            font-size: 1rem; 
+        }
+        .toast-notify { 
+            position: fixed; bottom: 20px; left: 20px; right: 20px; 
+            max-width: 400px; margin: 0 auto; 
+            background: #1e293b; 
+            border-left: 5px solid #3b82f6; 
+            padding: 12px 18px; 
+            border-radius: 16px; 
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5); 
+            z-index: 1200; 
+            display: none; 
+            align-items: center; 
+            gap: 10px; 
+            color: #e2e8f0;
+        }
+        .badge { font-weight: 500; padding: 6px 12px; border-radius: 40px; }
+        .lang-switch { 
+            background: #2d3b52; 
+            border-radius: 40px; 
+            padding: 4px; 
+            display: inline-flex; 
+        }
+        .lang-btn { 
+            background: transparent; 
+            border: none; 
+            padding: 4px 16px; 
+            border-radius: 40px; 
+            font-weight: 600; 
+            font-size: 0.7rem; 
+            cursor: pointer; 
+            color: #94a3b8; 
+        }
+        .lang-btn.active { background: #3b82f6; color: white; }
+        .store-card { 
+            background: #0f2a44; 
+            border-radius: 24px; 
+            padding: 16px 20px; 
+            color: white; 
+            margin-bottom: 20px; 
+        }
+        .store-card .form-control { 
+            background: rgba(255,255,255,0.08); 
+            border: 1px solid rgba(255,255,255,0.15); 
+            color: white; 
+            border-radius: 40px; 
+        }
+        .store-card .form-control::placeholder { color: rgba(255,255,255,0.4); }
+        .store-card .form-label { font-size: 0.65rem; opacity: 0.8; margin-bottom: 2px; }
+        .task-list-wrapper { max-height: 520px; overflow-y: auto; }
+        .btn-group-filter { display: flex; gap: 8px; flex-wrap: wrap; }
+        
+        /* HIGHLIGHT BANNER — yellow, advanced english */
+        .highlight-banner {
+            background: #facc15; 
+            color: #0f172a; 
+            padding: 12px 20px; 
+            border-radius: 60px; 
+            font-weight: 600; 
+            font-size: 0.9rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            margin-bottom: 18px;
+            box-shadow: 0 4px 12px rgba(250,204,21,0.25);
+            border: 1px solid #eab308;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .highlight-banner i { font-size: 1.2rem; color: #0f172a; }
+        .highlight-banner span { 
+            background: rgba(15,23,42,0.08); 
+            padding: 4px 16px; 
+            border-radius: 40px; 
+            font-weight: 700; 
+            letter-spacing: 0.3px;
+        }
+        @media (max-width:640px){ 
+            .highlight-banner { font-size: 0.75rem; padding: 10px 14px; }
+            .photo-thumbnails { grid-template-columns: repeat(3,1fr); }
+        }
+        /* rtl */
+        [dir="rtl"] .task-card { border-left-width: 1px; border-right-width: 5px; }
+        [dir="rtl"] .task-card.high-priority { border-right-color: #ef4444; border-left-color: #334155; }
+        [dir="rtl"] .task-card.medium-priority { border-right-color: #f59e0b; }
+        [dir="rtl"] .task-card.low-priority { border-right-color: #10b981; }
+        /* remove light toggle */
+        .theme-toggle { display: none; }
+        /* scrollbar */
+        .task-list-wrapper::-webkit-scrollbar { width: 6px; }
+        .task-list-wrapper::-webkit-scrollbar-track { background: #1e293b; }
+        .task-list-wrapper::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
     </style>
 </head>
-<body>
+<body class="dark">
 <div class="app-container">
-    <!-- Header -->
-    <div class="header-card">
-        <div class="logo-area"><h1><i class="bi bi-clipboard-check me-2"></i><span id="titleMain">Cleaning Task Manager</span></h1></div>
-        <div class="controls">
-            <div class="lang-switch"><button class="lang-btn active" id="langEn">EN</button><button class="lang-btn" id="langAr">AR</button></div>
-            <button class="theme-toggle" id="themeToggle"><i class="bi bi-moon"></i> <span id="themeText">Dark</span></button>
+    <!-- header with lang ONLY (dark forced) -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h1 style="font-size:1.4rem; font-weight:700; color:#facc15;" id="brandTitle">SADWAP</h1>
+        <div class="d-flex gap-3 align-items-center">
+            <div class="lang-switch">
+                <button class="lang-btn active" id="langEn" data-lang="en">EN</button>
+                <button class="lang-btn" id="langAr" data-lang="ar">AR</button>
+            </div>
+            <!-- theme toggle removed -->
         </div>
     </div>
 
-    <!-- Store Info -->
-    <div class="store-card">
-        <div class="row g-2">
-            <div class="col-md-6"><label class="form-label" data-key="storeNameLabel">Store Name</label><input type="text" class="form-control" id="storeName" value="Fine Dining Restaurant"></div>
-            <div class="col-md-6"><label class="form-label" data-key="locationLabel">Location</label><input type="text" class="form-control" id="storeLocation" value="123 Main Street, City"></div>
-        </div>
+    <!-- YELLOW HIGHLIGHT: advanced english -->
+    <div class="highlight-banner">
+        <i class="bi bi-camera-reels"></i>
+        <span>📸</span> 
+        Cleaning assignments utilise the rear-facing camera to capture superior imagery of critical zones — optimised for tablets and mobile devices.
+        <i class="bi bi-phone"></i>
     </div>
 
-    <!-- Stats -->
+    <!-- store info -->
+    <div class="store-card row g-2">
+        <div class="col-md-6"><label class="form-label" data-key="storeNameLabel">Store Name</label><input type="text" class="form-control" id="storeName" value="Fine Dining Restaurant"></div>
+        <div class="col-md-6"><label class="form-label" data-key="locationLabel">Location</label><input type="text" class="form-control" id="storeLocation" value="123 Main Street"></div>
+    </div>
+
+    <!-- stats -->
     <div class="stats-grid">
-        <div class="stat-card"><div class="stat-title" data-key="totalTasks">TOTAL TASKS</div><div class="stat-value" id="totalTasks">0</div><div class="stat-icon text-primary"><i class="bi bi-clipboard"></i></div></div>
-        <div class="stat-card"><div class="stat-title" data-key="pendingTasks">PENDING</div><div class="stat-value" id="pendingTasks">0</div><div class="stat-icon text-warning"><i class="bi bi-clock"></i></div></div>
-        <div class="stat-card"><div class="stat-title" data-key="inProgressTasks">IN PROGRESS</div><div class="stat-value" id="inProgressTasks">0</div><div class="stat-icon text-info"><i class="bi bi-arrow-repeat"></i></div></div>
-        <div class="stat-card"><div class="stat-title" data-key="completedTasks">COMPLETED</div><div class="stat-value" id="completedTasks">0</div><div class="stat-icon text-success"><i class="bi bi-check-circle"></i></div></div>
+        <div class="stat-card"><div class="stat-title" data-key="totalTasks">TOTAL</div><div class="stat-value" id="totalTasks">0</div></div>
+        <div class="stat-card"><div class="stat-title" data-key="pendingTasks">PENDING</div><div class="stat-value" id="pendingTasks">0</div></div>
+        <div class="stat-card"><div class="stat-title" data-key="inProgressTasks">IN PROGRESS</div><div class="stat-value" id="inProgressTasks">0</div></div>
+        <div class="stat-card"><div class="stat-title" data-key="completedTasks">COMPLETED</div><div class="stat-value" id="completedTasks">0</div></div>
     </div>
 
-    <!-- Team Management -->
-    <div class="card">
-        <div class="card-header"><i class="bi bi-people me-2"></i><span data-key="teamManagement">Team Management</span></div>
+    <!-- team management -->
+    <div class="card mb-4">
+        <div class="card-header" data-key="teamManagement"><i class="bi bi-people me-2"></i>Team Management</div>
         <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-6"><label class="form-label" data-key="addTeamMemberLabel">Add Team Member</label><div class="input-group"><input type="text" class="form-control" id="teamMemberInput" placeholder="Enter name"><button class="btn btn-primary" id="addTeamMemberBtn"><i class="bi bi-plus"></i></button></div></div>
-                <div class="col-md-6"><label class="form-label" data-key="teamMembersLabel">Team Members</label><div id="teamMemberList" class="d-flex flex-wrap gap-1"></div></div>
+            <div class="row g-3 align-items-end">
+                <div class="col-md-5"><label class="form-label" data-key="addTeamMemberLabel">Add member</label><div class="input-group"><input type="text" class="form-control" id="teamMemberInput" placeholder="Name"><button class="btn btn-primary" id="addTeamMemberBtn"><i class="bi bi-plus-lg"></i></button></div></div>
+                <div class="col-md-7"><label class="form-label" data-key="teamMembersLabel">Team members</label><div id="teamMemberList" class="d-flex flex-wrap gap-1"></div></div>
             </div>
         </div>
     </div>
 
-    <!-- Add Task Form & Task List Row -->
+    <!-- add task + list -->
     <div class="row g-4">
         <div class="col-lg-5">
             <div class="card">
-                <div class="card-header"><i class="bi bi-plus-circle me-2"></i><span data-key="addNewTask">Add New Task</span></div>
+                <div class="card-header" data-key="addNewTask"><i class="bi bi-plus-circle me-2"></i>New Task</div>
                 <div class="card-body">
                     <form id="taskForm">
-                        <!-- Camera Section -->
-                        <label class="form-label fw-bold"><span data-key="beforePictures">Before Pictures</span> <span class="text-danger">* (min 3)</span></label>
-                        <div class="photo-progress"><div class="d-flex justify-content-between mb-2"><span id="photoProgressText">0 Photos Taken</span><span class="text-muted small">Minimum 3 required</span></div><div class="progress"><div class="progress-bar bg-success" id="photoProgress" style="width:0%"></div></div></div>
-                        <div class="camera-container"><video id="videoElement" autoplay playsinline></video><canvas id="canvasElement" style="display:none;"></canvas><div id="cameraPlaceholder" class="camera-placeholder"><i class="bi bi-camera display-4"></i><p class="mt-2">Camera not started</p></div></div>
-                        <div class="d-flex gap-2 mt-3"><button type="button" class="btn btn-outline flex-grow-1" id="startCameraBtn"><i class="bi bi-camera-video"></i> Start</button><button type="button" class="btn btn-success flex-grow-1" id="captureBtn" disabled><i class="bi bi-camera"></i> Capture</button><button type="button" class="btn btn-warning flex-grow-1" id="stopCameraBtn" disabled><i class="bi bi-stop-circle"></i> Stop</button></div>
-                        <div id="photoGallery" style="display:none;"><div class="d-flex justify-content-between align-items-center mt-3"><small class="text-muted">Before Pictures</small><button type="button" class="btn btn-sm btn-outline-danger" id="clearAllPhotosBtn"><i class="bi bi-trash"></i> Clear All</button></div><div class="photo-thumbnails" id="photoThumbnails"></div></div>
+                        <!-- camera -->
+                        <label class="fw-bold" data-key="beforePictures">Before Pictures <span class="text-danger">(min 3)</span></label>
+                        <div class="d-flex justify-content-between mt-1"><span id="photoProgressText">0 / 3</span><span class="text-muted small" data-key="minPhotos">minimum 3</span></div>
+                        <div class="progress mb-2" style="height:6px; background:#2d3b52;"><div class="progress-bar bg-success" id="photoProgress" style="width:0%"></div></div>
+                        <div class="camera-container">
+                            <video id="videoElement" autoplay playsinline></video>
+                            <canvas id="canvasElement" style="display:none;"></canvas>
+                            <div id="cameraPlaceholder" class="camera-placeholder"><i class="bi bi-camera display-4"></i><p class="mt-1">Camera off</p></div>
+                        </div>
+                        <div class="d-flex gap-2 mt-2 flex-wrap">
+                            <button type="button" class="btn btn-outline-secondary flex-grow-1" id="startCameraBtn" data-key="startCamera"><i class="bi bi-camera-video"></i> Start</button>
+                            <button type="button" class="btn btn-success flex-grow-1" id="captureBtn" disabled data-key="capture"><i class="bi bi-camera"></i> Capture</button>
+                            <button type="button" class="btn btn-outline-secondary flex-grow-1" id="stopCameraBtn" disabled data-key="stopCamera"><i class="bi bi-stop-circle"></i> Stop</button>
+                        </div>
+                        <div id="photoGallery" style="display:none;" class="mt-2"><div class="d-flex justify-content-between"><small data-key="photosLabel">Photos</small><button type="button" class="btn btn-sm btn-outline-danger" id="clearAllPhotosBtn" data-key="clearAll"><i class="bi bi-trash"></i> Clear</button></div><div class="photo-thumbnails" id="photoThumbnails"></div></div>
 
-                        <!-- Task Details -->
-                        <div class="mt-3"><label class="form-label fw-bold"><span data-key="taskDescLabel">Task Description</span> <span class="text-danger">*</span></label><textarea class="form-control" id="taskDesc" rows="3" required></textarea></div>
-                        <div class="mt-3"><label class="form-label fw-bold"><span data-key="assignCrewLabel">Assign to Team Members</span> <span class="text-danger">*</span></label><input type="text" class="form-control" id="crewInput" placeholder="Type name and press Enter"><div id="selectedCrewList" class="d-flex flex-wrap gap-1 mt-2"></div></div>
-                        <div class="row g-2 mt-2"><div class="col-6"><label class="form-label fw-bold"><span data-key="priorityLabel">Priority</span></label><select class="form-select" id="prioritySelect"><option value="">Select</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></div><div class="col-6"><label class="form-label fw-bold"><span data-key="areaLabel">Area</span></label><select class="form-select" id="areaSelect"><option value="">Select</option><option value="Kitchen">Kitchen</option><option value="Dining Area">Dining Area</option><option value="Restrooms">Restrooms</option><option value="Storage">Storage</option><option value="Entrance">Entrance</option></select></div></div>
-                        <div class="row g-2 mt-2"><div class="col-6"><label class="form-label fw-bold"><span data-key="dueDateLabel">Due Date</span></label><input type="date" class="form-control" id="dueDateInput"></div><div class="col-6"><label class="form-label fw-bold"><span data-key="finishDateLabel">Finish Date</span></label><input type="date" class="form-control" id="finishDateInput"></div></div>
-                        <div class="mt-2"><label class="form-label fw-bold"><span data-key="statusLabel">Status</span></label><select class="form-select" id="statusSelect"><option value="Pending">Pending</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option></select></div>
+                        <div class="mt-3"><label class="fw-bold" data-key="taskDescLabel">Task Description *</label><textarea class="form-control" id="taskDesc" rows="2" required></textarea></div>
+
+                        <div class="mt-2"><label class="fw-bold" data-key="assignLabel">Assign to (from team)</label>
+                            <select class="form-select" id="assignSelect"><option value="">-- select --</option></select>
+                            <div id="selectedCrewList" class="d-flex flex-wrap gap-1 mt-2"></div>
+                        </div>
+
+                        <div class="row g-2 mt-2">
+                            <div class="col-4"><label class="fw-bold" data-key="priorityLabel">Priority</label><select class="form-select" id="prioritySelect"><option value="">Select</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></div>
+                            <div class="col-4"><label class="fw-bold" data-key="areaLabel">Area</label><select class="form-select" id="areaSelect"><option value="">Select</option><option value="Kitchen">Kitchen</option><option value="Dining">Dining</option><option value="Restrooms">Restrooms</option><option value="Storage">Storage</option><option value="Entrance">Entrance</option></select></div>
+                            <div class="col-4"><label class="fw-bold" data-key="statusLabel">Status</label><select class="form-select" id="statusSelect"><option value="Pending">Pending</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option></select></div>
+                        </div>
+                        <div class="row g-2 mt-2">
+                            <div class="col-6"><label class="fw-bold" data-key="dueDateLabel">Due Date</label><input type="date" class="form-control" id="dueDateInput"></div>
+                            <div class="col-6"><label class="fw-bold" data-key="finishDateLabel">Finish Date</label><input type="date" class="form-control" id="finishDateInput"></div>
+                        </div>
                         <div class="alert alert-warning mt-3 d-none" id="validationAlert"><i class="bi bi-exclamation-triangle me-2"></i><span id="validationMsg"></span></div>
-                        <button type="submit" class="btn btn-primary w-100 mt-3"><i class="bi bi-plus-circle me-2"></i><span data-key="addTaskBtn">Add Task</span></button>
+                        <button type="submit" class="btn btn-primary w-100 mt-3" data-key="addTaskBtn"><i class="bi bi-plus-circle me-2"></i>Add Task</button>
                     </form>
                 </div>
             </div>
@@ -252,128 +349,389 @@
 
         <div class="col-lg-7">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center"><span><i class="bi bi-list-check me-2"></i><span data-key="taskList">Task List</span></span><div><span class="badge bg-light text-dark me-2" id="taskCount">0 tasks</span><button class="btn btn-sm btn-success" id="exportPdfBtn"><i class="bi bi-file-pdf"></i> PDF</button></div></div>
+                <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+                    <span><i class="bi bi-list-check me-2"></i><span data-key="taskList">Task List</span></span>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-success" id="exportPdfBtn" data-key="exportPdf"><i class="bi bi-file-pdf"></i> PDF</button>
+                        <button class="btn btn-sm btn-outline-secondary" id="toggleListBtn" data-key="hideList"><i class="bi bi-eye-slash"></i> Hide</button>
+                    </div>
+                </div>
                 <div class="card-body p-0">
-                    <div class="p-3 border-bottom"><div class="row g-2"><div class="col-6"><select class="form-select form-select-sm" id="statusFilter"><option value="">All Status</option><option value="Pending">Pending</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option></select></div><div class="col-6"><select class="form-select form-select-sm" id="priorityFilter"><option value="">All Priorities</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></div></div></div>
-                    <div id="taskListContainer" class="p-3" style="max-height: 500px; overflow-y: auto;"></div>
-                    <div id="emptyState" class="text-center p-5"><i class="bi bi-clipboard-x display-4 text-muted"></i><p class="mt-2 text-muted">No tasks yet</p></div>
+                    <div class="p-3 border-bottom" style="border-color:#334155 !important;">
+                        <div class="d-flex gap-2 flex-wrap">
+                            <select class="form-select form-select-sm w-auto" id="statusFilter"><option value="" data-key="allStatus">All status</option><option value="Pending">Pending</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option></select>
+                            <select class="form-select form-select-sm w-auto" id="priorityFilter"><option value="" data-key="allPriority">All priority</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select>
+                            <span class="badge bg-secondary px-3 py-2" id="taskCount">0 tasks</span>
+                        </div>
+                    </div>
+                    <div id="taskListContainer" class="task-list-wrapper p-3"></div>
+                    <div id="emptyState" class="text-center p-5"><i class="bi bi-clipboard-x display-4 text-muted"></i><p class="mt-2 text-muted" data-key="noTasks">No tasks</p></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<div id="toastMsg" class="toast-notify"><i class="bi bi-check-circle-fill"></i> <span id="toastText"></span></div>
+<div id="toastMsg" class="toast-notify"><i class="bi bi-check-circle-fill me-2"></i><span id="toastText"></span></div>
 
 <script>
-    // ======================== TRANSLATIONS ========================
+    // ----- TRANSLATIONS (full) -----
     const translations = {
-        en: { titleMain: "Cleaning Task Manager", storeNameLabel: "Store Name", locationLabel: "Location", totalTasks: "TOTAL TASKS", pendingTasks: "PENDING", inProgressTasks: "IN PROGRESS", completedTasks: "COMPLETED", teamManagement: "Team Management", addTeamMemberLabel: "Add Team Member", teamMembersLabel: "Team Members", addNewTask: "Add New Task", beforePictures: "Before Pictures", taskDescLabel: "Task Description", assignCrewLabel: "Assign to Team Members", priorityLabel: "Priority", areaLabel: "Area", dueDateLabel: "Due Date", finishDateLabel: "Finish Date", statusLabel: "Status", addTaskBtn: "Add Task", taskList: "Task List" },
-        ar: { titleMain: "مدير مهام التنظيف", storeNameLabel: "اسم المتجر", locationLabel: "الموقع", totalTasks: "إجمالي المهام", pendingTasks: "قيد الانتظار", inProgressTasks: "قيد التنفيذ", completedTasks: "مكتملة", teamManagement: "إدارة الفريق", addTeamMemberLabel: "إضافة عضو", teamMembersLabel: "أعضاء الفريق", addNewTask: "إضافة مهمة جديدة", beforePictures: "الصور قبل التنظيف", taskDescLabel: "وصف المهمة", assignCrewLabel: "تعيين لأعضاء الفريق", priorityLabel: "الأولوية", areaLabel: "المنطقة", dueDateLabel: "تاريخ الاستحقاق", finishDateLabel: "تاريخ الانتهاء", statusLabel: "الحالة", addTaskBtn: "إضافة مهمة", taskList: "قائمة المهام" }
+        en: {
+            storeNameLabel: "Store Name", locationLabel: "Location",
+            totalTasks: "TOTAL", pendingTasks: "PENDING", inProgressTasks: "IN PROGRESS", completedTasks: "COMPLETED",
+            teamManagement: "Team Management", addTeamMemberLabel: "Add member", teamMembersLabel: "Team members",
+            addNewTask: "New Task", beforePictures: "Before Pictures", minPhotos: "minimum 3",
+            startCamera: "Start", capture: "Capture", stopCamera: "Stop",
+            photosLabel: "Photos", clearAll: "Clear",
+            taskDescLabel: "Task Description *", assignLabel: "Assign to (from team)",
+            priorityLabel: "Priority", areaLabel: "Area", statusLabel: "Status",
+            dueDateLabel: "Due Date", finishDateLabel: "Finish Date",
+            addTaskBtn: "Add Task", taskList: "Task List",
+            exportPdf: "PDF", hideList: "Hide", allStatus: "All status", allPriority: "All priority",
+            noTasks: "No tasks", brand: "SADWAP"
+        },
+        ar: {
+            storeNameLabel: "اسم المتجر", locationLabel: "الموقع",
+            totalTasks: "إجمالي المهام", pendingTasks: "قيد الانتظار", inProgressTasks: "قيد التنفيذ", completedTasks: "مكتملة",
+            teamManagement: "إدارة الفريق", addTeamMemberLabel: "إضافة عضو", teamMembersLabel: "أعضاء الفريق",
+            addNewTask: "مهمة جديدة", beforePictures: "الصور قبل التنظيف", minPhotos: "الحد الأدنى ٣",
+            startCamera: "تشغيل", capture: "التقاط", stopCamera: "إيقاف",
+            photosLabel: "الصور", clearAll: "مسح الكل",
+            taskDescLabel: "وصف المهمة *", assignLabel: "تعيين (من الفريق)",
+            priorityLabel: "الأولوية", areaLabel: "المنطقة", statusLabel: "الحالة",
+            dueDateLabel: "تاريخ الاستحقاق", finishDateLabel: "تاريخ الانتهاء",
+            addTaskBtn: "إضافة مهمة", taskList: "قائمة المهام",
+            exportPdf: "PDF", hideList: "إخفاء", allStatus: "كل الحالات", allPriority: "كل الأولويات",
+            noTasks: "لا توجد مهام", brand: "سادواب"
+        }
     };
-    let currentLang = "en";
-    let tasks = [], teamMembers = [], assignedCrew = [], capturedPhotos = [];
+
+    // ----- STATE -----
+    let tasks = [];
+    let teamMembers = [];
+    let assignedCrew = [];
+    let capturedPhotos = [];
     let stream = null;
-    let minPhotos = 3;
+    const MIN_PHOTOS = 3;
+    let currentLang = 'en';
 
-    // DOM Elements
-    const storeNameInput = document.getElementById('storeName'), storeLocationInput = document.getElementById('storeLocation');
-    const teamMemberInput = document.getElementById('teamMemberInput'), addTeamMemberBtn = document.getElementById('addTeamMemberBtn'), teamMemberList = document.getElementById('teamMemberList');
-    const taskForm = document.getElementById('taskForm'), taskDesc = document.getElementById('taskDesc'), crewInput = document.getElementById('crewInput'), selectedCrewList = document.getElementById('selectedCrewList');
-    const prioritySelect = document.getElementById('prioritySelect'), areaSelect = document.getElementById('areaSelect'), dueDateInput = document.getElementById('dueDateInput'), finishDateInput = document.getElementById('finishDateInput'), statusSelect = document.getElementById('statusSelect');
-    const startCameraBtn = document.getElementById('startCameraBtn'), captureBtn = document.getElementById('captureBtn'), stopCameraBtn = document.getElementById('stopCameraBtn');
-    const videoElement = document.getElementById('videoElement'), canvasElement = document.getElementById('canvasElement'), cameraPlaceholder = document.getElementById('cameraPlaceholder');
-    const photoProgress = document.getElementById('photoProgress'), photoProgressText = document.getElementById('photoProgressText'), photoGallery = document.getElementById('photoGallery'), photoThumbnails = document.getElementById('photoThumbnails'), clearAllPhotosBtn = document.getElementById('clearAllPhotosBtn');
-    const taskListContainer = document.getElementById('taskListContainer'), emptyState = document.getElementById('emptyState'), taskCount = document.getElementById('taskCount');
-    const totalTasksEl = document.getElementById('totalTasks'), pendingTasksEl = document.getElementById('pendingTasks'), inProgressTasksEl = document.getElementById('inProgressTasks'), completedTasksEl = document.getElementById('completedTasks');
-    const statusFilter = document.getElementById('statusFilter'), priorityFilter = document.getElementById('priorityFilter'), exportPdfBtn = document.getElementById('exportPdfBtn');
-    const validationAlert = document.getElementById('validationAlert'), validationMsg = document.getElementById('validationMsg');
-    const toast = document.getElementById('toastMsg'), toastText = document.getElementById('toastText');
+    // DOM refs
+    const $ = id => document.getElementById(id);
+    const storeName = $('storeName'), storeLocation = $('storeLocation');
+    const teamInput = $('teamMemberInput'), addTeamBtn = $('addTeamMemberBtn'), teamList = $('teamMemberList');
+    const taskForm = $('taskForm'), taskDesc = $('taskDesc'), assignSelect = $('assignSelect'), selectedCrewList = $('selectedCrewList');
+    const prioritySelect = $('prioritySelect'), areaSelect = $('areaSelect'), dueDateInput = $('dueDateInput'), finishDateInput = $('finishDateInput'), statusSelect = $('statusSelect');
+    const startCam = $('startCameraBtn'), captureBtn = $('captureBtn'), stopCam = $('stopCameraBtn');
+    const video = $('videoElement'), canvas = $('canvasElement'), camPlaceholder = $('cameraPlaceholder');
+    const photoProgress = $('photoProgress'), photoProgressText = $('photoProgressText'), photoGallery = $('photoGallery'), photoThumbnails = $('photoThumbnails'), clearPhotosBtn = $('clearAllPhotosBtn');
+    const taskContainer = $('taskListContainer'), emptyState = $('emptyState'), taskCount = $('taskCount');
+    const totalEl = $('totalTasks'), pendingEl = $('pendingTasks'), inProgEl = $('inProgressTasks'), completedEl = $('completedTasks');
+    const statusFilter = $('statusFilter'), priorityFilter = $('priorityFilter'), exportBtn = $('exportPdfBtn'), toggleListBtn = $('toggleListBtn');
+    const validationAlert = $('validationAlert'), validationMsg = $('validationMsg');
+    const toast = $('toastMsg'), toastText = $('toastText');
+    const brandTitle = $('brandTitle');
 
-    function showToast(msg, type = 'success') { toastText.innerText = msg; toast.style.display = 'flex'; toast.style.borderLeftColor = type === 'error' ? '#ef4444' : '#10b981'; setTimeout(() => toast.style.display = 'none', 2500); }
+    function showToast(msg, type='success'){ toastText.innerText=msg; toast.style.display='flex'; toast.style.borderLeftColor=type==='error'?'#ef4444':'#3b82f6'; setTimeout(()=>toast.style.display='none',2500); }
 
-    // Load/Save Data
+    // ----- i18n apply -----
+    function applyTranslations() {
+        const t = translations[currentLang];
+        document.querySelectorAll('[data-key]').forEach(el => {
+            const key = el.dataset.key;
+            if (t[key] !== undefined) {
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+                    // skip
+                } else {
+                    el.innerText = t[key];
+                }
+            }
+        });
+        brandTitle.innerText = t.brand || 'SADWAP';
+        teamInput.placeholder = currentLang === 'ar' ? 'الاسم' : 'Name';
+        document.querySelectorAll('#statusFilter option, #priorityFilter option').forEach(opt => {
+            const key = opt.dataset.key;
+            if (key && t[key]) opt.innerText = t[key];
+        });
+        document.querySelectorAll('#assignSelect option, #prioritySelect option, #areaSelect option').forEach(opt => {
+            if (opt.value === '' && currentLang === 'ar') opt.innerText = '-- اختر --';
+            else if (opt.value === '' && currentLang === 'en') opt.innerText = '-- select --';
+        });
+        document.querySelectorAll('[data-key]').forEach(el => {
+            const key = el.dataset.key;
+            if (key && t[key] && (el.id === 'startCameraBtn' || el.id === 'captureBtn' || el.id === 'stopCameraBtn' || el.id === 'clearAllPhotosBtn' || el.id === 'exportPdfBtn' || el.id === 'toggleListBtn' || el.id === 'addTeamMemberBtn')) {
+                const icon = el.querySelector('i');
+                if (icon) {
+                    const iconHtml = icon.outerHTML;
+                    el.innerHTML = iconHtml + ' ' + t[key];
+                } else {
+                    el.innerText = t[key];
+                }
+            }
+        });
+        const addBtn = document.querySelector('button[type="submit"]');
+        if (addBtn) {
+            const icon = addBtn.querySelector('i');
+            if (icon) addBtn.innerHTML = icon.outerHTML + ' ' + t.addTaskBtn;
+        }
+        document.querySelectorAll('.store-card .form-label').forEach(el => {
+            const key = el.dataset.key;
+            if (key && t[key]) el.innerText = t[key];
+        });
+        document.querySelectorAll('.stat-title').forEach(el => {
+            const key = el.dataset.key;
+            if (key && t[key]) el.innerText = t[key];
+        });
+        document.querySelectorAll('.card-header').forEach(el => {
+            const key = el.dataset.key;
+            if (key && t[key]) {
+                const icon = el.querySelector('i');
+                if (icon) el.innerHTML = icon.outerHTML + ' ' + t[key];
+                else el.innerText = t[key];
+            }
+        });
+        const taskListHeader = document.querySelector('.card-header span span');
+        if (taskListHeader) {
+            const key = taskListHeader.dataset.key;
+            if (key && t[key]) taskListHeader.innerText = t[key];
+        }
+        document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    }
+
+    // lang switch
+    document.getElementById('langEn').addEventListener('click', ()=>{ currentLang='en'; document.getElementById('langEn').classList.add('active'); document.getElementById('langAr').classList.remove('active'); applyTranslations(); });
+    document.getElementById('langAr').addEventListener('click', ()=>{ currentLang='ar'; document.getElementById('langAr').classList.add('active'); document.getElementById('langEn').classList.remove('active'); applyTranslations(); });
+
+    // ----- DARK MODE FORCED (no toggle) -----
+    // already dark by default
+
+    // ----- STORAGE -----
     function loadData() {
-        const savedTeam = localStorage.getItem('restaurantTeamMembers');
-        if (savedTeam) teamMembers = JSON.parse(savedTeam);
-        else teamMembers = ['John Smith', 'Maria Garcia', 'David Johnson'];
-        const savedTasks = localStorage.getItem('restaurantCleaningTasks');
-        if (savedTasks) tasks = JSON.parse(savedTasks);
-        else tasks = [];
+        teamMembers = JSON.parse(localStorage.getItem('teamMembers')) || ['John Smith', 'Maria Garcia', 'David Johnson'];
+        tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        if (localStorage.getItem('storeName')) storeName.value = localStorage.getItem('storeName');
+        if (localStorage.getItem('storeLocation')) storeLocation.value = localStorage.getItem('storeLocation');
         renderTeamMembers();
+        renderAssignOptions();
         renderTasks();
         updateStats();
     }
-    function saveData() { localStorage.setItem('restaurantTeamMembers', JSON.stringify(teamMembers)); localStorage.setItem('restaurantCleaningTasks', JSON.stringify(tasks)); }
-
-    function renderTeamMembers() {
-        teamMemberList.innerHTML = teamMembers.map(m => `<span class="team-member">${escapeHtml(m)}<button class="remove-team-member" onclick="removeTeamMember('${escapeHtml(m)}')"><i class="bi bi-x"></i></button></span>`).join('');
+    function saveData() {
+        localStorage.setItem('teamMembers', JSON.stringify(teamMembers));
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        localStorage.setItem('storeName', storeName.value);
+        localStorage.setItem('storeLocation', storeLocation.value);
     }
-    window.removeTeamMember = function(name) { teamMembers = teamMembers.filter(m => m !== name); saveData(); renderTeamMembers(); showToast('Team member removed', 'info'); };
 
-    addTeamMemberBtn.addEventListener('click', () => { const name = teamMemberInput.value.trim(); if (name && !teamMembers.includes(name)) { teamMembers.push(name); saveData(); renderTeamMembers(); teamMemberInput.value = ''; showToast(`Added ${name}`, 'success'); } });
-
-    // Crew assignment
-    crewInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); const name = crewInput.value.trim(); if (name && !assignedCrew.includes(name) && teamMembers.includes(name)) { assignedCrew.push(name); renderCrewList(); crewInput.value = ''; validateForm(); } } });
-    function renderCrewList() { selectedCrewList.innerHTML = assignedCrew.map(m => `<span class="crew-member">${escapeHtml(m)}<button class="remove-crew" onclick="removeCrew('${escapeHtml(m)}')"><i class="bi bi-x"></i></button></span>`).join(''); }
+    // ----- TEAM -----
+    function renderTeamMembers() {
+        teamList.innerHTML = teamMembers.map(m => `<span class="team-member">${escHtml(m)}<button class="remove-team-member" onclick="removeTeam('${escHtml(m)}')"><i class="bi bi-x"></i></button></span>`).join('');
+        renderAssignOptions();
+    }
+    window.removeTeam = function(name) {
+        teamMembers = teamMembers.filter(m => m !== name);
+        assignedCrew = assignedCrew.filter(m => m !== name);
+        saveData(); renderTeamMembers(); renderCrewList(); 
+        showToast(currentLang==='ar'?'تم الحذف':'Removed', 'info');
+    };
+    addTeamBtn.addEventListener('click', ()=>{
+        const name = teamInput.value.trim();
+        if(name && !teamMembers.includes(name)){ teamMembers.push(name); saveData(); renderTeamMembers(); teamInput.value=''; showToast(currentLang==='ar'?`تم إضافة ${name}`:`Added ${name}`); }
+    });
+    function renderAssignOptions() {
+        assignSelect.innerHTML = `<option value="">${currentLang==='ar'?'-- اختر --':'-- select --'}</option>` + teamMembers.map(m => `<option value="${escHtml(m)}">${escHtml(m)}</option>`).join('');
+    }
+    assignSelect.addEventListener('change', ()=>{
+        const val = assignSelect.value;
+        if(val && !assignedCrew.includes(val) && teamMembers.includes(val)) {
+            assignedCrew.push(val);
+            renderCrewList();
+            assignSelect.value = '';
+            validateForm();
+        }
+    });
+    function renderCrewList() {
+        selectedCrewList.innerHTML = assignedCrew.map(m => `<span class="crew-member">${escHtml(m)}<button class="remove-crew" onclick="removeCrew('${escHtml(m)}')"><i class="bi bi-x"></i></button></span>`).join('');
+    }
     window.removeCrew = function(name) { assignedCrew = assignedCrew.filter(m => m !== name); renderCrewList(); validateForm(); };
 
-    // Camera Functions
-    async function startCamera() { try { if (stream) stopCamera(); stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); videoElement.srcObject = stream; videoElement.style.display = 'block'; cameraPlaceholder.style.display = 'none'; startCameraBtn.disabled = true; captureBtn.disabled = false; stopCameraBtn.disabled = false; } catch(err) { showToast('Camera access denied', 'error'); } }
-    function stopCamera() { if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; } videoElement.style.display = 'none'; cameraPlaceholder.style.display = 'flex'; startCameraBtn.disabled = false; captureBtn.disabled = true; stopCameraBtn.disabled = true; }
-    function capturePhoto() { const ctx = canvasElement.getContext('2d'); canvasElement.width = videoElement.videoWidth; canvasElement.height = videoElement.videoHeight; ctx.drawImage(videoElement, 0, 0); const photoData = canvasElement.toDataURL('image/jpeg', 0.8); capturedPhotos.push(photoData); updatePhotoUI(); validateForm(); showToast(`Photo ${capturedPhotos.length} captured`, 'success'); }
-    function updatePhotoUI() { const pct = Math.min((capturedPhotos.length / minPhotos) * 100, 100); photoProgress.style.width = `${pct}%`; photoProgressText.textContent = `${capturedPhotos.length} Photos Taken`; if (capturedPhotos.length === 0) photoGallery.style.display = 'none'; else { photoGallery.style.display = 'block'; photoThumbnails.innerHTML = capturedPhotos.map((p, i) => `<div class="photo-thumbnail"><img src="${p}"><div class="photo-number">${i+1}</div><button class="delete-photo" onclick="deletePhoto(${i})"><i class="bi bi-x"></i></button></div>`).join(''); } }
-    window.deletePhoto = function(idx) { capturedPhotos.splice(idx, 1); updatePhotoUI(); validateForm(); };
-    clearAllPhotosBtn.addEventListener('click', () => { if (confirm('Clear all photos?')) { capturedPhotos = []; updatePhotoUI(); validateForm(); } });
-    startCameraBtn.addEventListener('click', startCamera); captureBtn.addEventListener('click', capturePhoto); stopCameraBtn.addEventListener('click', stopCamera);
+    // ----- CAMERA -----
+    async function startCamera() {
+        try { if(stream) stopCamera(); stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment' } }); video.srcObject=stream; video.style.display='block'; camPlaceholder.style.display='none'; startCam.disabled=true; captureBtn.disabled=false; stopCam.disabled=false; } catch(e){ showToast(currentLang==='ar'?'تعذر الوصول للكاميرا':'Camera access denied','error'); }
+    }
+    function stopCamera() { if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } video.style.display='none'; camPlaceholder.style.display='flex'; startCam.disabled=false; captureBtn.disabled=true; stopCam.disabled=true; }
+    function capturePhoto() {
+        const ctx = canvas.getContext('2d');
+        canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0);
+        capturedPhotos.push(canvas.toDataURL('image/jpeg', 0.85));
+        updatePhotoUI();
+        validateForm();
+        showToast(currentLang==='ar'?`تم التقاط الصورة ${capturedPhotos.length}`:`Photo ${capturedPhotos.length} captured`);
+    }
+    function updatePhotoUI() {
+        const pct = Math.min((capturedPhotos.length / MIN_PHOTOS)*100, 100);
+        photoProgress.style.width = pct+'%';
+        photoProgressText.textContent = `${capturedPhotos.length} / ${MIN_PHOTOS}`;
+        if(capturedPhotos.length===0) { photoGallery.style.display='none'; } else {
+            photoGallery.style.display='block';
+            photoThumbnails.innerHTML = capturedPhotos.map((p,i)=>`
+                <div class="photo-thumbnail"><img src="${p}"><div class="photo-number">${i+1}</div><button class="delete-photo" onclick="deletePhoto(${i})"><i class="bi bi-x"></i></button></div>`).join('');
+        }
+    }
+    window.deletePhoto = function(idx) { capturedPhotos.splice(idx,1); updatePhotoUI(); validateForm(); };
+    clearPhotosBtn.addEventListener('click', ()=>{ if(confirm(currentLang==='ar'?'مسح كل الصور؟':'Clear all photos?')){ capturedPhotos=[]; updatePhotoUI(); validateForm(); } });
+    startCam.addEventListener('click', startCamera);
+    captureBtn.addEventListener('click', capturePhoto);
+    stopCam.addEventListener('click', stopCamera);
 
-    function validateForm() { let errors = []; if (capturedPhotos.length < minPhotos) errors.push(`Minimum ${minPhotos} photos required (${capturedPhotos.length}/${minPhotos})`); if (assignedCrew.length === 0) errors.push('Assign at least one team member'); if (!taskDesc.value.trim()) errors.push('Task description required'); if (!prioritySelect.value) errors.push('Priority required'); if (!areaSelect.value) errors.push('Area required'); if (!dueDateInput.value) errors.push('Due date required'); if (errors.length > 0) { validationAlert.classList.remove('d-none'); validationMsg.innerHTML = errors.map(e => `• ${e}`).join('<br>'); return false; } validationAlert.classList.add('d-none'); return true; }
+    // ----- VALIDATION -----
+    function validateForm() {
+        let errors = [];
+        if(capturedPhotos.length < MIN_PHOTOS) errors.push(currentLang==='ar'?`تحتاج ${MIN_PHOTOS} صور (${capturedPhotos.length})`:`Need ${MIN_PHOTOS} photos (${capturedPhotos.length})`);
+        if(assignedCrew.length === 0) errors.push(currentLang==='ar'?'تعيين عضو واحد على الأقل':'Assign at least one team member');
+        if(!taskDesc.value.trim()) errors.push(currentLang==='ar'?'الوصف مطلوب':'Description required');
+        if(!prioritySelect.value) errors.push(currentLang==='ar'?'الأولوية مطلوبة':'Priority required');
+        if(!areaSelect.value) errors.push(currentLang==='ar'?'المنطقة مطلوبة':'Area required');
+        if(!dueDateInput.value) errors.push(currentLang==='ar'?'تاريخ الاستحقاق مطلوب':'Due date required');
+        if(errors.length>0){ validationAlert.classList.remove('d-none'); validationMsg.innerHTML=errors.map(e=>`• ${e}`).join('<br>'); return false; }
+        validationAlert.classList.add('d-none'); return true;
+    }
 
-    taskForm.addEventListener('submit', (e) => { e.preventDefault(); if (!validateForm()) return; const task = { id: Date.now(), description: taskDesc.value, assignedTo: [...assignedCrew], priority: prioritySelect.value, area: areaSelect.value, dueDate: dueDateInput.value, finishDate: finishDateInput.value || '', status: statusSelect.value, beforePhotos: [...capturedPhotos], createdAt: new Date().toISOString() }; tasks.push(task); saveData(); renderTasks(); updateStats(); resetForm(); showToast('Task added successfully!', 'success'); });
+    // ----- ADD TASK -----
+    taskForm.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        if(!validateForm()) return;
+        const task = {
+            id: Date.now(),
+            description: taskDesc.value,
+            assignedTo: [...assignedCrew],
+            priority: prioritySelect.value,
+            area: areaSelect.value,
+            dueDate: dueDateInput.value,
+            finishDate: finishDateInput.value || '',
+            status: statusSelect.value,
+            beforePhotos: [...capturedPhotos],
+            createdAt: new Date().toISOString()
+        };
+        tasks.push(task);
+        saveData();
+        renderTasks();
+        updateStats();
+        resetForm();
+        showToast(currentLang==='ar'?'تمت إضافة المهمة':'Task added!');
+    });
 
-    function resetForm() { taskDesc.value = ''; assignedCrew = []; renderCrewList(); capturedPhotos = []; updatePhotoUI(); prioritySelect.value = ''; areaSelect.value = ''; dueDateInput.value = ''; finishDateInput.value = ''; statusSelect.value = 'Pending'; crewInput.value = ''; stopCamera(); validateForm(); }
+    function resetForm() {
+        taskDesc.value = ''; assignedCrew = []; renderCrewList(); capturedPhotos=[]; updatePhotoUI();
+        prioritySelect.value=''; areaSelect.value=''; dueDateInput.value=''; finishDateInput.value=''; statusSelect.value='Pending';
+        stopCamera(); validateForm();
+    }
 
+    // ----- RENDER TASKS + FILTERS -----
     function renderTasks() {
-        const filtered = tasks.filter(t => { if (statusFilter.value && t.status !== statusFilter.value) return false; if (priorityFilter.value && t.priority !== priorityFilter.value) return false; return true; });
-        if (filtered.length === 0) { taskListContainer.innerHTML = ''; emptyState.style.display = 'block'; taskCount.textContent = `0 tasks`; return; }
-        emptyState.style.display = 'none'; taskCount.textContent = `${filtered.length} ${filtered.length === 1 ? 'task' : 'tasks'}`;
-        taskListContainer.innerHTML = filtered.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate)).map(task => `
-            <div class="task-card ${task.priority.toLowerCase()}-priority" data-status="${task.status}" data-priority="${task.priority}">
-                <div class="d-flex justify-content-between align-items-start"><h6 class="mb-2">${escapeHtml(task.description)}</h6><div class="dropdown"><button class="btn btn-sm btn-outline-secondary border-0" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></button><ul class="dropdown-menu"><li><a class="dropdown-item" href="#" onclick="editTask(${task.id})"><i class="bi bi-pencil me-2"></i>Edit</a></li><li><a class="dropdown-item text-danger" href="#" onclick="deleteTask(${task.id})"><i class="bi bi-trash me-2"></i>Delete</a></li></ul></div></div>
-                ${task.beforePhotos && task.beforePhotos.length > 0 ? `<div class="task-images">${task.beforePhotos.slice(0,4).map(p => `<img src="${p}" class="task-image" onclick="viewPhotos(${task.id})">`).join('')}${task.beforePhotos.length > 4 ? `<div class="task-image d-flex align-items-center justify-content-center bg-secondary text-white">+${task.beforePhotos.length-4}</div>` : ''}</div>` : ''}
-                <div class="d-flex flex-wrap gap-2 mb-2"><span class="badge ${task.priority === 'High' ? 'bg-danger' : task.priority === 'Medium' ? 'bg-warning text-dark' : 'bg-success'}">${task.priority}</span><span class="badge ${task.status === 'Completed' ? 'bg-success' : task.status === 'In Progress' ? 'bg-info' : 'bg-secondary'}">${task.status}</span><span class="badge bg-primary">${task.area}</span></div>
-                <div class="d-flex flex-wrap gap-1 mb-2">${task.assignedTo.map(m => `<span class="crew-member">${escapeHtml(m)}</span>`).join('')}</div>
-                <div class="small text-muted"><i class="bi bi-calendar-event"></i> Due: ${new Date(task.dueDate).toLocaleDateString()} ${task.finishDate ? `| <i class="bi bi-calendar-check"></i> Finish: ${new Date(task.finishDate).toLocaleDateString()}` : ''}</div>
+        const filtered = tasks.filter(t => {
+            if(statusFilter.value && t.status !== statusFilter.value) return false;
+            if(priorityFilter.value && t.priority !== priorityFilter.value) return false;
+            return true;
+        });
+        if(filtered.length === 0) {
+            taskContainer.innerHTML = '';
+            emptyState.style.display = 'block';
+            taskCount.textContent = '0 ' + (currentLang==='ar'?'مهام':'tasks');
+            return;
+        }
+        emptyState.style.display = 'none';
+        taskCount.textContent = `${filtered.length} ${currentLang==='ar'?'مهمة':'task'}${filtered.length>1?(currentLang==='ar'?'':'s'):''}`;
+        taskContainer.innerHTML = filtered.sort((a,b)=> new Date(a.dueDate)-new Date(b.dueDate)).map(t => `
+            <div class="task-card ${t.priority.toLowerCase()}-priority">
+                <div class="d-flex justify-content-between align-items-start">
+                    <h6 class="mb-1">${escHtml(t.description)}</h6>
+                    <div class="d-flex gap-1">
+                        <button class="btn btn-sm btn-outline-secondary border-0" onclick="deleteTask(${t.id})" title="${currentLang==='ar'?'حذف':'Delete'}"><i class="bi bi-trash text-danger"></i></button>
+                    </div>
+                </div>
+                ${t.beforePhotos && t.beforePhotos.length > 0 ? `<div class="task-images">${t.beforePhotos.slice(0,4).map(p => `<img src="${p}" class="task-image" onclick="alert('${currentLang==='ar'?'عرض الصورة':'view photo'}')">`).join('')}${t.beforePhotos.length>4?`<span class="task-image d-flex align-items-center justify-content-center bg-secondary text-muted">+${t.beforePhotos.length-4}</span>`:''}</div>` : ''}
+                <div class="d-flex flex-wrap gap-1 mb-1">
+                    <span class="badge ${t.priority==='High'?'bg-danger':t.priority==='Medium'?'bg-warning text-dark':'bg-success'}">${t.priority}</span>
+                    <span class="badge ${t.status==='Completed'?'bg-success':t.status==='In Progress'?'bg-info text-dark':'bg-secondary'}">${t.status}</span>
+                    <span class="badge bg-primary">${t.area}</span>
+                </div>
+                <div class="d-flex flex-wrap gap-1">${t.assignedTo.map(m=>`<span class="crew-member">${escHtml(m)}</span>`).join('')}</div>
+                <div class="small text-muted mt-1"><i class="bi bi-calendar-event"></i> ${currentLang==='ar'?'استحقاق':'Due'}: ${new Date(t.dueDate).toLocaleDateString()} ${t.finishDate ? `| ${currentLang==='ar'?'انتهاء':'Finish'}: ${new Date(t.finishDate).toLocaleDateString()}` : ''}</div>
             </div>`).join('');
     }
-    window.editTask = function(id) { const task = tasks.find(t => t.id === id); if (task) { taskDesc.value = task.description; assignedCrew = [...task.assignedTo]; renderCrewList(); prioritySelect.value = task.priority; areaSelect.value = task.area; dueDateInput.value = task.dueDate; finishDateInput.value = task.finishDate || ''; statusSelect.value = task.status; capturedPhotos = [...task.beforePhotos]; updatePhotoUI(); tasks = tasks.filter(t => t.id !== id); saveData(); renderTasks(); updateStats(); document.querySelector('.card-header').scrollIntoView({ behavior: 'smooth' }); showToast('Task loaded for editing', 'info'); } };
-    window.deleteTask = function(id) { if (confirm('Delete this task?')) { tasks = tasks.filter(t => t.id !== id); saveData(); renderTasks(); updateStats(); showToast('Task deleted', 'info'); } };
-    window.viewPhotos = function(id) { const task = tasks.find(t => t.id === id); if (task && task.beforePhotos) { const modalHtml = task.beforePhotos.map(p => `<img src="${p}" style="width:100%; max-height:400px; object-fit:contain; margin-bottom:10px;">`).join(''); alert('View photos: ' + task.beforePhotos.length + ' photos captured'); } };
 
-    function updateStats() { totalTasksEl.textContent = tasks.length; pendingTasksEl.textContent = tasks.filter(t => t.status === 'Pending').length; inProgressTasksEl.textContent = tasks.filter(t => t.status === 'In Progress').length; completedTasksEl.textContent = tasks.filter(t => t.status === 'Completed').length; }
-    statusFilter.addEventListener('change', () => renderTasks()); priorityFilter.addEventListener('change', () => renderTasks());
+    window.deleteTask = function(id) {
+        if(confirm(currentLang==='ar'?'حذف هذه المهمة؟':'Delete this task?')) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveData(); renderTasks(); updateStats(); showToast(currentLang==='ar'?'تم الحذف':'Deleted','info');
+        }
+    };
 
-    // PDF Export
-    exportPdfBtn.addEventListener('click', async () => { if (tasks.length === 0) { showToast('No tasks to export', 'warning'); return; } const element = document.createElement('div'); element.innerHTML = `<div style="padding:20px;"><h2>${storeNameInput.value} - Cleaning Tasks Report</h2><p>Date: ${new Date().toLocaleString()}</p><p>Total Tasks: ${tasks.length}</p><hr>${tasks.map(t => `<div style="margin-bottom:20px; border-bottom:1px solid #ccc; padding-bottom:10px;"><h4>${escapeHtml(t.description)}</h4><p>Priority: ${t.priority} | Status: ${t.status} | Area: ${t.area}</p><p>Due: ${new Date(t.dueDate).toLocaleDateString()}</p><p>Assigned: ${t.assignedTo.join(', ')}</p></div>`).join('')}</div>`; const opt = { margin: [10,10,10,10], filename: `cleaning-tasks-${new Date().toISOString().split('T')[0]}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }; html2pdf().set(opt).from(element).save(); showToast('PDF exported', 'success'); });
+    // toggle list hide/show
+    let listVisible = true;
+    toggleListBtn.addEventListener('click', ()=>{
+        listVisible = !listVisible;
+        taskContainer.style.display = listVisible ? 'block' : 'none';
+        emptyState.style.display = listVisible ? (tasks.length===0?'block':'none') : 'none';
+        toggleListBtn.innerHTML = listVisible ? '<i class="bi bi-eye-slash"></i> '+(currentLang==='ar'?'إخفاء':'Hide') : '<i class="bi bi-eye"></i> '+(currentLang==='ar'?'إظهار':'Show');
+    });
 
-    // Language & Theme
-    function updateLanguage() { const t = translations[currentLang]; document.getElementById('titleMain').innerText = t.titleMain; document.querySelectorAll('[data-key]').forEach(el => { const key = el.getAttribute('data-key'); if (t[key]) el.innerText = t[key]; }); document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr'); renderTasks(); }
-    document.getElementById('langEn').addEventListener('click', () => { currentLang = 'en'; document.getElementById('langEn').classList.add('active'); document.getElementById('langAr').classList.remove('active'); updateLanguage(); });
-    document.getElementById('langAr').addEventListener('click', () => { currentLang = 'ar'; document.getElementById('langAr').classList.add('active'); document.getElementById('langEn').classList.remove('active'); updateLanguage(); });
-    let darkMode = localStorage.getItem('taskManagerDark') === 'true';
-    function applyDarkMode() { if (darkMode) document.body.classList.add('dark'); else document.body.classList.remove('dark'); document.getElementById('themeText').innerText = darkMode ? 'Light' : 'Dark'; }
-    document.getElementById('themeToggle').addEventListener('click', () => { darkMode = !darkMode; localStorage.setItem('taskManagerDark', darkMode); applyDarkMode(); });
-    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    // ----- STATS -----
+    function updateStats() {
+        totalEl.textContent = tasks.length;
+        pendingEl.textContent = tasks.filter(t=>t.status==='Pending').length;
+        inProgEl.textContent = tasks.filter(t=>t.status==='In Progress').length;
+        completedEl.textContent = tasks.filter(t=>t.status==='Completed').length;
+    }
 
-    // Store info save
-    storeNameInput.addEventListener('change', () => localStorage.setItem('storeName', storeNameInput.value));
-    storeLocationInput.addEventListener('change', () => localStorage.setItem('storeLocation', storeLocationInput.value));
-    const savedStoreName = localStorage.getItem('storeName'); if (savedStoreName) storeNameInput.value = savedStoreName;
-    const savedStoreLocation = localStorage.getItem('storeLocation'); if (savedStoreLocation) storeLocationInput.value = savedStoreLocation;
+    statusFilter.addEventListener('change', renderTasks);
+    priorityFilter.addEventListener('change', renderTasks);
 
-    // Initialize
-    applyDarkMode(); updateLanguage(); loadData(); updateStats(); renderTasks();
-    const today = new Date().toISOString().split('T')[0]; dueDateInput.min = today; finishDateInput.min = today;
+    // ----- PDF EXPORT (with images & details) -----
+    exportBtn.addEventListener('click', async ()=>{
+        if(tasks.length===0){ showToast(currentLang==='ar'?'لا توجد مهام للتصدير':'No tasks to export','error'); return; }
+        const wrapper = document.createElement('div');
+        wrapper.style.padding='20px'; wrapper.style.fontFamily='Inter, sans-serif'; wrapper.style.background='white'; wrapper.style.color='#0f172a';
+        const rows = tasks.map(t => `
+            <div style="border-bottom:1px solid #ddd; padding:16px 0; display:flex; gap:12px; align-items:flex-start;">
+                <div style="flex:1;">
+                    <h4 style="margin:0 0 6px;">${escHtml(t.description)}</h4>
+                    <div><span style="background:${t.priority==='High'?'#b91c1c':t.priority==='Medium'?'#d97706':'#0b7e4b'};color:white;padding:2px 12px;border-radius:20px;font-size:0.7rem;">${t.priority}</span> <span style="background:#e9edf3;padding:2px 12px;border-radius:20px;">${t.status}</span> <span style="background:#1e3a5f;color:white;padding:2px 12px;border-radius:20px;">${t.area}</span></div>
+                    <div style="font-size:0.8rem;color:#475569;">${currentLang==='ar'?'استحقاق':'Due'}: ${new Date(t.dueDate).toLocaleDateString()} ${t.finishDate ? '| '+(currentLang==='ar'?'انتهاء':'Finish')+': '+new Date(t.finishDate).toLocaleDateString():''}</div>
+                    <div style="font-size:0.8rem;">${currentLang==='ar'?'الفريق':'Team'}: ${t.assignedTo.join(', ')}</div>
+                </div>
+                <div style="display:flex; gap:6px; flex-wrap:wrap; max-width:200px;">
+                    ${t.beforePhotos && t.beforePhotos.length > 0 ? t.beforePhotos.slice(0,3).map(p => `<img src="${p}" style="width:60px;height:60px;object-fit:cover;border-radius:12px;border:1px solid #ccc;">`).join('') : ''}
+                    ${t.beforePhotos && t.beforePhotos.length > 3 ? `<span style="background:#e9edf3;padding:8px 12px;border-radius:12px;">+${t.beforePhotos.length-3}</span>` : ''}
+                </div>
+            </div>
+        `).join('');
+        wrapper.innerHTML = `
+            <h2 style="color:#1e3a5f;">${storeName.value} · ${currentLang==='ar'?'تقرير التنظيف':'Cleaning Report'}</h2>
+            <p>${new Date().toLocaleString()} · ${currentLang==='ar'?'إجمالي المهام':'Total'}: ${tasks.length}</p>
+            <hr>${rows}
+        `;
+        const opt = { margin: 10, filename: `cleaning-report-${new Date().toISOString().slice(0,10)}.pdf`, image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'} };
+        html2pdf().set(opt).from(wrapper).save();
+        showToast(currentLang==='ar'?'تم تصدير PDF':'PDF exported');
+    });
+
+    // ----- HELPERS -----
+    function escHtml(str) { return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    // store autosave
+    storeName.addEventListener('change', ()=>localStorage.setItem('storeName', storeName.value));
+    storeLocation.addEventListener('change', ()=>localStorage.setItem('storeLocation', storeLocation.value));
+
+    // init
+    applyTranslations();
+    loadData();
+    const today = new Date().toISOString().split('T')[0];
+    dueDateInput.min = today; finishDateInput.min = today;
+    updatePhotoUI();
+    validateForm();
+    renderCrewList();
 </script>
 </body>
 </html>
