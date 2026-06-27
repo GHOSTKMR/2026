@@ -145,6 +145,14 @@
             gap: 10px;
         }
 
+        .header-title-left .logo-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
         .header-title h1 {
             font-size: 22px;
             font-weight: 700;
@@ -321,11 +329,10 @@
         .message-content .logo-container img {
             width: 42px;
             height: 42px;
-            border-radius: 8px;
-            object-fit: contain;
+            border-radius: 50%;
+            object-fit: cover;
             background: rgba(255,255,255,0.05);
-            padding: 4px;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 2px solid rgba(255,255,255,0.06);
         }
 
         .message-content .logo-container .logo-text {
@@ -934,6 +941,7 @@
             <div class="chat-header">
                 <div class="header-title">
                     <div class="header-title-left">
+                        <img src="https://raw.githubusercontent.com/GHOSTKMR/2026/main/mueen.jpeg" alt="SADWAP Logo" class="logo-img" onerror="this.style.display='none'">
                         <h1 id="botTitle">SADWAP AI</h1>
                         <span class="test-badge">Test Bot</span>
                     </div>
@@ -1045,9 +1053,9 @@
         const MAX_FREE_QUERIES = 3;
 
         // ============================================
-        // LOGO IMAGE
+        // LOGO IMAGE URL
         // ============================================
-        const LOGO_URL = 'https://ghostkmr.github.io/2026/chatbotformobile.html';
+        const LOGO_URL = 'https://raw.githubusercontent.com/GHOSTKMR/2026/main/mueen.jpeg';
 
         // ============================================
         // STATE
