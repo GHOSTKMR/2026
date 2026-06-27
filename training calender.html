@@ -1,314 +1,253 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>SADWAP | Training Plan Manager</title>
-    
+    <title>SADWAP | Training Plan · Monthly</title>
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- SheetJS for Excel export -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        * { margin:0; padding:0; box-sizing:border-box; }
+        /* DARK ONLY */
         :root {
-            --primary: #2c5f8a;
-            --primary-dark: #1e405e;
-            --primary-soft: #eef2f8;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #3b82f6;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --card-bg: #ffffff;
-            --border: #e5e7eb;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --primary: #5b8cbf;
+            --primary-light: #7ba9d9;
+            --success: #2e9b6e;
+            --warning: #d4a02b;
+            --danger: #c94a4f;
+            --info: #4a8bc2;
+            --gray-50: #0e1624;
+            --gray-100: #1a2538;
+            --gray-200: #2a3a52;
+            --gray-500: #8a9bb0;
+            --gray-600: #b0c2d6;
+            --gray-700: #d0def0;
+            --gray-800: #eaf0fa;
+            --card-bg: #162033;
+            --border: #2b3f5a;
+            --shadow: 0 10px 30px rgba(0,0,0,0.7);
             --radius-card: 20px;
-            --radius-element: 12px;
             --touch-target: 44px;
+            --bg-body: #0b121f;
+            --highlight-yellow: #f5c842;
         }
-
-        body.dark {
-            --primary: #3b82f6;
-            --primary-soft: #1e293b;
-            --gray-50: #0f172a;
-            --gray-100: #1e293b;
-            --gray-200: #334155;
-            --gray-500: #94a3b8;
-            --gray-600: #cbd5e1;
-            --gray-700: #e2e8f0;
-            --gray-800: #f1f5f9;
-            --card-bg: #1e293b;
-            --border: #334155;
-        }
-
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--gray-100);
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-body);
             color: var(--gray-800);
-            transition: background 0.2s, color 0.2s;
             padding: 16px;
             min-height: 100vh;
         }
-
         .container { max-width: 1600px; margin: 0 auto; }
+        .header-card { background: var(--card-bg); border-radius: var(--radius-card); padding: 16px 24px; margin-bottom: 20px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; box-shadow: var(--shadow); }
+        .logo-area h1 { font-size: 1.3rem; font-weight: 700; margin:0; color: var(--primary-light); }
+        .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .lang-switch { display: flex; gap:4px; background: var(--gray-100); padding:4px; border-radius:40px; }
+        .lang-btn { background:transparent; border:none; padding:6px 16px; border-radius:32px; font-weight:600; font-size:0.7rem; cursor:pointer; color:var(--gray-500); }
+        .lang-btn.active { background:var(--primary); color:#fff; }
 
-        /* Header */
-        .header-card {
+        /* LEGEND — highlighted with yellow */
+        .legend-bar {
             background: var(--card-bg);
             border-radius: var(--radius-card);
-            padding: 20px 24px;
-            margin-bottom: 24px;
-            border: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            border: 2px solid var(--highlight-yellow);
+            box-shadow: 0 0 20px rgba(245,200,66,0.15);
+            position: relative;
         }
-        .logo-area h1 { font-size: 1.4rem; font-weight: 700; margin: 0; color: var(--primary); }
-        .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-        .lang-switch { display: flex; gap: 6px; background: var(--gray-200); padding: 4px; border-radius: 40px; }
-        .lang-btn { background: transparent; border: none; padding: 6px 18px; border-radius: 32px; font-weight: 600; font-size: 0.7rem; cursor: pointer; color: var(--gray-600); }
-        .lang-btn.active { background: var(--primary); color: white; }
-        .theme-toggle { background: var(--gray-200); border: none; border-radius: 40px; padding: 6px 18px; display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 500; color: var(--gray-700); }
-
-        /* Stats Cards */
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-        @media (max-width: 640px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
-        .stat-card {
-            background: var(--card-bg);
-            border-radius: var(--radius-card);
-            padding: 16px;
-            border: 1px solid var(--border);
-            text-align: center;
-        }
-        .stat-value { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
-        .stat-label { font-size: 0.7rem; text-transform: uppercase; color: var(--gray-500); letter-spacing: 0.5px; }
-
-        /* Form Cards */
-        .form-card {
-            background: var(--card-bg);
-            border-radius: var(--radius-card);
-            padding: 20px;
-            margin-bottom: 24px;
-            border: 1px solid var(--border);
-        }
-        .form-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: var(--primary); }
-        .form-control, .form-select {
-            background: var(--gray-50);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 10px 16px;
-            font-size: 0.85rem;
-            color: var(--gray-800);
-            min-height: var(--touch-target);
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(44,95,138,0.1);
-            outline: none;
-        }
-        .btn {
-            border-radius: 40px;
-            padding: 10px 20px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            border: none;
-            transition: opacity 0.2s;
-            min-height: var(--touch-target);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-success { background: var(--success); color: white; }
-        .btn-warning { background: var(--warning); color: white; }
-        .btn-outline { background: var(--gray-100); border: 1px solid var(--border); color: var(--gray-700); }
-
-        /* Stations Tags */
-        .stations-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; max-height: 200px; overflow-y: auto; padding: 4px; }
-        .station-tag {
-            background: var(--gray-100);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 6px 12px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.75rem;
-            transition: all 0.2s;
-        }
-        .station-tag .badge { background: var(--primary); color: white; padding: 2px 8px; border-radius: 40px; font-size: 0.65rem; }
-
-        /* Training Table */
-        .table-container {
-            background: var(--card-bg);
-            border-radius: var(--radius-card);
-            border: 1px solid var(--border);
-            overflow-x: auto;
-            margin-bottom: 24px;
-        }
-        .training-table { width: 100%; border-collapse: collapse; min-width: 800px; font-size: 0.75rem; }
-        .training-table th { 
-            background: var(--gray-50); 
-            padding: 12px 8px; 
-            text-align: center; 
-            border-bottom: 1px solid var(--border);
-            color: var(--gray-600);
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-        }
-        .training-table td { padding: 8px; text-align: center; border-bottom: 1px solid var(--border); vertical-align: middle; }
-        .employee-name-cell, .employee-id-cell { background: var(--card-bg); position: sticky; background: var(--card-bg); }
-        .employee-name-cell { left: 0; min-width: 140px; }
-        .employee-id-cell { left: 140px; min-width: 100px; }
-
-        /* Station Cell Status */
-        .station-cell.completed { background: rgba(16,185,129,0.1); border-left: 3px solid var(--success); }
-        .station-cell.in-progress { background: rgba(245,158,11,0.1); border-left: 3px solid var(--warning); }
-        .station-cell.deadline-today { background: rgba(245,158,11,0.2); border-left: 3px solid #f59e0b; animation: pulse 1s infinite; }
-        .station-cell.deadline-passed { background: rgba(239,68,68,0.15); border-left: 3px solid var(--danger); }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-
-        /* Date Range Inputs */
-        .date-range-inputs { display: flex; gap: 6px; align-items: center; min-width: 180px; }
-        .date-range-inputs input { flex: 1; min-width: 80px; padding: 6px 8px; font-size: 0.7rem; border-radius: 30px; border: 1px solid var(--border); background: var(--gray-50); }
-
-        /* Action Buttons */
-        .action-buttons { display: flex; gap: 6px; justify-content: center; min-width: 100px; }
-        .btn-action { background: var(--gray-100); border: 1px solid var(--border); border-radius: 30px; padding: 6px 10px; font-size: 0.7rem; transition: all 0.2s; }
-        .btn-action.delete:hover { background: var(--danger); color: white; }
-        .btn-action.copy:hover { background: var(--info); color: white; }
-
-        /* Notification Badge */
-        .notification-badge {
-            position: fixed;
-            bottom: 20px;
+        .legend-bar::before {
+            content: "⭐ TIP";
+            position: absolute;
+            top: -10px;
             right: 20px;
-            background: var(--danger);
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            animation: bounce 2s infinite;
+            background: var(--highlight-yellow);
+            color: #0b121f;
+            padding: 2px 14px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .legend-bar .legend-title { font-weight: 700; color: var(--highlight-yellow); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .legend-grid { display: flex; flex-wrap: wrap; gap: 12px 24px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--gray-600); }
+        .legend-color { width: 28px; height: 18px; border-radius: 4px; border: 1px solid var(--border); }
+        .legend-color.green { background: rgba(46,155,110,0.25); border-left: 4px solid var(--success); }
+        .legend-color.yellow { background: rgba(212,160,43,0.20); border-left: 4px solid var(--warning); }
+        .legend-color.blue { background: rgba(74,139,194,0.20); border-left: 4px solid var(--info); animation: pulse-blue 1.5s infinite; }
+        .legend-color.red { background: rgba(201,74,79,0.25); border-left: 4px solid var(--danger); animation: pulse-red 1s infinite; }
+        .legend-desc { color: var(--gray-500); font-size: 0.7rem; margin-left: 4px; }
+        @keyframes pulse-blue { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
+        @keyframes pulse-red { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
 
-        /* Toast */
-        .toast-notify {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: var(--card-bg);
-            border-left: 4px solid var(--success);
-            padding: 12px 16px;
-            border-radius: 12px;
-            z-index: 1100;
-            display: none;
-            align-items: center;
-            gap: 10px;
+        .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px; }
+        @media (max-width:640px){ .stats-grid { grid-template-columns:repeat(2,1fr); } }
+        .stat-card { background:var(--card-bg); border-radius:var(--radius-card); padding:14px; border:1px solid var(--border); text-align:center; box-shadow: var(--shadow); }
+        .stat-value { font-size:1.5rem; font-weight:700; color:var(--primary-light); }
+        .stat-label { font-size:0.65rem; text-transform:uppercase; color:var(--gray-500); letter-spacing:0.5px; }
+
+        .form-card { background:var(--card-bg); border-radius:var(--radius-card); padding:18px 20px; margin-bottom:20px; border:1px solid var(--border); box-shadow: var(--shadow); }
+        .form-card h5 { font-size:0.95rem; font-weight:600; margin-bottom:14px; color:var(--primary-light); }
+        .form-control, .form-select { background:var(--gray-50); border:1px solid var(--border); border-radius:40px; padding:10px 16px; font-size:0.8rem; color:var(--gray-800); min-height:var(--touch-target); }
+        .form-control:focus, .form-select:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(91,140,191,0.25); outline:none; }
+        .btn { border-radius:40px; padding:8px 18px; font-weight:600; font-size:0.75rem; border:none; min-height:var(--touch-target); display:inline-flex; align-items:center; gap:6px; transition:0.15s; }
+        .btn-primary { background:var(--primary); color:#0b121f; }
+        .btn-primary:hover { opacity:0.85; }
+        .btn-success { background:var(--success); color:#fff; }
+        .btn-warning { background:var(--warning); color:#0b121f; }
+        .btn-danger { background:var(--danger); color:#fff; }
+        .btn-outline { background:var(--gray-100); border:1px solid var(--border); color:var(--gray-600); }
+        .btn-pdf { background:#b22234; color:#fff; }
+
+        .stations-tags { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; max-height:180px; overflow-y:auto; padding:4px; }
+        .station-tag { background:var(--gray-100); border:1px solid var(--border); border-radius:40px; padding:4px 12px; display:inline-flex; align-items:center; gap:6px; font-size:0.7rem; color:var(--gray-600); }
+        .station-tag .badge { background:var(--primary); color:#0b121f; padding:1px 8px; border-radius:40px; font-size:0.6rem; }
+
+        .table-container { background:var(--card-bg); border-radius:var(--radius-card); border:1px solid var(--border); overflow-x:auto; margin-bottom:20px; box-shadow: var(--shadow); }
+        .training-table { width:100%; border-collapse:collapse; min-width:900px; font-size:0.72rem; }
+        .training-table th { background:var(--gray-50); padding:10px 6px; text-align:center; border-bottom:1px solid var(--border); color:var(--gray-500); font-weight:600; position:sticky; top:0; z-index:2; }
+        .training-table td { padding:6px; text-align:center; border-bottom:1px solid var(--border); vertical-align:middle; }
+        .employee-name-cell, .employee-id-cell { background:var(--card-bg); position:sticky; background:var(--card-bg); z-index:1; }
+        .employee-name-cell { left:0; min-width:130px; }
+        .employee-id-cell { left:130px; min-width:80px; }
+
+        .station-cell { transition:all 0.3s; position:relative; }
+        .station-cell.completed { background:rgba(46,155,110,0.15); border-left:4px solid var(--success); }
+        .station-cell.not-started { background:rgba(212,160,43,0.12); border-left:4px solid var(--warning); }
+        .station-cell.in-progress { background:rgba(74,139,194,0.15); border-left:4px solid var(--info); animation: pulse-blue 1.5s infinite; }
+        .station-cell.overdue { background:rgba(201,74,79,0.20); border-left:4px solid var(--danger); animation: pulse-red 1s infinite; }
+
+        .date-range-inputs { display:flex; gap:4px; align-items:center; justify-content:center; flex-wrap:wrap; }
+        .date-range-inputs input { width:90px; padding:4px 6px; font-size:0.65rem; border-radius:20px; border:1px solid var(--border); background:var(--gray-50); color:var(--gray-800); }
+
+        .month-selector { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+        .month-selector select { background:var(--gray-50); border:1px solid var(--border); border-radius:40px; padding:8px 16px; color:var(--gray-800); min-height:var(--touch-target); }
+
+        .notification-container { position:fixed; top:20px; right:20px; z-index:1200; display:flex; flex-direction:column; gap:10px; max-width:380px; width:100%; }
+        .notification-item { background:var(--card-bg); border-radius:12px; padding:14px 18px; border-left:5px solid var(--warning); box-shadow:0 8px 24px rgba(0,0,0,0.5); animation: slideIn 0.4s ease; display:flex; align-items:center; gap:12px; color:var(--gray-800); }
+        .notification-item.danger { border-left-color:var(--danger); }
+        .notification-item.success { border-left-color:var(--success); }
+        .notification-item .ntf-icon { font-size:1.3rem; }
+        .notification-item .ntf-close { cursor:pointer; margin-left:auto; background:none; border:none; font-size:1.1rem; color:var(--gray-500); }
+        @keyframes slideIn { from { transform:translateX(120%); opacity:0; } to { transform:translateX(0); opacity:1; } }
+
+        .action-buttons { display:flex; gap:4px; justify-content:center; flex-wrap:wrap; }
+        .btn-action { background:var(--gray-100); border:1px solid var(--border); border-radius:30px; padding:4px 8px; font-size:0.65rem; color:var(--gray-600); transition:0.15s; }
+
+        .modal-content { background:var(--card-bg); border-radius:var(--radius-card); border:1px solid var(--border); color:var(--gray-800); }
+        .modal-header, .modal-footer { border-color:var(--border); }
+        .btn-close { filter: invert(1); }
+
+        .month-indicator {
+            display: inline-block;
+            background: var(--primary);
+            color: #0b121f;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-weight: 700;
             font-size: 0.8rem;
-            max-width: 400px;
-            margin: 0 auto;
         }
 
-        /* Modal */
-        .modal-content { background: var(--card-bg); border-radius: var(--radius-card); border: 1px solid var(--border); }
-
-        @media (max-width: 640px) {
-            body { padding: 12px; }
-            .employee-name-cell { min-width: 120px; }
-            .employee-id-cell { left: 120px; min-width: 80px; }
-        }
-
-        [dir="rtl"] .employee-name-cell { left: auto; right: 0; }
-        [dir="rtl"] .employee-id-cell { left: auto; right: 140px; }
+        @media (max-width:640px){ .employee-name-cell { min-width:100px; } .employee-id-cell { left:100px; min-width:70px; } }
+        [dir="rtl"] .employee-name-cell { left:auto; right:0; }
+        [dir="rtl"] .employee-id-cell { left:auto; right:130px; }
+        [dir="rtl"] .notification-container { right:auto; left:20px; }
+        ::-webkit-scrollbar { width:6px; background:var(--gray-100); }
+        ::-webkit-scrollbar-thumb { background:var(--primary); border-radius:10px; }
     </style>
 </head>
 <body>
 <div class="container">
     <!-- Header -->
     <div class="header-card">
-        <div class="logo-area"><h1><i class="bi bi-journal-bookmark-fill me-2"></i><span id="titleMain">Training Plan Manager</span></h1></div>
+        <div class="logo-area"><h1><i class="bi bi-calendar3 me-2"></i><span id="titleMain">Training Plan · Monthly</span></h1></div>
         <div class="controls">
-            <div class="lang-switch"><button class="lang-btn active" id="langEn">EN</button><button class="lang-btn" id="langAr">AR</button></div>
-            <button class="theme-toggle" id="themeToggle"><i class="bi bi-moon"></i> <span id="themeText">Dark</span></button>
+            <div class="lang-switch">
+                <button class="lang-btn active" id="langEn">EN</button>
+                <button class="lang-btn" id="langAr">AR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEGEND: Highlighted in Yellow -->
+    <div class="legend-bar">
+        <div class="legend-title"><i class="bi bi-info-circle-fill"></i> <span data-key="legendTitle">Status Guide — How the Calendar Works</span></div>
+        <div class="legend-grid">
+            <div class="legend-item"><span class="legend-color green"></span> <strong data-key="completed">Completed</strong> <span class="legend-desc" data-key="completedDesc">(Green) — all training done</span></div>
+            <div class="legend-item"><span class="legend-color yellow"></span> <strong data-key="notStarted">Not Started</strong> <span class="legend-desc" data-key="notStartedDesc">(Yellow) — training not yet begun</span></div>
+            <div class="legend-item"><span class="legend-color blue"></span> <strong data-key="inProgress">In Progress</strong> <span class="legend-desc" data-key="inProgressDesc">(Blinking Blue) — currently training</span></div>
+            <div class="legend-item"><span class="legend-color red"></span> <strong data-key="overdue">Overdue</strong> <span class="legend-desc" data-key="overdueDesc">(Blinking Red) — past due date</span></div>
+            <div class="legend-item" style="margin-left:auto;"><i class="bi bi-calendar-check text-primary"></i> <span data-key="legendHint">Set due dates → auto-alerts & color coding</span></div>
+        </div>
+        <div style="margin-top:8px; font-size:0.75rem; color:var(--gray-500); border-top:1px solid var(--border); padding-top:8px;">
+            <i class="bi bi-arrow-right"></i> <span data-key="legendDetail">Select a month (Jan–Dec) to view/save plans separately. Enter employee name, ID, date range, and station due dates. The system auto-highlights status and sends notifications.</span>
         </div>
     </div>
 
     <!-- Stats -->
     <div class="stats-grid">
-        <div class="stat-card"><div class="stat-value" id="totalEmployees">0</div><div class="stat-label" data-key="totalEmployees">EMPLOYEES</div></div>
+        <div class="stat-card"><div class="stat-value" id="totalEmployees">0</div><div class="stat-label" data-key="employees">EMPLOYEES</div></div>
         <div class="stat-card"><div class="stat-value" id="completionRate">0%</div><div class="stat-label" data-key="completion">COMPLETION</div></div>
         <div class="stat-card"><div class="stat-value" id="totalStations">0</div><div class="stat-label" data-key="stations">STATIONS</div></div>
         <div class="stat-card"><div class="stat-value" id="activeTrainers">0</div><div class="stat-label" data-key="trainers">TRAINERS</div></div>
     </div>
 
-    <!-- Store & Month Info -->
+    <!-- Store & Month Selector -->
     <div class="form-card">
-        <div class="row g-3">
-            <div class="col-md-6"><label class="form-label" data-key="storeLabel">Store Name</label><input type="text" class="form-control" id="storeName" value="KS-22"></div>
-            <div class="col-md-6"><label class="form-label" data-key="monthLabel">Month</label><input type="month" class="form-control" id="monthPicker" value="2026-01"></div>
+        <div class="row g-2">
+            <div class="col-md-3"><label class="form-label" data-key="storeLabel">Store</label><input type="text" class="form-control" id="storeName" value="KS-22"></div>
+            <div class="col-md-3">
+                <label class="form-label" data-key="monthLabel">Month</label>
+                <div class="month-selector">
+                    <select class="form-control" id="monthSelector">
+                        <option value="2026-01">Jan 2026</option><option value="2026-02">Feb 2026</option><option value="2026-03">Mar 2026</option>
+                        <option value="2026-04">Apr 2026</option><option value="2026-05">May 2026</option><option value="2026-06">Jun 2026</option>
+                        <option value="2026-07" selected>Jul 2026</option><option value="2026-08">Aug 2026</option><option value="2026-09">Sep 2026</option>
+                        <option value="2026-10">Oct 2026</option><option value="2026-11">Nov 2026</option><option value="2026-12">Dec 2026</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3"><label class="form-label" data-key="trainersLabel">Trainers</label><input type="text" class="form-control" id="trainersInput" value="Odin, Mueen, Sarah, Alex"></div>
+            <div class="col-md-3 d-flex align-items-end gap-2">
+                <button class="btn btn-primary flex-grow-1" id="exportExcelBtn"><i class="bi bi-file-earmark-excel"></i> <span data-key="exportExcel">Excel</span></button>
+                <button class="btn btn-pdf" id="exportPdfBtn"><i class="bi bi-file-earmark-pdf"></i> PDF</button>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-12">
+                <span class="month-indicator" id="monthIndicator">📅 Current: Jul 2026</span>
+                <span style="color:var(--gray-500);font-size:0.75rem;margin-left:12px;" id="dataStatus">Data loaded for this month</span>
+            </div>
         </div>
     </div>
 
-    <!-- Stations Management -->
+    <!-- Stations + Add Employee -->
     <div class="form-card">
-        <h3><i class="bi bi-building me-2"></i><span data-key="stationsManagement">Stations Management</span></h3>
-        <div class="stations-list" id="stationsList"></div>
         <div class="row g-2">
-            <div class="col"><input type="text" class="form-control" id="newStationName" placeholder="New station name"></div>
-            <div class="col-auto"><button class="btn btn-primary" id="addStationBtn"><i class="bi bi-plus"></i> <span data-key="add">Add</span></button></div>
-            <div class="col-auto"><button class="btn btn-outline" id="resetStationsBtn"><i class="bi bi-arrow-repeat"></i> <span data-key="reset">Reset</span></button></div>
-        </div>
-    </div>
-
-    <!-- Trainers Management -->
-    <div class="form-card">
-        <h3><i class="bi bi-person-badge me-2"></i><span data-key="trainersManagement">Trainers Management</span></h3>
-        <div class="row g-2">
-            <div class="col"><input type="text" class="form-control" id="trainersInput" placeholder="Trainers (comma separated)" value="Odin, Mueen, Sarah, Alex"></div>
-            <div class="col-auto"><button class="btn btn-primary" id="updateTrainersBtn"><i class="bi bi-check-lg"></i> <span data-key="update">Update</span></button></div>
-        </div>
-    </div>
-
-    <!-- Add Employee -->
-    <div class="form-card">
-        <h3><i class="bi bi-person-plus me-2"></i><span data-key="addEmployee">Add Employee</span></h3>
-        <div class="row g-2">
-            <div class="col-md-4"><input type="text" class="form-control" id="empName" placeholder="Employee Name"></div>
-            <div class="col-md-4"><input type="text" class="form-control" id="empId" placeholder="Employee ID"></div>
-            <div class="col-md-4"><button class="btn btn-success w-100" id="addEmployeeBtn"><i class="bi bi-plus-circle"></i> <span data-key="addEmp">Add Employee</span></button></div>
-        </div>
-        <div class="row g-2 mt-2">
-            <div class="col-md-6"><button class="btn btn-outline w-100" id="addMultipleBtn"><i class="bi bi-people"></i> <span data-key="add5">Add 5 Employees</span></button></div>
-            <div class="col-md-6"><button class="btn btn-info w-100" id="exportExcelBtn"><i class="bi bi-file-earmark-excel"></i> <span data-key="exportExcel">Export Excel</span></button></div>
+            <div class="col-md-6">
+                <h5><i class="bi bi-building me-2"></i><span data-key="stationsMng">Stations</span></h5>
+                <div class="stations-tags" id="stationsList"></div>
+                <div class="row g-1">
+                    <div class="col"><input type="text" class="form-control" id="newStationName" placeholder="New station name"></div>
+                    <div class="col-auto"><button class="btn btn-primary" id="addStationBtn"><i class="bi bi-plus"></i> <span data-key="add">Add</span></button></div>
+                    <div class="col-auto"><button class="btn btn-outline" id="resetStationsBtn"><i class="bi bi-arrow-repeat"></i></button></div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h5><i class="bi bi-person-plus me-2"></i><span data-key="addEmployee">Add Employee</span></h5>
+                <div class="row g-1">
+                    <div class="col-4"><input type="text" class="form-control" id="empName" placeholder="Name"></div>
+                    <div class="col-3"><input type="text" class="form-control" id="empId" placeholder="ID"></div>
+                    <div class="col-5"><button class="btn btn-success w-100" id="addEmployeeBtn"><i class="bi bi-plus-circle"></i> <span data-key="addEmp">Add</span></button></div>
+                </div>
+                <div class="row g-1 mt-1">
+                    <div class="col-6"><button class="btn btn-outline w-100" id="addMultipleBtn"><i class="bi bi-people"></i> <span data-key="add5">+5</span></button></div>
+                    <div class="col-6"><button class="btn btn-warning w-100" id="checkDeadlinesBtn"><i class="bi bi-bell-fill"></i> <span data-key="check">Check</span></button></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -320,409 +259,365 @@
         </table>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="d-flex flex-wrap gap-2 justify-content-center mb-4">
-        <button class="btn btn-warning" id="checkDeadlinesBtn"><i class="bi bi-bell-fill"></i> <span data-key="checkDeadlines">Check Deadlines</span></button>
+    <div class="d-flex flex-wrap gap-2 justify-content-center mb-3">
         <button class="btn btn-danger" id="clearAllBtn"><i class="bi bi-trash3"></i> <span data-key="clearAll">Clear All</span></button>
+        <button class="btn btn-primary" id="markAllCompleteBtn"><i class="bi bi-check-all"></i> <span data-key="markAll">Mark All Complete</span></button>
     </div>
 </div>
 
-<!-- Notification Badge -->
-<div class="notification-badge" id="notificationBadge"><span id="notificationCount">0</span></div>
-
-<!-- Toast -->
-<div id="toastMsg" class="toast-notify"><i class="bi bi-check-circle-fill"></i> <span id="toastText"></span></div>
+<!-- Notification Container -->
+<div class="notification-container" id="notificationContainer"></div>
 
 <!-- Edit Station Modal -->
-<div class="modal fade" id="editStationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Edit Station</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="editStationId"><div class="mb-3"><label class="form-label">Station Name</label><input type="text" class="form-control" id="editStationName"></div><div class="mb-3"><label class="form-label">Station Code</label><input type="text" class="form-control" id="editStationCode" maxlength="3"></div></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveStationEditBtn">Save</button></div></div></div></div>
+<div class="modal fade" id="editStationModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Edit Station</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="editStationId"><div class="mb-2"><label>Name</label><input type="text" class="form-control" id="editStationName"></div><div class="mb-2"><label>Code</label><input type="text" class="form-control" id="editStationCode" maxlength="3"></div></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveStationEditBtn">Save</button></div></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // ======================== TRANSLATIONS ========================
     const translations = {
-        en: { titleMain: "Training Plan Manager", totalEmployees: "EMPLOYEES", completion: "COMPLETION", stations: "STATIONS", trainers: "TRAINERS", storeLabel: "Store Name", monthLabel: "Month", stationsManagement: "Stations Management", add: "Add", reset: "Reset", trainersManagement: "Trainers Management", update: "Update", addEmployee: "Add Employee", addEmp: "Add Employee", add5: "Add 5 Employees", exportExcel: "Export Excel", checkDeadlines: "Check Deadlines", clearAll: "Clear All" },
-        ar: { titleMain: "مدير خطة التدريب", totalEmployees: "الموظفين", completion: "الإنجاز", stations: "المحطات", trainers: "المدربين", storeLabel: "اسم المتجر", monthLabel: "الشهر", stationsManagement: "إدارة المحطات", add: "إضافة", reset: "إعادة تعيين", trainersManagement: "إدارة المدربين", update: "تحديث", addEmployee: "إضافة موظف", addEmp: "إضافة موظف", add5: "إضافة 5 موظفين", exportExcel: "تصدير إكسيل", checkDeadlines: "فحص المواعيد", clearAll: "مسح الكل" }
+        en: {
+            titleMain:"Training Plan · Monthly", employees:"EMPLOYEES", completion:"COMPLETION", stations:"STATIONS", trainers:"TRAINERS",
+            storeLabel:"Store", monthLabel:"Month", trainersLabel:"Trainers", stationsMng:"Stations", add:"Add",
+            addEmployee:"Add Employee", addEmp:"Add", add5:"+5", exportExcel:"Excel", check:"Check Deadlines",
+            clearAll:"Clear All", markAll:"Mark All Complete",
+            legendTitle:"Status Guide — How the Calendar Works",
+            completed:"Completed", completedDesc:"(Green) — all training done",
+            notStarted:"Not Started", notStartedDesc:"(Yellow) — training not yet begun",
+            inProgress:"In Progress", inProgressDesc:"(Blinking Blue) — currently training",
+            overdue:"Overdue", overdueDesc:"(Blinking Red) — past due date",
+            legendHint:"Set due dates → auto-alerts & color coding",
+            legendDetail:"Select a month (Jan–Dec) to view/save plans separately. Enter employee name, ID, date range, and station due dates. The system auto-highlights status and sends notifications."
+        },
+        ar: {
+            titleMain:"خطة التدريب · شهري", employees:"الموظفين", completion:"الإنجاز", stations:"المحطات", trainers:"المدربين",
+            storeLabel:"المتجر", monthLabel:"الشهر", trainersLabel:"المدربين", stationsMng:"المحطات", add:"إضافة",
+            addEmployee:"إضافة موظف", addEmp:"إضافة", add5:"+5", exportExcel:"إكسيل", check:"فحص المواعيد",
+            clearAll:"مسح الكل", markAll:"تحديد الكل مكتمل",
+            legendTitle:"دليل الحالة — كيف يعمل التقويم",
+            completed:"مكتمل", completedDesc:"(أخضر) — اكتمل التدريب",
+            notStarted:"لم يبدأ", notStartedDesc:"(أصفر) — لم يبدأ التدريب بعد",
+            inProgress:"قيد التنفيذ", inProgressDesc:"(أزرق وامض) — التدريب جارٍ",
+            overdue:"متأخر", overdueDesc:"(أحمر وامض) — تجاوز الموعد",
+            legendHint:"حدد التواريخ → تنبيهات تلقائية وتلوين",
+            legendDetail:"حدد شهرًا (يناير-ديسمبر) لعرض/حفظ الخطط بشكل منفصل. أدخل اسم الموظف والمعرف ونطاق التاريخ وتواريخ استحقاق المحطة. يقوم النظام بتمييز الحالة وإرسال إشعارات."
+        }
     };
     let currentLang = "en";
 
-    // Default stations
     const DEFAULT_STATIONS = [
-        { id: "ess", name: "Essentials", code: "ESS" },
-        { id: "prep", name: "Preparations", code: "PREP" },
-        { id: "brk", name: "Breakfast", code: "BRK" },
-        { id: "burg", name: "Burger Station", code: "BURG" },
-        { id: "side", name: "Side Items", code: "SIDE" },
-        { id: "dess", name: "Desserts", code: "DESS" },
-        { id: "gs", name: "Guest Service", code: "GS" }
+        { id:"ess", name:"Essentials", code:"ESS" }, { id:"prep", name:"Preparations", code:"PREP" },
+        { id:"brk", name:"Breakfast", code:"BRK" }, { id:"burg", name:"Burger Station", code:"BURG" },
+        { id:"side", name:"Side Items", code:"SIDE" }, { id:"dess", name:"Desserts", code:"DESS" },
+        { id:"gs", name:"Guest Service", code:"GS" }
     ];
 
     let stations = [], trainers = [], employees = [], nextId = 1001;
-    let editingStationId = null;
+    let currentMonth = "2026-07";
+    let notificationInterval = null;
+    const STORAGE_PREFIX = 'training_plan_month_';
 
-    // Load data
+    function getStorageKey(month) { return STORAGE_PREFIX + month; }
+
     function loadData() {
-        const saved = localStorage.getItem('training_plan_manager');
+        const month = document.getElementById('monthSelector').value;
+        currentMonth = month;
+        const saved = localStorage.getItem(getStorageKey(month));
         if (saved) {
             const data = JSON.parse(saved);
             stations = data.stations || DEFAULT_STATIONS;
-            trainers = data.trainers || ["Odin", "Mueen", "Sarah", "Alex"];
+            trainers = data.trainers || ["Odin","Mueen","Sarah","Alex"];
             employees = data.employees || [];
             nextId = data.nextId || 1001;
             document.getElementById('storeName').value = data.storeName || "KS-22";
-            document.getElementById('monthPicker').value = data.month || "2026-01";
+            document.getElementById('dataStatus').textContent = '✅ Data loaded for ' + getMonthLabel(month);
         } else {
+            // New month — initialize with default stations and empty employees
             stations = [...DEFAULT_STATIONS];
-            trainers = ["Odin", "Mueen", "Sarah", "Alex"];
+            trainers = ["Odin","Mueen","Sarah","Alex"];
             employees = [];
+            nextId = 1001;
+            document.getElementById('dataStatus').textContent = '🆕 New month — no data yet';
         }
         document.getElementById('trainersInput').value = trainers.join(", ");
-        renderStationsList();
+        updateMonthIndicator(month);
+        renderStations();
         renderTable();
         updateStats();
+        checkDeadlines();
+        startAutoCheck();
+    }
+
+    function getMonthLabel(month) {
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const parts = month.split('-');
+        return months[parseInt(parts[1])-1] + ' ' + parts[0];
+    }
+
+    function updateMonthIndicator(month) {
+        document.getElementById('monthIndicator').textContent = '📅 Current: ' + getMonthLabel(month);
     }
 
     function saveData() {
-        localStorage.setItem('training_plan_manager', JSON.stringify({
+        const month = document.getElementById('monthSelector').value;
+        localStorage.setItem(getStorageKey(month), JSON.stringify({
             stations, trainers, employees, nextId,
-            storeName: document.getElementById('storeName').value,
-            month: document.getElementById('monthPicker').value
+            storeName: document.getElementById('storeName').value
         }));
+        document.getElementById('dataStatus').textContent = '💾 Saved for ' + getMonthLabel(month);
     }
 
-    function renderStationsList() {
+    // Month change handler — saves current and loads new
+    document.getElementById('monthSelector').addEventListener('change', function() {
+        // Save current data before switching
+        saveData();
+        loadData();
+        showNotification('Switched to ' + this.options[this.selectedIndex].text, 'success');
+    });
+
+    function renderStations() {
         const container = document.getElementById('stationsList');
         container.innerHTML = stations.map(s => `
             <div class="station-tag">
-                <span class="badge">${s.code}</span>
-                <span>${s.name}</span>
-                <button class="btn btn-sm btn-outline-primary rounded-circle" onclick="editStation('${s.id}')" style="width:28px;height:28px;padding:0;"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-outline-danger rounded-circle" onclick="removeStation('${s.id}')" style="width:28px;height:28px;padding:0;"><i class="bi bi-x"></i></button>
+                <span class="badge">${s.code}</span><span>${s.name}</span>
+                <button class="btn btn-sm btn-outline-primary rounded-circle" onclick="editStation('${s.id}')" style="width:26px;height:26px;padding:0;font-size:0.65rem;"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-sm btn-outline-danger rounded-circle" onclick="removeStation('${s.id}')" style="width:26px;height:26px;padding:0;font-size:0.65rem;"><i class="bi bi-x"></i></button>
             </div>
         `).join('');
         document.getElementById('totalStations').innerText = stations.length;
     }
 
     window.editStation = function(id) {
-        const station = stations.find(s => s.id === id);
-        if (station) {
-            editingStationId = id;
-            document.getElementById('editStationId').value = id;
-            document.getElementById('editStationName').value = station.name;
-            document.getElementById('editStationCode').value = station.code;
-            new bootstrap.Modal(document.getElementById('editStationModal')).show();
-        }
+        const s = stations.find(x=>x.id===id); if(!s)return;
+        document.getElementById('editStationId').value=id;
+        document.getElementById('editStationName').value=s.name;
+        document.getElementById('editStationCode').value=s.code;
+        new bootstrap.Modal(document.getElementById('editStationModal')).show();
     };
-
-    document.getElementById('saveStationEditBtn').addEventListener('click', () => {
-        const name = document.getElementById('editStationName').value.trim();
-        const code = document.getElementById('editStationCode').value.trim().toUpperCase();
-        if (name && code) {
-            const idx = stations.findIndex(s => s.id === editingStationId);
-            if (idx !== -1) {
-                stations[idx].name = name;
-                stations[idx].code = code;
-                saveData();
-                renderStationsList();
-                renderTable();
-                showToast('Station updated', 'success');
-            }
-        }
+    document.getElementById('saveStationEditBtn').addEventListener('click', ()=>{
+        const id=document.getElementById('editStationId').value;
+        const name=document.getElementById('editStationName').value.trim();
+        const code=document.getElementById('editStationCode').value.trim().toUpperCase();
+        if(name&&code){ const idx=stations.findIndex(s=>s.id===id); if(idx!==-1){ stations[idx].name=name; stations[idx].code=code; saveData(); renderStations(); renderTable(); showNotification('Station updated','success'); } }
         bootstrap.Modal.getInstance(document.getElementById('editStationModal')).hide();
     });
 
     window.removeStation = function(id) {
-        if (stations.length <= 1) { showToast('Cannot remove all stations', 'error'); return; }
-        if (confirm('Remove this station?')) {
-            stations = stations.filter(s => s.id !== id);
-            employees.forEach(emp => { if (emp.stations) delete emp.stations[id]; });
-            saveData();
-            renderStationsList();
-            renderTable();
-            updateStats();
-            showToast('Station removed', 'success');
-        }
+        if(stations.length<=1){ showNotification('Cannot remove all stations','danger'); return; }
+        if(confirm('Remove station?')){ stations=stations.filter(s=>s.id!==id); employees.forEach(e=>{ if(e.stations) delete e.stations[id]; }); saveData(); renderStations(); renderTable(); updateStats(); showNotification('Station removed','success'); }
     };
 
-    document.getElementById('addStationBtn').addEventListener('click', () => {
-        const name = document.getElementById('newStationName').value.trim();
-        if (!name) { showToast('Enter station name', 'error'); return; }
-        const id = name.toLowerCase().replace(/\s+/g, '-');
-        const code = name.substring(0, 3).toUpperCase();
-        if (stations.some(s => s.id === id)) { showToast('Station exists', 'error'); return; }
-        stations.push({ id, name, code });
-        saveData();
-        renderStationsList();
-        renderTable();
-        document.getElementById('newStationName').value = '';
-        showToast('Station added', 'success');
+    document.getElementById('addStationBtn').addEventListener('click', ()=>{
+        const name=document.getElementById('newStationName').value.trim();
+        if(!name){ showNotification('Enter station name','danger'); return; }
+        const id=name.toLowerCase().replace(/\s+/g,'-'); const code=name.substring(0,3).toUpperCase();
+        if(stations.some(s=>s.id===id)){ showNotification('Station exists','danger'); return; }
+        stations.push({id,name,code}); saveData(); renderStations(); renderTable(); document.getElementById('newStationName').value=''; showNotification('Station added','success');
     });
 
-    document.getElementById('resetStationsBtn').addEventListener('click', () => {
-        if (confirm('Reset to default stations?')) {
-            stations = [...DEFAULT_STATIONS];
-            employees.forEach(emp => {
-                const newStations = {};
-                stations.forEach(s => { if (emp.stations && emp.stations[s.id]) newStations[s.id] = emp.stations[s.id]; });
-                emp.stations = newStations;
-            });
-            saveData();
-            renderStationsList();
-            renderTable();
-            updateStats();
-            showToast('Reset to default stations', 'success');
-        }
+    document.getElementById('resetStationsBtn').addEventListener('click', ()=>{
+        if(confirm('Reset to default stations for this month?')){ stations=[...DEFAULT_STATIONS]; employees.forEach(e=>{ const ns={}; stations.forEach(s=>{ if(e.stations&&e.stations[s.id]) ns[s.id]=e.stations[s.id]; }); e.stations=ns; }); saveData(); renderStations(); renderTable(); updateStats(); showNotification('Reset stations','success'); }
     });
 
-    document.getElementById('updateTrainersBtn').addEventListener('click', () => {
-        const text = document.getElementById('trainersInput').value;
-        trainers = text.split(",").map(t => t.trim()).filter(t => t);
-        if (trainers.length === 0) trainers = ["Odin", "Mueen", "Sarah", "Alex"];
-        saveData();
-        renderTable();
-        showToast('Trainers updated', 'success');
+    document.getElementById('trainersInput').addEventListener('change', function(){
+        trainers = this.value.split(",").map(t=>t.trim()).filter(t=>t);
+        if(trainers.length===0) trainers=["Odin","Mueen","Sarah","Alex"];
+        saveData(); renderTable();
     });
 
-    function saveEmployeeField(empId, field, value) {
-        const emp = employees.find(e => e.id === empId);
-        if (emp) { emp[field] = value; saveData(); updateStats(); }
-    }
-
+    function saveEmployeeField(empId, field, value) { const emp=employees.find(e=>e.id===empId); if(emp){ emp[field]=value; saveData(); updateStats(); } }
     function saveStationData(empId, stationId, field, value) {
-        const emp = employees.find(e => e.id === empId);
-        if (emp) {
-            if (!emp.stations) emp.stations = {};
-            if (!emp.stations[stationId]) emp.stations[stationId] = {};
-            emp.stations[stationId][field] = value;
-            saveData();
-            updateStats();
-            if (field === 'completionDate') checkDeadlines();
-        }
+        const emp=employees.find(e=>e.id===empId);
+        if(emp){ if(!emp.stations) emp.stations={}; if(!emp.stations[stationId]) emp.stations[stationId]={}; emp.stations[stationId][field]=value; saveData(); updateStats(); checkDeadlines(); renderTable(); }
     }
-
-    function deleteEmployee(empId) {
-        if (confirm('Delete this employee?')) {
-            employees = employees.filter(e => e.id !== empId);
-            saveData();
-            renderTable();
-            updateStats();
-            showToast('Employee deleted', 'success');
-        }
-    }
-
-    function duplicateEmployee(empId) {
-        const emp = employees.find(e => e.id === empId);
-        if (emp) {
-            const newEmp = { ...emp, id: `${empId}_copy`, name: `${emp.name} (Copy)`, stations: JSON.parse(JSON.stringify(emp.stations || {})) };
-            employees.push(newEmp);
-            saveData();
-            renderTable();
-            updateStats();
-            showToast('Employee duplicated', 'success');
-        }
-    }
-
-    function markAllCompleted(empId) {
-        const emp = employees.find(e => e.id === empId);
-        if (emp) {
-            if (!emp.stations) emp.stations = {};
-            stations.forEach(s => {
-                if (!emp.stations[s.id]) emp.stations[s.id] = {};
-                emp.stations[s.id].status = "Completed";
-                emp.stations[s.id].completionDate = new Date().toISOString().split('T')[0];
-            });
-            saveData();
-            renderTable();
-            updateStats();
-            checkDeadlines();
-            showToast('All stations marked completed', 'success');
-        }
+    function deleteEmployee(id) { if(confirm('Delete?')){ employees=employees.filter(e=>e.id!==id); saveData(); renderTable(); updateStats(); showNotification('Employee deleted','success'); } }
+    function duplicateEmployee(id) { const emp=employees.find(e=>e.id===id); if(emp){ const newEmp={...emp, id:`emp-${nextId++}`, name:`${emp.name} (Copy)`, stations:JSON.parse(JSON.stringify(emp.stations||{}))}; employees.push(newEmp); saveData(); renderTable(); updateStats(); showNotification('Duplicated','success'); } }
+    function markAllCompletedForEmp(id) {
+        const emp=employees.find(e=>e.id===id); if(!emp)return;
+        if(!emp.stations) emp.stations={};
+        stations.forEach(s=>{ if(!emp.stations[s.id]) emp.stations[s.id]={}; emp.stations[s.id].status='Completed'; emp.stations[s.id].completionDate=new Date().toISOString().split('T')[0]; });
+        saveData(); renderTable(); updateStats(); checkDeadlines(); showNotification('All completed for employee','success');
     }
 
     function renderTable() {
-        const thead = document.getElementById('tableHead');
-        const tbody = document.getElementById('tableBody');
-        
-        // Header
-        let headerHtml = `<tr><th class="employee-name-cell" data-key="employee">Employee</th><th class="employee-id-cell" data-key="id">ID</th><th data-key="dateRange">Date Range</th>`;
-        stations.forEach(s => headerHtml += `<th>${s.name}<br><small>${s.code}</small></th>`);
-        headerHtml += `<th data-key="actions">Actions</th></tr>`;
-        thead.innerHTML = headerHtml;
-        
-        // Body
-        if (employees.length === 0) { tbody.innerHTML = '<tr><td colspan="100%" style="text-align:center; padding:40px;">No employees added</td></tr>'; return; }
-        
+        const thead=document.getElementById('tableHead');
+        const tbody=document.getElementById('tableBody');
+        let h = `<tr><th class="employee-name-cell" data-key="employee">Employee</th><th class="employee-id-cell" data-key="id">ID</th><th data-key="dateRange">Date Range</th>`;
+        stations.forEach(s=> h+=`<th>${s.name}<br><small>${s.code}</small></th>`);
+        h+=`<th data-key="actions">Actions</th></tr>`;
+        thead.innerHTML=h;
+
+        if(employees.length===0){ tbody.innerHTML='<tr><td colspan="100%" style="padding:30px;text-align:center;color:var(--gray-500);">No employees for this month</td></tr>'; return; }
+
         tbody.innerHTML = employees.map(emp => {
             let row = `<tr data-id="${emp.id}">
-                <td class="employee-name-cell"><input type="text" class="form-control form-control-sm" value="${escapeHtml(emp.name || '')}" onchange="saveEmployeeField('${emp.id}', 'name', this.value)"></td>
-                <td class="employee-id-cell"><input type="text" class="form-control form-control-sm" value="${escapeHtml(emp.employeeId || emp.id)}" onchange="saveEmployeeField('${emp.id}', 'employeeId', this.value)"></td>
-                <td><div class="date-range-inputs"><input type="date" value="${emp.dateFrom || ''}" onchange="saveEmployeeField('${emp.id}', 'dateFrom', this.value)"><span>to</span><input type="date" value="${emp.dateTo || ''}" onchange="saveEmployeeField('${emp.id}', 'dateTo', this.value)"></div></td>`;
-            
+                <td class="employee-name-cell"><input type="text" class="form-control form-control-sm" value="${escapeHtml(emp.name||'')}" onchange="saveEmployeeField('${emp.id}','name',this.value)"></td>
+                <td class="employee-id-cell"><input type="text" class="form-control form-control-sm" value="${escapeHtml(emp.employeeId||emp.id)}" onchange="saveEmployeeField('${emp.id}','employeeId',this.value)"></td>
+                <td><div class="date-range-inputs"><input type="date" value="${emp.dateFrom||''}" onchange="saveEmployeeField('${emp.id}','dateFrom',this.value)"><span>→</span><input type="date" value="${emp.dateTo||''}" onchange="saveEmployeeField('${emp.id}','dateTo',this.value)"></div></td>`;
             stations.forEach(s => {
-                const data = (emp.stations && emp.stations[s.id]) || {};
-                const statusClass = data.status === 'Completed' ? 'completed' : (data.status === 'In Progress' ? 'in-progress' : '');
-                row += `<td class="station-cell ${statusClass}">
-                    <div style="display:flex; flex-direction:column; gap:4px;">
-                        <select class="form-select form-select-sm" onchange="saveStationData('${emp.id}', '${s.id}', 'status', this.value)">
+                const d = (emp.stations&&emp.stations[s.id])||{};
+                let cls = '';
+                if(d.status==='Completed') cls='completed';
+                else if(d.status==='Not Started') cls='not-started';
+                else if(d.status==='In Progress') cls='in-progress';
+                if(d.completionDate && d.status!=='Completed'){
+                    const due=new Date(d.completionDate); due.setHours(0,0,0,0);
+                    const today=new Date(); today.setHours(0,0,0,0);
+                    if(due < today) cls='overdue';
+                }
+                row += `<td class="station-cell ${cls}">
+                    <div style="display:flex;flex-direction:column;gap:3px;min-width:120px;">
+                        <select class="form-select form-select-sm" onchange="saveStationData('${emp.id}','${s.id}','status',this.value)">
                             <option value="">Status</option>
-                            <option value="Not Started" ${data.status === 'Not Started' ? 'selected' : ''}>Not Started</option>
-                            <option value="In Progress" ${data.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
-                            <option value="Completed" ${data.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                            <option value="Not Started" ${d.status==='Not Started'?'selected':''}>Not Started</option>
+                            <option value="In Progress" ${d.status==='In Progress'?'selected':''}>In Progress</option>
+                            <option value="Completed" ${d.status==='Completed'?'selected':''}>Completed</option>
                         </select>
-                        <select class="form-select form-select-sm" onchange="saveStationData('${emp.id}', '${s.id}', 'trainer', this.value)">
+                        <select class="form-select form-select-sm" onchange="saveStationData('${emp.id}','${s.id}','trainer',this.value)">
                             <option value="">Trainer</option>
-                            ${trainers.map(t => `<option value="${t}" ${data.trainer === t ? 'selected' : ''}>${t}</option>`).join('')}
+                            ${trainers.map(t=>`<option value="${t}" ${d.trainer===t?'selected':''}>${t}</option>`).join('')}
                         </select>
-                        <input type="date" class="form-control form-control-sm" value="${data.completionDate || ''}" onchange="saveStationData('${emp.id}', '${s.id}', 'completionDate', this.value)">
+                        <input type="date" class="form-control form-control-sm" value="${d.completionDate||''}" onchange="saveStationData('${emp.id}','${s.id}','completionDate',this.value)" placeholder="Due date">
                     </div>
                 </td>`;
             });
-            
             row += `<td class="action-buttons">
-                <button class="btn-action delete" onclick="deleteEmployee('${emp.id}')"><i class="bi bi-trash"></i></button>
-                <button class="btn-action copy" onclick="duplicateEmployee('${emp.id}')"><i class="bi bi-copy"></i></button>
-                <button class="btn-action" onclick="markAllCompleted('${emp.id}')"><i class="bi bi-check-all"></i></button>
+                <button class="btn-action btn-sm btn-outline-danger" onclick="deleteEmployee('${emp.id}')"><i class="bi bi-trash"></i></button>
+                <button class="btn-action btn-sm btn-outline-info" onclick="duplicateEmployee('${emp.id}')"><i class="bi bi-copy"></i></button>
+                <button class="btn-action btn-sm btn-outline-success" onclick="markAllCompletedForEmp('${emp.id}')"><i class="bi bi-check-all"></i></button>
             </td></tr>`;
             return row;
         }).join('');
-        
-        // Apply translations
-        document.querySelectorAll('[data-key]').forEach(el => { const key = el.getAttribute('data-key'); if (translations[currentLang][key]) el.innerText = translations[currentLang][key]; });
+        document.querySelectorAll('[data-key]').forEach(el=>{ const key=el.getAttribute('data-key'); if(translations[currentLang][key]) el.innerText=translations[currentLang][key]; });
     }
 
-    document.getElementById('addEmployeeBtn').addEventListener('click', () => {
-        const name = document.getElementById('empName').value.trim();
-        const empId = document.getElementById('empId').value.trim() || `EMP-${nextId}`;
-        if (!name) { showToast('Enter employee name', 'error'); return; }
-        employees.push({ id: `emp-${nextId++}`, name, employeeId: empId, stations: {} });
-        saveData();
-        renderTable();
-        updateStats();
-        document.getElementById('empName').value = '';
-        document.getElementById('empId').value = '';
-        showToast('Employee added', 'success');
+    document.getElementById('addEmployeeBtn').addEventListener('click', ()=>{
+        const name=document.getElementById('empName').value.trim();
+        const empId=document.getElementById('empId').value.trim()||`EMP-${nextId}`;
+        if(!name){ showNotification('Enter name','danger'); return; }
+        employees.push({ id:`emp-${nextId++}`, name, employeeId:empId, stations:{}, dateFrom:'', dateTo:'' });
+        saveData(); renderTable(); updateStats(); document.getElementById('empName').value=''; document.getElementById('empId').value=''; showNotification('Employee added','success');
     });
 
-    document.getElementById('addMultipleBtn').addEventListener('click', () => {
-        for (let i = 0; i < 5; i++) {
-            employees.push({ id: `emp-${nextId++}`, name: `Employee ${nextId}`, employeeId: `EMP-${nextId}`, stations: {} });
-        }
-        saveData();
-        renderTable();
-        updateStats();
-        showToast('5 employees added', 'success');
+    document.getElementById('addMultipleBtn').addEventListener('click', ()=>{
+        for(let i=0;i<5;i++){ employees.push({ id:`emp-${nextId++}`, name:`Emp ${nextId}`, employeeId:`EMP-${nextId}`, stations:{}, dateFrom:'', dateTo:'' }); }
+        saveData(); renderTable(); updateStats(); showNotification('5 employees added','success');
     });
 
     function updateStats() {
-        document.getElementById('totalEmployees').innerText = employees.length;
-        let completed = 0, total = employees.length * stations.length;
-        employees.forEach(emp => {
-            if (emp.stations) stations.forEach(s => { if (emp.stations[s.id]?.status === 'Completed') completed++; });
-        });
-        const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
-        document.getElementById('completionRate').innerText = `${rate}%`;
-        
-        const activeTrainers = new Set();
-        employees.forEach(emp => { if (emp.stations) stations.forEach(s => { if (emp.stations[s.id]?.trainer) activeTrainers.add(emp.stations[s.id].trainer); }); });
-        document.getElementById('activeTrainers').innerText = activeTrainers.size;
+        document.getElementById('totalEmployees').innerText=employees.length;
+        let completed=0,total=employees.length*stations.length;
+        employees.forEach(e=>{ if(e.stations) stations.forEach(s=>{ if(e.stations[s.id]?.status==='Completed') completed++; }); });
+        const rate=total>0?Math.round((completed/total)*100):0;
+        document.getElementById('completionRate').innerText=`${rate}%`;
+        const active=new Set();
+        employees.forEach(e=>{ if(e.stations) stations.forEach(s=>{ if(e.stations[s.id]?.trainer) active.add(e.stations[s.id].trainer); }); });
+        document.getElementById('activeTrainers').innerText=active.size;
+    }
+
+    // ================= NOTIFICATIONS =================
+    function showNotification(msg, type='warning') {
+        const container=document.getElementById('notificationContainer');
+        const el=document.createElement('div');
+        el.className=`notification-item ${type}`;
+        const icon=type==='danger'?'bi-exclamation-triangle-fill':type==='success'?'bi-check-circle-fill':'bi-bell-fill';
+        el.innerHTML=`<i class="bi ${icon} ntf-icon"></i><span>${msg}</span><button class="ntf-close" onclick="this.parentElement.remove()"><i class="bi bi-x"></i></button>`;
+        container.prepend(el);
+        setTimeout(()=>{ if(el.parentElement) el.remove(); }, 8000);
     }
 
     function checkDeadlines() {
-        const today = new Date(); today.setHours(0,0,0,0);
-        const notifications = [];
+        const today=new Date(); today.setHours(0,0,0,0);
+        let alerts=[];
         employees.forEach(emp => {
-            if (emp.stations) stations.forEach(s => {
-                const date = emp.stations[s.id]?.completionDate;
-                if (date) {
-                    const due = new Date(date); due.setHours(0,0,0,0);
-                    const diff = Math.ceil((due - today) / (1000*60*60*24));
-                    if (diff === 0) notifications.push(`${emp.name}: ${s.name} due TODAY`);
-                    else if (diff < 0) notifications.push(`${emp.name}: ${s.name} OVERDUE by ${Math.abs(diff)} days`);
-                    else if (diff <= 3) notifications.push(`${emp.name}: ${s.name} due in ${diff} days`);
+            if(emp.stations) stations.forEach(s => {
+                const d = emp.stations[s.id]||{};
+                if(d.completionDate && d.status!=='Completed'){
+                    const due=new Date(d.completionDate); due.setHours(0,0,0,0);
+                    const diff=Math.ceil((due - today)/(1000*60*60*24));
+                    if(diff===0) alerts.push({ msg:`${emp.name}: ${s.name} due TODAY`, type:'warning' });
+                    else if(diff<0) alerts.push({ msg:`${emp.name}: ${s.name} OVERDUE by ${Math.abs(diff)} days`, type:'danger' });
+                    else if(diff<=3) alerts.push({ msg:`${emp.name}: ${s.name} due in ${diff} days`, type:'warning' });
                 }
             });
         });
-        const badge = document.getElementById('notificationBadge');
-        const countSpan = document.getElementById('notificationCount');
-        if (notifications.length > 0) {
-            countSpan.innerText = notifications.length;
-            badge.style.display = 'flex';
-            badge.onclick = () => alert(notifications.join('\n'));
-        } else {
-            badge.style.display = 'none';
-        }
-        highlightDeadlineCells();
-    }
-
-    function highlightDeadlineCells() {
-        const today = new Date(); today.setHours(0,0,0,0);
-        document.querySelectorAll('.station-cell').forEach(cell => cell.classList.remove('deadline-today', 'deadline-passed'));
-        employees.forEach(emp => {
-            stations.forEach((s, idx) => {
-                const date = emp.stations?.[s.id]?.completionDate;
-                if (date) {
-                    const due = new Date(date); due.setHours(0,0,0,0);
-                    const diff = Math.ceil((due - today) / (1000*60*60*24));
-                    const row = document.querySelector(`tr[data-id="${emp.id}"]`);
-                    if (row) {
-                        const cell = row.querySelector(`td:nth-child(${idx + 4})`);
-                        if (cell) {
-                            if (diff === 0) cell.classList.add('deadline-today');
-                            else if (diff < 0) cell.classList.add('deadline-passed');
-                        }
-                    }
-                }
-            });
-        });
-    }
-
-    document.getElementById('checkDeadlinesBtn').addEventListener('click', () => { checkDeadlines(); showToast('Deadlines checked', 'success'); });
-    document.getElementById('clearAllBtn').addEventListener('click', () => { if (confirm('Clear all data?')) { employees = []; nextId = 1001; saveData(); renderTable(); updateStats(); showToast('All data cleared', 'warning'); } });
-    document.getElementById('exportExcelBtn').addEventListener('click', () => {
-        const wsData = [['Store', document.getElementById('storeName').value], ['Month', document.getElementById('monthPicker').value], [], ['Employee', 'ID', 'Date Range', ...stations.flatMap(s => [`${s.name} Status`, `${s.name} Trainer`, `${s.name} Date`])]];
-        employees.forEach(emp => {
-            wsData.push([emp.name || '', emp.employeeId || emp.id, `${emp.dateFrom || ''} to ${emp.dateTo || ''}`, ...stations.flatMap(s => {
-                const d = emp.stations?.[s.id] || {};
-                return [d.status || '', d.trainer || '', d.completionDate || ''];
-            })]);
-        });
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Training Plan');
-        XLSX.writeFile(wb, `Training_Plan_${document.getElementById('storeName').value}.xlsx`);
-        showToast('Exported to Excel', 'success');
-    });
-
-    function showToast(msg, type = 'success') {
-        const toast = document.getElementById('toastMsg');
-        document.getElementById('toastText').innerText = msg;
-        toast.style.display = 'flex';
-        toast.style.borderLeftColor = type === 'error' ? '#ef4444' : '#10b981';
-        setTimeout(() => toast.style.display = 'none', 2500);
-    }
-
-    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
-
-    // Language & Theme
-    function updateLanguage() {
-        const t = translations[currentLang];
-        document.getElementById('titleMain').innerText = t.titleMain;
-        document.querySelectorAll('[data-key]').forEach(el => { const key = el.getAttribute('data-key'); if (t[key]) el.innerText = t[key]; });
-        document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+        alerts.slice(0,5).forEach(a=> showNotification(a.msg, a.type));
         renderTable();
     }
-    document.getElementById('langEn').addEventListener('click', () => { currentLang = 'en'; document.getElementById('langEn').classList.add('active'); document.getElementById('langAr').classList.remove('active'); updateLanguage(); });
-    document.getElementById('langAr').addEventListener('click', () => { currentLang = 'ar'; document.getElementById('langAr').classList.add('active'); document.getElementById('langEn').classList.remove('active'); updateLanguage(); });
-    
-    let darkMode = localStorage.getItem('trainingDark') === 'true';
-    function applyDarkMode() { if (darkMode) document.body.classList.add('dark'); else document.body.classList.remove('dark'); document.getElementById('themeText').innerText = darkMode ? 'Light' : 'Dark'; }
-    document.getElementById('themeToggle').addEventListener('click', () => { darkMode = !darkMode; localStorage.setItem('trainingDark', darkMode); applyDarkMode(); });
-    
-    applyDarkMode(); updateLanguage(); loadData(); 
-    setInterval(() => { if (new Date().getHours() === 9) checkDeadlines(); }, 3600000);
-    window.saveEmployeeField = saveEmployeeField;
-    window.saveStationData = saveStationData;
-    window.deleteEmployee = deleteEmployee;
-    window.duplicateEmployee = duplicateEmployee;
-    window.markAllCompleted = markAllCompleted;
+
+    function startAutoCheck() {
+        if(notificationInterval) clearInterval(notificationInterval);
+        notificationInterval = setInterval(()=>{ checkDeadlines(); }, 30000);
+    }
+
+    document.getElementById('checkDeadlinesBtn').addEventListener('click', ()=>{ checkDeadlines(); showNotification('Deadlines checked','success'); });
+    document.getElementById('clearAllBtn').addEventListener('click', ()=>{ if(confirm('Clear all employees for this month?')){ employees=[]; nextId=1001; saveData(); renderTable(); updateStats(); showNotification('All cleared for this month','warning'); } });
+    document.getElementById('markAllCompleteBtn').addEventListener('click', ()=>{
+        employees.forEach(emp => {
+            if(!emp.stations) emp.stations={};
+            stations.forEach(s => { if(!emp.stations[s.id]) emp.stations[s.id]={}; emp.stations[s.id].status='Completed'; emp.stations[s.id].completionDate=new Date().toISOString().split('T')[0]; });
+        });
+        saveData(); renderTable(); updateStats(); checkDeadlines(); showNotification('All employees marked complete','success');
+    });
+
+    // ================= EXPORT EXCEL & PDF =================
+    document.getElementById('exportExcelBtn').addEventListener('click', ()=>{
+        const monthLabel = document.getElementById('monthSelector').options[document.getElementById('monthSelector').selectedIndex].text;
+        const wsData = [['Store', document.getElementById('storeName').value], ['Month', monthLabel], [], ['Employee','ID','Date Range', ...stations.flatMap(s=>[`${s.name} Status`,`${s.name} Trainer`,`${s.name} Due`])]];
+        employees.forEach(emp => {
+            wsData.push([emp.name||'', emp.employeeId||emp.id, `${emp.dateFrom||''} → ${emp.dateTo||''}`, ...stations.flatMap(s=>{
+                const d=emp.stations?.[s.id]||{};
+                return [d.status||'', d.trainer||'', d.completionDate||''];
+            })]);
+        });
+        const wb=XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Training Plan');
+        XLSX.writeFile(wb, `Training_Plan_${document.getElementById('storeName').value}_${monthLabel.replace(' ','_')}.xlsx`);
+        showNotification('Exported Excel','success');
+    });
+
+    document.getElementById('exportPdfBtn').addEventListener('click', ()=>{
+        const monthLabel = document.getElementById('monthSelector').options[document.getElementById('monthSelector').selectedIndex].text;
+        const printWin = window.open('', '_blank', 'width=1100,height=800');
+        let rows = employees.map(emp => {
+            const stationCells = stations.map(s => {
+                const d = emp.stations?.[s.id]||{};
+                return `<td>${d.status||'-'}<br><small>${d.trainer||'-'}<br>${d.completionDate||'-'}</small></td>`;
+            }).join('');
+            return `<tr><td>${emp.name||''}</td><td>${emp.employeeId||emp.id}</td><td>${emp.dateFrom||''} → ${emp.dateTo||''}</td>${stationCells}</tr>`;
+        }).join('');
+        const headerCells = stations.map(s => `<th>${s.name}<br><small>${s.code}</small></th>`).join('');
+        printWin.document.write(`
+            <html><head><title>Training Plan</title>
+            <style>body{font-family:sans-serif;padding:20px;background:#0b121f;color:#eaf0fa;} table{width:100%;border-collapse:collapse;font-size:11px;} th,td{border:1px solid #2b3f5a;padding:6px;text-align:center;} th{background:#1a2538;color:#7ba9d9;} h2{color:#7ba9d9;}</style>
+</head>
+<body><h2>Training Plan — ${document.getElementById('storeName').value} (${monthLabel})</h2>
+<table><thead><tr><th>Employee</th><th>ID</th><th>Date Range</th>${headerCells}</tr></thead><tbody>${rows}</tbody></table>
+<p style="margin-top:16px;color:#8a9bb0;">Generated: ${new Date().toLocaleString()}</p></body></html>
+`);
+printWin.document.close();
+setTimeout(()=>{ printWin.print(); }, 500);
+showNotification('PDF generated','success');
+});
+
+function escapeHtml(s){ if(!s)return ''; return s.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]||m)); }
+
+// Language
+function updateLanguage() {
+const t=translations[currentLang];
+document.getElementById('titleMain').innerText=t.titleMain;
+document.querySelectorAll('[data-key]').forEach(el=>{ const key=el.getAttribute('data-key'); if(t[key]) el.innerText=t[key]; });
+document.documentElement.setAttribute('dir', currentLang==='ar'?'rtl':'ltr');
+renderTable();
+}
+document.getElementById('langEn').addEventListener('click', ()=>{ currentLang='en'; document.getElementById('langEn').classList.add('active'); document.getElementById('langAr').classList.remove('active'); updateLanguage(); });
+document.getElementById('langAr').addEventListener('click', ()=>{ currentLang='ar'; document.getElementById('langAr').classList.add('active'); document.getElementById('langEn').classList.remove('active'); updateLanguage(); });
+
+// Initialize — default to July
+document.getElementById('monthSelector').value = '2026-07';
+updateLanguage(); loadData();
+
+// expose functions globally
+window.saveEmployeeField=saveEmployeeField; window.saveStationData=saveStationData; window.deleteEmployee=deleteEmployee; window.duplicateEmployee=duplicateEmployee; window.markAllCompletedForEmp=markAllCompletedForEmp; window.editStation=editStation; window.removeStation=removeStation;
 </script>
 </body>
 </html>
