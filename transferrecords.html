@@ -1,558 +1,202 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>SADWAP | Inventory Transfer · Responsive</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>SADWAP · Inventory Transfer · Dark Corporate</title>
+    <!-- Bootstrap 5 + Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <!-- SheetJS for Excel export -->
+    <!-- SheetJS for Excel -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* Professional Corporate Theme - Fully Responsive */
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        /* DARK ONLY — deep corporate dark theme */
         :root {
-            --primary: #2c5f8a;
-            --primary-dark: #1e405e;
-            --primary-soft: #eef2f8;
-            --success: #10b981;
-            --danger: #ef4444;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --card-bg: #ffffff;
-            --border: #e5e7eb;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --radius-card: 20px;
-            --touch-target: 44px;
+            --primary: #5b8cbf;
+            --primary-light: #7ba9d9;
+            --primary-soft: #1e2a3a;
+            --success: #2e9b6e;
+            --danger: #c94a4f;
+            --gray-50: #0e1624;
+            --gray-100: #1a2538;
+            --gray-200: #2a3a52;
+            --gray-500: #8a9bb0;
+            --gray-600: #b0c2d6;
+            --gray-700: #d0def0;
+            --gray-800: #eaf0fa;
+            --card-bg: #162033;
+            --border: #2b3f5a;
+            --shadow: 0 10px 30px rgba(0,0,0,0.7);
+            --radius-card: 24px;
+            --touch: 44px;
+            --bg-body: #0b121f;
         }
-
-        body.dark {
-            --primary: #3b82f6;
-            --primary-soft: #1e293b;
-            --gray-50: #0f172a;
-            --gray-100: #1e293b;
-            --gray-200: #334155;
-            --gray-500: #94a3b8;
-            --gray-600: #cbd5e1;
-            --gray-700: #e2e8f0;
-            --gray-800: #f1f5f9;
-            --card-bg: #1e293b;
-            --border: #334155;
-        }
-
         body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            background: var(--gray-100);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-body);
             color: var(--gray-800);
-            transition: background 0.2s, color 0.2s;
-            padding: 0;
-            margin: 0;
-            min-height: 100vh;
-            width: 100%;
+            padding:0; margin:0; min-height:100vh;
+            width:100%;
         }
-
-        /* MAIN WRAPPER - FULL WIDTH RESPONSIVE */
-        .responsive-wrapper {
-            width: 100%;
-            max-width: 100%;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Dynamic container - expands on larger screens */
+        .responsive-wrapper { width:100%; max-width:100%; min-height:100vh; display:flex; flex-direction:column; }
         .fluid-container {
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px 24px;
+            width:100%; max-width:1440px; margin:0 auto; padding:24px 28px;
         }
+        @media (max-width:768px){ .fluid-container { padding:16px; } }
+        @media (max-width:480px){ .fluid-container { padding:12px; } }
 
-        /* On smaller screens reduce padding */
-        @media (max-width: 768px) {
-            .fluid-container {
-                padding: 12px 16px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .fluid-container {
-                padding: 10px 12px;
-            }
-        }
-
-        /* Header - fully responsive */
+        /* ---- Header ---- */
         .header-card {
             background: var(--card-bg);
             border-radius: var(--radius-card);
-            padding: 16px 24px;
-            margin-bottom: 24px;
+            padding: 18px 28px;
+            margin-bottom: 28px;
             border: 1px solid var(--border);
+            box-shadow: var(--shadow);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 16px;
         }
-
         .logo-area h1 {
-            font-size: 1.35rem;
-            font-weight: 700;
-            margin: 0;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 1.5rem; font-weight: 700; margin:0;
+            color: var(--primary-light);
+            display:flex; align-items:center; gap:10px;
+            letter-spacing:-0.2px;
         }
-
-        .controls {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
+        .logo-area h1 i { color: var(--primary); }
+        .controls { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
         .lang-switch {
-            display: flex;
-            gap: 4px;
-            background: var(--gray-200);
-            padding: 4px;
-            border-radius: 40px;
+            display:flex; gap:4px; background:var(--gray-100); padding:4px; border-radius:40px;
         }
-
         .lang-btn {
-            background: transparent;
-            border: none;
-            padding: 6px 18px;
-            border-radius: 32px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            cursor: pointer;
-            color: var(--gray-600);
-            transition: 0.2s;
+            background:transparent; border:none; padding:6px 20px; border-radius:32px;
+            font-weight:600; font-size:0.75rem; cursor:pointer; color:var(--gray-500);
+            transition:0.2s;
         }
+        .lang-btn.active { background:var(--primary); color:#fff; }
 
-        .lang-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .theme-toggle {
-            background: var(--gray-200);
-            border: none;
-            border-radius: 40px;
-            padding: 6px 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--gray-700);
-            cursor: pointer;
-        }
-
-        /* Stats Grid - Responsive breakpoints */
+        /* ---- Stats ---- */
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
+            display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:28px;
         }
-
         .stat-card {
-            background: var(--card-bg);
-            border-radius: 18px;
-            padding: 16px 12px;
-            border: 1px solid var(--border);
-            text-align: center;
-            transition: transform 0.2s;
+            background:var(--card-bg); border-radius:20px; padding:18px 14px;
+            border:1px solid var(--border); box-shadow:var(--shadow);
+            text-align:center; transition: all 0.15s;
         }
+        .stat-card:hover { transform:translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.5); }
+        .stat-title { font-size:0.7rem; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.6px; }
+        .stat-value { font-size:1.8rem; font-weight:700; margin:6px 0; color:var(--gray-800); }
+        .stat-icon { font-size:1rem; opacity:0.6; }
+        @media (max-width:768px){ .stats-grid { gap:14px; } .stat-value { font-size:1.5rem; } }
+        @media (max-width:600px){ .stats-grid { grid-template-columns:repeat(2,1fr); gap:12px; } .stat-value { font-size:1.2rem; } }
 
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .stat-title {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--gray-500);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 8px 0;
-            color: var(--gray-800);
-        }
-
-        .stat-icon {
-            font-size: 0.9rem;
-            opacity: 0.7;
-        }
-
-        /* Tablet and mobile adjustments */
-        @media (max-width: 992px) {
-            .stats-grid {
-                gap: 12px;
-            }
-            .stat-value {
-                font-size: 1.3rem;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .stat-value {
-                font-size: 1.1rem;
-            }
-            .stat-title {
-                font-size: 0.6rem;
-            }
-            .stat-card {
-                padding: 12px 8px;
-            }
-        }
-
-        /* Form Card */
+        /* ---- Form ---- */
         .form-card {
-            background: var(--card-bg);
-            border-radius: var(--radius-card);
-            padding: 20px 24px;
-            margin-bottom: 24px;
-            border: 1px solid var(--border);
+            background:var(--card-bg); border-radius:var(--radius-card); padding:24px 28px;
+            margin-bottom:28px; border:1px solid var(--border); box-shadow:var(--shadow);
         }
-
         .form-card h5 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 18px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size:1rem; font-weight:700; margin-bottom:20px;
+            color:var(--primary-light); display:flex; align-items:center; gap:10px;
         }
-
-        .form-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: var(--gray-600);
-        }
-
+        .form-label { font-size:0.75rem; font-weight:600; color:var(--gray-500); margin-bottom:4px; }
         .form-control, .form-select {
-            background: var(--gray-50);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 10px 16px;
-            font-size: 0.85rem;
-            color: var(--gray-800);
-            min-height: var(--touch-target);
+            background:var(--gray-50); border:1px solid var(--border); border-radius:40px;
+            padding:10px 18px; font-size:0.85rem; color:var(--gray-800);
+            min-height:var(--touch);
         }
-
         .form-control:focus, .form-select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(44,95,138,0.1);
-            outline: none;
+            border-color:var(--primary); box-shadow:0 0 0 3px rgba(91,140,191,0.25); outline:none;
         }
-
-        /* Two column layout on larger screens */
-        .form-row-responsive {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 12px;
-        }
-
-        @media (max-width: 640px) {
-            .form-row-responsive {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-            .form-card {
-                padding: 16px;
-            }
-        }
-
+        .form-row-responsive { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        @media (max-width:640px){ .form-row-responsive { grid-template-columns:1fr; gap:12px; } .form-card { padding:18px; } }
         .btn {
-            border-radius: 40px;
-            padding: 10px 20px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            border: none;
-            transition: all 0.2s;
-            min-height: var(--touch-target);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            border-radius:40px; padding:10px 24px; font-weight:600; font-size:0.85rem; border:none;
+            min-height:var(--touch); display:inline-flex; align-items:center; justify-content:center; gap:8px;
+            transition:0.2s;
         }
+        .btn-primary { background:var(--primary); color:#0b121f; }
+        .btn-primary:active { transform:scale(0.97); opacity:0.85; }
+        .btn-outline { background:var(--gray-100); border:1px solid var(--border); color:var(--gray-600); }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
+        /* ---- Transfer list ---- */
+        .transfer-list {
+            background:var(--card-bg); border-radius:var(--radius-card);
+            border:1px solid var(--border); box-shadow:var(--shadow); overflow:hidden;
         }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-            opacity: 0.9;
+        .list-header {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:16px 24px; border-bottom:1px solid var(--border);
+            background:var(--gray-50); flex-wrap:wrap; gap:12px;
         }
+        .list-header h5 { font-size:0.9rem; font-weight:700; margin:0; display:flex; align-items:center; gap:8px; color:var(--primary-light); }
+        .sort-group { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+        .sort-btn {
+            background:transparent; border:1px solid var(--border); border-radius:40px;
+            padding:6px 16px; font-size:0.7rem; font-weight:600; color:var(--gray-500);
+            cursor:pointer; transition:0.15s;
+        }
+        .sort-btn:hover, .sort-btn.active-sort { background:var(--primary); color:#0b121f; border-color:var(--primary); }
+        .btn-excel, .btn-pdf {
+            border:none; border-radius:40px; padding:8px 20px; font-size:0.75rem; font-weight:600;
+            cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:0.2s;
+        }
+        .btn-excel { background:#1e7e34; color:white; }
+        .btn-pdf { background:#b22234; color:white; }
+        .btn-excel:active, .btn-pdf:active { opacity:0.75; transform:scale(0.97); }
 
-        .btn-outline {
-            background: var(--gray-100);
-            border: 1px solid var(--border);
+        .transfer-items-container { width:100%; }
+        .transfer-item {
+            display:flex; align-items:center; padding:14px 24px; border-bottom:1px solid var(--border);
+            transition:background 0.15s;
+        }
+        .transfer-item:hover { background:var(--gray-50); }
+        .transfer-badge {
+            width:5px; height:42px; border-radius:8px; margin-right:18px; flex-shrink:0;
+        }
+        .badge-in { background:var(--success); }
+        .badge-out { background:var(--danger); }
+        .transfer-info { flex:1; min-width:0; }
+        .transfer-title { font-weight:600; font-size:0.9rem; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--gray-700); }
+        .transfer-meta { display:flex; gap:12px; font-size:0.65rem; color:var(--gray-500); flex-wrap:wrap; }
+        .transfer-qty { font-weight:700; font-size:1.1rem; margin-right:18px; color:var(--primary-light); flex-shrink:0; }
+        .delete-btn { background:none; border:none; color:var(--danger); font-size:1.1rem; cursor:pointer; padding:8px; flex-shrink:0; }
+        .delete-btn:active { opacity:0.6; transform:scale(0.95); }
+        .empty-state { text-align:center; padding:50px 20px; color:var(--gray-500); }
+        .empty-state i { font-size:3rem; opacity:0.4; margin-bottom:12px; }
+
+        @media (max-width:640px){ .transfer-item { padding:12px 16px; flex-wrap:wrap; } .transfer-qty { font-size:0.9rem; margin-right:12px; } }
+        @media (max-width:480px){ .transfer-title { font-size:0.78rem; white-space:normal; } .transfer-meta { font-size:0.6rem; } }
+
+        /* chart card */
+        .chart-card {
+            background:var(--card-bg); border-radius:var(--radius-card); padding:20px 24px;
+            border:1px solid var(--border); box-shadow:var(--shadow); margin-top:28px;
+        }
+        .chart-card h6 { font-weight:700; color:var(--primary-light); margin-bottom:18px; display:flex; align-items:center; gap:10px; }
+        .chart-wrapper { height:200px; width:100%; position:relative; }
+        @media (max-width:600px){ .chart-wrapper { height:160px; } }
+
+        /* toast */
+        .toast-notify {
+            position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
+            background:var(--card-bg); border-left:4px solid var(--success);
+            padding:12px 24px; border-radius:50px; box-shadow:0 12px 30px rgba(0,0,0,0.8);
+            z-index:1200; display:none; align-items:center; gap:12px;
+            font-weight:500; font-size:0.85rem; max-width:92%; white-space:nowrap;
             color: var(--gray-700);
         }
-
-        /* Transfer List - Full Width */
-        .transfer-list {
-            background: var(--card-bg);
-            border-radius: var(--radius-card);
-            border: 1px solid var(--border);
-            overflow: hidden;
-        }
-
-        .list-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--border);
-            background: var(--gray-50);
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .list-header h5 {
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-excel {
-            background: var(--success);
-            color: white;
-            border: none;
-            border-radius: 40px;
-            padding: 8px 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            transition: opacity 0.2s;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-excel:active {
-            opacity: 0.8;
-        }
-
-        /* Transfer Items Grid - Better on larger screens */
-        .transfer-items-container {
-            width: 100%;
-        }
-
-        .transfer-item {
-            display: flex;
-            align-items: center;
-            padding: 14px 24px;
-            border-bottom: 1px solid var(--border);
-            transition: background 0.2s;
-        }
-
-        .transfer-item:hover {
-            background: var(--gray-50);
-        }
-
-        .transfer-badge {
-            width: 4px;
-            height: 40px;
-            border-radius: 6px;
-            margin-right: 16px;
-            flex-shrink: 0;
-        }
-
-        .badge-in {
-            background: var(--success);
-        }
-
-        .badge-out {
-            background: var(--danger);
-        }
-
-        .transfer-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .transfer-title {
-            font-weight: 600;
-            font-size: 0.85rem;
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .transfer-meta {
-            display: flex;
-            gap: 8px;
-            font-size: 0.65rem;
-            color: var(--gray-500);
-            flex-wrap: wrap;
-        }
-
-        .transfer-qty {
-            font-weight: 700;
-            font-size: 1rem;
-            margin-right: 16px;
-            color: var(--primary);
-            flex-shrink: 0;
-        }
-
-        .delete-btn {
-            background: none;
-            border: none;
-            color: var(--danger);
-            font-size: 1.1rem;
-            cursor: pointer;
-            padding: 8px;
-            transition: opacity 0.2s;
-            flex-shrink: 0;
-        }
-
-        .delete-btn:active {
-            opacity: 0.6;
-            transform: scale(0.95);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-            color: var(--gray-500);
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 12px;
-            opacity: 0.5;
-        }
-
-        /* Responsive adjustments for transfer items */
-        @media (max-width: 640px) {
-            .transfer-item {
-                padding: 12px 16px;
-                flex-wrap: wrap;
-            }
-            .transfer-badge {
-                margin-right: 12px;
-            }
-            .transfer-qty {
-                font-size: 0.9rem;
-                margin-right: 12px;
-            }
-            .list-header {
-                padding: 12px 16px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .transfer-title {
-                font-size: 0.75rem;
-                white-space: normal;
-            }
-            .transfer-meta {
-                font-size: 0.6rem;
-            }
-            .delete-btn {
-                padding: 4px;
-            }
-        }
-
-        /* Toast Notification */
-        .toast-notify {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--card-bg);
-            border-left: 3px solid var(--success);
-            padding: 12px 20px;
-            border-radius: 50px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            z-index: 1100;
-            display: none;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            width: auto;
-            max-width: 90%;
-            white-space: nowrap;
-        }
-
-        @media (max-width: 480px) {
-            .toast-notify {
-                white-space: normal;
-                text-align: center;
-                padding: 10px 16px;
-                font-size: 0.75rem;
-            }
-        }
-
-        /* RTL Support */
-        [dir="rtl"] .transfer-badge {
-            margin-right: 0;
-            margin-left: 16px;
-        }
-
-        [dir="rtl"] .transfer-qty {
-            margin-right: 0;
-            margin-left: 16px;
-        }
-
-        [dir="rtl"] .stat-icon {
-            transform: scaleX(-1);
-            display: inline-block;
-        }
-
-        /* Large Screens Enhancement */
-        @media (min-width: 1200px) {
-            .fluid-container {
-                padding: 30px 40px;
-            }
-            .stat-value {
-                font-size: 1.7rem;
-            }
-            .transfer-title {
-                font-size: 0.9rem;
-            }
-        }
+        @media (max-width:480px){ .toast-notify { white-space:normal; text-align:center; padding:10px 18px; font-size:0.75rem; } }
+        [dir="rtl"] .transfer-badge { margin-right:0; margin-left:18px; }
+        [dir="rtl"] .transfer-qty { margin-right:0; margin-left:18px; }
+        ::-webkit-scrollbar { width:6px; background:var(--gray-100); }
+        ::-webkit-scrollbar-thumb { background:var(--primary); border-radius:10px; }
     </style>
 </head>
 <body>
@@ -560,78 +204,34 @@
     <div class="fluid-container">
         <!-- Header -->
         <div class="header-card">
-            <div class="logo-area">
-                <h1><i class="bi bi-box-seam"></i> <span id="titleMain">Inventory Transfer</span></h1>
-            </div>
+            <div class="logo-area"><h1><i class="bi bi-box-seam"></i> <span id="titleMain">Inventory Transfer</span></h1></div>
             <div class="controls">
                 <div class="lang-switch">
                     <button class="lang-btn active" id="langEn">EN</button>
                     <button class="lang-btn" id="langAr">AR</button>
                 </div>
-                <button class="theme-toggle" id="themeToggle"><i class="bi bi-moon"></i> <span id="themeText">Dark</span></button>
             </div>
         </div>
 
-        <!-- Stats Cards -->
+        <!-- Stats -->
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-title" data-key="total">TOTAL</div>
-                <div class="stat-value" id="totalTransfers">0</div>
-                <div class="stat-icon text-primary"><i class="bi bi-arrow-left-right"></i></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title" data-key="transfersIn">IN</div>
-                <div class="stat-value" id="transfersIn">0</div>
-                <div class="stat-icon text-success"><i class="bi bi-arrow-down-circle"></i></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title" data-key="transfersOut">OUT</div>
-                <div class="stat-value" id="transfersOut">0</div>
-                <div class="stat-icon text-danger"><i class="bi bi-arrow-up-circle"></i></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title" data-key="itemsTracked">ITEMS</div>
-                <div class="stat-value" id="itemsTracked">0</div>
-                <div class="stat-icon text-info"><i class="bi bi-box"></i></div>
-            </div>
+            <div class="stat-card"><div class="stat-title" data-key="total">TOTAL</div><div class="stat-value" id="totalTransfers">0</div><div class="stat-icon text-primary"><i class="bi bi-arrow-left-right"></i></div></div>
+            <div class="stat-card"><div class="stat-title" data-key="transfersIn">IN</div><div class="stat-value" id="transfersIn">0</div><div class="stat-icon text-success"><i class="bi bi-arrow-down-circle"></i></div></div>
+            <div class="stat-card"><div class="stat-title" data-key="transfersOut">OUT</div><div class="stat-value" id="transfersOut">0</div><div class="stat-icon text-danger"><i class="bi bi-arrow-up-circle"></i></div></div>
+            <div class="stat-card"><div class="stat-title" data-key="itemsTracked">ITEMS</div><div class="stat-value" id="itemsTracked">0</div><div class="stat-icon text-info"><i class="bi bi-box"></i></div></div>
         </div>
 
-        <!-- Add Transfer Form -->
+        <!-- Form -->
         <div class="form-card">
             <h5><i class="bi bi-plus-circle"></i> <span data-key="newTransfer">New Transfer</span></h5>
             <form id="transferForm">
-                <div class="mb-3">
-                    <label class="form-label" data-key="storeLabel">Store</label>
-                    <input type="text" class="form-control" id="storeName" placeholder="e.g. Main Street / Warehouse A" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" data-key="itemLabel">Item</label>
-                    <input type="text" class="form-control" id="itemName" placeholder="e.g. Apples, Chicken, Oil" required>
-                </div>
+                <div class="mb-3"><label class="form-label" data-key="storeLabel">Store</label><input type="text" class="form-control" id="storeName" placeholder="e.g. Main Street / Warehouse A" required></div>
+                <div class="mb-3"><label class="form-label" data-key="itemLabel">Item</label><input type="text" class="form-control" id="itemName" placeholder="e.g. Apples, Chicken, Oil" required></div>
                 <div class="form-row-responsive">
-                    <div class="mb-3">
-                        <label class="form-label" data-key="unitLabel">Unit</label>
-                        <select class="form-select" id="unitOfMeasure" required>
-                            <option value="">Select</option>
-                            <option value="Piece">Piece</option>
-                            <option value="Kilogram">Kilogram (kg)</option>
-                            <option value="Liter">Liter (L)</option>
-                            <option value="Box">Box</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" data-key="quantityLabel">Quantity</label>
-                        <input type="number" class="form-control" id="quantity" min="1" placeholder="0" required>
-                    </div>
+                    <div class="mb-3"><label class="form-label" data-key="unitLabel">Unit</label><select class="form-select" id="unitOfMeasure" required><option value="">Select</option><option value="Piece">Piece</option><option value="Kilogram">Kilogram (kg)</option><option value="Liter">Liter (L)</option><option value="Box">Box</option></select></div>
+                    <div class="mb-3"><label class="form-label" data-key="quantityLabel">Quantity</label><input type="number" class="form-control" id="quantity" min="1" placeholder="0" required></div>
                 </div>
-                <div class="mb-4">
-                    <label class="form-label" data-key="typeLabel">Transfer Type</label>
-                    <select class="form-select" id="transferType" required>
-                        <option value="">Select type</option>
-                        <option value="in">Transfer In (Receive)</option>
-                        <option value="out">Transfer Out (Dispatch)</option>
-                    </select>
-                </div>
+                <div class="mb-4"><label class="form-label" data-key="typeLabel">Transfer Type</label><select class="form-select" id="transferType" required><option value="">Select type</option><option value="in">Transfer In (Receive)</option><option value="out">Transfer Out (Dispatch)</option></select></div>
                 <div class="d-flex gap-3">
                     <button type="submit" class="btn btn-primary flex-grow-1"><i class="bi bi-check2-circle"></i> <span data-key="addBtn">Add Transfer</span></button>
                     <button type="button" class="btn btn-outline" id="clearForm"><i class="bi bi-arrow-repeat"></i></button>
@@ -639,18 +239,25 @@
             </form>
         </div>
 
-        <!-- Transfer History -->
+        <!-- Transfer history + graph -->
         <div class="transfer-list">
             <div class="list-header">
                 <h5><i class="bi bi-clock-history"></i> <span data-key="history">Transfer History</span></h5>
-                <button class="btn-excel" id="exportExcel"><i class="bi bi-file-earmark-excel"></i> <span data-key="export">Export Excel</span></button>
+                <div class="sort-group">
+                    <button class="sort-btn" data-sort="date" id="sortDate"><i class="bi bi-calendar3"></i> Date</button>
+                    <button class="sort-btn" data-sort="store" id="sortStore"><i class="bi bi-shop"></i> Store</button>
+                    <button class="btn-excel" id="exportExcel"><i class="bi bi-file-earmark-excel"></i> Excel</button>
+                    <button class="btn-pdf" id="exportPdf"><i class="bi bi-file-earmark-pdf"></i> PDF</button>
+                </div>
             </div>
             <div class="transfer-items-container" id="transfersContainer"></div>
-            <div id="emptyState" class="empty-state">
-                <i class="bi bi-inbox"></i>
-                <p data-key="noRecords">No transfers recorded yet</p>
-                <small>Click "Add Transfer" to get started</small>
-            </div>
+            <div id="emptyState" class="empty-state"><i class="bi bi-inbox"></i><p data-key="noRecords">No transfers recorded yet</p><small>Add a transfer to begin</small></div>
+        </div>
+
+        <!-- Graph Card -->
+        <div class="chart-card">
+            <h6><i class="bi bi-bar-chart-fill"></i> <span data-key="graphTitle">Transfer Overview (IN / OUT)</span></h6>
+            <div class="chart-wrapper"><canvas id="transferChart"></canvas></div>
         </div>
     </div>
 </div>
@@ -658,219 +265,365 @@
 <div id="toastMsg" class="toast-notify"><i class="bi bi-check-circle-fill"></i> <span id="toastText"></span></div>
 
 <script>
-    // ======================== TRANSLATIONS ========================
-    const translations = {
-        en: { 
-            titleMain: "Inventory Transfer", total: "TOTAL", transfersIn: "IN", transfersOut: "OUT", 
-            itemsTracked: "ITEMS", newTransfer: "New Transfer", storeLabel: "Store", itemLabel: "Item", 
-            unitLabel: "Unit", quantityLabel: "Quantity", typeLabel: "Transfer Type", 
-            addBtn: "Add Transfer", history: "Transfer History", export: "Export Excel", 
-            noRecords: "No transfers recorded yet" 
-        },
-        ar: { 
-            titleMain: "نقل المخزون", total: "الإجمالي", transfersIn: "وارد", transfersOut: "صادر", 
-            itemsTracked: "العناصر", newTransfer: "تحويل جديد", storeLabel: "المتجر", itemLabel: "المنتج", 
-            unitLabel: "الوحدة", quantityLabel: "الكمية", typeLabel: "نوع التحويل", 
-            addBtn: "إضافة تحويل", history: "سجل التحويلات", export: "تصدير إكسيل", 
-            noRecords: "لا توجد تحويلات مسجلة" 
+    (function(){
+        // ---- translations for UI + data fields ----
+        const translations = {
+            en: {
+                titleMain:"Inventory Transfer", total:"TOTAL", transfersIn:"IN", transfersOut:"OUT",
+                itemsTracked:"ITEMS", newTransfer:"New Transfer", storeLabel:"Store", itemLabel:"Item",
+                unitLabel:"Unit", quantityLabel:"Quantity", typeLabel:"Transfer Type",
+                addBtn:"Add Transfer", history:"Transfer History", export:"Export Excel",
+                noRecords:"No transfers recorded yet", graphTitle:"Transfer Overview (IN / OUT)",
+                // field name mappings for display (used when rendering)
+                fieldStore:"Store", fieldItem:"Item", fieldUnit:"Unit", fieldQty:"Qty", fieldType:"Type"
+            },
+            ar: {
+                titleMain:"نقل المخزون", total:"الإجمالي", transfersIn:"وارد", transfersOut:"صادر",
+                itemsTracked:"العناصر", newTransfer:"تحويل جديد", storeLabel:"المتجر", itemLabel:"المنتج",
+                unitLabel:"الوحدة", quantityLabel:"الكمية", typeLabel:"نوع التحويل",
+                addBtn:"إضافة تحويل", history:"سجل التحويلات", export:"تصدير إكسيل",
+                noRecords:"لا توجد تحويلات مسجلة", graphTitle:"نظرة عامة على التحويلات (وارد / صادر)",
+                fieldStore:"المتجر", fieldItem:"المنتج", fieldUnit:"الوحدة", fieldQty:"الكمية", fieldType:"النوع"
+            }
+        };
+
+        // ---- Bilingual field names for stored data (Arabic and English) ----
+        // Each transfer stores both English and Arabic values for store, item, unit, type.
+        // When rendering, we show the version matching current language.
+
+        let currentLang = "en";
+        let transfers = JSON.parse(localStorage.getItem('transfers_mobile_responsive')) || [];
+        let chartInstance = null;
+
+        // DOM refs
+        const container = document.getElementById('transfersContainer');
+        const emptyState = document.getElementById('emptyState');
+        const totalSpan = document.getElementById('totalTransfers');
+        const inSpan = document.getElementById('transfersIn');
+        const outSpan = document.getElementById('transfersOut');
+        const itemsSpan = document.getElementById('itemsTracked');
+        const toast = document.getElementById('toastMsg');
+        const toastText = document.getElementById('toastText');
+        const form = document.getElementById('transferForm');
+        const storeInput = document.getElementById('storeName');
+        const itemInput = document.getElementById('itemName');
+        const unitSelect = document.getElementById('unitOfMeasure');
+        const qtyInput = document.getElementById('quantity');
+        const typeSelect = document.getElementById('transferType');
+        const clearBtn = document.getElementById('clearForm');
+
+        // helpers
+        function showToast(msg, type='success') {
+            toastText.innerText = msg;
+            toast.style.display = 'flex';
+            toast.style.borderLeftColor = type==='error' ? '#c94a4f' : '#2e9b6e';
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(()=> toast.style.display = 'none', 2600);
         }
-    };
-    
-    let currentLang = "en";
-    let transfers = JSON.parse(localStorage.getItem('transfers_mobile_responsive')) || [];
 
-    const container = document.getElementById('transfersContainer');
-    const emptyState = document.getElementById('emptyState');
-    const totalSpan = document.getElementById('totalTransfers');
-    const inSpan = document.getElementById('transfersIn');
-    const outSpan = document.getElementById('transfersOut');
-    const itemsSpan = document.getElementById('itemsTracked');
-    const toast = document.getElementById('toastMsg');
-    const toastText = document.getElementById('toastText');
-    const form = document.getElementById('transferForm');
-    const storeInput = document.getElementById('storeName');
-    const itemInput = document.getElementById('itemName');
-    const unitSelect = document.getElementById('unitOfMeasure');
-    const qtyInput = document.getElementById('quantity');
-    const typeSelect = document.getElementById('transferType');
-    const clearBtn = document.getElementById('clearForm');
-
-    function showToast(msg, type = 'success') {
-        toastText.innerText = msg;
-        toast.style.display = 'flex';
-        toast.style.borderLeftColor = type === 'error' ? '#ef4444' : '#10b981';
-        setTimeout(() => toast.style.display = 'none', 2500);
-    }
-
-    function updateStats() {
-        totalSpan.innerText = transfers.length;
-        inSpan.innerText = transfers.filter(t => t.transferType === 'in').length;
-        outSpan.innerText = transfers.filter(t => t.transferType === 'out').length;
-        const uniqueItems = new Set(transfers.map(t => t.itemName?.toLowerCase()));
-        itemsSpan.innerText = uniqueItems.size;
-    }
-
-    function formatDate() {
-        const now = new Date();
-        return now.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-    }
-
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    function renderTransfers() {
-        if (transfers.length === 0) {
-            container.innerHTML = '';
-            emptyState.style.display = 'block';
-            return;
+        function formatDate() {
+            const now = new Date();
+            return now.toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
         }
-        emptyState.style.display = 'none';
-        container.innerHTML = transfers.slice().reverse().map(t => `
-            <div class="transfer-item" data-id="${t.id}">
-                <div class="transfer-badge ${t.transferType === 'in' ? 'badge-in' : 'badge-out'}"></div>
-                <div class="transfer-info">
-                    <div class="transfer-title">${escapeHtml(t.itemName)} · ${escapeHtml(t.storeName)}</div>
-                    <div class="transfer-meta">
-                        <span><i class="bi bi-box"></i> ${escapeHtml(t.unitOfMeasure)}</span>
-                        <span>•</span>
-                        <span><i class="bi bi-calendar"></i> ${t.date || 'just now'}</span>
+
+        function escapeHtml(s){ if(!s)return ''; return s.replace(/[&<>]/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;' }[m]||m)); }
+
+        // ---- get display value based on current language ----
+        function getDisplayField(transfer, field) {
+            // field: 'storeName', 'itemName', 'unitOfMeasure', 'transferType'
+            if (currentLang === 'ar') {
+                // if Arabic version exists, use it, otherwise fallback to English
+                const arKey = field + '_ar';
+                if (transfer[arKey]) return transfer[arKey];
+                // fallback: translate common terms on the fly (simple mapping)
+                if (field === 'storeName') return transfer.storeName || '';
+                if (field === 'itemName') return transfer.itemName || '';
+                if (field === 'unitOfMeasure') {
+                    const unitMap = { 'Piece':'قطعة', 'Kilogram':'كيلوغرام', 'Liter':'لتر', 'Box':'صندوق' };
+                    return unitMap[transfer.unitOfMeasure] || transfer.unitOfMeasure;
+                }
+                if (field === 'transferType') {
+                    return transfer.transferType === 'in' ? 'وارد' : 'صادر';
+                }
+                return transfer[field] || '';
+            }
+            // English: return stored English value
+            return transfer[field] || '';
+        }
+
+        function getDisplayUnit(transfer) {
+            if (currentLang === 'ar') {
+                const unitMap = { 'Piece':'قطعة', 'Kilogram':'كيلوغرام', 'Liter':'لتر', 'Box':'صندوق' };
+                return unitMap[transfer.unitOfMeasure] || transfer.unitOfMeasure;
+            }
+            return transfer.unitOfMeasure;
+        }
+
+        function getDisplayType(transfer) {
+            if (currentLang === 'ar') {
+                return transfer.transferType === 'in' ? 'وارد' : 'صادر';
+            }
+            return transfer.transferType === 'in' ? 'IN' : 'OUT';
+        }
+
+        function getDisplayStore(transfer) {
+            if (currentLang === 'ar') {
+                return transfer.storeName_ar || transfer.storeName;
+            }
+            return transfer.storeName;
+        }
+
+        function getDisplayItem(transfer) {
+            if (currentLang === 'ar') {
+                return transfer.itemName_ar || transfer.itemName;
+            }
+            return transfer.itemName;
+        }
+
+        function updateStats() {
+            totalSpan.innerText = transfers.length;
+            inSpan.innerText = transfers.filter(t => t.transferType === 'in').length;
+            outSpan.innerText = transfers.filter(t => t.transferType === 'out').length;
+            const uniqueItems = new Set(transfers.map(t => t.itemName?.toLowerCase()));
+            itemsSpan.innerText = uniqueItems.size;
+        }
+
+        // sorting state
+        let currentSort = { key: 'date', asc: false };
+
+        function getSortedTransfers() {
+            const arr = [...transfers];
+            if (currentSort.key === 'date') {
+                arr.sort((a,b) => (a.id||0) - (b.id||0));
+                if (!currentSort.asc) arr.reverse();
+            } else if (currentSort.key === 'store') {
+                arr.sort((a,b) => {
+                    const aName = currentLang === 'ar' ? (a.storeName_ar || a.storeName) : a.storeName;
+                    const bName = currentLang === 'ar' ? (b.storeName_ar || b.storeName) : b.storeName;
+                    return aName.localeCompare(bName);
+                });
+                if (!currentSort.asc) arr.reverse();
+            }
+            return arr;
+        }
+
+        function renderTransfers() {
+            const sorted = getSortedTransfers();
+            if (sorted.length === 0) {
+                container.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            emptyState.style.display = 'none';
+            container.innerHTML = sorted.map(t => {
+                const storeDisplay = getDisplayStore(t);
+                const itemDisplay = getDisplayItem(t);
+                const unitDisplay = getDisplayUnit(t);
+                const typeDisplay = getDisplayType(t);
+                const badgeClass = t.transferType === 'in' ? 'badge-in' : 'badge-out';
+                return `
+                    <div class="transfer-item" data-id="${t.id}">
+                        <div class="transfer-badge ${badgeClass}"></div>
+                        <div class="transfer-info">
+                            <div class="transfer-title">${escapeHtml(itemDisplay)} · ${escapeHtml(storeDisplay)}</div>
+                            <div class="transfer-meta">
+                                <span><i class="bi bi-box"></i> ${escapeHtml(unitDisplay)}</span>
+                                <span>•</span>
+                                <span><i class="bi bi-calendar"></i> ${t.date||'just now'}</span>
+                                <span>•</span>
+                                <span><i class="bi bi-arrow-left-right"></i> ${escapeHtml(typeDisplay)}</span>
+                            </div>
+                        </div>
+                        <div class="transfer-qty">${t.quantity}</div>
+                        <button class="delete-btn" onclick="deleteTransfer(${t.id})"><i class="bi bi-trash3"></i></button>
                     </div>
-                </div>
-                <div class="transfer-qty">${t.quantity}</div>
-                <button class="delete-btn" onclick="deleteTransfer(${t.id})"><i class="bi bi-trash3"></i></button>
-            </div>
-        `).join('');
-    }
+                `;
+            }).join('');
+            updateChart();
+        }
 
-    window.deleteTransfer = function(id) {
-        const confirmMsg = currentLang === 'en' ? 'Delete this transfer record?' : 'حذف هذا السجل؟';
-        if (confirm(confirmMsg)) {
-            transfers = transfers.filter(t => t.id !== id);
+        window.deleteTransfer = function(id) {
+            const msg = currentLang==='en' ? 'Delete this transfer record?' : 'حذف هذا السجل؟';
+            if (confirm(msg)) {
+                transfers = transfers.filter(t => t.id !== id);
+                localStorage.setItem('transfers_mobile_responsive', JSON.stringify(transfers));
+                renderTransfers();
+                updateStats();
+                showToast(currentLang==='en' ? 'Transfer deleted' : 'تم حذف التحويل');
+            }
+        };
+
+        // ---- form submit ----
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const store = storeInput.value.trim();
+            const item = itemInput.value.trim();
+            const unit = unitSelect.value;
+            const qty = parseInt(qtyInput.value);
+            const type = typeSelect.value;
+            if (!store || !item || !unit || !qty || !type) {
+                showToast(currentLang==='en' ? 'Please fill all fields' : 'الرجاء ملء جميع الحقول', 'error');
+                return;
+            }
+
+            // For Arabic, we store both versions: if current language is Arabic, we store the Arabic value in the *_ar fields.
+            // Also store English version in main fields.
+            const newTransfer = {
+                id: Date.now(),
+                date: formatDate(),
+                storeName: store,  // English (or whatever user typed, but we treat as primary)
+                itemName: item,
+                unitOfMeasure: unit,
+                quantity: qty,
+                transferType: type,
+                // Arabic versions (if current lang is ar, we copy; else we store empty and later fallback to English)
+                storeName_ar: currentLang === 'ar' ? store : '',
+                itemName_ar: currentLang === 'ar' ? item : '',
+                unitOfMeasure_ar: currentLang === 'ar' ? unit : '',
+                transferType_ar: currentLang === 'ar' ? type : ''
+            };
+            // If current language is English, we still want to store Arabic translation for common terms
+            // but user might type English, so we keep it as is.
+            transfers.push(newTransfer);
             localStorage.setItem('transfers_mobile_responsive', JSON.stringify(transfers));
             renderTransfers();
             updateStats();
-            showToast(currentLang === 'en' ? 'Transfer deleted' : 'تم حذف التحويل', 'success');
-        }
-    };
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const store = storeInput.value.trim();
-        const item = itemInput.value.trim();
-        const unit = unitSelect.value;
-        const qty = parseInt(qtyInput.value);
-        const type = typeSelect.value;
-        
-        if (!store || !item || !unit || !qty || !type) {
-            showToast(currentLang === 'en' ? 'Please fill all fields' : 'الرجاء ملء جميع الحقول', 'error');
-            return;
-        }
-        
-        const newTransfer = {
-            id: Date.now(),
-            date: formatDate(),
-            storeName: store,
-            itemName: item,
-            unitOfMeasure: unit,
-            quantity: qty,
-            transferType: type
-        };
-        
-        transfers.push(newTransfer);
-        localStorage.setItem('transfers_mobile_responsive', JSON.stringify(transfers));
-        renderTransfers();
-        updateStats();
-        form.reset();
-        showToast(currentLang === 'en' ? 'Transfer added successfully' : 'تم إضافة التحويل بنجاح');
-    });
-
-    clearBtn.addEventListener('click', () => form.reset());
-
-    document.getElementById('exportExcel').addEventListener('click', () => {
-        if (transfers.length === 0) {
-            showToast(currentLang === 'en' ? 'No data to export' : 'لا توجد بيانات للتصدير', 'error');
-            return;
-        }
-        const exportData = transfers.map(t => ({
-            Date: t.date || new Date().toLocaleString(),
-            Store: t.storeName,
-            Item: t.itemName,
-            Unit: t.unitOfMeasure,
-            Quantity: t.quantity,
-            Type: t.transferType === 'in' ? 'Transfer In' : 'Transfer Out'
-        }));
-        const ws = XLSX.utils.json_to_sheet(exportData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Transfers');
-        XLSX.writeFile(wb, `Inventory_Transfers_${new Date().toISOString().slice(0,19)}.xlsx`);
-        showToast(currentLang === 'en' ? 'Exported to Excel' : 'تم التصدير إلى إكسيل');
-    });
-
-    // Language Support
-    function updateLanguage() {
-        const t = translations[currentLang];
-        document.getElementById('titleMain').innerText = t.titleMain;
-        document.querySelectorAll('[data-key]').forEach(el => {
-            const key = el.getAttribute('data-key');
-            if (t[key]) el.innerText = t[key];
+            form.reset();
+            showToast(currentLang==='en' ? 'Transfer added' : 'تم إضافة التحويل');
         });
-        document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
-        renderTransfers();
-        updateStats();
-    }
-    
-    document.getElementById('langEn').addEventListener('click', () => {
-        currentLang = 'en';
-        document.getElementById('langEn').classList.add('active');
-        document.getElementById('langAr').classList.remove('active');
-        updateLanguage();
-    });
-    
-    document.getElementById('langAr').addEventListener('click', () => {
-        currentLang = 'ar';
-        document.getElementById('langAr').classList.add('active');
-        document.getElementById('langEn').classList.remove('active');
-        updateLanguage();
-    });
-    
-    // Dark Mode
-    let darkMode = localStorage.getItem('transferDarkResponsive') === 'true';
-    function applyDarkMode() {
-        if (darkMode) document.body.classList.add('dark');
-        else document.body.classList.remove('dark');
-        document.getElementById('themeText').innerText = darkMode ? 'Light' : 'Dark';
-    }
-    document.getElementById('themeToggle').addEventListener('click', () => {
-        darkMode = !darkMode;
-        localStorage.setItem('transferDarkResponsive', darkMode);
-        applyDarkMode();
-    });
-    
-    // Initialize
-    applyDarkMode();
-    updateLanguage();
-    renderTransfers();
-    updateStats();
-    
-    // Add sample data if empty for demo
-    if (transfers.length === 0 && localStorage.getItem('transfers_mobile_responsive') === null) {
-        const sampleTransfers = [
-            { id: Date.now() + 1, date: formatDate(), storeName: "Riyadh Branch", itemName: "Chicken Breast", unitOfMeasure: "Kilogram", quantity: 50, transferType: "in" },
-            { id: Date.now() + 2, date: formatDate(), storeName: "Jeddah Warehouse", itemName: "Basmati Rice", unitOfMeasure: "Kilogram", quantity: 100, transferType: "out" },
-            { id: Date.now() + 3, date: formatDate(), storeName: "Dammam Store", itemName: "Olive Oil", unitOfMeasure: "Liter", quantity: 30, transferType: "in" }
-        ];
-        transfers = sampleTransfers;
-        localStorage.setItem('transfers_mobile_responsive', JSON.stringify(transfers));
-        renderTransfers();
-        updateStats();
-    }
+        clearBtn.addEventListener('click', ()=> form.reset());
+
+        // ---- sorting buttons ----
+        document.getElementById('sortDate').addEventListener('click', function(){
+            if (currentSort.key === 'date') currentSort.asc = !currentSort.asc;
+            else { currentSort.key = 'date'; currentSort.asc = false; }
+            renderTransfers();
+        });
+        document.getElementById('sortStore').addEventListener('click', function(){
+            if (currentSort.key === 'store') currentSort.asc = !currentSort.asc;
+            else { currentSort.key = 'store'; currentSort.asc = false; }
+            renderTransfers();
+        });
+
+        // ---- export Excel ----
+        document.getElementById('exportExcel').addEventListener('click', ()=>{
+            if (transfers.length===0) { showToast(currentLang==='en'?'No data':'لا توجد بيانات','error'); return; }
+            const data = transfers.map(t => {
+                const store = currentLang === 'ar' ? (t.storeName_ar || t.storeName) : t.storeName;
+                const item = currentLang === 'ar' ? (t.itemName_ar || t.itemName) : t.itemName;
+                const unit = currentLang === 'ar' ? (t.unitOfMeasure_ar || t.unitOfMeasure) : t.unitOfMeasure;
+                const type = currentLang === 'ar' ? (t.transferType === 'in' ? 'وارد' : 'صادر') : (t.transferType === 'in' ? 'Transfer In' : 'Transfer Out');
+                return {
+                    Date: t.date || new Date().toLocaleString(),
+                    Store: store,
+                    Item: item,
+                    Unit: unit,
+                    Quantity: t.quantity,
+                    Type: type
+                };
+            });
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Transfers');
+            XLSX.writeFile(wb, `Inventory_Transfers_${new Date().toISOString().slice(0,10)}.xlsx`);
+            showToast(currentLang==='en'?'Exported Excel':'تم تصدير إكسيل');
+        });
+
+        // ---- export PDF ----
+        document.getElementById('exportPdf').addEventListener('click', ()=>{
+            if (transfers.length===0) { showToast(currentLang==='en'?'No data':'لا توجد بيانات','error'); return; }
+            const printWin = window.open('', '_blank', 'width=800,height=600');
+            const rows = transfers.map(t => {
+                const store = currentLang === 'ar' ? (t.storeName_ar || t.storeName) : t.storeName;
+                const item = currentLang === 'ar' ? (t.itemName_ar || t.itemName) : t.itemName;
+                const unit = currentLang === 'ar' ? (t.unitOfMeasure_ar || t.unitOfMeasure) : t.unitOfMeasure;
+                const type = currentLang === 'ar' ? (t.transferType === 'in' ? 'وارد' : 'صادر') : (t.transferType === 'in' ? 'IN' : 'OUT');
+                return `<tr><td>${t.date||''}</td><td>${store}</td><td>${item}</td><td>${unit}</td><td>${t.quantity}</td><td>${type}</td></tr>`;
+            }).join('');
+            printWin.document.write(`
+                <html><head><title>Inventory Transfers</title>
+                <style>body{font-family:sans-serif;padding:20px;background:#0b121f;color:#eaf0fa;} table{width:100%;border-collapse:collapse;} th,td{border:1px solid #2b3f5a;padding:8px;text-align:left;} th{background:#1a2538;} </style>
+</head>
+<body><h2 style="color:#5b8cbf;">Inventory Transfer Report</h2><table><thead><tr><th>Date</th><th>Store</th><th>Item</th><th>Unit</th><th>Qty</th><th>Type</th></tr></thead><tbody>${rows}</tbody></table>
+<p>Generated: ${new Date().toLocaleString()}</p></body></html>
+`);
+printWin.document.close();
+setTimeout(()=> { printWin.print(); }, 400);
+});
+
+// ---- chart ----
+function updateChart() {
+const ctx = document.getElementById('transferChart').getContext('2d');
+if (chartInstance) chartInstance.destroy();
+const inCount = transfers.filter(t=>t.transferType==='in').length;
+const outCount = transfers.filter(t=>t.transferType==='out').length;
+chartInstance = new Chart(ctx, {
+type: 'bar',
+data: {
+labels: [currentLang==='en' ? 'IN' : 'وارد', currentLang==='en' ? 'OUT' : 'صادر'],
+datasets: [{
+label: currentLang==='en' ? 'Transfers' : 'التحويلات',
+data: [inCount, outCount],
+backgroundColor: ['#2e9b6e', '#c94a4f'],
+borderRadius: 8,
+barPercentage: 0.5,
+}]
+},
+options: {
+responsive: true,
+maintainAspectRatio: false,
+plugins: { legend: { display: false } },
+scales: {
+y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: '#b0c2d6' } },
+x: { grid: { display: false }, ticks: { color: '#b0c2d6' } }
+}
+}
+});
+}
+
+// ---- language ----
+function updateLanguage() {
+const t = translations[currentLang];
+document.getElementById('titleMain').innerText = t.titleMain;
+document.querySelectorAll('[data-key]').forEach(el => {
+const key = el.getAttribute('data-key');
+if (t[key]) el.innerText = t[key];
+});
+document.documentElement.setAttribute('dir', currentLang==='ar' ? 'rtl' : 'ltr');
+renderTransfers();
+updateStats();
+}
+document.getElementById('langEn').addEventListener('click', ()=>{
+currentLang='en';
+document.getElementById('langEn').classList.add('active');
+document.getElementById('langAr').classList.remove('active');
+updateLanguage();
+});
+document.getElementById('langAr').addEventListener('click', ()=>{
+currentLang='ar';
+document.getElementById('langAr').classList.add('active');
+document.getElementById('langEn').classList.remove('active');
+updateLanguage();
+});
+
+// init
+updateLanguage();
+renderTransfers();
+updateStats();
+
+// sample data if empty — with bilingual support
+if (transfers.length===0 && localStorage.getItem('transfers_mobile_responsive')===null) {
+const sample = [
+{ id: Date.now()+1, date: formatDate(), storeName: "Riyadh Branch", storeName_ar: "فرع الرياض", itemName: "Chicken Breast", itemName_ar: "صدور الدجاج", unitOfMeasure: "Kilogram", unitOfMeasure_ar: "كيلوغرام", quantity: 50, transferType: "in" },
+{ id: Date.now()+2, date: formatDate(), storeName: "Jeddah Warehouse", storeName_ar: "مستودع جدة", itemName: "Basmati Rice", itemName_ar: "أرز بسمتي", unitOfMeasure: "Kilogram", unitOfMeasure_ar: "كيلوغرام", quantity: 100, transferType: "out" },
+{ id: Date.now()+3, date: formatDate(), storeName: "Dammam Store", storeName_ar: "متجر الدمام", itemName: "Olive Oil", itemName_ar: "زيت الزيتون", unitOfMeasure: "Liter", unitOfMeasure_ar: "لتر", quantity: 30, transferType: "in" }
+];
+transfers = sample;
+localStorage.setItem('transfers_mobile_responsive', JSON.stringify(transfers));
+renderTransfers();
+updateStats();
+}
+})();
 </script>
 </body>
 </html>
