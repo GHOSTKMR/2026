@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Maintenance Reporter · SADWAP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0b0e1a;
+            --bg-secondary: #111630;
+            --bg-card: #141b3d;
+            --accent-blue: #1e88e5;
+            --accent-glow: rgba(30, 136, 229, 0.3);
+            --accent-gold: #fbbf24;
+            --text-primary: #f0f4ff;
+            --text-secondary: #a0b4d0;
+            --text-muted: #6a7fa0;
+            --border-glow: rgba(30, 136, 229, 0.15);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 16px;
+            min-height: 100vh;
+        }
+        .app-container { max-width: 1400px; margin: 0 auto; }
+        
+        /* Header */
+        .header-bar {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 16px 24px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            border: 1px solid var(--border-glow);
+        }
+        .logo h1 { font-size: 1.3rem; font-weight: 800; color: var(--accent-blue); }
+        .logo span { color: var(--accent-gold); }
+        .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .lang-switch { background: var(--bg-primary); border-radius: 40px; padding: 4px; border: 1px solid var(--border-glow); display: flex; }
+        .lang-btn { background: transparent; border: none; padding: 6px 18px; border-radius: 40px; font-weight: 600; font-size: 0.7rem; cursor: pointer; color: var(--text-secondary); transition: 0.2s; }
+        .lang-btn.active { background: var(--accent-blue); color: white; }
+        .badge-user { background: var(--bg-primary); padding: 6px 16px; border-radius: 40px; font-size: 0.75rem; border: 1px solid var(--border-glow); color: var(--text-secondary); }
+        
+        /* Highlight Banner - SINGLE */
+        .highlight-banner {
+            background: var(--accent-gold);
+            color: #0b0e1a;
+            padding: 14px 24px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(251, 191, 36, 0.2);
+        }
+        .highlight-banner i { font-size: 1.2rem; }
+        .highlight-banner .tag { background: rgba(11, 14, 26, 0.12); padding: 4px 16px; border-radius: 40px; font-weight: 700; }
+
+        /* Store Info */
+        .store-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 18px 22px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-glow);
+        }
+        .store-card .row { display: flex; gap: 16px; flex-wrap: wrap; }
+        .store-card .col { flex: 1; min-width: 200px; }
+        .store-card label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px; }
+        .store-card input { width: 100%; background: var(--bg-primary); border: 1px solid var(--border-glow); border-radius: 40px; padding: 10px 16px; color: var(--text-primary); font-size: 0.85rem; outline: none; transition: 0.2s; }
+        .store-card input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px var(--accent-glow); }
+        .store-card input::placeholder { color: var(--text-muted); }
+
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+        @media (max-width: 640px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+        .stat-card { background: var(--bg-card); border-radius: 16px; padding: 14px; text-align: center; border: 1px solid var(--border-glow); }
+        .stat-title { font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; }
+        .stat-value { font-size: 1.6rem; font-weight: 700; color: var(--accent-blue); }
+
+        /* Main Grid */
+        .main-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; }
+        @media (max-width: 992px) { .main-grid { grid-template-columns: 1fr; } }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            border: 1px solid var(--border-glow);
+            overflow: hidden;
+        }
+        .card-header {
+            background: rgba(30, 136, 229, 0.08);
+            padding: 16px 22px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border-bottom: 1px solid var(--border-glow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .card-body { padding: 20px 22px; }
+
+        /* Form */
+        .form-group { margin-bottom: 16px; }
+        .form-group label { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 4px; }
+        .form-group .required { color: #ef4444; }
+        .form-control, .form-select {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-glow);
+            border-radius: 40px;
+            padding: 10px 16px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            outline: none;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .form-control:focus, .form-select:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px var(--accent-glow); }
+        .form-control::placeholder { color: var(--text-muted); }
+        textarea.form-control { border-radius: 20px; resize: vertical; min-height: 80px; }
+
+        /* Camera */
+        .camera-box {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            overflow: hidden;
+            min-height: 180px;
+            position: relative;
+            border: 1px solid var(--border-glow);
+        }
+        #videoElement { width: 100%; height: 200px; object-fit: cover; display: none; background: #000; }
+        .camera-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-muted);
+        }
+        .camera-placeholder i { font-size: 2.5rem; margin-bottom: 8px; }
+        .photo-progress { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+        .photo-progress .bar { flex: 1; height: 4px; background: var(--bg-primary); border-radius: 4px; overflow: hidden; }
+        .photo-progress .bar .fill { height: 100%; background: var(--accent-blue); width: 0%; transition: 0.3s; }
+        .photo-progress .count { font-size: 0.75rem; color: var(--text-muted); }
+        .btn-group-camera { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .btn {
+            padding: 8px 18px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+        }
+        .btn-primary { background: var(--accent-blue); color: white; }
+        .btn-primary:hover { opacity: 0.85; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--border-glow); color: var(--text-secondary); }
+        .btn-outline:hover { background: var(--bg-primary); }
+        .btn-sm { padding: 4px 12px; font-size: 0.65rem; }
+        .btn-block { width: 100%; justify-content: center; }
+
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .photo-thumb {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 2px solid var(--border-glow);
+            background: var(--bg-primary);
+        }
+        .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-thumb .idx { position: absolute; top: 4px; left: 4px; background: var(--accent-blue); color: white; width: 22px; height: 22px; border-radius: 50%; font-size: 0.6rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+        .photo-thumb .del { position: absolute; top: 4px; right: 4px; background: #ef4444; color: white; border: none; width: 22px; height: 22px; border-radius: 50%; font-size: 0.6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        /* Task List */
+        .task-item {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--accent-blue);
+            border: 1px solid var(--border-glow);
+            border-left-width: 4px;
+        }
+        .task-item .header { display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 8px; }
+        .task-item .id { font-weight: 700; color: var(--accent-blue); font-size: 0.8rem; }
+        .task-item .desc { font-weight: 600; margin: 4px 0; }
+        .task-item .meta { display: flex; gap: 10px; flex-wrap: wrap; font-size: 0.7rem; color: var(--text-muted); }
+        .task-item .meta span { background: var(--bg-card); padding: 2px 12px; border-radius: 40px; }
+        .task-item .images { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+        .task-item .images img { width: 48px; height: 48px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border-glow); }
+        .task-item .actions { display: flex; gap: 6px; }
+        .task-item .actions button { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 4px 8px; border-radius: 8px; transition: 0.2s; }
+        .task-item .actions button:hover { background: var(--bg-card); color: var(--text-primary); }
+        .task-item .actions .del:hover { color: #ef4444; }
+
+        /* Empty state */
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+        .empty-state i { font-size: 3rem; margin-bottom: 12px; opacity: 0.3; }
+
+        /* Toast */
+        .toast-msg {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent-blue);
+            padding: 12px 20px;
+            border-radius: 14px;
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            border: 1px solid var(--border-glow);
+            color: var(--text-primary);
+        }
+
+        /* PDF export */
+        .btn-pdf { background: #dc2626; color: white; }
+        .btn-pdf:hover { opacity: 0.85; }
+
+        /* Scroll */
+        .task-list-scroll { max-height: 500px; overflow-y: auto; padding-right: 4px; }
+        .task-list-scroll::-webkit-scrollbar { width: 4px; }
+        .task-list-scroll::-webkit-scrollbar-track { background: var(--bg-primary); border-radius: 4px; }
+        .task-list-scroll::-webkit-scrollbar-thumb { background: var(--accent-blue); border-radius: 4px; }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .header-bar { padding: 12px 16px; }
+            .logo h1 { font-size: 1rem; }
+            .highlight-banner { font-size: 0.7rem; padding: 10px 14px; }
+            .card-body { padding: 14px 16px; }
+            .stats-grid { gap: 8px; }
+            .stat-value { font-size: 1.2rem; }
+        }
+        [dir="rtl"] .task-item { border-left-width: 1px; border-right-width: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- Header -->
+    <div class="header-bar">
+        <div class="logo"><h1><i class="fas fa-tools" style="color:var(--accent-gold);"></i> <span data-i18n="brand">SADWAP</span> · <span data-i18n="headerTitle">Maintenance</span></h1></div>
+        <div class="controls">
+            <div class="lang-switch">
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="ar">AR</button>
+            </div>
+            <span class="badge-user"><i class="fas fa-user-circle"></i> <span data-i18n="adminLabel">Admin</span></span>
+        </div>
+    </div>
+
+    <!-- Highlight Banner - SINGLE (fixed - no duplicate) -->
+    <div class="highlight-banner" id="bannerText">
+        <i class="fas fa-camera"></i>
+        <span class="tag">📸</span>
+        <span id="bannerMessage">Utilise the rear-facing camera to capture high-resolution imagery of maintenance concerns — optimised for tablets and mobile devices.</span>
+        <i class="fas fa-mobile-alt"></i> <i class="fas fa-tablet-alt"></i>
+    </div>
+
+    <!-- Store Info -->
+    <div class="store-card">
+        <div class="row">
+            <div class="col"><label data-i18n="storeNameLabel">Store Name</label><input type="text" id="storeName" value="SADWAP Store · Downtown" placeholder="Store name"></div>
+            <div class="col"><label data-i18n="addressLabel">Address</label><input type="text" id="storeAddress" value="123 Business Avenue, City Centre" placeholder="Store address"></div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-title" data-i18n="statTotal">Total Jobs</div><div class="stat-value" id="totalJobs">0</div></div>
+        <div class="stat-card"><div class="stat-title" data-i18n="statPending">Pending</div><div class="stat-value" id="pendingJobs">0</div></div>
+        <div class="stat-card"><div class="stat-title" data-i18n="statInProgress">In Progress</div><div class="stat-value" id="inProgressJobs">0</div></div>
+        <div class="stat-card"><div class="stat-title" data-i18n="statCompleted">Completed</div><div class="stat-value" id="completedJobs">0</div></div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+
+        <!-- Form Column -->
+        <div class="card">
+            <div class="card-header"><i class="fas fa-plus-circle" style="color:var(--accent-gold);"></i> <span data-i18n="formTitle">New Maintenance Job</span></div>
+            <div class="card-body">
+                <form id="taskForm">
+                    <!-- Job Order Number -->
+                    <div class="form-group">
+                        <label data-i18n="jobNumberLabel">Job Order Number <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="jobNumber" placeholder="e.g. JOB-2026-001" required>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group">
+                        <label data-i18n="descLabel">Issue Description <span class="required">*</span></label>
+                        <textarea class="form-control" id="jobDesc" rows="2" placeholder="Describe the maintenance issue..." required></textarea>
+                    </div>
+
+                    <!-- Camera -->
+                    <div class="form-group">
+                        <label data-i18n="photosLabel">Before Pictures <span class="required">(min 2)</span></label>
+                        <div class="camera-box">
+                            <video id="videoElement" autoplay playsinline></video>
+                            <canvas id="canvasElement" style="display:none;"></canvas>
+                            <div id="cameraPlaceholder" class="camera-placeholder">
+                                <i class="fas fa-camera"></i>
+                                <p data-i18n="cameraReady">Camera ready — tap Start</p>
+                            </div>
+                        </div>
+                        <div class="photo-progress">
+                            <span class="count" id="photoCount">0 / 2</span>
+                            <div class="bar"><div class="fill" id="photoProgress" style="width:0%"></div></div>
+                            <span class="count" style="font-size:0.6rem; color:var(--text-muted);" data-i18n="minPhotos">min 2</span>
+                        </div>
+                        <div class="btn-group-camera">
+                            <button type="button" class="btn btn-primary" id="startCamBtn" data-i18n="btnStart"><i class="fas fa-play"></i> Start</button>
+                            <button type="button" class="btn btn-success" id="captureBtn" disabled data-i18n="btnCapture"><i class="fas fa-camera"></i> Capture</button>
+                            <button type="button" class="btn btn-outline" id="stopCamBtn" disabled data-i18n="btnStop"><i class="fas fa-stop"></i> Stop</button>
+                            <button type="button" class="btn btn-outline btn-sm" id="clearPhotosBtn" data-i18n="btnClear"><i class="fas fa-trash"></i> Clear</button>
+                        </div>
+                        <div class="photo-gallery" id="photoGallery"></div>
+                    </div>
+
+                    <!-- Priority & Status -->
+                    <div class="row" style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <div class="form-group" style="flex:1; min-width:120px;">
+                            <label data-i18n="priorityLabel">Priority</label>
+                            <select class="form-select" id="prioritySelect">
+                                <option value="Low" data-i18n="priLow">Low</option>
+                                <option value="Medium" selected data-i18n="priMedium">Medium</option>
+                                <option value="High" data-i18n="priHigh">High</option>
+                                <option value="Critical" data-i18n="priCritical">Critical</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:120px;">
+                            <label data-i18n="statusLabel">Status</label>
+                            <select class="form-select" id="statusSelect">
+                                <option value="Pending" data-i18n="statPendingOpt">Pending</option>
+                                <option value="In Progress" data-i18n="statInProgressOpt">In Progress</option>
+                                <option value="Completed" data-i18n="statCompletedOpt">Completed</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:120px;">
+                            <label data-i18n="dateLabel">Date</label>
+                            <input type="date" class="form-control" id="jobDate">
+                        </div>
+                    </div>
+
+                    <!-- Validation Alert -->
+                    <div class="alert" style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:16px; padding:10px 16px; display:none; margin-top:12px;" id="validationAlert">
+                        <i class="fas fa-exclamation-triangle" style="color:#ef4444;"></i>
+                        <span id="validationMsg" style="color:#fca5a5; font-size:0.8rem;"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" style="margin-top:12px;" data-i18n="btnSubmit"><i class="fas fa-save"></i> <span id="submitBtnText">Add Job</span></button>
+                </form>
+            </div>
+        </div>
+
+        <!-- List Column -->
+        <div class="card">
+            <div class="card-header">
+                <span><i class="fas fa-list" style="color:var(--accent-gold);"></i> <span data-i18n="listTitle">Job List</span></span>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="btn btn-pdf btn-sm" id="exportPdfBtn" data-i18n="btnPdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                    <button class="btn btn-outline btn-sm" id="toggleListBtn" data-i18n="btnHide"><i class="fas fa-eye-slash"></i> Hide</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+                    <select class="form-select" style="width:auto; flex:1; min-width:100px;" id="statusFilter">
+                        <option value="" data-i18n="filterAllStatus">All Status</option>
+                        <option value="Pending" data-i18n="statPendingOpt">Pending</option>
+                        <option value="In Progress" data-i18n="statInProgressOpt">In Progress</option>
+                        <option value="Completed" data-i18n="statCompletedOpt">Completed</option>
+                    </select>
+                    <select class="form-select" style="width:auto; flex:1; min-width:100px;" id="priorityFilter">
+                        <option value="" data-i18n="filterAllPriority">All Priority</option>
+                        <option value="Low" data-i18n="priLow">Low</option>
+                        <option value="Medium" data-i18n="priMedium">Medium</option>
+                        <option value="High" data-i18n="priHigh">High</option>
+                        <option value="Critical" data-i18n="priCritical">Critical</option>
+                    </select>
+                </div>
+                <div class="task-list-scroll" id="taskListContainer">
+                    <div class="empty-state" id="emptyState">
+                        <i class="fas fa-clipboard-list"></i>
+                        <p data-i18n="emptyState">No maintenance jobs recorded yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-msg" id="toastMsg"><i class="fas fa-check-circle" style="color:#10b981;"></i> <span id="toastText"></span></div>
+
+<script>
+    // ======================= TRANSLATIONS =======================
+    const i18n = {
+        en: {
+            brand: "SADWAP",
+            headerTitle: "Maintenance",
+            adminLabel: "Admin",
+            banner: "Utilise the rear-facing camera to capture high-resolution imagery of maintenance concerns — optimised for tablets and mobile devices.",
+            storeNameLabel: "Store Name",
+            addressLabel: "Address",
+            statTotal: "Total Jobs",
+            statPending: "Pending",
+            statInProgress: "In Progress",
+            statCompleted: "Completed",
+            formTitle: "New Maintenance Job",
+            jobNumberLabel: "Job Order Number *",
+            descLabel: "Issue Description *",
+            photosLabel: "Before Pictures (min 2)",
+            cameraReady: "Camera ready — tap Start",
+            minPhotos: "min 2",
+            btnStart: "Start",
+            btnCapture: "Capture",
+            btnStop: "Stop",
+            btnClear: "Clear",
+            priorityLabel: "Priority",
+            priLow: "Low",
+            priMedium: "Medium",
+            priHigh: "High",
+            priCritical: "Critical",
+            statusLabel: "Status",
+            statPendingOpt: "Pending",
+            statInProgressOpt: "In Progress",
+            statCompletedOpt: "Completed",
+            dateLabel: "Date",
+            btnSubmit: "Add Job",
+            listTitle: "Job List",
+            btnPdf: "PDF",
+            btnHide: "Hide",
+            btnShow: "Show",
+            filterAllStatus: "All Status",
+            filterAllPriority: "All Priority",
+            emptyState: "No maintenance jobs recorded yet.",
+            toastAdded: "Maintenance job added successfully!",
+            toastDeleted: "Job deleted",
+            toastCleared: "Photos cleared",
+            toastPhoto: "Photo captured",
+            toastMinPhotos: "Minimum 2 photos required",
+            toastFill: "Please fill in all required fields",
+            toastPdf: "PDF exported",
+            toastNoData: "No jobs to export",
+            toastRefresh: "Data refreshed",
+            valPhotos: "Minimum 2 photos required",
+            valNumber: "Job order number required",
+            valDesc: "Description required",
+            pdfTitle: "Maintenance Report",
+            pdfStore: "Store",
+            pdfAddress: "Address",
+            pdfDate: "Report Date",
+            pdfTotal: "Total Jobs",
+            pdfFooter: "Generated by SADWAP Maintenance System",
+            deleteConfirm: "Delete this job?",
+            clearConfirm: "Clear all photos?",
+            cameraDenied: "Camera access denied. Please allow camera permissions."
+        },
+        ar: {
+            brand: "سادواب",
+            headerTitle: "الصيانة",
+            adminLabel: "مدير",
+            banner: "استخدم الكاميرا الخلفية لالتقاط صور عالية الدقة لمشاكل الصيانة — مُحسَّن للأجهزة اللوحية والهواتف المحمولة.",
+            storeNameLabel: "اسم المتجر",
+            addressLabel: "العنوان",
+            statTotal: "إجمالي المهام",
+            statPending: "قيد الانتظار",
+            statInProgress: "قيد التنفيذ",
+            statCompleted: "مكتملة",
+            formTitle: "مهمة صيانة جديدة",
+            jobNumberLabel: "رقم أمر العمل *",
+            descLabel: "وصف المشكلة *",
+            photosLabel: "الصور قبل الإصلاح (2 على الأقل)",
+            cameraReady: "الكاميرا جاهزة — اضغط بدء",
+            minPhotos: "2 على الأقل",
+            btnStart: "بدء",
+            btnCapture: "التقاط",
+            btnStop: "إيقاف",
+            btnClear: "مسح",
+            priorityLabel: "الأولوية",
+            priLow: "منخفضة",
+            priMedium: "متوسطة",
+            priHigh: "عالية",
+            priCritical: "حرجة",
+            statusLabel: "الحالة",
+            statPendingOpt: "قيد الانتظار",
+            statInProgressOpt: "قيد التنفيذ",
+            statCompletedOpt: "مكتملة",
+            dateLabel: "التاريخ",
+            btnSubmit: "إضافة مهمة",
+            listTitle: "قائمة المهام",
+            btnPdf: "PDF",
+            btnHide: "إخفاء",
+            btnShow: "إظهار",
+            filterAllStatus: "كل الحالات",
+            filterAllPriority: "كل الأولويات",
+            emptyState: "لا توجد مهام صيانة مسجلة بعد.",
+            toastAdded: "تمت إضافة مهمة الصيانة بنجاح!",
+            toastDeleted: "تم حذف المهمة",
+            toastCleared: "تم مسح الصور",
+            toastPhoto: "تم التقاط الصورة",
+            toastMinPhotos: "يلزم صورتان على الأقل",
+            toastFill: "يرجى ملء جميع الحقول المطلوبة",
+            toastPdf: "تم تصدير PDF",
+            toastNoData: "لا توجد مهام للتصدير",
+            toastRefresh: "تم تحديث البيانات",
+            valPhotos: "يلزم صورتان على الأقل",
+            valNumber: "رقم الأمر مطلوب",
+            valDesc: "الوصف مطلوب",
+            pdfTitle: "تقرير الصيانة",
+            pdfStore: "المتجر",
+            pdfAddress: "العنوان",
+            pdfDate: "تاريخ التقرير",
+            pdfTotal: "إجمالي المهام",
+            pdfFooter: "تم إنشاؤه بواسطة نظام صيانة سادواب",
+            deleteConfirm: "حذف هذه المهمة؟",
+            clearConfirm: "مسح كل الصور؟",
+            cameraDenied: "تم رفض الوصول للكاميرا. يرجى السماح بالوصول."
+        }
+    };
+
+    let currentLang = 'en';
+
+    function t(key) {
+        return i18n[currentLang]?.[key] || key;
+    }
+
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+        
+        // Update banner specifically (fixes the duplicate issue)
+        const bannerMsg = document.getElementById('bannerMessage');
+        if (bannerMsg) {
+            bannerMsg.textContent = t('banner');
+        }
+        
+        // Update all elements with data-i18n attribute
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            const translation = t(key);
+            if (translation) {
+                // Check if element has children (like buttons with icons)
+                const icon = el.querySelector('i');
+                if (icon && el.childNodes.length > 1) {
+                    // Keep the icon, replace text
+                    const textNode = el.childNodes[1];
+                    if (textNode) {
+                        textNode.textContent = ' ' + translation;
+                    } else {
+                        el.appendChild(document.createTextNode(' ' + translation));
+                    }
+                } else {
+                    // Don't override the banner container, only the message span
+                    if (el.id !== 'bannerText') {
+                        el.textContent = translation;
+                    }
+                }
+            }
+        });
+
+        // Update placeholder texts
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            const translation = t(key);
+            if (translation) el.placeholder = translation;
+        });
+
+        // Update select options with data-i18n
+        document.querySelectorAll('select option[data-i18n]').forEach(opt => {
+            const key = opt.getAttribute('data-i18n');
+            const translation = t(key);
+            if (translation) opt.textContent = translation;
+        });
+
+        // Update button texts with icons
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if ((el.tagName === 'BUTTON' || el.tagName === 'A') && el.id !== 'bannerText') {
+                const icon = el.querySelector('i');
+                const translation = t(key);
+                if (icon && translation) {
+                    // Keep icon, update text
+                    const textNode = el.childNodes[1];
+                    if (textNode) {
+                        textNode.textContent = ' ' + translation;
+                    } else {
+                        el.appendChild(document.createTextNode(' ' + translation));
+                    }
+                }
+            }
+        });
+
+        // Update submit button specifically
+        const submitBtn = document.getElementById('submitBtnText');
+        if (submitBtn) submitBtn.textContent = t('btnSubmit');
+
+        // Update toggle list button
+        updateToggleButton();
+
+        // Update language buttons
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.lang === lang);
+        });
+
+        // Re-render tasks to update static text in task items
+        renderTasks();
+        
+        // Update validation messages
+        validateForm();
+    }
+
+    function updateToggleButton() {
+        const btn = document.getElementById('toggleListBtn');
+        if (btn) {
+            const icon = btn.querySelector('i');
+            const isHidden = taskContainer.style.display === 'none';
+            const key = isHidden ? 'btnShow' : 'btnHide';
+            if (icon) {
+                btn.innerHTML = icon.outerHTML + ' ' + t(key);
+            } else {
+                btn.textContent = t(key);
+            }
+        }
+    }
+
+    // Language switcher
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            setLanguage(btn.dataset.lang);
+        });
+    });
+
+    // ======================= STATE =======================
+    let tasks = [];
+    let capturedPhotos = [];
+    let stream = null;
+    const MIN_PHOTOS = 2;
+
+    // DOM refs
+    const $ = id => document.getElementById(id);
+    const storeName = $('storeName'), storeAddress = $('storeAddress');
+    const jobNumber = $('jobNumber'), jobDesc = $('jobDesc'), prioritySelect = $('prioritySelect'), statusSelect = $('statusSelect'), jobDate = $('jobDate');
+    const startCam = $('startCamBtn'), captureBtn = $('captureBtn'), stopCam = $('stopCamBtn'), clearPhotosBtn = $('clearPhotosBtn');
+    const video = $('videoElement'), canvas = $('canvasElement'), camPlaceholder = $('cameraPlaceholder');
+    const photoCount = $('photoCount'), photoProgress = $('photoProgress'), photoGallery = $('photoGallery');
+    const taskContainer = $('taskListContainer'), emptyState = $('emptyState');
+    const totalJobs = $('totalJobs'), pendingJobs = $('pendingJobs'), inProgressJobs = $('inProgressJobs'), completedJobs = $('completedJobs');
+    const statusFilter = $('statusFilter'), priorityFilter = $('priorityFilter');
+    const validationAlert = $('validationAlert'), validationMsg = $('validationMsg');
+    const toast = $('toastMsg'), toastText = $('toastText');
+    const exportBtn = $('exportPdfBtn'), toggleListBtn = $('toggleListBtn');
+    const taskForm = $('taskForm');
+    const submitBtnText = $('submitBtnText');
+
+    // ======================= TOAST =======================
+    function showToast(msg, type = 'success') {
+        toastText.innerText = msg;
+        toast.style.display = 'flex';
+        toast.style.borderLeftColor = type === 'error' ? '#ef4444' : '#1e88e5';
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => toast.style.display = 'none', 2800);
+    }
+
+    // ======================= STORAGE =======================
+    function loadData() {
+        const saved = localStorage.getItem('maintenanceJobs');
+        if (saved) tasks = JSON.parse(saved);
+        else tasks = [];
+        const sn = localStorage.getItem('mStoreName');
+        if (sn) storeName.value = sn;
+        const sa = localStorage.getItem('mStoreAddress');
+        if (sa) storeAddress.value = sa;
+        renderTasks();
+        updateStats();
+    }
+    function saveData() {
+        localStorage.setItem('maintenanceJobs', JSON.stringify(tasks));
+        localStorage.setItem('mStoreName', storeName.value);
+        localStorage.setItem('mStoreAddress', storeAddress.value);
+    }
+
+    // ======================= CAMERA =======================
+    async function startCamera() {
+        try {
+            if (stream) stopCamera();
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            video.srcObject = stream;
+            video.style.display = 'block';
+            camPlaceholder.style.display = 'none';
+            startCam.disabled = true;
+            captureBtn.disabled = false;
+            stopCam.disabled = false;
+        } catch (e) {
+            showToast(t('cameraDenied'), 'error');
+        }
+    }
+    function stopCamera() {
+        if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+        video.style.display = 'none';
+        camPlaceholder.style.display = 'flex';
+        startCam.disabled = false;
+        captureBtn.disabled = true;
+        stopCam.disabled = true;
+    }
+    function capturePhoto() {
+        const ctx = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0);
+        capturedPhotos.push(canvas.toDataURL('image/jpeg', 0.85));
+        updatePhotoUI();
+        showToast(t('toastPhoto'));
+        validateForm();
+    }
+    function updatePhotoUI() {
+        const count = capturedPhotos.length;
+        const pct = Math.min((count / MIN_PHOTOS) * 100, 100);
+        photoProgress.style.width = pct + '%';
+        photoCount.innerText = `${count} / ${MIN_PHOTOS}`;
+        if (count === 0) {
+            photoGallery.innerHTML = '';
+            return;
+        }
+        photoGallery.innerHTML = capturedPhotos.map((p, i) => `
+            <div class="photo-thumb">
+                <img src="${p}" alt="photo ${i+1}">
+                <div class="idx">${i+1}</div>
+                <button class="del" onclick="deletePhoto(${i})"><i class="fas fa-times"></i></button>
+            </div>
+        `).join('');
+    }
+    window.deletePhoto = function(idx) {
+        capturedPhotos.splice(idx, 1);
+        updatePhotoUI();
+        validateForm();
+    };
+    clearPhotosBtn.addEventListener('click', () => {
+        if (capturedPhotos.length === 0) return;
+        if (confirm(t('clearConfirm'))) {
+            capturedPhotos = [];
+            updatePhotoUI();
+            validateForm();
+            showToast(t('toastCleared'));
+        }
+    });
+    startCam.addEventListener('click', startCamera);
+    captureBtn.addEventListener('click', capturePhoto);
+    stopCam.addEventListener('click', stopCamera);
+
+    // ======================= VALIDATION =======================
+    function validateForm() {
+        let errors = [];
+        if (capturedPhotos.length < MIN_PHOTOS) errors.push(t('valPhotos'));
+        if (!jobNumber.value.trim()) errors.push(t('valNumber'));
+        if (!jobDesc.value.trim()) errors.push(t('valDesc'));
+        if (errors.length > 0) {
+            validationAlert.style.display = 'block';
+            validationMsg.innerText = errors.join(' · ');
+            return false;
+        }
+        validationAlert.style.display = 'none';
+        return true;
+    }
+
+    // ======================= ADD TASK =======================
+    taskForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!validateForm()) { showToast(t('toastFill'), 'error'); return; }
+        const task = {
+            id: Date.now(),
+            jobNumber: jobNumber.value.trim(),
+            description: jobDesc.value.trim(),
+            priority: prioritySelect.value,
+            status: statusSelect.value,
+            date: jobDate.value || new Date().toISOString().split('T')[0],
+            photos: [...capturedPhotos],
+            createdAt: new Date().toISOString()
+        };
+        tasks.push(task);
+        saveData();
+        renderTasks();
+        updateStats();
+        resetForm();
+        showToast(t('toastAdded'));
+    });
+
+    function resetForm() {
+        jobNumber.value = '';
+        jobDesc.value = '';
+        prioritySelect.value = 'Medium';
+        statusSelect.value = 'Pending';
+        jobDate.value = '';
+        capturedPhotos = [];
+        updatePhotoUI();
+        stopCamera();
+        validationAlert.style.display = 'none';
+        validateForm();
+    }
+
+    // ======================= RENDER TASKS =======================
+    function renderTasks() {
+        const filtered = tasks.filter(t => {
+            if (statusFilter.value && t.status !== statusFilter.value) return false;
+            if (priorityFilter.value && t.priority !== priorityFilter.value) return false;
+            return true;
+        });
+        if (filtered.length === 0) {
+            taskContainer.innerHTML = `<div class="empty-state"><i class="fas fa-clipboard-list"></i><p>${t('emptyState')}</p></div>`;
+            return;
+        }
+        taskContainer.innerHTML = filtered.sort((a, b) => b.id - a.id).map(t => `
+            <div class="task-item">
+                <div class="header">
+                    <div>
+                        <div class="id">#${escHtml(t.jobNumber)}</div>
+                        <div class="desc">${escHtml(t.description)}</div>
+                    </div>
+                    <div class="actions">
+                        <button onclick="deleteTask(${t.id})" class="del" title="${t('deleteConfirm')}"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+                <div class="meta">
+                    <span><i class="fas fa-tag"></i> ${t.priority}</span>
+                    <span><i class="fas fa-circle" style="color:${t.status === 'Completed' ? '#10b981' : t.status === 'In Progress' ? '#f59e0b' : '#6a7fa0'};"></i> ${t.status}</span>
+                    <span><i class="fas fa-calendar"></i> ${t.date}</span>
+                    <span><i class="fas fa-image"></i> ${t.photos?.length || 0} photos</span>
+                </div>
+                ${t.photos && t.photos.length > 0 ? `<div class="images">${t.photos.slice(0,4).map(p => `<img src="${p}" onclick="viewPhoto('${p}')">`).join('')}${t.photos.length > 4 ? `<span style="font-size:0.7rem;color:var(--text-muted);padding:4px 8px;">+${t.photos.length-4}</span>` : ''}</div>` : ''}
+            </div>
+        `).join('');
+    }
+
+    window.deleteTask = function(id) {
+        if (confirm(t('deleteConfirm'))) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveData();
+            renderTasks();
+            updateStats();
+            showToast(t('toastDeleted'));
+        }
+    };
+    window.viewPhoto = function(src) {
+        window.open(src, '_blank');
+    };
+
+    function updateStats() {
+        totalJobs.innerText = tasks.length;
+        pendingJobs.innerText = tasks.filter(t => t.status === 'Pending').length;
+        inProgressJobs.innerText = tasks.filter(t => t.status === 'In Progress').length;
+        completedJobs.innerText = tasks.filter(t => t.status === 'Completed').length;
+    }
+
+    statusFilter.addEventListener('change', renderTasks);
+    priorityFilter.addEventListener('change', renderTasks);
+
+    // ======================= PDF EXPORT =======================
+    exportBtn.addEventListener('click', async () => {
+        if (tasks.length === 0) {
+            showToast(t('toastNoData'), 'error');
+            return;
+        }
+        const wrapper = document.createElement('div');
+        wrapper.style.padding = '24px';
+        wrapper.style.fontFamily = 'Inter, sans-serif';
+        wrapper.style.background = '#ffffff';
+        wrapper.style.color = '#0b0e1a';
+        const rows = tasks.map(t => `
+            <div style="border-bottom:1px solid #e5e7eb; padding:16px 0; display:flex; gap:14px; align-items:flex-start;">
+                <div style="flex:1;">
+                    <h4 style="margin:0 0 4px; color:#1e3a5f;">#${escHtml(t.jobNumber)}</h4>
+                    <p style="margin:4px 0; font-weight:500;">${escHtml(t.description)}</p>
+                    <div style="font-size:0.8rem; color:#4b5563; display:flex; gap:12px; flex-wrap:wrap;">
+                        <span><strong>${t('priorityLabel')}:</strong> ${t.priority}</span>
+                        <span><strong>${t('statusLabel')}:</strong> ${t.status}</span>
+                        <span><strong>${t('dateLabel')}:</strong> ${t.date}</span>
+                    </div>
+                </div>
+                <div style="display:flex; gap:6px; flex-wrap:wrap; max-width:180px;">
+                    ${t.photos && t.photos.length > 0 ? t.photos.slice(0,3).map(p => `<img src="${p}" style="width:56px;height:56px;object-fit:cover;border-radius:10px;border:1px solid #ddd;">`).join('') : ''}
+                    ${t.photos && t.photos.length > 3 ? `<span style="background:#e5e7eb;padding:6px 12px;border-radius:10px;">+${t.photos.length-3}</span>` : ''}
+                </div>
+            </div>
+        `).join('');
+        wrapper.innerHTML = `
+            <h1 style="color:#1e3a5f; display:flex; align-items:center; gap:10px;">
+                <i class="fas fa-tools" style="color:#fbbf24;"></i> ${t('pdfTitle')}
+            </h1>
+            <p><strong>${t('pdfStore')}:</strong> ${escHtml(storeName.value)}</p>
+            <p><strong>${t('pdfAddress')}:</strong> ${escHtml(storeAddress.value)}</p>
+            <p><strong>${t('pdfDate')}:</strong> ${new Date().toLocaleString()}</p>
+            <p><strong>${t('pdfTotal')}:</strong> ${tasks.length}</p>
+            <hr style="border-color:#ddd;">
+            ${rows}
+            <p style="margin-top:20px; font-size:0.8rem; color:#6b7280; text-align:center;">${t('pdfFooter')}</p>
+        `;
+        const opt = {
+            margin: 10,
+            filename: `maintenance-report-${new Date().toISOString().slice(0,10)}.pdf`,
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(wrapper).save();
+        showToast(t('toastPdf'));
+    });
+
+    // ======================= TOGGLE LIST =======================
+    let listVisible = true;
+    toggleListBtn.addEventListener('click', () => {
+        listVisible = !listVisible;
+        taskContainer.style.display = listVisible ? 'block' : 'none';
+        updateToggleButton();
+    });
+
+    // ======================= HELPERS =======================
+    function escHtml(str) {
+        return String(str).replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // ======================= INIT =======================
+    const today = new Date().toISOString().split('T')[0];
+    jobDate.value = today;
+    
+    // Set initial language
+    setLanguage('en');
+    loadData();
+    updatePhotoUI();
+    validateForm();
+    
+    // Also translate placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        const translation = t(key);
+        if (translation) el.placeholder = translation;
+    });
+</script>
+</body>
+</html>
