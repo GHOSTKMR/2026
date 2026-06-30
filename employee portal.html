@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SADWAP · Employee Attendance System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0a0c15;
+            --bg-secondary: #0f111a;
+            --bg-card: rgba(18, 22, 35, 0.95);
+            --bg-input: #1a1f35;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #7b2cbf;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+            --accent-blue: #3b82f6;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a8c0;
+            --text-muted: #6b7280;
+            --border-glow: rgba(0, 212, 255, 0.15);
+            --card-radius: 20px;
+            --shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+
+        /* Header */
+        .header {
+            background: var(--bg-card);
+            border-radius: var(--card-radius);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-glow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: var(--shadow);
+        }
+        .logo h1 { font-size: 1.6rem; font-weight: 800; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); background-clip: text; -webkit-background-clip: text; color: transparent; }
+        .logo i { color: var(--accent-cyan); margin-right: 8px; }
+        .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .lang-switch { display: flex; gap: 6px; background: var(--bg-secondary); padding: 4px; border-radius: 40px; border: 1px solid var(--border-glow); }
+        .lang-btn { background: transparent; border: none; padding: 6px 18px; border-radius: 32px; font-weight: 600; font-size: 0.75rem; cursor: pointer; color: var(--text-muted); transition: all 0.2s; }
+        .lang-btn.active { background: var(--accent-cyan); color: #0b121f; }
+        .export-btn { background: var(--bg-secondary); border: 1px solid var(--border-glow); padding: 8px 16px; border-radius: 40px; color: var(--text-secondary); cursor: pointer; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .export-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 768px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: var(--card-radius);
+            padding: 18px 20px;
+            border: 1px solid var(--border-glow);
+            box-shadow: var(--shadow);
+        }
+        .stat-card .label { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; }
+        .stat-card .value { font-size: 1.8rem; font-weight: 700; margin-top: 4px; }
+        .stat-card .value.green { color: var(--accent-green); }
+        .stat-card .value.blue { color: var(--accent-blue); }
+        .stat-card .value.red { color: var(--accent-red); }
+        .stat-card .value.cyan { color: var(--accent-cyan); }
+
+        /* Month Selector */
+        .month-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        .month-selector select {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            padding: 10px 18px;
+            border-radius: 40px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            min-width: 160px;
+            font-family: inherit;
+        }
+        .month-selector select:focus { outline: none; border-color: var(--accent-cyan); }
+
+        /* Employee Management */
+        .employee-manager {
+            background: var(--bg-card);
+            border-radius: var(--card-radius);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-glow);
+            box-shadow: var(--shadow);
+        }
+        .employee-manager .title { font-weight: 600; margin-bottom: 16px; color: var(--accent-cyan); display: flex; align-items: center; gap: 8px; }
+        .employee-form { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
+        .employee-form .input-group { flex: 1; min-width: 150px; }
+        .employee-form .input-group label { display: block; font-size: 0.65rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .employee-form .input-group input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+        .employee-form .input-group input:focus { outline: none; border-color: var(--accent-cyan); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary:hover { transform: scale(0.98); opacity: 0.9; }
+        .btn-danger { background: var(--accent-red); border: none; padding: 6px 14px; border-radius: 30px; color: white; cursor: pointer; font-size: 0.7rem; font-weight: 600; transition: 0.2s; }
+        .btn-danger:hover { opacity: 0.8; }
+        .btn-edit { background: var(--accent-yellow); border: none; padding: 6px 14px; border-radius: 30px; color: #0b121f; cursor: pointer; font-size: 0.7rem; font-weight: 600; transition: 0.2s; }
+        .btn-edit:hover { opacity: 0.8; }
+
+        .employee-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .employee-tag {
+            background: var(--bg-input);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--border-glow);
+        }
+        .employee-tag .id-badge { color: var(--text-muted); font-size: 0.65rem; }
+        .employee-tag .actions { display: flex; gap: 4px; }
+        .employee-tag .actions button { background: transparent; border: none; cursor: pointer; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; transition: 0.2s; }
+        .employee-tag .actions .edit-btn { color: var(--accent-yellow); }
+        .employee-tag .actions .edit-btn:hover { background: rgba(245,158,11,0.2); }
+        .employee-tag .actions .del-btn { color: var(--accent-red); }
+        .employee-tag .actions .del-btn:hover { background: rgba(239,68,68,0.2); }
+
+        /* Attendance Table */
+        .table-container {
+            background: var(--bg-card);
+            border-radius: var(--card-radius);
+            border: 1px solid var(--border-glow);
+            overflow-x: auto;
+            box-shadow: var(--shadow);
+        }
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-glow);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+            font-size: 0.8rem;
+        }
+        .attendance-table th, .attendance-table td {
+            padding: 8px 10px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-glow);
+            vertical-align: middle;
+        }
+        .attendance-table th {
+            color: var(--text-muted);
+            font-size: 0.6rem;
+            font-weight: 600;
+            background: var(--bg-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .attendance-table th:first-child, .attendance-table td:first-child {
+            text-align: left;
+            padding-left: 16px;
+            min-width: 120px;
+        }
+        .attendance-table th:nth-child(2), .attendance-table td:nth-child(2) {
+            min-width: 80px;
+        }
+        .attendance-table .employee-name { font-weight: 600; }
+        .attendance-table .employee-id { color: var(--text-muted); font-size: 0.7rem; }
+
+        .status-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 2px solid var(--border-glow);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            color: var(--text-muted);
+        }
+        .status-btn.present { background: var(--accent-green); color: white; border-color: var(--accent-green); }
+        .status-btn.present:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(16,185,129,0.3); }
+        .status-btn.leave { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+        .status-btn.leave:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(59,130,246,0.3); }
+        .status-btn.absent { background: var(--accent-red); color: white; border-color: var(--accent-red); }
+        .status-btn.absent:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(239,68,68,0.3); }
+        .status-btn.unmarked { background: transparent; color: var(--text-muted); border-color: var(--border-glow); }
+        .status-btn.unmarked:hover { border-color: var(--accent-cyan); transform: scale(1.1); }
+
+        .status-legend {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 8px 0;
+        }
+        .status-legend .item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: var(--text-secondary); }
+        .status-legend .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 1px solid var(--border-glow); }
+        .dot-green { background: var(--accent-green); }
+        .dot-blue { background: var(--accent-blue); }
+        .dot-red { background: var(--accent-red); }
+        .dot-white { background: transparent; border: 2px solid var(--border-glow); }
+
+        .footer-note { text-align: center; margin-top: 20px; font-size: 0.7rem; color: var(--text-muted); }
+
+        /* Toast */
+        .toast-msg {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent-cyan);
+            padding: 12px 20px;
+            border-radius: 14px;
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            border: 1px solid var(--border-glow);
+            color: var(--text-primary);
+            max-width: 400px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--bg-card);
+            border-radius: var(--card-radius);
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid var(--border-glow);
+            box-shadow: var(--shadow);
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal h3 { color: var(--accent-cyan); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .modal .input-group { margin-bottom: 12px; }
+        .modal .input-group label { display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .modal .input-group input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+        .modal .input-group input:focus { outline: none; border-color: var(--accent-cyan); }
+        .modal .modal-actions { display: flex; gap: 12px; margin-top: 16px; justify-content: flex-end; }
+        .modal .modal-actions button { padding: 8px 20px; border-radius: 40px; border: none; font-weight: 600; cursor: pointer; font-family: inherit; }
+        .modal .modal-actions .btn-cancel { background: var(--bg-input); color: var(--text-secondary); }
+        .modal .modal-actions .btn-cancel:hover { background: var(--bg-secondary); }
+        .modal .modal-actions .btn-save { background: var(--accent-cyan); color: #0b121f; }
+        .modal .modal-actions .btn-save:hover { opacity: 0.8; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            .employee-form { flex-direction: column; }
+            .employee-form .input-group { min-width: 100%; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .attendance-table { font-size: 0.7rem; }
+            .attendance-table th, .attendance-table td { padding: 4px 6px; }
+            .status-btn { width: 28px; height: 28px; font-size: 0.6rem; }
+        }
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .stat-card .value { font-size: 1.2rem; }
+            .header { flex-direction: column; align-items: stretch; }
+            .controls { justify-content: center; }
+        }
+        [dir="rtl"] .attendance-table th:first-child, [dir="rtl"] .attendance-table td:first-child {
+            text-align: right;
+        }
+        [dir="rtl"] .status-legend { justify-content: flex-start; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="logo"><h1><i class="fas fa-clipboard-list"></i> <span id="titleMain">Employee Attendance</span></h1></div>
+        <div class="controls">
+            <div class="lang-switch">
+                <button class="lang-btn active" id="langEn">EN</button>
+                <button class="lang-btn" id="langAr">AR</button>
+            </div>
+            <button class="export-btn" id="exportExcelBtn"><i class="fas fa-file-excel"></i> <span id="excelLabel">Excel</span></button>
+            <button class="export-btn" id="exportPdfBtn"><i class="fas fa-file-pdf"></i> <span id="pdfLabel">PDF</span></button>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card"><div class="label" id="statTotalEmployees">Total Employees</div><div class="value cyan" id="totalEmployees">0</div></div>
+        <div class="stat-card"><div class="label" id="statPresent">Present Today</div><div class="value green" id="presentToday">0</div></div>
+        <div class="stat-card"><div class="label" id="statLeave">On Leave</div><div class="value blue" id="leaveToday">0</div></div>
+        <div class="stat-card"><div class="label" id="statAbsent">Absent Today</div><div class="value red" id="absentToday">0</div></div>
+    </div>
+
+    <!-- Month Selector -->
+    <div class="month-selector">
+        <select id="monthSelect">
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+        </select>
+        <select id="yearSelect">
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026" selected>2026</option>
+            <option value="2027">2027</option>
+        </select>
+        <span style="color:var(--text-muted);font-size:0.8rem;" id="daysInMonth">31 days</span>
+        <button class="btn-primary" id="loadMonthBtn" style="padding:8px 20px;font-size:0.8rem;"><i class="fas fa-sync"></i> <span id="loadLabel">Load Month</span></button>
+    </div>
+
+    <!-- Employee Management -->
+    <div class="employee-manager">
+        <div class="title"><i class="fas fa-users"></i> <span id="employeeManagerTitle">Employee Management</span></div>
+        <div class="employee-form">
+            <div class="input-group">
+                <label id="empNameLabel">Employee Name</label>
+                <input type="text" id="empNameInput" placeholder="e.g. Ahmed Mohammed">
+            </div>
+            <div class="input-group">
+                <label id="empIdLabel">ID Number</label>
+                <input type="text" id="empIdInput" placeholder="e.g. EMP-001">
+            </div>
+            <button class="btn-primary" id="addEmployeeBtn"><i class="fas fa-plus"></i> <span id="addBtnText">Add Employee</span></button>
+        </div>
+        <div class="employee-list" id="employeeList"></div>
+    </div>
+
+    <!-- Attendance Table -->
+    <div class="table-container">
+        <div class="table-header">
+            <span><i class="fas fa-table"></i> <span id="tableTitle">Attendance Record</span></span>
+            <div class="status-legend">
+                <span class="item"><span class="dot dot-green"></span> <span id="legendPresent">Present</span></span>
+                <span class="item"><span class="dot dot-blue"></span> <span id="legendLeave">Leave</span></span>
+                <span class="item"><span class="dot dot-red"></span> <span id="legendAbsent">Absent</span></span>
+                <span class="item"><span class="dot dot-white"></span> <span id="legendUnmarked">Unmarked</span></span>
+                <span class="item"><span style="color:var(--text-muted);font-size:0.7rem;" id="legendClick">Click to toggle</span></span>
+            </div>
+        </div>
+        <div style="overflow-x: auto;max-height:600px;overflow-y:auto;">
+            <table class="attendance-table" id="attendanceTable">
+                <thead id="tableHead"></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="footer-note" id="footerNote">💡 Click on any status circle to cycle: Unmarked → Present → Leave → Absent</div>
+</div>
+
+<!-- Toast -->
+<div class="toast-msg" id="toastMsg"><i class="fas fa-check-circle" style="color:#10b981;"></i> <span id="toastText"></span></div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <h3><i class="fas fa-edit"></i> <span id="editModalTitle">Edit Employee</span></h3>
+        <div class="input-group">
+            <label id="editNameLabel">Employee Name</label>
+            <input type="text" id="editNameInput">
+        </div>
+        <div class="input-group">
+            <label id="editIdLabel">ID Number</label>
+            <input type="text" id="editIdInput">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" id="editCancelBtn"><span id="cancelBtnText">Cancel</span></button>
+            <button class="btn-save" id="editSaveBtn"><span id="saveBtnText">Save Changes</span></button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ======================== TRANSLATIONS ========================
+    const translations = {
+        en: {
+            titleMain: "Employee Attendance",
+            statTotalEmployees: "Total Employees",
+            statPresent: "Present Today",
+            statLeave: "On Leave",
+            statAbsent: "Absent Today",
+            employeeManagerTitle: "Employee Management",
+            empNameLabel: "Employee Name",
+            empIdLabel: "ID Number",
+            addBtnText: "Add Employee",
+            tableTitle: "Attendance Record",
+            legendPresent: "Present",
+            legendLeave: "Leave",
+            legendAbsent: "Absent",
+            legendUnmarked: "Unmarked",
+            legendClick: "Click to toggle",
+            footerNote: "💡 Click on any status circle to cycle: Unmarked → Present → Leave → Absent",
+            loadLabel: "Load Month",
+            excelLabel: "Excel",
+            pdfLabel: "PDF",
+            editModalTitle: "Edit Employee",
+            cancelBtnText: "Cancel",
+            saveBtnText: "Save Changes",
+            toastAdded: "Employee added successfully",
+            toastDeleted: "Employee deleted",
+            toastUpdated: "Employee updated",
+            toastSaved: "Attendance saved",
+            toastLoaded: "Month loaded",
+            toastExport: "Export successful",
+            toastNoData: "No data to export",
+            confirmDelete: "Delete this employee?",
+            days: "days",
+            present: "Present",
+            leave: "Leave",
+            absent: "Absent",
+            unmarked: "Unmarked",
+            edit: "Edit",
+            delete: "Delete"
+        },
+        ar: {
+            titleMain: "حضور الموظفين",
+            statTotalEmployees: "إجمالي الموظفين",
+            statPresent: "حاضر اليوم",
+            statLeave: "في إجازة",
+            statAbsent: "غائب اليوم",
+            employeeManagerTitle: "إدارة الموظفين",
+            empNameLabel: "اسم الموظف",
+            empIdLabel: "رقم الهوية",
+            addBtnText: "إضافة موظف",
+            tableTitle: "سجل الحضور",
+            legendPresent: "حاضر",
+            legendLeave: "إجازة",
+            legendAbsent: "غائب",
+            legendUnmarked: "غير محدد",
+            legendClick: "انقر للتبديل",
+            footerNote: "💡 انقر على أي دائرة حالة للتبديل: غير محدد → حاضر → إجازة → غائب",
+            loadLabel: "تحميل الشهر",
+            excelLabel: "إكسيل",
+            pdfLabel: "PDF",
+            editModalTitle: "تعديل الموظف",
+            cancelBtnText: "إلغاء",
+            saveBtnText: "حفظ التغييرات",
+            toastAdded: "تم إضافة الموظف بنجاح",
+            toastDeleted: "تم حذف الموظف",
+            toastUpdated: "تم تحديث الموظف",
+            toastSaved: "تم حفظ الحضور",
+            toastLoaded: "تم تحميل الشهر",
+            toastExport: "تم التصدير بنجاح",
+            toastNoData: "لا توجد بيانات للتصدير",
+            confirmDelete: "حذف هذا الموظف؟",
+            days: "يوم",
+            present: "حاضر",
+            leave: "إجازة",
+            absent: "غائب",
+            unmarked: "غير محدد",
+            edit: "تعديل",
+            delete: "حذف"
+        }
+    };
+
+    let currentLang = 'en';
+    let employees = [];
+    let attendanceData = {};
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+    let editingEmployeeId = null;
+
+    // ======================== DOM REFS ========================
+    const $ = id => document.getElementById(id);
+    const monthSelect = $('monthSelect');
+    const yearSelect = $('yearSelect');
+    const daysInMonth = $('daysInMonth');
+    const empNameInput = $('empNameInput');
+    const empIdInput = $('empIdInput');
+    const addEmployeeBtn = $('addEmployeeBtn');
+    const employeeList = $('employeeList');
+    const tableHead = $('tableHead');
+    const tableBody = $('tableBody');
+    const totalEmployees = $('totalEmployees');
+    const presentToday = $('presentToday');
+    const leaveToday = $('leaveToday');
+    const absentToday = $('absentToday');
+    const loadMonthBtn = $('loadMonthBtn');
+    const toast = $('toastMsg');
+    const toastText = $('toastText');
+    const editModal = $('editModal');
+    const editNameInput = $('editNameInput');
+    const editIdInput = $('editIdInput');
+    const editCancelBtn = $('editCancelBtn');
+    const editSaveBtn = $('editSaveBtn');
+    const exportExcelBtn = $('exportExcelBtn');
+    const exportPdfBtn = $('exportPdfBtn');
+
+    // ======================== LANGUAGE ========================
+    function t(key) {
+        return translations[currentLang]?.[key] || key;
+    }
+
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+        
+        document.querySelectorAll('[id]').forEach(el => {
+            const key = el.id;
+            if (translations[lang][key]) {
+                if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+                    // Skip inputs
+                } else {
+                    el.innerText = translations[lang][key];
+                }
+            }
+        });
+
+        // Update specific elements
+        document.getElementById('titleMain').innerText = t('titleMain');
+        document.getElementById('statTotalEmployees').innerText = t('statTotalEmployees');
+        document.getElementById('statPresent').innerText = t('statPresent');
+        document.getElementById('statLeave').innerText = t('statLeave');
+        document.getElementById('statAbsent').innerText = t('statAbsent');
+        document.getElementById('employeeManagerTitle').innerText = t('employeeManagerTitle');
+        document.getElementById('empNameLabel').innerText = t('empNameLabel');
+        document.getElementById('empIdLabel').innerText = t('empIdLabel');
+        document.getElementById('addBtnText').innerText = t('addBtnText');
+        document.getElementById('tableTitle').innerText = t('tableTitle');
+        document.getElementById('legendPresent').innerText = t('legendPresent');
+        document.getElementById('legendLeave').innerText = t('legendLeave');
+        document.getElementById('legendAbsent').innerText = t('legendAbsent');
+        document.getElementById('legendUnmarked').innerText = t('legendUnmarked');
+        document.getElementById('legendClick').innerText = t('legendClick');
+        document.getElementById('footerNote').innerText = t('footerNote');
+        document.getElementById('loadLabel').innerText = t('loadLabel');
+        document.getElementById('excelLabel').innerText = t('excelLabel');
+        document.getElementById('pdfLabel').innerText = t('pdfLabel');
+        document.getElementById('editModalTitle').innerText = t('editModalTitle');
+        document.getElementById('editNameLabel').innerText = t('empNameLabel');
+        document.getElementById('editIdLabel').innerText = t('empIdLabel');
+        document.getElementById('cancelBtnText').innerText = t('cancelBtnText');
+        document.getElementById('saveBtnText').innerText = t('saveBtnText');
+
+        // Update month dropdown
+        const monthNames = lang === 'ar' ? 
+            ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'] :
+            ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        monthSelect.querySelectorAll('option').forEach((opt, idx) => {
+            opt.textContent = monthNames[idx];
+        });
+
+        renderAll();
+    }
+
+    document.getElementById('langEn').addEventListener('click', () => {
+        document.getElementById('langEn').classList.add('active');
+        document.getElementById('langAr').classList.remove('active');
+        setLanguage('en');
+    });
+    document.getElementById('langAr').addEventListener('click', () => {
+        document.getElementById('langAr').classList.add('active');
+        document.getElementById('langEn').classList.remove('active');
+        setLanguage('ar');
+    });
+
+    // ======================== TOAST ========================
+    function showToast(msg, type = 'success') {
+        toastText.innerText = msg;
+        toast.style.display = 'flex';
+        toast.style.borderLeftColor = type === 'error' ? '#ef4444' : '#10b981';
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => toast.style.display = 'none', 3000);
+    }
+
+    // ======================== DATA MANAGEMENT ========================
+    function getDaysInMonth(month, year) {
+        return new Date(year, month + 1, 0).getDate();
+    }
+
+    function getStorageKey() {
+        return `attendance_${currentYear}_${currentMonth}`;
+    }
+
+    function loadData() {
+        const saved = localStorage.getItem('attendanceEmployees');
+        if (saved) {
+            employees = JSON.parse(saved);
+        } else {
+            // Default employees
+            employees = [
+                { id: 'EMP-001', name: 'Ahmed Mohammed' },
+                { id: 'EMP-002', name: 'Sarah Abdullah' },
+                { id: 'EMP-003', name: 'Khalid Al-Saud' }
+            ];
+            saveEmployees();
+        }
+
+        const key = getStorageKey();
+        const savedAttendance = localStorage.getItem(key);
+        if (savedAttendance) {
+            attendanceData = JSON.parse(savedAttendance);
+        } else {
+            attendanceData = {};
+            // Initialize with unmarked for all days
+            const days = getDaysInMonth(currentMonth, currentYear);
+            employees.forEach(emp => {
+                attendanceData[emp.id] = {};
+                for (let d = 1; d <= days; d++) {
+                    attendanceData[emp.id][d] = 'unmarked';
+                }
+            });
+            saveAttendance();
+        }
+    }
+
+    function saveEmployees() {
+        localStorage.setItem('attendanceEmployees', JSON.stringify(employees));
+    }
+
+    function saveAttendance() {
+        const key = getStorageKey();
+        localStorage.setItem(key, JSON.stringify(attendanceData));
+    }
+
+    // ======================== RENDER ========================
+    function renderAll() {
+        renderEmployeeList();
+        renderTable();
+        updateStats();
+        updateDaysInMonth();
+    }
+
+    function renderEmployeeList() {
+        employeeList.innerHTML = employees.map(emp => `
+            <span class="employee-tag">
+                <span>${emp.name}</span>
+                <span class="id-badge">(${emp.id})</span>
+                <span class="actions">
+                    <button class="edit-btn" onclick="editEmployee('${emp.id}')" title="${t('edit')}"><i class="fas fa-edit"></i></button>
+                    <button class="del-btn" onclick="deleteEmployee('${emp.id}')" title="${t('delete')}"><i class="fas fa-trash"></i></button>
+                </span>
+            </span>
+        `).join('');
+        totalEmployees.innerText = employees.length;
+    }
+
+    function renderTable() {
+        const days = getDaysInMonth(currentMonth, currentYear);
+        const monthNames = currentLang === 'ar' ? 
+            ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'] :
+            ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        
+        // Build header
+        let thead = `<tr><th>${currentLang === 'ar' ? 'الموظف' : 'Employee'}</th><th>${currentLang === 'ar' ? 'الرقم' : 'ID'}</th>`;
+        for (let d = 1; d <= days; d++) {
+            thead += `<th>${d}</th>`;
+        }
+        thead += `</tr>`;
+        tableHead.innerHTML = thead;
+
+        // Build body
+        let tbody = '';
+        employees.forEach(emp => {
+            tbody += `<tr>`;
+            tbody += `<td class="employee-name">${emp.name}</td>`;
+            tbody += `<td class="employee-id">${emp.id}</td>`;
+            for (let d = 1; d <= days; d++) {
+                const status = attendanceData[emp.id]?.[d] || 'unmarked';
+                const statusClass = status === 'present' ? 'present' : status === 'leave' ? 'leave' : status === 'absent' ? 'absent' : 'unmarked';
+                const statusText = status === 'present' ? 'P' : status === 'leave' ? 'L' : status === 'absent' ? 'A' : '•';
+                tbody += `<td>
+                    <button class="status-btn ${statusClass}" onclick="toggleStatus('${emp.id}', ${d})" title="${t(status)}">
+                        ${statusText}
+                    </button>
+                </td>`;
+            }
+            tbody += `</tr>`;
+        });
+        tableBody.innerHTML = tbody;
+        updateStats();
+    }
+
+    function updateStats() {
+        const today = new Date().getDate();
+        const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+        // Only count if today is within the month
+        const dayToCheck = today <= daysInMonth ? today : 1;
+        
+        let present = 0, leave = 0, absent = 0;
+        employees.forEach(emp => {
+            const status = attendanceData[emp.id]?.[dayToCheck] || 'unmarked';
+            if (status === 'present') present++;
+            else if (status === 'leave') leave++;
+            else if (status === 'absent') absent++;
+        });
+        presentToday.innerText = present;
+        leaveToday.innerText = leave;
+        absentToday.innerText = absent;
+    }
+
+    function updateDaysInMonth() {
+        const days = getDaysInMonth(currentMonth, currentYear);
+        daysInMonth.innerText = `${days} ${t('days')}`;
+    }
+
+    // ======================== EMPLOYEE CRUD ========================
+    function addEmployee() {
+        const name = empNameInput.value.trim();
+        const id = empIdInput.value.trim();
+        if (!name || !id) {
+            showToast(currentLang === 'ar' ? 'الرجاء إدخال الاسم والرقم' : 'Please enter name and ID', 'error');
+            return;
+        }
+        if (employees.find(e => e.id === id)) {
+            showToast(currentLang === 'ar' ? 'هذا الرقم موجود بالفعل' : 'This ID already exists', 'error');
+            return;
+        }
+        employees.push({ id, name });
+        saveEmployees();
+        
+        // Initialize attendance for new employee
+        const days = getDaysInMonth(currentMonth, currentYear);
+        attendanceData[id] = {};
+        for (let d = 1; d <= days; d++) {
+            attendanceData[id][d] = 'unmarked';
+        }
+        saveAttendance();
+        
+        empNameInput.value = '';
+        empIdInput.value = '';
+        renderAll();
+        showToast(t('toastAdded'));
+    }
+
+    window.deleteEmployee = function(id) {
+        if (confirm(t('confirmDelete'))) {
+            employees = employees.filter(e => e.id !== id);
+            delete attendanceData[id];
+            saveEmployees();
+            saveAttendance();
+            renderAll();
+            showToast(t('toastDeleted'));
+        }
+    };
+
+    window.editEmployee = function(id) {
+        const emp = employees.find(e => e.id === id);
+        if (!emp) return;
+        editingEmployeeId = id;
+        editNameInput.value = emp.name;
+        editIdInput.value = emp.id;
+        editModal.classList.add('active');
+    };
+
+    function saveEditEmployee() {
+        const name = editNameInput.value.trim();
+        const id = editIdInput.value.trim();
+        if (!name || !id) {
+            showToast(currentLang === 'ar' ? 'الرجاء إدخال الاسم والرقم' : 'Please enter name and ID', 'error');
+            return;
+        }
+        if (id !== editingEmployeeId && employees.find(e => e.id === id)) {
+            showToast(currentLang === 'ar' ? 'هذا الرقم موجود بالفعل' : 'This ID already exists', 'error');
+            return;
+        }
+        const oldId = editingEmployeeId;
+        const emp = employees.find(e => e.id === oldId);
+        if (!emp) return;
+        
+        emp.name = name;
+        if (id !== oldId) {
+            emp.id = id;
+            // Migrate attendance data
+            attendanceData[id] = attendanceData[oldId];
+            delete attendanceData[oldId];
+            saveAttendance();
+        }
+        saveEmployees();
+        editModal.classList.remove('active');
+        renderAll();
+        showToast(t('toastUpdated'));
+    }
+
+    editCancelBtn.addEventListener('click', () => {
+        editModal.classList.remove('active');
+    });
+    editSaveBtn.addEventListener('click', saveEditEmployee);
+    editModal.addEventListener('click', (e) => {
+        if (e.target === editModal) editModal.classList.remove('active');
+    });
+
+    addEmployeeBtn.addEventListener('click', addEmployee);
+    empNameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addEmployee(); });
+    empIdInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addEmployee(); });
+
+    // ======================== ATTENDANCE TOGGLE ========================
+    window.toggleStatus = function(empId, day) {
+        const current = attendanceData[empId]?.[day] || 'unmarked';
+        const cycle = ['unmarked', 'present', 'leave', 'absent'];
+        let nextIndex = (cycle.indexOf(current) + 1) % cycle.length;
+        attendanceData[empId][day] = cycle[nextIndex];
+        saveAttendance();
+        renderTable();
+        showToast(`${currentLang === 'ar' ? 'تم التحديث' : 'Updated'} ${empId} - ${t(cycle[nextIndex])}`);
+    };
+
+    // ======================== MONTH LOAD ========================
+    loadMonthBtn.addEventListener('click', () => {
+        currentMonth = parseInt(monthSelect.value);
+        currentYear = parseInt(yearSelect.value);
+        const key = getStorageKey();
+        const savedAttendance = localStorage.getItem(key);
+        if (savedAttendance) {
+            attendanceData = JSON.parse(savedAttendance);
+        } else {
+            attendanceData = {};
+            const days = getDaysInMonth(currentMonth, currentYear);
+            employees.forEach(emp => {
+                attendanceData[emp.id] = {};
+                for (let d = 1; d <= days; d++) {
+                    attendanceData[emp.id][d] = 'unmarked';
+                }
+            });
+            saveAttendance();
+        }
+        renderAll();
+        showToast(t('toastLoaded'));
+    });
+
+    // ======================== EXPORT EXCEL ========================
+    exportExcelBtn.addEventListener('click', () => {
+        if (employees.length === 0) {
+            showToast(t('toastNoData'), 'error');
+            return;
+        }
+        const days = getDaysInMonth(currentMonth, currentYear);
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        
+        let data = [];
+        let header = ['Employee', 'ID'];
+        for (let d = 1; d <= days; d++) {
+            header.push(`Day ${d}`);
+        }
+        data.push(header);
+
+        employees.forEach(emp => {
+            let row = [emp.name, emp.id];
+            for (let d = 1; d <= days; d++) {
+                const status = attendanceData[emp.id]?.[d] || 'unmarked';
+                row.push(status === 'present' ? 'P' : status === 'leave' ? 'L' : status === 'absent' ? 'A' : '');
+            }
+            data.push(row);
+        });
+
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Attendance');
+        XLSX.writeFile(wb, `Attendance_${monthNames[currentMonth]}_${currentYear}.xlsx`);
+        showToast(t('toastExport'));
+    });
+
+    // ======================== EXPORT PDF ========================
+    exportPdfBtn.addEventListener('click', () => {
+        if (employees.length === 0) {
+            showToast(t('toastNoData'), 'error');
+            return;
+        }
+        
+        try {
+            const days = getDaysInMonth(currentMonth, currentYear);
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('landscape', 'mm', 'a4');
+            
+            // Header
+            doc.setFontSize(18);
+            doc.setTextColor(0, 212, 255);
+            doc.text(`Attendance Report - ${monthNames[currentMonth]} ${currentYear}`, 14, 20);
+            
+            doc.setFontSize(10);
+            doc.setTextColor(160, 168, 192);
+            doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 28);
+            doc.text(`Total Employees: ${employees.length}`, 14, 34);
+            
+            // Prepare table data
+            let tableData = [];
+            employees.forEach(emp => {
+                let row = [emp.name, emp.id];
+                for (let d = 1; d <= days; d++) {
+                    const status = attendanceData[emp.id]?.[d] || 'unmarked';
+                    row.push(status === 'present' ? 'P' : status === 'leave' ? 'L' : status === 'absent' ? 'A' : '');
+                }
+                tableData.push(row);
+            });
+            
+            let headers = ['Employee', 'ID'];
+            for (let d = 1; d <= days; d++) {
+                headers.push(`${d}`);
+            }
+            
+            // Generate table with autoTable
+            doc.autoTable({
+                head: [headers],
+                body: tableData,
+                startY: 40,
+                theme: 'dark',
+                styles: { 
+                    fontSize: 6, 
+                    cellPadding: 1.5, 
+                    textColor: [255, 255, 255],
+                    lineColor: [40, 50, 70],
+                    lineWidth: 0.1
+                },
+                headStyles: { 
+                    fillColor: [0, 212, 255], 
+                    textColor: [11, 18, 31],
+                    fontSize: 7,
+                    fontStyle: 'bold'
+                },
+                alternateRowStyles: { 
+                    fillColor: [18, 22, 35] 
+                },
+                didParseCell: function(data) {
+                    // Color code status cells
+                    if (data.section === 'body' && data.column.index > 1) {
+                        const value = data.cell.raw;
+                        if (value === 'P') {
+                            data.cell.styles.fillColor = [16, 185, 129];
+                            data.cell.styles.textColor = [255, 255, 255];
+                        } else if (value === 'L') {
+                            data.cell.styles.fillColor = [59, 130, 246];
+                            data.cell.styles.textColor = [255, 255, 255];
+                        } else if (value === 'A') {
+                            data.cell.styles.fillColor = [239, 68, 68];
+                            data.cell.styles.textColor = [255, 255, 255];
+                        } else {
+                            data.cell.styles.fillColor = [30, 35, 50];
+                            data.cell.styles.textColor = [100, 110, 130];
+                        }
+                    }
+                    // Employee name column
+                    if (data.section === 'body' && data.column.index === 0) {
+                        data.cell.styles.fontStyle = 'bold';
+                        data.cell.styles.textColor = [255, 255, 255];
+                    }
+                    // Employee ID column
+                    if (data.section === 'body' && data.column.index === 1) {
+                        data.cell.styles.textColor = [160, 168, 192];
+                    }
+                }
+            });
+            
+            // Footer
+            const finalY = doc.lastAutoTable.finalY || 200;
+            doc.setFontSize(8);
+            doc.setTextColor(100, 110, 130);
+            doc.text('Generated by SADWAP Attendance System | P=Present, L=Leave, A=Absent', 14, finalY + 10);
+            
+            // Save
+            doc.save(`Attendance_${monthNames[currentMonth]}_${currentYear}.pdf`);
+            showToast(t('toastExport'));
+        } catch (error) {
+            console.error('PDF Export Error:', error);
+            showToast(currentLang === 'ar' ? 'خطأ في تصدير PDF' : 'PDF export error', 'error');
+        }
+    });
+
+    // ======================== INIT ========================
+    monthSelect.value = currentMonth;
+    yearSelect.value = currentYear;
+    loadData();
+    renderAll();
+    setLanguage('en');
+
+    // Keyboard shortcut: Escape to close modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') editModal.classList.remove('active');
+    });
+</script>
+</body>
+</html>
