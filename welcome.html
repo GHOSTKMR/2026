@@ -1090,7 +1090,7 @@
     closeIframeBtn.addEventListener('click', closeIframe);
 
     // ============================================================
-    // RADIAL MENU - 16 ITEMS
+    // RADIAL MENU - 17 ITEMS (Added Employee Portal)
     // ============================================================
     const menuItems = [
         { icon: "fas fa-tachometer-alt", name: "Dashboard", nameAr: "الرئيسية", url: "#" },
@@ -1107,7 +1107,7 @@
         { icon: "fas fa-undo-alt", name: "Void & Refunds", nameAr: "الإلغاء والمستردات", url: "https://ghostkmr.github.io/2026/void%20and%20refunds.html" },
         { icon: "fas fa-graduation-cap", name: "Tutorials", nameAr: "الدروس", url: "https://ghostkmr.github.io/2026/tutorial.html" },
         { icon: "fas fa-link", name: "Corporate Links", nameAr: "روابط الشركة", url: "#corporate", corporate: true },
-        { icon: "fas fa-robot", name: "Coming Soon", nameAr: "قريباً", url: "#", comingSoon: true },
+        { icon: "fas fa-book", name: "Employee Handbook", nameAr: "دليل الموظف", url: "https://ghostkmr.github.io/2026/employee portal.html" },
         { icon: "fas fa-cloud-upload-alt", name: "Coming Soon", nameAr: "قريباً", url: "#", comingSoon: true }
     ];
 
@@ -1129,6 +1129,11 @@
             }
             if (item.corporate) {
                 el.style.borderColor = 'rgba(251, 191, 36, 0.5)';
+            }
+            // Highlight Employee Portal and Employee Handbook
+            if (item.url && (item.url.includes('attendance') || item.url.includes('employee_handbook'))) {
+                el.style.borderColor = 'rgba(0, 212, 255, 0.6)';
+                el.style.boxShadow = '0 0 20px rgba(0, 212, 255, 0.2)';
             }
             el.style.transform = `translate(${x}px, ${y}px)`;
             const displayName = item.comingSoon ? (currentLang === 'ar' ? 'قريباً' : 'Coming Soon') : (currentLang === 'ar' ? item.nameAr : item.name);
@@ -1472,7 +1477,8 @@
             { name: "RVR Experience", nameAr: "الواقع الافتراضي", icon: "fas fa-vr-cardboard", color: "#00d4ff", description: "Immersive VR", descriptionAr: "تجربة غامرة", url: "https://ghostkmr.github.io/2026/srv.html" },
             { name: "Maintenance Reports", nameAr: "تقارير الصيانة", icon: "fas fa-tools", color: "#f59e0b", description: "Track maintenance & issues", descriptionAr: "تتبع الصيانة والإصلاحات", url: "https://ghostkmr.github.io/2026/maintenence.html" },
             { name: "Void & Refunds", nameAr: "الإلغاء والمستردات", icon: "fas fa-undo-alt", color: "#f59e0b", description: "Manage voids and refunds", descriptionAr: "إدارة الإلغاء والمستردات", url: "https://ghostkmr.github.io/2026/void%20and%20refunds.html" },
-            { name: "Tutorials", nameAr: "الدروس", icon: "fas fa-graduation-cap", color: "#7b2cbf", description: "Learning hub", descriptionAr: "مركز التعلم", url: "https://ghostkmr.github.io/2026/tutorial.html" }
+            { name: "Tutorials", nameAr: "الدروس", icon: "fas fa-graduation-cap", color: "#7b2cbf", description: "Learning hub", descriptionAr: "مركز التعلم", url: "https://ghostkmr.github.io/2026/tutorial.html" },
+            { name: "Employee Handbook", nameAr: "دليل الموظف", icon: "fas fa-book", color: "#10b981", description: "Company policies", descriptionAr: "سياسات الشركة", url: "https://ghostkmr.github.io/2026/employee portal.html" }
         ];
         const grid = document.getElementById("modulesGrid");
         grid.innerHTML = '';
@@ -1605,8 +1611,8 @@
     if(existing.length === 0){
         addActivityLog("🚀 SADWAP StreamOps initialized · Drag the circular menu anywhere!");
         addActivityLog("📊 Active users: 5 (1 PC, 3 Mobile, 1 Tablet) · System Health: 99.9% · Ops: 10K+");
-        addActivityLog("📋 Click the compass icon to open radial menu (16 modules including Corporate Links)");
-        addActivityLog("✅ All links verified: Inventory, Sales, Expiry, Transfers, Training, Municipality, Admin, Insights, RVR, Tutorials, Void & Refunds, Maintenance Reports, Corporate Links");
+        addActivityLog("📋 Click the compass icon to open radial menu (17 modules including Corporate Links)");
+        addActivityLog("✅ All links verified: Inventory, Sales, Expiry, Transfers, Training, Municipality, Admin, Insights, RVR, Tutorials, Void & Refunds, Maintenance Reports, Corporate Links, Employee Portal, Employee Handbook");
         addActivityLog("🔗 Corporate Links: Gmail, Freshworks, Crystal, Crunchtime, S.O.S Assessment");
         addActivityLog("🔒 Security: Right-click disabled · Session expires after 30 seconds · Passcode: kudukudu12345");
     }
