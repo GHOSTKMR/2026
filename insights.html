@@ -232,7 +232,7 @@
         .data-table tr { cursor: pointer; transition: background 0.2s; }
         .data-table tr:hover { background: rgba(0,212,255,0.04); }
 
-        .foodcost-badge {
+        .cogs-badge {
             display: inline-block;
             padding: 3px 12px;
             border-radius: 40px;
@@ -273,20 +273,20 @@
 
     <!-- Guide Section -->
     <div class="guide-section">
-        <div class="guide-title"><i class="fas fa-graduation-cap"></i> <span id="guideTitle">Quick Start Guide — January & February Highlighted as Examples</span></div>
+        <div class="guide-title"><i class="fas fa-graduation-cap"></i> <span id="guideTitle">Quick Start Guide — COGS = (Food + Beverage + Packaging + Other) / Sales × 100</span></div>
         <div class="guide-grid">
-            <div class="guide-item"><div class="label" data-key="targetLabel">🎯 Food Cost Target</div><div class="value">28-32%</div></div>
-            <div class="guide-item"><div class="label" data-key="janLabel">✅ Jan Food Cost</div><div class="value" id="janGuide">—</div></div>
-            <div class="guide-item"><div class="label" data-key="febLabel">✅ Feb Food Cost</div><div class="value" id="febGuide">—</div></div>
+            <div class="guide-item"><div class="label" data-key="targetLabel">🎯 COGS Target</div><div class="value">28-32%</div></div>
+            <div class="guide-item"><div class="label" data-key="janLabel">✅ Jan COGS</div><div class="value" id="janGuide">—</div></div>
+            <div class="guide-item"><div class="label" data-key="febLabel">✅ Feb COGS</div><div class="value" id="febGuide">—</div></div>
             <div class="guide-item"><div class="label" data-key="tipLabel">💡 Pro Tip</div><div class="value" style="font-size:0.8rem;color:var(--text-secondary);" data-key="tipText">Click any row → AI insights</div></div>
         </div>
     </div>
 
     <!-- KPI Cards -->
     <div class="kpi-grid">
-        <div class="kpi-card"><div class="kpi-label" data-key="avgFoodCost">Avg Food Cost %</div><div class="kpi-value" id="avgFoodCost">0%</div></div>
+        <div class="kpi-card"><div class="kpi-label" data-key="avgFoodCost">Avg COGS %</div><div class="kpi-value" id="avgFoodCost">0%</div></div>
         <div class="kpi-card"><div class="kpi-label" data-key="totalSales">Total Sales (YTD)</div><div class="kpi-value" id="totalSales">SAR 0</div></div>
-        <div class="kpi-card"><div class="kpi-label" data-key="totalFoodCost">Total Food Cost</div><div class="kpi-value" id="totalFoodCost">SAR 0</div></div>
+        <div class="kpi-card"><div class="kpi-label" data-key="totalFoodCost">Total COGS</div><div class="kpi-value" id="totalFoodCost">SAR 0</div></div>
         <div class="kpi-card"><div class="kpi-label" data-key="bestMonth">Best Month</div><div class="kpi-value" id="bestMonth">-</div></div>
     </div>
 
@@ -297,7 +297,7 @@
             <div class="chart-container"><canvas id="pieChart"></canvas></div>
         </div>
         <div class="viz-card">
-            <h4><i class="fas fa-chart-bar"></i> <span data-key="monthlyTrend">Monthly Food Cost Trend</span></h4>
+            <h4><i class="fas fa-chart-bar"></i> <span data-key="monthlyTrend">Monthly COGS Trend</span></h4>
             <div class="chart-container-sm"><canvas id="barChart"></canvas></div>
         </div>
     </div>
@@ -340,14 +340,14 @@
                     <th data-key="beverageHeader">Beverage</th>
                     <th data-key="packagingHeader">Packaging</th>
                     <th data-key="otherHeader">Other</th>
-                    <th data-key="fcPercentHeader">Food Cost %</th>
+                    <th data-key="fcPercentHeader">COGS %</th>
                     <th data-key="statusHeader">Status</th>
                 </tr></thead>
                 <tbody id="tableBody"></tbody>
             </table>
         </div>
     </div>
-    <div class="footer-note" data-key="footerNote">💡 Click on any row to view AI insights for that month | Food Cost % = (Food Cost / Sales) × 100</div>
+    <div class="footer-note" data-key="footerNote">💡 Click on any row to view AI insights for that month | COGS % = (Food + Beverage + Packaging + Other) / Sales × 100</div>
 </div>
 
 <script>
@@ -355,18 +355,18 @@
     const translations = {
         en: {
             titleMain: "Food Cost Intelligence",
-            guideTitle: "Quick Start Guide — January & February Highlighted as Examples",
-            targetLabel: "🎯 Food Cost Target",
-            janLabel: "✅ Jan Food Cost",
-            febLabel: "✅ Feb Food Cost",
+            guideTitle: "Quick Start Guide — COGS = (Food + Beverage + Packaging + Other) / Sales × 100",
+            targetLabel: "🎯 COGS Target",
+            janLabel: "✅ Jan COGS",
+            febLabel: "✅ Feb COGS",
             tipLabel: "💡 Pro Tip",
             tipText: "Click any row → AI insights",
-            avgFoodCost: "Avg Food Cost %",
+            avgFoodCost: "Avg COGS %",
             totalSales: "Total Sales (YTD)",
-            totalFoodCost: "Total Food Cost",
+            totalFoodCost: "Total COGS",
             bestMonth: "Best Month",
             costBreakdown: "Cost Breakdown by Category",
-            monthlyTrend: "Monthly Food Cost Trend",
+            monthlyTrend: "Monthly COGS Trend",
             aiTitle: "AI Insights & Recommendations",
             selectMonth: "Select Month",
             salesLabel: "Total Sales (SAR)",
@@ -383,30 +383,30 @@
             beverageHeader: "Beverage",
             packagingHeader: "Packaging",
             otherHeader: "Other",
-            fcPercentHeader: "Food Cost %",
+            fcPercentHeader: "COGS %",
             statusHeader: "Status",
-            footerNote: "💡 Click on any row to view AI insights for that month | Food Cost % = (Food Cost / Sales) × 100",
+            footerNote: "💡 Click on any row to view AI insights for that month | COGS % = (Food + Beverage + Packaging + Other) / Sales × 100",
             // AI Insights English
             analysisSummary: "Analysis Summary",
-            avgFoodCostText: "Average Food Cost",
+            avgFoodCostText: "Average COGS",
             excellentRange: "Excellent range",
             acceptableRange: "Acceptable range",
             aboveTarget: "Above target - needs attention",
-            highestFoodCost: "Highest Food Cost",
-            lowestFoodCost: "Lowest Food Cost",
+            highestFoodCost: "Highest COGS",
+            lowestFoodCost: "Lowest COGS",
             bestPerforming: "Best performing month",
             beverageCost: "Beverage Cost",
             benchmark: "Benchmark",
             packagingCost: "Packaging Cost",
-            trendUp: "Food cost is trending UP by",
-            trendDown: "Food cost is trending DOWN by",
+            trendUp: "COGS is trending UP by",
+            trendDown: "COGS is trending DOWN by",
             reviewSuppliers: "Review supplier pricing and portion control",
             greatWork: "Great work! Continue these practices",
             industryBenchmark: "Industry benchmark",
             optimal: "is considered optimal for food service businesses",
             actionableRecs: "Actionable Recommendations",
             urgent: "URGENT",
-            elevated: "food cost is elevated",
+            elevated: "COGS is elevated",
             auditPortions: "Audit portion sizes and check for theft/spoilage",
             exceptional: "Exceptional performance in",
             documentWhatWorked: "Document what worked and replicate",
@@ -420,18 +420,18 @@
         },
         ar: {
             titleMain: "ذكاء تكلفة الطعام",
-            guideTitle: "دليل البدء السريع — يناير وفبراير مميزان كأمثلة",
-            targetLabel: "🎯 هدف تكلفة الطعام",
-            janLabel: "✅ تكلفة طعام يناير",
-            febLabel: "✅ تكلفة طعام فبراير",
+            guideTitle: "دليل البدء السريع — COGS = (الطعام + المشروبات + التغليف + أخرى) / المبيعات × 100",
+            targetLabel: "🎯 هدف COGS",
+            janLabel: "✅ COGS يناير",
+            febLabel: "✅ COGS فبراير",
             tipLabel: "💡 نصيحة",
             tipText: "انقر على أي صف → رؤى الذكاء الاصطناعي",
-            avgFoodCost: "متوسط تكلفة الطعام %",
+            avgFoodCost: "متوسط COGS %",
             totalSales: "إجمالي المبيعات (منذ بداية العام)",
-            totalFoodCost: "إجمالي تكلفة الطعام",
+            totalFoodCost: "إجمالي COGS",
             bestMonth: "أفضل شهر",
             costBreakdown: "توزيع التكاليف حسب الفئة",
-            monthlyTrend: "اتجاه تكلفة الطعام الشهري",
+            monthlyTrend: "اتجاه COGS الشهري",
             aiTitle: "رؤى وتوصيات الذكاء الاصطناعي",
             selectMonth: "اختر الشهر",
             salesLabel: "إجمالي المبيعات (ر.س)",
@@ -448,30 +448,30 @@
             beverageHeader: "المشروبات",
             packagingHeader: "التغليف",
             otherHeader: "أخرى",
-            fcPercentHeader: "نسبة تكلفة الطعام %",
+            fcPercentHeader: "نسبة COGS %",
             statusHeader: "الحالة",
-            footerNote: "💡 انقر على أي صف لعرض رؤى الذكاء الاصطناعي لذلك الشهر | نسبة تكلفة الطعام = (تكلفة الطعام / المبيعات) × 100",
+            footerNote: "💡 انقر على أي صف لعرض رؤى الذكاء الاصطناعي لذلك الشهر | COGS % = (الطعام + المشروبات + التغليف + أخرى) / المبيعات × 100",
             // AI Insights Arabic
             analysisSummary: "ملخص التحليل",
-            avgFoodCostText: "متوسط تكلفة الطعام",
+            avgFoodCostText: "متوسط COGS",
             excellentRange: "نطاق ممتاز",
             acceptableRange: "نطاق مقبول",
             aboveTarget: "أعلى من الهدف - يحتاج إلى اهتمام",
-            highestFoodCost: "أعلى تكلفة طعام",
-            lowestFoodCost: "أقل تكلفة طعام",
+            highestFoodCost: "أعلى COGS",
+            lowestFoodCost: "أقل COGS",
             bestPerforming: "أفضل شهر أداءً",
             beverageCost: "تكلفة المشروبات",
             benchmark: "المعيار",
             packagingCost: "تكلفة التغليف",
-            trendUp: "تكلفة الطعام في ارتفاع بمقدار",
-            trendDown: "تكلفة الطعام في انخفاض بمقدار",
+            trendUp: "COGS في ارتفاع بمقدار",
+            trendDown: "COGS في انخفاض بمقدار",
             reviewSuppliers: "مراجعة أسعار الموردين والتحكم في الحصص",
             greatWork: "عمل رائع! استمر في هذه الممارسات",
             industryBenchmark: "المعيار الصناعي",
             optimal: "يعتبر مثاليًا لأعمال خدمات الطعام",
             actionableRecs: "توصيات قابلة للتنفيذ",
             urgent: "عاجل",
-            elevated: "تكلفة الطعام مرتفعة",
+            elevated: "COGS مرتفع",
             auditPortions: "مراجعة أحجام الحصص والتحقق من السرقة/التلف",
             exceptional: "أداء استثنائي في",
             documentWhatWorked: "توثيق ما نجح وتكراره",
@@ -523,9 +523,16 @@
         localStorage.setItem('foodCostDataFull', JSON.stringify(monthlyData));
     }
 
-    function getFoodCostPercentage(sales, foodCost) {
+    // ======================== CORRECT COGS FORMULA ========================
+    // COGS % = (Food Cost + Beverage Cost + Packaging Cost + Other Costs) / Net Sales × 100
+    function calculateCOGS(sales, foodCost, beverage, packaging, other) {
         if (!sales || sales === 0) return 0;
-        return (foodCost / sales) * 100;
+        const totalCosts = (foodCost || 0) + (beverage || 0) + (packaging || 0) + (other || 0);
+        return (totalCosts / sales) * 100;
+    }
+
+    function getTotalCosts(data) {
+        return (data.foodCost || 0) + (data.beverage || 0) + (data.packaging || 0) + (data.other || 0);
     }
 
     function getStatusClass(percentage) {
@@ -545,51 +552,51 @@
     function updateGuide() {
         const janData = monthlyData.jan;
         const febData = monthlyData.feb;
-        const janFC = janData && janData.sales ? getFoodCostPercentage(janData.sales, janData.foodCost) : 0;
-        const febFC = febData && febData.sales ? getFoodCostPercentage(febData.sales, febData.foodCost) : 0;
-        document.getElementById('janGuide').textContent = janFC ? janFC.toFixed(1) + '%' : '—';
-        document.getElementById('febGuide').textContent = febFC ? febFC.toFixed(1) + '%' : '—';
-        document.getElementById('janGuide').style.color = janFC <= 28 ? '#10b981' : (janFC <= 32 ? '#f59e0b' : '#e50914');
-        document.getElementById('febGuide').style.color = febFC <= 28 ? '#10b981' : (febFC <= 32 ? '#f59e0b' : '#e50914');
+        const janCOGS = janData && janData.sales ? calculateCOGS(janData.sales, janData.foodCost, janData.beverage, janData.packaging, janData.other) : 0;
+        const febCOGS = febData && febData.sales ? calculateCOGS(febData.sales, febData.foodCost, febData.beverage, febData.packaging, febData.other) : 0;
+        document.getElementById('janGuide').textContent = janCOGS ? janCOGS.toFixed(1) + '%' : '—';
+        document.getElementById('febGuide').textContent = febCOGS ? febCOGS.toFixed(1) + '%' : '—';
+        document.getElementById('janGuide').style.color = janCOGS <= 28 ? '#10b981' : (janCOGS <= 32 ? '#f59e0b' : '#e50914');
+        document.getElementById('febGuide').style.color = febCOGS <= 28 ? '#10b981' : (febCOGS <= 32 ? '#f59e0b' : '#e50914');
     }
 
     function calculateKPIs() {
-        let totalSales = 0, totalFoodCost = 0;
+        let totalSales = 0, totalCosts = 0;
         let percentages = [];
         let bestMonthName = "";
-        let bestFoodCost = Infinity;
+        let bestCOGS = Infinity;
 
         for (let i = 0; i < monthKeys.length; i++) {
             const key = monthKeys[i];
             const data = monthlyData[key];
             if (data && data.sales && data.sales > 0) {
                 totalSales += data.sales;
-                totalFoodCost += data.foodCost;
-                const fcPercent = getFoodCostPercentage(data.sales, data.foodCost);
-                percentages.push(fcPercent);
-                if (fcPercent < bestFoodCost) {
-                    bestFoodCost = fcPercent;
+                totalCosts += getTotalCosts(data);
+                const cogsPercent = calculateCOGS(data.sales, data.foodCost, data.beverage, data.packaging, data.other);
+                percentages.push(cogsPercent);
+                if (cogsPercent < bestCOGS) {
+                    bestCOGS = cogsPercent;
                     bestMonthName = months[i];
                 }
             }
         }
 
-        const avgFC = percentages.length > 0 ? percentages.reduce((a, b) => a + b, 0) / percentages.length : 0;
+        const avgCOGS = percentages.length > 0 ? percentages.reduce((a, b) => a + b, 0) / percentages.length : 0;
         
-        document.getElementById('avgFoodCost').innerHTML = avgFC.toFixed(1) + '%';
+        document.getElementById('avgFoodCost').innerHTML = avgCOGS.toFixed(1) + '%';
         document.getElementById('totalSales').innerHTML = 'SAR ' + totalSales.toLocaleString();
-        document.getElementById('totalFoodCost').innerHTML = 'SAR ' + totalFoodCost.toLocaleString();
+        document.getElementById('totalFoodCost').innerHTML = 'SAR ' + totalCosts.toLocaleString();
         document.getElementById('bestMonth').innerHTML = bestMonthName || '-';
 
         const avgElement = document.getElementById('avgFoodCost');
-        if (avgFC <= 28) avgElement.className = "kpi-value good";
-        else if (avgFC <= 32) avgElement.className = "kpi-value warning";
+        if (avgCOGS <= 28) avgElement.className = "kpi-value good";
+        else if (avgCOGS <= 32) avgElement.className = "kpi-value warning";
         else avgElement.className = "kpi-value bad";
 
-        return { avgFC, totalSales, totalFoodCost, percentages };
+        return { avgCOGS, totalSales, totalCosts, percentages };
     }
 
-    // ======================== AI INSIGHTS WITH ARABIC SUPPORT ========================
+    // ======================== AI INSIGHTS ========================
     function generateAIInsights() {
         const t = translations[currentLang];
         let percentages = [];
@@ -597,8 +604,17 @@
             const key = monthKeys[i];
             const data = monthlyData[key];
             if (data && data.sales && data.sales > 0) {
-                const fcPercent = getFoodCostPercentage(data.sales, data.foodCost);
-                percentages.push({ month: months[i], percent: fcPercent, sales: data.sales, foodCost: data.foodCost, beverage: data.beverage || 0, packaging: data.packaging || 0, other: data.other || 0 });
+                const cogsPercent = calculateCOGS(data.sales, data.foodCost, data.beverage, data.packaging, data.other);
+                percentages.push({ 
+                    month: months[i], 
+                    percent: cogsPercent, 
+                    sales: data.sales, 
+                    foodCost: data.foodCost, 
+                    beverage: data.beverage || 0, 
+                    packaging: data.packaging || 0, 
+                    other: data.other || 0,
+                    totalCost: getTotalCosts(data)
+                });
             }
         }
 
@@ -608,21 +624,21 @@
             return;
         }
 
-        const maxFC = percentages.reduce((max, p) => p.percent > max.percent ? p : max, percentages[0]);
-        const minFC = percentages.reduce((min, p) => p.percent < min.percent ? p : min, percentages[0]);
-        const avgFC = percentages.reduce((a, b) => a + b.percent, 0) / percentages.length;
+        const maxCOGS = percentages.reduce((max, p) => p.percent > max.percent ? p : max, percentages[0]);
+        const minCOGS = percentages.reduce((min, p) => p.percent < min.percent ? p : min, percentages[0]);
+        const avgCOGS = percentages.reduce((a, b) => a + b.percent, 0) / percentages.length;
 
         // Build insights in current language
         let insights = `<i class="fas fa-chart-line"></i> <strong>${t.analysisSummary}:</strong><br>`;
         
         let rangeText = '';
-        if (avgFC <= 28) rangeText = `(${t.excellentRange})`;
-        else if (avgFC <= 32) rangeText = `(${t.acceptableRange})`;
+        if (avgCOGS <= 28) rangeText = `(${t.excellentRange})`;
+        else if (avgCOGS <= 32) rangeText = `(${t.acceptableRange})`;
         else rangeText = `(${t.aboveTarget})`;
-        insights += `• ${t.avgFoodCostText}: <strong>${avgFC.toFixed(1)}%</strong> ${rangeText}<br>`;
+        insights += `• ${t.avgFoodCostText}: <strong>${avgCOGS.toFixed(1)}%</strong> ${rangeText}<br>`;
         
-        insights += `• ${t.highestFoodCost}: <strong>${maxFC.month}</strong> بنسبة ${maxFC.percent.toFixed(1)}% (المبيعات: ${maxFC.sales.toLocaleString()} ر.س | التكلفة: ${maxFC.foodCost.toLocaleString()} ر.س)<br>`;
-        insights += `• ${t.lowestFoodCost}: <strong>${minFC.month}</strong> بنسبة ${minFC.percent.toFixed(1)}% (${t.bestPerforming})<br>`;
+        insights += `• ${t.highestFoodCost}: <strong>${maxCOGS.month}</strong> ${maxCOGS.percent.toFixed(1)}% (${t.totalCosts || 'COGS'}: ${maxCOGS.totalCost.toLocaleString()} ر.س | Sales: ${maxCOGS.sales.toLocaleString()} ر.س)<br>`;
+        insights += `• ${t.lowestFoodCost}: <strong>${minCOGS.month}</strong> ${minCOGS.percent.toFixed(1)}% (${t.bestPerforming})<br>`;
         
         const totalBeverage = percentages.reduce((a, b) => a + (b.beverage || 0), 0);
         const totalSales = percentages.reduce((a, b) => a + b.sales, 0);
@@ -647,14 +663,14 @@
         // Suggestions in current language
         let suggestions = `<div class="insight-title" style="margin-top: 15px;"><i class="fas fa-lightbulb"></i> ${t.actionableRecs}</div>`;
         
-        if (maxFC.percent > 35) {
-            suggestions += `<span class="suggestion-badge"><i class="fas fa-exclamation-triangle"></i> 🔴 ${t.urgent}: ${maxFC.month} ${t.elevated} ${maxFC.percent.toFixed(1)}% - ${t.auditPortions}</span>`;
-        } else if (maxFC.percent > 32) {
-            suggestions += `<span class="suggestion-badge"><i class="fas fa-chart-line"></i> 🟡 ${maxFC.month} ${t.elevated} (${maxFC.percent.toFixed(1)}%) - ${t.auditPortions}</span>`;
+        if (maxCOGS.percent > 35) {
+            suggestions += `<span class="suggestion-badge"><i class="fas fa-exclamation-triangle"></i> 🔴 ${t.urgent}: ${maxCOGS.month} ${t.elevated} ${maxCOGS.percent.toFixed(1)}% - ${t.auditPortions}</span>`;
+        } else if (maxCOGS.percent > 32) {
+            suggestions += `<span class="suggestion-badge"><i class="fas fa-chart-line"></i> 🟡 ${maxCOGS.month} ${t.elevated} (${maxCOGS.percent.toFixed(1)}%) - ${t.auditPortions}</span>`;
         }
         
-        if (minFC.percent < 25) {
-            suggestions += `<span class="suggestion-badge"><i class="fas fa-star"></i> ⭐ ${t.exceptional} ${minFC.month} (${minFC.percent.toFixed(1)}%) - ${t.documentWhatWorked}</span>`;
+        if (minCOGS.percent < 25) {
+            suggestions += `<span class="suggestion-badge"><i class="fas fa-star"></i> ⭐ ${t.exceptional} ${minCOGS.month} (${minCOGS.percent.toFixed(1)}%) - ${t.documentWhatWorked}</span>`;
         }
 
         if (bevPercent > 6) {
@@ -665,8 +681,8 @@
         }
         
         let targetAdvice = '';
-        if (avgFC > 32) targetAdvice = t.targetFocus;
-        else if (avgFC < 28) targetAdvice = t.maintainPractices;
+        if (avgCOGS > 32) targetAdvice = t.targetFocus;
+        else if (avgCOGS < 28) targetAdvice = t.maintainPractices;
         else targetAdvice = t.onTrack;
         suggestions += `<span class="suggestion-badge"><i class="fas fa-chart-simple"></i> 📊 الهدف: 28-32% - ${targetAdvice}</span>`;
         suggestions += `<span class="suggestion-badge"><i class="fas fa-calculator"></i> 🧾 ${t.reviewContracts}</span>`;
@@ -695,16 +711,16 @@
             const month = visibleMonths[i];
             const key = monthKeys[months.indexOf(month)];
             const data = monthlyData[key] || { sales: 0, foodCost: 0, beverage: 0, packaging: 0, other: 0 };
-            const fcPercent = getFoodCostPercentage(data.sales, data.foodCost);
-            const statusClass = getStatusClass(fcPercent);
-            const statusText = getStatusText(fcPercent);
+            const cogsPercent = calculateCOGS(data.sales, data.foodCost, data.beverage, data.packaging, data.other);
+            const statusClass = getStatusClass(cogsPercent);
+            const statusText = getStatusText(cogsPercent);
             
             const isHighlight = (month === 'January' || month === 'February') && data.sales > 0;
             
             const row = tbody.insertRow();
             if (isHighlight) row.className = 'highlight-row';
             row.style.cursor = 'pointer';
-            row.onclick = () => showMonthInsight(month, fcPercent, data);
+            row.onclick = () => showMonthInsight(month, cogsPercent, data);
             row.innerHTML = `
                 <td><strong>${month}</strong> ${isHighlight ? '<i class="fas fa-star" style="color:#f5c842;font-size:0.7rem;"></i>' : ''}</td>
                 <td>${data.sales ? 'SAR ' + data.sales.toLocaleString() : '-'}</td>
@@ -712,8 +728,8 @@
                 <td>${data.beverage ? 'SAR ' + data.beverage.toLocaleString() : '-'}</td>
                 <td>${data.packaging ? 'SAR ' + data.packaging.toLocaleString() : '-'}</td>
                 <td>${data.other ? 'SAR ' + data.other.toLocaleString() : '-'}</td>
-                <td><span class="foodcost-badge ${statusClass}">${fcPercent.toFixed(1)}%</span></td>
-                <td><span class="foodcost-badge ${statusClass}">${statusText}</span></td>
+                <td><span class="cogs-badge ${statusClass}">${cogsPercent.toFixed(1)}%</span></td>
+                <td><span class="cogs-badge ${statusClass}">${statusText}</span></td>
             `;
         }
     }
@@ -723,19 +739,22 @@
         const suggestion = document.getElementById('suggestions');
         suggestion.scrollIntoView({ behavior: 'smooth' });
         
+        const totalCost = getTotalCosts(data);
         let insightMsg = `<div class="insight-title"><i class="fas fa-chart-simple"></i> ${currentLang === 'en' ? 'AI Analysis for' : 'تحليل الذكاء الاصطناعي لـ'} ${month}</div><div class="insight-text">`;
-        insightMsg += `📊 ${currentLang === 'en' ? 'Food Cost Percentage' : 'نسبة تكلفة الطعام'}: <strong>${percent.toFixed(1)}%</strong><br>`;
+        insightMsg += `📊 ${currentLang === 'en' ? 'COGS Percentage' : 'نسبة COGS'}: <strong>${percent.toFixed(1)}%</strong><br>`;
         insightMsg += `💰 ${currentLang === 'en' ? 'Total Sales' : 'إجمالي المبيعات'}: SAR ${(data.sales || 0).toLocaleString()}<br>`;
         insightMsg += `🍽️ ${currentLang === 'en' ? 'Food Cost' : 'تكلفة الطعام'}: SAR ${(data.foodCost || 0).toLocaleString()}<br>`;
         insightMsg += `🍷 ${currentLang === 'en' ? 'Beverage Cost' : 'تكلفة المشروبات'}: SAR ${(data.beverage || 0).toLocaleString()} (${data.sales ? ((data.beverage/data.sales)*100).toFixed(1) : 0}%)<br>`;
         insightMsg += `📦 ${currentLang === 'en' ? 'Packaging Cost' : 'تكلفة التغليف'}: SAR ${(data.packaging || 0).toLocaleString()} (${data.sales ? ((data.packaging/data.sales)*100).toFixed(1) : 0}%)<br>`;
+        insightMsg += `📦 ${currentLang === 'en' ? 'Other Costs' : 'تكاليف أخرى'}: SAR ${(data.other || 0).toLocaleString()} (${data.sales ? ((data.other/data.sales)*100).toFixed(1) : 0}%)<br>`;
+        insightMsg += `💰 ${currentLang === 'en' ? 'Total COGS' : 'إجمالي COGS'}: SAR ${totalCost.toLocaleString()} (${(totalCost/(data.sales||1)*100).toFixed(1)}%)<br>`;
         
         if (percent <= 28) {
-            insightMsg += `✅ <strong style="color:#10b981">${currentLang === 'en' ? 'Excellent performance!' : 'أداء ممتاز!'}</strong> ${currentLang === 'en' ? 'Your food cost is well below the industry benchmark.' : 'تكلفة الطعام أقل بكثير من المعيار الصناعي.'}<br>`;
+            insightMsg += `✅ <strong style="color:#10b981">${currentLang === 'en' ? 'Excellent performance!' : 'أداء ممتاز!'}</strong> ${currentLang === 'en' ? 'Your COGS is well below the industry benchmark.' : 'COGS أقل بكثير من المعيار الصناعي.'}<br>`;
         } else if (percent <= 32) {
             insightMsg += `📈 <strong style="color:#f59e0b">${currentLang === 'en' ? 'Good range.' : 'نطاق جيد.'}</strong> ${currentLang === 'en' ? "You're within industry standard (28-32%)." : 'أنت ضمن المعيار الصناعي (28-32%).'}<br>`;
         } else {
-            insightMsg += `⚠️ <strong style="color:#e50914">${currentLang === 'en' ? 'Above target!' : 'أعلى من الهدف!'}</strong> ${currentLang === 'en' ? 'Food cost exceeds 32%. Review portion sizes, supplier pricing, and inventory management.' : 'تتجاوز تكلفة الطعام 32%. راجع أحجام الحصص وتسعير الموردين وإدارة المخزون.'}<br>`;
+            insightMsg += `⚠️ <strong style="color:#e50914">${currentLang === 'en' ? 'Above target!' : 'أعلى من الهدف!'}</strong> ${currentLang === 'en' ? 'COGS exceeds 32%. Review portion sizes, supplier pricing, and inventory management.' : 'تتجاوز COGS 32%. راجع أحجام الحصص وتسعير الموردين وإدارة المخزون.'}<br>`;
         }
         insightMsg += `</div>`;
         
@@ -803,7 +822,7 @@
         const fcData = labels.map((_, idx) => {
             const key = monthKeys[idx];
             const data = monthlyData[key];
-            return data && data.sales ? getFoodCostPercentage(data.sales, data.foodCost) : 0;
+            return data && data.sales ? calculateCOGS(data.sales, data.foodCost, data.beverage, data.packaging, data.other) : 0;
         });
 
         chartBar = new Chart(barCtx, {
@@ -811,7 +830,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: currentLang === 'en' ? 'Food Cost %' : 'نسبة تكلفة الطعام %',
+                    label: currentLang === 'en' ? 'COGS %' : 'نسبة COGS %',
                     data: fcData,
                     backgroundColor: fcData.map(v => v <= 28 ? 'rgba(16,185,129,0.7)' : (v <= 32 ? 'rgba(245,158,11,0.7)' : 'rgba(229,9,20,0.7)')),
                     borderColor: fcData.map(v => v <= 28 ? '#10b981' : (v <= 32 ? '#f59e0b' : '#e50914')),
@@ -871,7 +890,8 @@
         monthlyData[monthKey] = { sales, foodCost, beverage, packaging, other };
         saveData();
         renderAll();
-        showToast(currentLang === 'en' ? `Data saved for ${months[monthKeys.indexOf(monthKey)]}` : `تم حفظ البيانات لـ ${months[monthKeys.indexOf(monthKey)]}`);
+        const cogs = calculateCOGS(sales, foodCost, beverage, packaging, other);
+        showToast(currentLang === 'en' ? `Data saved for ${months[monthKeys.indexOf(monthKey)]}. COGS: ${cogs.toFixed(1)}%` : `تم حفظ البيانات لـ ${months[monthKeys.indexOf(monthKey)]}. COGS: ${cogs.toFixed(1)}%`);
         
         document.getElementById('salesInput').value = '';
         document.getElementById('foodCostInput').value = '';
@@ -944,19 +964,20 @@
     // Export Functions
     function exportExcel() {
         const data = [];
-        data.push(['Month', 'Sales (SAR)', 'Food Cost (SAR)', 'Beverage (SAR)', 'Packaging (SAR)', 'Other (SAR)', 'Food Cost %', 'Status']);
+        data.push(['Month', 'Sales (SAR)', 'Food Cost (SAR)', 'Beverage (SAR)', 'Packaging (SAR)', 'Other (SAR)', 'Total COGS (SAR)', 'COGS %', 'Status']);
         for (let i = 0; i < monthKeys.length; i++) {
             const key = monthKeys[i];
             const d = monthlyData[key];
             if (d && d.sales && d.sales > 0) {
-                const fcPercent = getFoodCostPercentage(d.sales, d.foodCost);
-                data.push([months[i], d.sales, d.foodCost, d.beverage || 0, d.packaging || 0, d.other || 0, fcPercent.toFixed(1) + '%', getStatusText(fcPercent)]);
+                const totalCost = getTotalCosts(d);
+                const cogsPercent = calculateCOGS(d.sales, d.foodCost, d.beverage, d.packaging, d.other);
+                data.push([months[i], d.sales, d.foodCost, d.beverage || 0, d.packaging || 0, d.other || 0, totalCost, cogsPercent.toFixed(1) + '%', getStatusText(cogsPercent)]);
             }
         }
         const ws = XLSX.utils.aoa_to_sheet(data);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Food Cost');
-        XLSX.writeFile(wb, `Food_Cost_Report.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, 'COGS Analysis');
+        XLSX.writeFile(wb, `COGS_Analysis_Report.xlsx`);
         showToast(currentLang === 'en' ? 'Excel exported successfully' : 'تم تصدير إكسيل بنجاح');
     }
 
@@ -967,22 +988,24 @@
             const key = monthKeys[i];
             const d = monthlyData[key];
             if (d && d.sales && d.sales > 0) {
-                const fcPercent = getFoodCostPercentage(d.sales, d.foodCost);
-                rows += `<tr><td>${months[i]}</td><td>${d.sales.toLocaleString()}</td><td>${d.foodCost.toLocaleString()}</td><td>${(d.beverage||0).toLocaleString()}</td><td>${(d.packaging||0).toLocaleString()}</td><td>${(d.other||0).toLocaleString()}</td><td>${fcPercent.toFixed(1)}%</td><td>${getStatusText(fcPercent)}</td></tr>`;
+                const cogsPercent = calculateCOGS(d.sales, d.foodCost, d.beverage, d.packaging, d.other);
+                const totalCost = getTotalCosts(d);
+                rows += `<tr><td>${months[i]}</td><td>${d.sales.toLocaleString()}</td><td>${d.foodCost.toLocaleString()}</td><td>${(d.beverage||0).toLocaleString()}</td><td>${(d.packaging||0).toLocaleString()}</td><td>${(d.other||0).toLocaleString()}</td><td>${totalCost.toLocaleString()}</td><td>${cogsPercent.toFixed(1)}%</td><td>${getStatusText(cogsPercent)}</td></tr>`;
             }
         }
         const totalSales = Object.values(monthlyData).reduce((a, b) => a + (b.sales || 0), 0);
-        const totalFood = Object.values(monthlyData).reduce((a, b) => a + (b.foodCost || 0), 0);
-        const avgFC = totalSales > 0 ? (totalFood / totalSales) * 100 : 0;
+        const totalCosts = Object.values(monthlyData).reduce((a, b) => a + getTotalCosts(b), 0);
+        const avgCOGS = totalSales > 0 ? (totalCosts / totalSales) * 100 : 0;
 
         printWin.document.write(`
-            <html><head><title>Food Cost Report</title>
+            <html><head><title>COGS Analysis Report</title>
             <style>body{font-family:'Inter',sans-serif;padding:30px;background:#0a0c15;color:#eaf0fa;} h1{color:#00d4ff;} table{width:100%;border-collapse:collapse;margin-top:20px;} th,td{border:1px solid #2b3f5a;padding:10px;text-align:left;} th{background:#1a2538;color:#7ba9d9;} .summary{margin:20px 0;padding:20px;background:#1a2538;border-radius:12px;} .highlight{color:#f5c842;}
 </style></head>
-<body><h1>📊 Food Cost Intelligence Report</h1>
-<div class="summary"><strong>Summary:</strong> Total Sales: SAR ${totalSales.toLocaleString()} | Total Food Cost: SAR ${totalFood.toLocaleString()} | Avg Food Cost: ${avgFC.toFixed(1)}%</div>
-<table><thead><tr><th>Month</th><th>Sales (SAR)</th><th>Food Cost</th><th>Beverage</th><th>Packaging</th><th>Other</th><th>Food Cost %</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>
-<p style="margin-top:20px;color:#6b7280;">Generated: ${new Date().toLocaleString()}</p></body></html>
+<body><h1>📊 COGS Intelligence Report</h1>
+<div class="summary"><strong>Summary:</strong> Total Sales: SAR ${totalSales.toLocaleString()} | Total COGS: SAR ${totalCosts.toLocaleString()} | Avg COGS: ${avgCOGS.toFixed(1)}%</div>
+<table><thead><tr><th>Month</th><th>Sales (SAR)</th><th>Food Cost</th><th>Beverage</th><th>Packaging</th><th>Other</th><th>Total COGS</th><th>COGS %</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>
+<p style="margin-top:20px;color:#6b7280;">Generated: ${new Date().toLocaleString()}</p>
+<p style="margin-top:10px;color:#6b7280;font-size:0.8rem;">Formula: COGS % = (Food + Beverage + Packaging + Other) / Sales × 100</p></body></html>
 `);
 printWin.document.close();
 setTimeout(() => { printWin.print(); }, 500);
