@@ -35,7 +35,6 @@
             min-height: 100vh;
         }
 
-        /* Loading Screen */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -65,7 +64,171 @@
         .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); transition: width 0.05s linear; }
         .loading-percent { font-size: 1rem; font-weight: 600; color: var(--accent-cyan); margin-top: 1rem; font-family: monospace; }
 
-        /* Draggable Circular Menu - Corporate Dark Theme */
+        /* ===== SECURITY OVERLAY - Session Expired with Password ===== */
+        .security-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.94);
+            backdrop-filter: blur(16px);
+            z-index: 20000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            animation: overlayFadeIn 0.5s ease;
+        }
+        .security-overlay.active { display: flex; }
+        @keyframes overlayFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .security-overlay .lock-icon {
+            font-size: 4.5rem;
+            color: #ef4444;
+            margin-bottom: 1rem;
+            animation: pulse-lock 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-lock {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+        .security-overlay .shield-icon {
+            font-size: 2.5rem;
+            color: var(--accent-gold);
+            margin-bottom: 0.3rem;
+        }
+        .security-overlay h2 {
+            color: #fbbf24;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            text-align: center;
+        }
+        .security-overlay .sub-text {
+            color: #94a3b8;
+            font-size: 1rem;
+            text-align: center;
+            max-width: 480px;
+            line-height: 1.7;
+            margin-bottom: 0.3rem;
+        }
+        .security-overlay .sub-text strong {
+            color: var(--accent-cyan);
+        }
+        .security-overlay .contact-info {
+            color: var(--accent-gold);
+            font-size: 0.9rem;
+            margin-bottom: 1.2rem;
+            padding: 0.3rem 1.2rem;
+            background: rgba(251, 191, 36, 0.08);
+            border-radius: 40px;
+            border: 1px solid rgba(251, 191, 36, 0.15);
+        }
+        .security-overlay .contact-info i { margin-right: 6px; }
+        
+        .security-overlay .password-section {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 1.2rem;
+        }
+        .security-overlay .password-section .input-group {
+            display: flex;
+            gap: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50px;
+            padding: 4px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: border-color 0.3s;
+        }
+        .security-overlay .password-section .input-group:focus-within {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.15);
+        }
+        .security-overlay .password-section input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 20px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+        .security-overlay .password-section input::placeholder {
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 0px;
+            font-family: 'Inter', sans-serif;
+        }
+        .security-overlay .password-section .unlock-btn {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border: none;
+            padding: 10px 28px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .security-overlay .password-section .unlock-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+        .security-overlay .password-section .unlock-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .security-overlay .error-msg {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            display: none;
+            text-align: center;
+        }
+        .security-overlay .error-msg.show { display: block; }
+        .security-overlay .success-msg {
+            color: #34d399;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            display: none;
+            text-align: center;
+        }
+        .security-overlay .success-msg.show { display: block; }
+        
+        .security-overlay .timer {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            opacity: 0.7;
+        }
+        .security-overlay .timer span {
+            color: #fbbf24;
+            font-weight: 600;
+        }
+        .security-overlay .login-link {
+            color: var(--accent-cyan);
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 0.5rem;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            background: none;
+            border: none;
+        }
+        .security-overlay .login-link:hover { opacity: 1; }
+
+        /* Draggable Circular Menu */
         .circular-menu-container {
             position: fixed;
             left: 30px;
@@ -252,8 +415,60 @@
         .activity-feed-full { background: var(--bg-card); backdrop-filter: blur(10px); border-radius: 20px; padding: 1.5rem; border: 1px solid var(--border-glow); }
         .activity-item { font-size: 0.85rem; padding: 0.8rem 0; border-bottom: 1px solid var(--border-glow); display: flex; gap: 1rem; align-items: center; }
         .notification-toast { position: fixed; bottom: 24px; right: 24px; background: var(--bg-card); border-left: 3px solid var(--accent-cyan); padding: 0.8rem 1.2rem; border-radius: 12px; z-index: 1100; display: none; align-items: center; gap: 12px; }
-        
-        /* Pikachu Style AI Assistant - Yellow with bounce */
+
+        /* Corporate Social Links Widget */
+        .social-corporate-widget {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-glow);
+            margin-bottom: 2rem;
+        }
+        .social-corporate-widget .widget-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--text-primary);
+        }
+        .social-corporate-widget .widget-title i { color: var(--accent-cyan); }
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 1rem;
+        }
+        .social-grid .social-item {
+            background: rgba(0, 212, 255, 0.06);
+            border-radius: 16px;
+            padding: 0.8rem 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-glow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .social-grid .social-item:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px var(--accent-glow);
+            background: rgba(0, 212, 255, 0.12);
+        }
+        .social-grid .social-item .social-icon { font-size: 1.8rem; margin-bottom: 2px; }
+        .social-grid .social-item .social-name {
+            font-size: 0.55rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .social-grid .social-item .social-name.ar { font-size: 0.5rem; }
+
+        /* Pikachu Style AI Assistant */
         .floating-ai-assistant {
             position: fixed;
             bottom: 30px;
@@ -274,32 +489,16 @@
             animation: bounceGame 1.5s ease-in-out infinite;
             transition: all 0.3s ease;
         }
-        .floating-ai-assistant:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 50px rgba(251, 191, 36, 0.6);
-        }
-        .floating-ai-assistant i {
-            font-size: 2.2rem;
-            color: #1a1a2e;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-        }
-        .floating-ai-assistant .pikachu-face {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            font-size: 1rem;
-            animation: sparkle 1s ease-in-out infinite alternate;
-        }
+        .floating-ai-assistant:hover { transform: scale(1.1); box-shadow: 0 0 50px rgba(251, 191, 36, 0.6); }
+        .floating-ai-assistant i { font-size: 2.2rem; color: #1a1a2e; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+        .floating-ai-assistant .pikachu-face { position: absolute; top: -8px; right: -8px; font-size: 1rem; animation: sparkle 1s ease-in-out infinite alternate; }
         @keyframes bounceGame {
             0%, 100% { transform: translateY(0) scale(1); }
             30% { transform: translateY(-15px) scale(1.05); }
             50% { transform: translateY(-5px) scale(0.95); }
             70% { transform: translateY(-10px) scale(1.02); }
         }
-        @keyframes sparkle {
-            0% { opacity: 0.3; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1.2); }
-        }
+        @keyframes sparkle { 0% { opacity: 0.3; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); } }
         .floating-ai-assistant .speech-bubble {
             position: absolute;
             bottom: 75px;
@@ -317,9 +516,7 @@
             pointer-events: none;
             font-weight: 600;
         }
-        .floating-ai-assistant:hover .speech-bubble {
-            opacity: 1;
-        }
+        .floating-ai-assistant:hover .speech-bubble { opacity: 1; }
         .floating-ai-assistant .speech-bubble::after {
             content: '';
             position: absolute;
@@ -348,15 +545,10 @@
             color: white;
             font-weight: bold;
         }
-        @keyframes pulse-dot {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-        .floating-ai-assistant .audio-indicator.hidden {
-            display: none;
-        }
+        @keyframes pulse-dot { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+        .floating-ai-assistant .audio-indicator.hidden { display: none; }
 
-        /* CHATBOT MODAL - EXTRA LARGE FRAME */
+        /* CHATBOT MODAL */
         .chatbot-modal {
             position: fixed;
             bottom: 100px;
@@ -376,143 +568,92 @@
             box-shadow: 0 30px 100px rgba(0,0,0,0.95);
         }
         .chatbot-modal.open { display: flex; }
-        
-        .chatbot-header { 
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); 
-            padding: 16px 24px; 
-            display: flex; 
-            justify-content: space-between; 
+        .chatbot-header {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
             flex-shrink: 0;
             min-height: 62px;
             z-index: 10;
         }
-        .chatbot-header h4 { 
-            font-size: 1.05rem; 
-            font-weight: 600; 
-            color: white;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .chatbot-header h4 i { font-size: 1.2rem; }
-        .chatbot-header button { 
-            background: rgba(255,255,255,0.12); 
-            border: none; 
-            color: white; 
-            font-size: 1.3rem; 
-            cursor: pointer;
-            padding: 4px 16px;
-            border-radius: 10px;
-            transition: background 0.2s;
-        }
+        .chatbot-header h4 { font-size: 1.05rem; font-weight: 600; color: white; margin: 0; display: flex; align-items: center; gap: 10px; }
+        .chatbot-header button { background: rgba(255,255,255,0.12); border: none; color: white; font-size: 1.3rem; cursor: pointer; padding: 4px 16px; border-radius: 10px; transition: background 0.2s; }
         .chatbot-header button:hover { background: rgba(255,255,255,0.25); }
-        
-        .chatbot-body {
-            flex: 1;
-            background: var(--bg-secondary);
-            overflow: auto;
-            position: relative;
-            -webkit-overflow-scrolling: touch;
-            padding: 0;
-        }
-        .chatbot-body::-webkit-scrollbar {
-            width: 8px;
-        }
-        .chatbot-body::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
-        }
-        .chatbot-body::-webkit-scrollbar-thumb {
-            background: var(--accent-cyan);
-            border-radius: 4px;
-        }
-        
-        .chatbot-iframe { 
-            width: 100%; 
-            height: 100%; 
-            min-height: 500px;
-            border: none; 
-            background: var(--bg-secondary);
-            display: block;
-            overflow: auto;
-        }
+        .chatbot-body { flex: 1; background: var(--bg-secondary); overflow: auto; position: relative; -webkit-overflow-scrolling: touch; padding: 0; }
+        .chatbot-body::-webkit-scrollbar { width: 8px; }
+        .chatbot-body::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        .chatbot-body::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 4px; }
+        .chatbot-iframe { width: 100%; height: 100%; min-height: 500px; border: none; background: var(--bg-secondary); display: block; overflow: auto; }
 
         .iframe-container { position: fixed; top: var(--header-height); left: 0; right: 0; bottom: 0; z-index: 90; background: var(--bg-primary); display: none; }
         .iframe-container.active { display: block; }
         .iframe-container iframe { width: 100%; height: 100%; border: none; }
         .close-iframe { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 95; box-shadow: 0 0 15px var(--accent-glow); }
 
-        /* Responsive Chatbot */
+        /* RTL */
+        [dir="rtl"] .floating-ai-assistant { right: auto; left: 30px; }
+        [dir="rtl"] .chatbot-modal { right: auto; left: 30px; }
+        [dir="rtl"] .close-iframe { right: auto; left: 15px; }
+        @media (max-width: 768px) { [dir="rtl"] .chatbot-modal { right: 8px; left: 8px; } }
+        @media (max-width: 480px) { [dir="rtl"] .chatbot-modal { right: 5px; left: 5px; } }
         @media (max-width: 768px) {
             .menu-center-btn { width: 60px; height: 60px; }
             .circular-menu { width: 220px; height: 220px; margin-left: -110px; margin-top: -110px; }
             .menu-item { width: 50px; height: 50px; }
-            .chatbot-modal { 
-                width: calc(100vw - 16px); 
-                max-width: calc(100vw - 16px);
-                right: 8px; 
-                left: 8px; 
-                height: 82vh;
-                max-height: 82vh;
-                min-height: 400px;
-                bottom: 80px;
-                border-radius: 20px;
-            }
+            .chatbot-modal { width: calc(100vw - 16px); max-width: calc(100vw - 16px); right: 8px; left: 8px; height: 82vh; max-height: 82vh; min-height: 400px; bottom: 80px; border-radius: 20px; }
             .dashboard-inner { padding: 1rem; }
             .hero-stats { gap: 1.2rem; }
             .hero-stat-value { font-size: 1.3rem; }
             .floating-ai-assistant { width: 55px; height: 55px; bottom: 20px; right: 20px; }
             .floating-ai-assistant i { font-size: 1.8rem; }
-            .chatbot-header { padding: 12px 18px; min-height: 54px; }
-            .chatbot-header h4 { font-size: 0.9rem; }
-            .chatbot-iframe { min-height: 350px; }
+            .social-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
+            .security-overlay h2 { font-size: 1.6rem; }
+            .security-overlay .lock-icon { font-size: 3.5rem; }
+            .security-overlay .password-section .input-group { flex-direction: column; border-radius: 20px; }
+            .security-overlay .password-section .unlock-btn { justify-content: center; }
         }
         @media (max-width: 480px) {
-            .chatbot-modal { 
-                height: 85vh;
-                max-height: 85vh;
-                min-height: 350px;
-                bottom: 72px;
-                border-radius: 16px;
-                width: calc(100vw - 10px);
-                max-width: calc(100vw - 10px);
-                right: 5px;
-                left: 5px;
-            }
-            .chatbot-header { padding: 10px 14px; min-height: 48px; }
-            .chatbot-header h4 { font-size: 0.8rem; }
-            .chatbot-iframe { min-height: 300px; }
-        }
-        @media (max-height: 700px) {
-            .chatbot-modal { 
-                height: 70vh;
-                max-height: 70vh;
-                min-height: 300px;
-                bottom: 75px;
-            }
-        }
-        @media (max-height: 600px) {
-            .chatbot-modal { 
-                height: 60vh;
-                max-height: 60vh;
-                min-height: 250px;
-                bottom: 65px;
-            }
-        }
-
-        [dir="rtl"] .floating-ai-assistant { right: auto; left: 30px; }
-        [dir="rtl"] .chatbot-modal { right: auto; left: 30px; }
-        [dir="rtl"] .close-iframe { right: auto; left: 15px; }
-        @media (max-width: 768px) {
-            [dir="rtl"] .chatbot-modal { right: 8px; left: 8px; }
-        }
-        @media (max-width: 480px) {
-            [dir="rtl"] .chatbot-modal { right: 5px; left: 5px; }
+            .chatbot-modal { height: 85vh; max-height: 85vh; min-height: 350px; bottom: 72px; border-radius: 16px; width: calc(100vw - 10px); max-width: calc(100vw - 10px); right: 5px; left: 5px; }
+            .social-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); }
+            .social-grid .social-item .social-icon { font-size: 1.4rem; }
+            .social-grid .social-item .social-name { font-size: 0.45rem; }
+            .security-overlay h2 { font-size: 1.3rem; }
+            .security-overlay .sub-text { font-size: 0.85rem; }
+            .security-overlay .lock-icon { font-size: 2.8rem; }
         }
     </style>
 </head>
 <body>
+
+<!-- ===== SECURITY OVERLAY - Session Expired with Password ===== -->
+<div class="security-overlay" id="securityOverlay">
+    <div class="lock-icon"><i class="fas fa-lock"></i></div>
+    <div class="shield-icon"><i class="fas fa-shield-alt"></i></div>
+    <h2>🔒 Session Expired</h2>
+    <p class="sub-text">
+        Your session has been <strong>automatically terminated</strong> for security reasons.
+        <br>Enter the <strong>authorized passcode</strong> to regain access.
+    </p>
+    <div class="contact-info">
+        <i class="fas fa-envelope"></i> Contact: <strong>moinranzao2@gmail.com</strong>
+    </div>
+    
+    <div class="password-section">
+        <div class="input-group">
+            <input type="password" id="securityPasscode" placeholder="Enter passcode..." autocomplete="off" onkeypress="if(event.key==='Enter') verifySecurityPasscode()">
+            <button class="unlock-btn" id="unlockSecurityBtn" onclick="verifySecurityPasscode()">
+                <i class="fas fa-unlock"></i> Unlock
+            </button>
+        </div>
+        <div class="error-msg" id="securityError"><i class="fas fa-exclamation-circle"></i> Invalid passcode. Redirecting to login...</div>
+        <div class="success-msg" id="securitySuccess"><i class="fas fa-check-circle"></i> Access granted! Resuming session...</div>
+    </div>
+    
+    <div class="timer" id="redirectTimer">⏳ Auto-redirect in <span id="timerSeconds">10</span>s</div>
+    <button class="login-link" onclick="redirectToLogin()"><i class="fas fa-arrow-right"></i> Return to Login Page</button>
+</div>
 
 <div class="loading-overlay" id="loadingOverlay">
     <div class="futuristic-loader">
@@ -570,6 +711,13 @@
                 </div>
             </div>
             <div class="welcome-header"><div class="greeting"><h1 id="welcomeMsg">Welcome back, Operations Director</h1><p style="color:var(--text-muted);" id="welcomeSub">Main Hub · Real-time Metrics</p></div><div class="info-badge"><span id="currentDate"></span> <span id="currentTime"></span></div></div>
+            
+            <!-- SOCIAL CORPORATE LINKS WIDGET -->
+            <div class="social-corporate-widget" id="socialWidget">
+                <div class="widget-title"><i class="fas fa-link"></i> <span id="socialWidgetTitle">Other Social Corporate Links</span></div>
+                <div class="social-grid" id="socialGrid"></div>
+            </div>
+
             <div class="section-title"><i class="fas fa-th-large"></i> <span id="modulesTitle">Quick Access Modules</span></div>
             <div class="modules-grid-enhanced" id="modulesGrid"></div>
             <div class="section-title"><i class="fas fa-history"></i> <span id="activityTitle">Recent Activity</span></div>
@@ -578,7 +726,7 @@
     </div>
 </div>
 
-<!-- Pikachu Style AI Assistant - Always Visible -->
+<!-- Pikachu Style AI Assistant -->
 <div class="floating-ai-assistant" id="floatingAiBtn">
     <i class="fas fa-bolt"></i>
     <span class="pikachu-face">⚡</span>
@@ -599,7 +747,199 @@
 <div id="toastMessage" class="notification-toast"><i class="fas fa-check-circle"></i> <span></span></div>
 
 <script>
-    // ======================= LOADING ANIMATION =======================
+    // ============================================================
+    // SECURITY FEATURES
+    // ============================================================
+
+    const CORRECT_PASSCODE = 'kudukudu12345';
+    const LOGIN_URL = 'https://ghostkmr.github.io/2026/';
+    let isUnlocked = false;
+    let redirectTimeout = null;
+    let redirectCountdown = 10;
+
+    // 1. DISABLE RIGHT CLICK
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        showToast('🚫 Right-click disabled for security');
+        return false;
+    });
+
+    // 2. SECURITY OVERLAY ELEMENTS
+    const securityOverlay = document.getElementById('securityOverlay');
+    const securityPasscode = document.getElementById('securityPasscode');
+    const unlockBtn = document.getElementById('unlockSecurityBtn');
+    const securityError = document.getElementById('securityError');
+    const securitySuccess = document.getElementById('securitySuccess');
+    const redirectTimer = document.getElementById('redirectTimer');
+    const timerSeconds = document.getElementById('timerSeconds');
+
+    function redirectToLogin() {
+        window.location.href = LOGIN_URL;
+    }
+
+    function verifySecurityPasscode() {
+        const input = securityPasscode.value.trim();
+        
+        if (input === CORRECT_PASSCODE) {
+            // Correct password - grant access
+            isUnlocked = true;
+            securityError.classList.remove('show');
+            securitySuccess.classList.add('show');
+            securitySuccess.textContent = '✅ Access granted! Resuming session...';
+            unlockBtn.disabled = true;
+            securityPasscode.disabled = true;
+            
+            // Clear any redirect timeout
+            if (redirectTimeout) {
+                clearTimeout(redirectTimeout);
+                redirectTimeout = null;
+            }
+            
+            // Hide overlay after 1.5 seconds and reset timer
+            setTimeout(() => {
+                securityOverlay.classList.remove('active');
+                securitySuccess.classList.remove('show');
+                securityPasscode.value = '';
+                securityPasscode.disabled = false;
+                unlockBtn.disabled = false;
+                // Reset session timer
+                resetSessionTimer();
+                showToast('✅ Access granted! Session resumed.');
+            }, 1500);
+        } else {
+            // Wrong password - show error and redirect to login
+            securityError.classList.add('show');
+            securityError.textContent = '❌ Invalid passcode. Redirecting to login...';
+            securityPasscode.value = '';
+            securityPasscode.focus();
+            
+            // Redirect to login after 2 seconds
+            setTimeout(() => {
+                redirectToLogin();
+            }, 2000);
+        }
+    }
+
+    // Allow Enter key on passcode field
+    securityPasscode.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            verifySecurityPasscode();
+        }
+    });
+
+    // 3. SESSION TIMER - 30 seconds
+    const SESSION_TIMEOUT = 30;
+    let sessionTimer = SESSION_TIMEOUT;
+    let timerInterval = null;
+    let securityOverlayShown = false;
+
+    function showSecurityOverlay() {
+        if (isUnlocked) return; // Don't show if already unlocked
+        securityOverlayShown = true;
+        securityOverlay.classList.add('active');
+        securityPasscode.focus();
+        startRedirectCountdown();
+    }
+
+    function startRedirectCountdown() {
+        redirectCountdown = 10;
+        timerSeconds.textContent = redirectCountdown;
+        redirectTimer.style.display = 'block';
+        
+        if (redirectTimeout) {
+            clearTimeout(redirectTimeout);
+            redirectTimeout = null;
+        }
+        
+        redirectTimeout = setInterval(() => {
+            redirectCountdown--;
+            timerSeconds.textContent = redirectCountdown;
+            
+            if (redirectCountdown <= 0) {
+                clearInterval(redirectTimeout);
+                redirectTimeout = null;
+                // If still locked, redirect to login
+                if (!isUnlocked) {
+                    redirectToLogin();
+                }
+            }
+        }, 1000);
+    }
+
+    function startSessionTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        if (isUnlocked) return; // Don't restart timer if unlocked
+        
+        sessionTimer = SESSION_TIMEOUT;
+        securityOverlayShown = false;
+        securityOverlay.classList.remove('active');
+        securityError.classList.remove('show');
+        securitySuccess.classList.remove('show');
+        redirectTimer.style.display = 'none';
+        if (redirectTimeout) {
+            clearTimeout(redirectTimeout);
+            redirectTimeout = null;
+        }
+        
+        timerInterval = setInterval(() => {
+            sessionTimer--;
+            
+            // Show overlay at 10 seconds remaining
+            if (sessionTimer <= 10 && !securityOverlayShown && !isUnlocked) {
+                showSecurityOverlay();
+            }
+            
+            if (sessionTimer <= 0) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                if (!isUnlocked) {
+                    redirectToLogin();
+                }
+            }
+        }, 1000);
+    }
+
+    // Reset timer on user activity
+    function resetSessionTimer() {
+        if (isUnlocked) return; // Don't reset if unlocked
+        if (securityOverlayShown) {
+            // If overlay is shown, reset the redirect countdown instead
+            if (redirectTimeout) {
+                clearTimeout(redirectTimeout);
+                redirectTimeout = null;
+            }
+            startRedirectCountdown();
+            return;
+        }
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        startSessionTimer();
+    }
+
+    // Events that reset the timer
+    const resetEvents = ['click', 'mousemove', 'keydown', 'scroll', 'touchstart', 'touchmove', 'wheel'];
+    resetEvents.forEach(event => {
+        document.addEventListener(event, resetSessionTimer);
+    });
+
+    // Start the timer on page load
+    startSessionTimer();
+
+    // Login link in overlay
+    document.querySelector('.login-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        redirectToLogin();
+    });
+
+    // ============================================================
+    // LOADING ANIMATION
+    // ============================================================
     let progress = 0;
     const progressBar = document.getElementById('loadingProgressBar');
     const percentText = document.getElementById('loadingPercentText');
@@ -625,7 +965,9 @@
     }
     simulateLoading();
 
-    // ======================= AI ASSISTANT WITH USER INTERACTION =======================
+    // ============================================================
+    // AI ASSISTANT
+    // ============================================================
     const aiBtn = document.getElementById('floatingAiBtn');
     const audioIndicator = document.getElementById('audioIndicator');
     let audioPlayed = false;
@@ -680,31 +1022,61 @@
     aiBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         playAIAudio();
+        resetSessionTimer();
     });
 
     function openChatbot() {
         chatbotModal.classList.add('open');
         addActivityLog(getText('activityAIOpened'));
         playAIAudio();
+        resetSessionTimer();
     }
 
-    // ======================= IFRAME NAVIGATION =======================
+    // ============================================================
+    // IFRAME NAVIGATION
+    // ============================================================
     const iframeContainer = document.getElementById('iframeContainer');
     const pageIframe = document.getElementById('pageIframe');
     const closeIframeBtn = document.getElementById('closeIframeBtn');
     const mainContentDiv = document.getElementById('dashboardInner');
     
+    const externalUrls = [
+        'mail.google.com', 'freshworks.com', 'crystalknows.com', 
+        'crunchtime.com', 'google.com', 'youtube.com', 'github.com', 'linkedin.com'
+    ];
+
+    function isExternalUrl(url) {
+        if (!url) return false;
+        return externalUrls.some(domain => url.includes(domain));
+    }
+
     function navigateTo(url) {
+        if (isUnlocked) {
+            // Reset session timer on activity
+            resetSessionTimer();
+        }
+        
         if (!url || url === '#' || url === '') {
             showToast('📍 Dashboard is already active');
+            resetSessionTimer();
             return;
         }
+        
+        if (isExternalUrl(url) || url.startsWith('http') && !url.includes('ghostkmr.github.io')) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+            showToast('🔗 Opening ' + (url.split('/')[2] || url) + ' in new tab');
+            addActivityLog(`🔗 External link opened: ${url.split('/')[2] || url}`);
+            resetSessionTimer();
+            return;
+        }
+        
         showToast('🔄 Loading: ' + (url.split('/').pop() || 'module'));
         pageIframe.src = url;
         mainContentDiv.style.display = 'none';
         iframeContainer.classList.add('active');
         if (menuOpen) toggleMenu();
         addActivityLog(`📄 Navigated to: ${url.split('/').pop() || url}`);
+        resetSessionTimer();
     }
     
     function closeIframe() {
@@ -713,10 +1085,13 @@
         pageIframe.src = 'about:blank';
         addActivityLog('🏠 Returned to Dashboard');
         showToast('Back to Dashboard');
+        resetSessionTimer();
     }
     closeIframeBtn.addEventListener('click', closeIframe);
 
-    // ======================= RADIAL MENU - 15 ITEMS =======================
+    // ============================================================
+    // RADIAL MENU - 16 ITEMS
+    // ============================================================
     const menuItems = [
         { icon: "fas fa-tachometer-alt", name: "Dashboard", nameAr: "الرئيسية", url: "#" },
         { icon: "fas fa-boxes", name: "Inventory", nameAr: "المخزون", url: "https://ghostkmr.github.io/2026/inventory.html" },
@@ -731,6 +1106,7 @@
         { icon: "fas fa-tools", name: "Maintenance Reports", nameAr: "تقارير الصيانة", url: "https://ghostkmr.github.io/2026/maintenence.html" },
         { icon: "fas fa-undo-alt", name: "Void & Refunds", nameAr: "الإلغاء والمستردات", url: "https://ghostkmr.github.io/2026/void%20and%20refunds.html" },
         { icon: "fas fa-graduation-cap", name: "Tutorials", nameAr: "الدروس", url: "https://ghostkmr.github.io/2026/tutorial.html" },
+        { icon: "fas fa-link", name: "Corporate Links", nameAr: "روابط الشركة", url: "#corporate", corporate: true },
         { icon: "fas fa-robot", name: "Coming Soon", nameAr: "قريباً", url: "#", comingSoon: true },
         { icon: "fas fa-cloud-upload-alt", name: "Coming Soon", nameAr: "قريباً", url: "#", comingSoon: true }
     ];
@@ -751,21 +1127,36 @@
                 el.style.borderColor = 'rgba(251, 191, 36, 0.3)';
                 el.style.opacity = '0.7';
             }
+            if (item.corporate) {
+                el.style.borderColor = 'rgba(251, 191, 36, 0.5)';
+            }
             el.style.transform = `translate(${x}px, ${y}px)`;
             const displayName = item.comingSoon ? (currentLang === 'ar' ? 'قريباً' : 'Coming Soon') : (currentLang === 'ar' ? item.nameAr : item.name);
             el.innerHTML = `<i class="${item.icon}"></i><span class="item-label" data-name="${item.name}" data-name-ar="${item.nameAr}">${displayName}${item.comingSoon ? ' ⏳' : ''}</span>`;
             el.onclick = (e) => {
                 e.stopPropagation();
+                if (isUnlocked) resetSessionTimer();
+                
                 if (item.comingSoon) {
                     showToast(currentLang === 'ar' ? '🚀 قريباً! هذه الوحدة قيد التطوير.' : '🚀 Coming Soon! This module is under development.');
                     addActivityLog(currentLang === 'ar' ? `⏳ ${item.nameAr} (قريباً)` : `⏳ ${item.name} (Coming Soon)`);
                     if (menuOpen) toggleMenu();
+                    resetSessionTimer();
+                    return;
+                }
+                if (item.corporate) {
+                    document.getElementById('socialWidget').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    showToast('📋 Corporate Links widget activated');
+                    addActivityLog('📋 Opened Corporate Links widget');
+                    if (menuOpen) toggleMenu();
+                    resetSessionTimer();
                     return;
                 }
                 if (item.url === '#') {
                     showToast(currentLang === 'ar' ? '✨ الرئيسية' : '✨ Dashboard Home');
                     addActivityLog(currentLang === 'ar' ? '🏠 تم اختيار الرئيسية' : '🏠 Dashboard selected');
                     if (iframeContainer.classList.contains('active')) closeIframe();
+                    resetSessionTimer();
                 } else {
                     navigateTo(item.url);
                     addActivityLog(currentLang === 'ar' ? `🔘 ${item.nameAr}` : `🔘 ${item.name}`);
@@ -776,7 +1167,9 @@
         });
     }
 
-    // ======================= DRAG & DROP FOR CIRCULAR MENU =======================
+    // ============================================================
+    // DRAG & DROP
+    // ============================================================
     const dragContainer = document.getElementById('circularMenuContainer');
     const dragHandle = document.getElementById('dragHandle');
     let isDragging = false, startX, startY, currentLeft, currentTop;
@@ -813,6 +1206,7 @@
         document.addEventListener('mouseup', stopDrag);
         document.addEventListener('touchmove', onDrag);
         document.addEventListener('touchend', stopDrag);
+        resetSessionTimer();
     }
     
     function onDrag(e) {
@@ -844,6 +1238,7 @@
         document.removeEventListener('mouseup', stopDrag);
         document.removeEventListener('touchmove', onDrag);
         document.removeEventListener('touchend', stopDrag);
+        resetSessionTimer();
     }
     
     dragHandle.addEventListener('mousedown', startDrag);
@@ -862,6 +1257,7 @@
             circularMenu.classList.remove('active');
             document.getElementById('menuLabel').innerText = currentLang === 'ar' ? 'القائمة' : 'MENU';
         }
+        resetSessionTimer();
     }
     
     menuBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
@@ -869,7 +1265,9 @@
         if (menuOpen && !circularMenu.contains(e.target) && !menuBtn.contains(e.target) && !dragHandle.contains(e.target)) toggleMenu();
     });
 
-    // ======================= LANGUAGE SYSTEM =======================
+    // ============================================================
+    // LANGUAGE SYSTEM
+    // ============================================================
     let currentLang = "en";
 
     const langTexts = {
@@ -890,6 +1288,7 @@
             refreshBtn: "Refresh",
             chatbotTitle: "SADWAP AI Assistant",
             aiBubble: "Click me for AI voice!",
+            socialWidgetTitle: "Other Social Corporate Links",
             toastComingSoon: "🚀 Coming Soon! This module is under development.",
             toastDashboard: "📍 Dashboard is already active",
             toastLoading: "🔄 Loading: ",
@@ -909,7 +1308,12 @@
             activityLaunched: "🚀 Launched ",
             activityComingSoon: "⏳ Coming Soon",
             comingSoon: "Coming Soon",
-            stayTuned: "Stay tuned for updates"
+            stayTuned: "Stay tuned for updates",
+            socialGmail: "Gmail",
+            socialFreshworks: "Freshworks",
+            socialCrystal: "Crystal",
+            socialCrunchtime: "Crunchtime",
+            socialSOS: "S.O.S Assessment"
         },
         ar: {
             welcomeMsg: "مرحباً بعودتك، مدير العمليات",
@@ -928,6 +1332,7 @@
             refreshBtn: "تحديث",
             chatbotTitle: "مساعد سادواب الذكي",
             aiBubble: "اضغطني للصوت!",
+            socialWidgetTitle: "روابط الشركات الاجتماعية الأخرى",
             toastComingSoon: "🚀 قريباً! هذه الوحدة قيد التطوير.",
             toastDashboard: "📍 لوحة التحكم نشطة بالفعل",
             toastLoading: "🔄 جاري التحميل: ",
@@ -947,7 +1352,12 @@
             activityLaunched: "🚀 تم إطلاق ",
             activityComingSoon: "⏳ قريباً",
             comingSoon: "قريباً",
-            stayTuned: "ترقبوا التحديثات"
+            stayTuned: "ترقبوا التحديثات",
+            socialGmail: "جيميل",
+            socialFreshworks: "فريش ووركس",
+            socialCrystal: "كريستال",
+            socialCrunchtime: "كرانش تايم",
+            socialSOS: "تقييم S.O.S"
         }
     };
 
@@ -974,16 +1384,20 @@
         document.getElementById("refreshBtnText").innerText = getText('refreshBtn');
         document.getElementById("chatbotTitle").innerText = getText('chatbotTitle');
         document.getElementById("aiBubble").innerText = getText('aiBubble');
+        document.getElementById("socialWidgetTitle").innerText = getText('socialWidgetTitle');
         
         document.getElementById("menuLabel").innerText = menuOpen ? (lang === 'ar' ? 'إغلاق' : 'CLOSE') : (lang === 'ar' ? 'القائمة' : 'MENU');
         
         document.querySelectorAll('.menu-item .item-label').forEach(lbl => {
             const isComingSoon = lbl.closest('.menu-item').style.opacity === '0.7';
+            const isCorporate = lbl.closest('.menu-item').style.borderColor === 'rgba(251, 191, 36, 0.5)';
             const name = lbl.getAttribute('data-name');
             const nameAr = lbl.getAttribute('data-name-ar');
             if (isComingSoon) {
                 lbl.innerText = lang === 'ar' ? 'قريباً' : 'Coming Soon';
                 lbl.innerText += ' ⏳';
+            } else if (isCorporate) {
+                lbl.innerText = lang === 'ar' ? 'روابط الشركة' : 'Corporate Links';
             } else {
                 lbl.innerText = lang === 'ar' ? nameAr : name;
             }
@@ -991,8 +1405,10 @@
         
         document.documentElement.setAttribute("dir", lang === 'ar' ? 'rtl' : 'ltr');
         buildQuickModules();
+        buildSocialWidget();
         loadActivityLogs();
         showToast(getText('toastLanguage'));
+        resetSessionTimer();
     }
     
     document.getElementById("langEn").onclick = () => {
@@ -1009,7 +1425,40 @@
         setLanguage("ar");
     };
 
-    // ======================= QUICK ACCESS MODULES =======================
+    // ============================================================
+    // SOCIAL CORPORATE WIDGET
+    // ============================================================
+    function buildSocialWidget() {
+        const socialLinks = [
+            { icon: "fas fa-envelope", name: "Gmail", nameAr: "جيميل", color: "#ea4335", url: "https://mail.google.com/" },
+            { icon: "fas fa-bolt", name: "Freshworks", nameAr: "فريش ووركس", color: "#00b4d8", url: "https://www.freshworks.com/" },
+            { icon: "fas fa-gem", name: "Crystal", nameAr: "كريستال", color: "#a855f7", url: "https://www.crystalknows.com/" },
+            { icon: "fas fa-clock", name: "Crunchtime", nameAr: "كرانش تايم", color: "#f97316", url: "https://www.crunchtime.com/" },
+            { icon: "fas fa-clipboard-check", name: "S.O.S Assessment", nameAr: "تقييم S.O.S", color: "#ef4444", url: "https://ghostkmr.github.io/2026/sos.html" }
+        ];
+        
+        const grid = document.getElementById('socialGrid');
+        grid.innerHTML = '';
+        socialLinks.forEach(link => {
+            const item = document.createElement('div');
+            item.className = 'social-item';
+            const displayName = currentLang === 'ar' ? link.nameAr : link.name;
+            item.innerHTML = `
+                <div class="social-icon" style="color:${link.color}"><i class="${link.icon}"></i></div>
+                <div class="social-name ${currentLang === 'ar' ? 'ar' : ''}">${displayName}</div>
+            `;
+            item.onclick = () => {
+                navigateTo(link.url);
+                addActivityLog(`🔗 ${displayName} (${currentLang === 'ar' ? 'روابط الشركات' : 'Corporate Links'})`);
+                resetSessionTimer();
+            };
+            grid.appendChild(item);
+        });
+    }
+
+    // ============================================================
+    // QUICK ACCESS MODULES
+    // ============================================================
     function buildQuickModules() {
         const modules = [
             { name: "Expiry Tracker", nameAr: "متتبع الصلاحية", icon: "fas fa-calendar-times", color: "#00d4ff", description: "Monitor expiring products", descriptionAr: "مراقبة المنتجات المنتهية", url: "https://ghostkmr.github.io/2026/expiration%20tracker.html" },
@@ -1036,6 +1485,7 @@
             card.onclick = () => {
                 addActivityLog(`${currentLang === 'ar' ? '🚀 تم إطلاق' : '🚀 Launched'} ${displayName}`);
                 navigateTo(mod.url);
+                resetSessionTimer();
             };
             grid.appendChild(card);
         });
@@ -1053,12 +1503,15 @@
             card.onclick = () => {
                 showToast(getText('toastComingSoon'));
                 addActivityLog(`⏳ ${displayName} (${currentLang === 'ar' ? 'قريباً' : 'Coming Soon'})`);
+                resetSessionTimer();
             };
             grid.appendChild(card);
         });
     }
 
-    // ======================= ACTIVITY LOGS =======================
+    // ============================================================
+    // ACTIVITY LOGS
+    // ============================================================
     function addActivityLog(msg) {
         let cont = document.getElementById("activityList");
         let div = document.createElement("div");
@@ -1104,22 +1557,28 @@
         addActivityLog(getText('activityCleared'));
         addActivityLog(getText('activityStats'));
         addActivityLog(getText('activityReady'));
+        resetSessionTimer();
     }
     
     document.getElementById("refreshDataBtn").addEventListener("click", refreshAllData);
 
-    // ======================= CHATBOT AI =======================
+    // ============================================================
+    // CHATBOT AI
+    // ============================================================
     const floatingBtn = document.getElementById('floatingAiBtn');
     const chatbotModal = document.getElementById('chatbotModal');
     const closeChatbotBtn = document.getElementById('closeChatbotBtn');
     
     function closeChatbot() {
         chatbotModal.classList.remove('open');
+        resetSessionTimer();
     }
     floatingBtn.addEventListener('click', openChatbot);
     closeChatbotBtn.addEventListener('click', closeChatbot);
 
-    // ======================= DATE/TIME =======================
+    // ============================================================
+    // DATE/TIME
+    // ============================================================
     function updateDateTime() {
         let n = new Date();
         document.getElementById("currentDate").innerHTML = n.toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'});
@@ -1128,11 +1587,14 @@
     setInterval(updateDateTime, 1000);
     updateDateTime();
 
-    // ======================= INITIALIZE =======================
+    // ============================================================
+    // INITIALIZE
+    // ============================================================
     positionMenuItems();
     loadSavedPosition(); 
     setLanguage("en");
     buildQuickModules();
+    buildSocialWidget();
     loadActivityLogs();
     
     document.getElementById('activeUsers').innerHTML = '5';
@@ -1143,9 +1605,10 @@
     if(existing.length === 0){
         addActivityLog("🚀 SADWAP StreamOps initialized · Drag the circular menu anywhere!");
         addActivityLog("📊 Active users: 5 (1 PC, 3 Mobile, 1 Tablet) · System Health: 99.9% · Ops: 10K+");
-        addActivityLog("📋 Click the compass icon to open radial menu (15 modules including 2 Coming Soon)");
-        addActivityLog("✅ All links verified: Inventory, Sales, Expiry, Transfers, Training, Municipality, Admin, Insights, RVR, Tutorials, Void & Refunds, Maintenance Reports");
-       
+        addActivityLog("📋 Click the compass icon to open radial menu (16 modules including Corporate Links)");
+        addActivityLog("✅ All links verified: Inventory, Sales, Expiry, Transfers, Training, Municipality, Admin, Insights, RVR, Tutorials, Void & Refunds, Maintenance Reports, Corporate Links");
+        addActivityLog("🔗 Corporate Links: Gmail, Freshworks, Crystal, Crunchtime, S.O.S Assessment");
+        addActivityLog("🔒 Security: Right-click disabled · Session expires after 30 seconds · Passcode: kudukudu12345");
     }
 </script>
 </body>
