@@ -533,6 +533,38 @@
             right: auto;
             left: 16px;
         }
+
+        /* ---- MAINTENANCE BANNER ---- */
+        .maintenance-banner {
+            background: rgba(255, 180, 40, 0.12);
+            border: 1px solid #ffb428;
+            border-radius: 60px;
+            padding: 10px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            backdrop-filter: blur(6px);
+            color: #ffd966;
+            font-weight: 500;
+            font-size: 0.9rem;
+            box-shadow: 0 0 30px rgba(255, 180, 40, 0.05);
+            letter-spacing: 0.3px;
+        }
+        .maintenance-banner i {
+            font-size: 1.3rem;
+            color: #ffb428;
+        }
+        .maintenance-banner strong {
+            color: #fff;
+            font-weight: 700;
+        }
+        @media (max-width: 480px) {
+            .maintenance-banner { font-size: 0.75rem; padding: 8px 16px; gap: 8px; }
+            .maintenance-banner i { font-size: 1rem; }
+        }
     </style>
 </head>
 <body>
@@ -566,13 +598,19 @@
             </div>
         </div>
 
-        <!-- DateTime Widget - Clean & Simple -->
+        <!-- DateTime Widget -->
         <div class="info-widget" id="infoWidget">
             <div class="time-date">
                 <span class="time" id="currentTime">--:--:--</span>
                 <span class="separator">|</span>
                 <span class="date" id="currentDate">Loading...</span>
             </div>
+        </div>
+
+        <!-- MAINTENANCE WARNING BANNER -->
+        <div class="maintenance-banner" id="maintenanceBanner">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span><strong>⚠️ Page under maintenance</strong> — We're applying important updates. Some features may be temporarily unavailable.</span>
         </div>
 
         <div class="hero-section">
@@ -609,7 +647,7 @@
     </div>
 </div>
 
-<!-- Developer Badge - Links to GitHub Repo -->
+<!-- Developer Badge -->
 <div class="dev-badge-container" id="developerBadge">
     <a href="https://github.com/GHOSTKMR/2026" id="devProfileLink" class="dev-badge-link" target="_blank">
         <div class="dev-avatar">
@@ -713,7 +751,8 @@
                 toastReset: "Contact IT Admin: reset PIN via secure channel",
                 toastRightClick: "Right-click disabled for security",
                 toastDevtools: "Developer tools restricted",
-                toastDevProfile: "Opening GitHub repository"
+                toastDevProfile: "Opening GitHub repository",
+                maintenance: "⚠️ Page under maintenance — We're applying important updates. Some features may be temporarily unavailable."
             },
             ar: {
                 badge: "تطبيق ويب ديناميكي مستقل",
@@ -736,7 +775,8 @@
                 toastReset: "اتصل بمسؤول تكنولوجيا المعلومات",
                 toastRightClick: "تعطيل النقر بزر الماوس الأيمن",
                 toastDevtools: "أدوات المطور مقيدة",
-                toastDevProfile: "فتح مستودع GitHub"
+                toastDevProfile: "فتح مستودع GitHub",
+                maintenance: "⚠️ الصفحة قيد الصيانة — نقوم بتطبيق تحديثات هامة. قد تكون بعض الميزات غير متاحة مؤقتاً."
             }
         };
         
@@ -761,6 +801,9 @@
             document.getElementById('footerNote').innerHTML = `<i class="bi bi-c-circle"></i> ${t.footer}`;
             const devTooltipSpan = document.getElementById('devTooltipText');
             if (devTooltipSpan) devTooltipSpan.innerText = currentLang === 'en' ? "GitHub Repository" : "مستودع GitHub";
+            // maintenance banner text update
+            const bannerSpan = document.querySelector('#maintenanceBanner span');
+            if (bannerSpan) bannerSpan.innerHTML = t.maintenance;
             if(lang === 'ar') {
                 bodyElem.classList.add('rtl');
                 bodyElem.style.fontFamily = "'Cairo', 'Inter', sans-serif";
@@ -790,9 +833,9 @@
         }
 
         // ============================================================
-        // AUTHENTICATION LOGIC - Password: kudu12345
+        // AUTHENTICATION LOGIC - Password: kudukudu12345
         // ============================================================
-        const CORRECT_PIN = "kudu12345";
+        const CORRECT_PIN = "kudukudu12345";
         const REDIRECT_URL = "https://ghostkmr.github.io/2026/welcome.html";
         
         const loginForm = document.getElementById('loginForm');
@@ -848,8 +891,6 @@
             showToast(translations[currentLang].toastGranted, false);
             setTimeout(() => { window.location.href = REDIRECT_URL; }, 1300);
         });
-
-        // LOGO CLICK REMOVED - No longer redirects to dashboard
 
         // Contact Developer - moinranzao2@gmail.com
         document.getElementById('gmailLink').addEventListener('click', (e) => {
