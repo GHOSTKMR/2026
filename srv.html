@@ -9,9 +9,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <!-- html2pdf -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- jsPDF for direct image handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        /* DARK MODE ONLY — remove light toggle */
         body {
             background: #0f172a; 
             color: #e2e8f0; 
@@ -19,7 +20,6 @@
             padding: 16px; 
             transition: background 0.2s, color 0.2s;
         }
-        body.dark { /* keep dark as default */ }
         .card {
             background: #1e293b; 
             border: 1px solid #334155;
@@ -210,9 +210,7 @@
         .store-card .form-control::placeholder { color: rgba(255,255,255,0.4); }
         .store-card .form-label { font-size: 0.65rem; opacity: 0.8; margin-bottom: 2px; }
         .task-list-wrapper { max-height: 520px; overflow-y: auto; }
-        .btn-group-filter { display: flex; gap: 8px; flex-wrap: wrap; }
         
-        /* HIGHLIGHT BANNER — yellow, advanced english */
         .highlight-banner {
             background: #facc15; 
             color: #0f172a; 
@@ -241,14 +239,10 @@
             .highlight-banner { font-size: 0.75rem; padding: 10px 14px; }
             .photo-thumbnails { grid-template-columns: repeat(3,1fr); }
         }
-        /* rtl */
         [dir="rtl"] .task-card { border-left-width: 1px; border-right-width: 5px; }
         [dir="rtl"] .task-card.high-priority { border-right-color: #ef4444; border-left-color: #334155; }
         [dir="rtl"] .task-card.medium-priority { border-right-color: #f59e0b; }
         [dir="rtl"] .task-card.low-priority { border-right-color: #10b981; }
-        /* remove light toggle */
-        .theme-toggle { display: none; }
-        /* scrollbar */
         .task-list-wrapper::-webkit-scrollbar { width: 6px; }
         .task-list-wrapper::-webkit-scrollbar-track { background: #1e293b; }
         .task-list-wrapper::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
@@ -256,7 +250,7 @@
 </head>
 <body class="dark">
 <div class="app-container">
-    <!-- header with lang ONLY (dark forced) -->
+    <!-- header -->
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <h1 style="font-size:1.4rem; font-weight:700; color:#facc15;" id="brandTitle">SADWAP</h1>
         <div class="d-flex gap-3 align-items-center">
@@ -264,11 +258,10 @@
                 <button class="lang-btn active" id="langEn" data-lang="en">EN</button>
                 <button class="lang-btn" id="langAr" data-lang="ar">AR</button>
             </div>
-            <!-- theme toggle removed -->
         </div>
     </div>
 
-    <!-- YELLOW HIGHLIGHT: advanced english -->
+    <!-- YELLOW HIGHLIGHT -->
     <div class="highlight-banner">
         <i class="bi bi-camera-reels"></i>
         <span>📸</span> 
@@ -308,7 +301,6 @@
                 <div class="card-header" data-key="addNewTask"><i class="bi bi-plus-circle me-2"></i>New Task</div>
                 <div class="card-body">
                     <form id="taskForm">
-                        <!-- camera -->
                         <label class="fw-bold" data-key="beforePictures">Before Pictures <span class="text-danger">(min 3)</span></label>
                         <div class="d-flex justify-content-between mt-1"><span id="photoProgressText">0 / 3</span><span class="text-muted small" data-key="minPhotos">minimum 3</span></div>
                         <div class="progress mb-2" style="height:6px; background:#2d3b52;"><div class="progress-bar bg-success" id="photoProgress" style="width:0%"></div></div>
@@ -371,10 +363,11 @@
         </div>
     </div>
 </div>
+
 <div id="toastMsg" class="toast-notify"><i class="bi bi-check-circle-fill me-2"></i><span id="toastText"></span></div>
 
 <script>
-    // ----- TRANSLATIONS (full) -----
+    // ----- TRANSLATIONS -----
     const translations = {
         en: {
             storeNameLabel: "Store Name", locationLabel: "Location",
@@ -433,14 +426,13 @@
 
     function showToast(msg, type='success'){ toastText.innerText=msg; toast.style.display='flex'; toast.style.borderLeftColor=type==='error'?'#ef4444':'#3b82f6'; setTimeout(()=>toast.style.display='none',2500); }
 
-    // ----- i18n apply -----
+    // ----- i18n -----
     function applyTranslations() {
         const t = translations[currentLang];
         document.querySelectorAll('[data-key]').forEach(el => {
             const key = el.dataset.key;
             if (t[key] !== undefined) {
                 if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
-                    // skip
                 } else {
                     el.innerText = t[key];
                 }
@@ -497,12 +489,8 @@
         document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
     }
 
-    // lang switch
     document.getElementById('langEn').addEventListener('click', ()=>{ currentLang='en'; document.getElementById('langEn').classList.add('active'); document.getElementById('langAr').classList.remove('active'); applyTranslations(); });
     document.getElementById('langAr').addEventListener('click', ()=>{ currentLang='ar'; document.getElementById('langAr').classList.add('active'); document.getElementById('langEn').classList.remove('active'); applyTranslations(); });
-
-    // ----- DARK MODE FORCED (no toggle) -----
-    // already dark by default
 
     // ----- STORAGE -----
     function loadData() {
@@ -556,18 +544,33 @@
 
     // ----- CAMERA -----
     async function startCamera() {
-        try { if(stream) stopCamera(); stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment' } }); video.srcObject=stream; video.style.display='block'; camPlaceholder.style.display='none'; startCam.disabled=true; captureBtn.disabled=false; stopCam.disabled=false; } catch(e){ showToast(currentLang==='ar'?'تعذر الوصول للكاميرا':'Camera access denied','error'); }
+        try { if(stream) stopCamera(); stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment', width:{ideal:640}, height:{ideal:480} } }); video.srcObject=stream; video.style.display='block'; camPlaceholder.style.display='none'; startCam.disabled=true; captureBtn.disabled=false; stopCam.disabled=false; } catch(e){ showToast(currentLang==='ar'?'تعذر الوصول للكاميرا':'Camera access denied','error'); }
     }
     function stopCamera() { if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } video.style.display='none'; camPlaceholder.style.display='flex'; startCam.disabled=false; captureBtn.disabled=true; stopCam.disabled=true; }
+    
     function capturePhoto() {
         const ctx = canvas.getContext('2d');
-        canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0);
-        capturedPhotos.push(canvas.toDataURL('image/jpeg', 0.85));
+        const maxWidth = 640;
+        const maxHeight = 480;
+        let width = video.videoWidth;
+        let height = video.videoHeight;
+        if (width > maxWidth) {
+            height = height * (maxWidth / width);
+            width = maxWidth;
+        }
+        if (height > maxHeight) {
+            width = width * (maxHeight / height);
+            height = maxHeight;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(video, 0, 0, width, height);
+        capturedPhotos.push(canvas.toDataURL('image/jpeg', 0.6));
         updatePhotoUI();
         validateForm();
         showToast(currentLang==='ar'?`تم التقاط الصورة ${capturedPhotos.length}`:`Photo ${capturedPhotos.length} captured`);
     }
+    
     function updatePhotoUI() {
         const pct = Math.min((capturedPhotos.length / MIN_PHOTOS)*100, 100);
         photoProgress.style.width = pct+'%';
@@ -627,7 +630,7 @@
         stopCamera(); validateForm();
     }
 
-    // ----- RENDER TASKS + FILTERS -----
+    // ----- RENDER TASKS -----
     function renderTasks() {
         const filtered = tasks.filter(t => {
             if(statusFilter.value && t.status !== statusFilter.value) return false;
@@ -668,7 +671,6 @@
         }
     };
 
-    // toggle list hide/show
     let listVisible = true;
     toggleListBtn.addEventListener('click', ()=>{
         listVisible = !listVisible;
@@ -688,37 +690,225 @@
     statusFilter.addEventListener('change', renderTasks);
     priorityFilter.addEventListener('change', renderTasks);
 
-    // ----- PDF EXPORT (with images & details) -----
+    // ----- PDF EXPORT - WITH HORIZONTAL IMAGES -----
     exportBtn.addEventListener('click', async ()=>{
         if(tasks.length===0){ showToast(currentLang==='ar'?'لا توجد مهام للتصدير':'No tasks to export','error'); return; }
-        const wrapper = document.createElement('div');
-        wrapper.style.padding='20px'; wrapper.style.fontFamily='Inter, sans-serif'; wrapper.style.background='white'; wrapper.style.color='#0f172a';
-        const rows = tasks.map(t => `
-            <div style="border-bottom:1px solid #ddd; padding:16px 0; display:flex; gap:12px; align-items:flex-start;">
-                <div style="flex:1;">
-                    <h4 style="margin:0 0 6px;">${escHtml(t.description)}</h4>
-                    <div><span style="background:${t.priority==='High'?'#b91c1c':t.priority==='Medium'?'#d97706':'#0b7e4b'};color:white;padding:2px 12px;border-radius:20px;font-size:0.7rem;">${t.priority}</span> <span style="background:#e9edf3;padding:2px 12px;border-radius:20px;">${t.status}</span> <span style="background:#1e3a5f;color:white;padding:2px 12px;border-radius:20px;">${t.area}</span></div>
-                    <div style="font-size:0.8rem;color:#475569;">${currentLang==='ar'?'استحقاق':'Due'}: ${new Date(t.dueDate).toLocaleDateString()} ${t.finishDate ? '| '+(currentLang==='ar'?'انتهاء':'Finish')+': '+new Date(t.finishDate).toLocaleDateString():''}</div>
-                    <div style="font-size:0.8rem;">${currentLang==='ar'?'الفريق':'Team'}: ${t.assignedTo.join(', ')}</div>
-                </div>
-                <div style="display:flex; gap:6px; flex-wrap:wrap; max-width:200px;">
-                    ${t.beforePhotos && t.beforePhotos.length > 0 ? t.beforePhotos.slice(0,3).map(p => `<img src="${p}" style="width:60px;height:60px;object-fit:cover;border-radius:12px;border:1px solid #ccc;">`).join('') : ''}
-                    ${t.beforePhotos && t.beforePhotos.length > 3 ? `<span style="background:#e9edf3;padding:8px 12px;border-radius:12px;">+${t.beforePhotos.length-3}</span>` : ''}
-                </div>
-            </div>
-        `).join('');
-        wrapper.innerHTML = `
-            <h2 style="color:#1e3a5f;">${storeName.value} · ${currentLang==='ar'?'تقرير التنظيف':'Cleaning Report'}</h2>
-            <p>${new Date().toLocaleString()} · ${currentLang==='ar'?'إجمالي المهام':'Total'}: ${tasks.length}</p>
-            <hr>${rows}
-        `;
-        const opt = { margin: 10, filename: `cleaning-report-${new Date().toISOString().slice(0,10)}.pdf`, image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'} };
-        html2pdf().set(opt).from(wrapper).save();
-        showToast(currentLang==='ar'?'تم تصدير PDF':'PDF exported');
+        
+        exportBtn.disabled = true;
+        exportBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Generating...';
+        
+        try {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = 210;
+            const pageHeight = 297;
+            let y = 20;
+            const margin = 15;
+            const maxWidth = pageWidth - (margin * 2);
+            
+            // Helper function to add text with wrapping
+            function addWrappedText(text, x, y, maxWidth, lineHeight = 5) {
+                const lines = doc.splitTextToSize(text, maxWidth);
+                doc.text(lines, x, y);
+                return y + (lines.length * lineHeight);
+            }
+            
+            // Header
+            doc.setFontSize(18);
+            doc.setTextColor(30, 58, 95);
+            doc.text(storeName.value || 'Cleaning Report', margin, y);
+            y += 8;
+            
+            doc.setFontSize(11);
+            doc.setTextColor(71, 85, 105);
+            doc.text(storeLocation.value || '', margin, y);
+            y += 6;
+            doc.text(new Date().toLocaleString(), margin, y);
+            y += 8;
+            
+            doc.setFontSize(13);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Total Tasks: ${tasks.length}`, margin, y);
+            y += 10;
+            
+            // Line
+            doc.setDrawColor(226, 232, 240);
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 8;
+            
+            // Process each task
+            for (let i = 0; i < tasks.length; i++) {
+                const task = tasks[i];
+                
+                // Check if we need a new page
+                if (y > pageHeight - 50) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                // Task number and description
+                doc.setFontSize(12);
+                doc.setTextColor(30, 41, 59);
+                const descText = `${i+1}. ${task.description}`;
+                y = addWrappedText(descText, margin, y, maxWidth, 5.5);
+                y += 2;
+                
+                // Badges - Priority
+                const priorityColors = {
+                    'High': [185, 28, 28],
+                    'Medium': [217, 119, 6],
+                    'Low': [11, 126, 75]
+                };
+                const statusColors = {
+                    'Pending': [100, 116, 139],
+                    'In Progress': [37, 99, 235],
+                    'Completed': [22, 163, 74]
+                };
+                
+                const pColor = priorityColors[task.priority] || [100, 116, 139];
+                const sColor = statusColors[task.status] || [100, 116, 139];
+                
+                // Priority badge
+                doc.setFillColor(pColor[0], pColor[1], pColor[2]);
+                doc.roundedRect(margin, y - 3, 20, 6, 2, 2, 'F');
+                doc.setFontSize(8);
+                doc.setTextColor(255, 255, 255);
+                doc.text(task.priority, margin + 2, y + 1.5);
+                
+                // Status badge
+                const statusX = margin + 24;
+                doc.setFillColor(sColor[0], sColor[1], sColor[2]);
+                doc.roundedRect(statusX, y - 3, 22, 6, 2, 2, 'F');
+                doc.text(task.status, statusX + 2, y + 1.5);
+                
+                // Area badge
+                const areaX = statusX + 26;
+                doc.setFillColor(219, 234, 254);
+                doc.roundedRect(areaX, y - 3, 20, 6, 2, 2, 'F');
+                doc.setTextColor(30, 58, 138);
+                doc.text(task.area, areaX + 2, y + 1.5);
+                
+                y += 6;
+                
+                // Due date and assignee
+                doc.setFontSize(9);
+                doc.setTextColor(71, 85, 105);
+                const dateStr = `Due: ${new Date(task.dueDate).toLocaleDateString()}`;
+                doc.text(dateStr, margin, y);
+                y += 5;
+                
+                const assignStr = `Team: ${task.assignedTo.join(', ')}`;
+                y = addWrappedText(assignStr, margin, y, maxWidth, 4.5);
+                y += 4;
+                
+                // Images - HORIZONTAL LAYOUT
+                if (task.beforePhotos && task.beforePhotos.length > 0) {
+                    const imgSize = 35; // Slightly smaller to fit more in a row
+                    const maxImages = Math.min(task.beforePhotos.length, 6); // Show up to 6 images
+                    let imgX = margin;
+                    const imgY = y;
+                    let imagesAdded = 0;
+                    
+                    // Calculate how many images fit in one row
+                    const maxImagesPerRow = Math.floor((maxWidth - 10) / (imgSize + 4));
+                    const imagesToShow = Math.min(maxImages, maxImagesPerRow);
+                    
+                    for (let j = 0; j < imagesToShow; j++) {
+                        try {
+                            const imgData = task.beforePhotos[j];
+                            if (imgData && imgData.startsWith('data:image')) {
+                                // Get image properties to maintain aspect ratio
+                                const imgProps = doc.getImageProperties(imgData);
+                                const imgWidth = imgProps.width;
+                                const imgHeight = imgProps.height;
+                                
+                                let w = imgSize;
+                                let h = imgSize;
+                                if (imgWidth > imgHeight) {
+                                    w = imgSize;
+                                    h = imgSize * (imgHeight / imgWidth);
+                                } else {
+                                    h = imgSize;
+                                    w = imgSize * (imgWidth / imgHeight);
+                                }
+                                
+                                // Center the image in the box
+                                const xOffset = (imgSize - w) / 2;
+                                const yOffset = (imgSize - h) / 2;
+                                
+                                doc.addImage(imgData, 'JPEG', imgX + xOffset, imgY + yOffset, w, h);
+                                imagesAdded++;
+                            }
+                        } catch(e) {
+                            // Skip this image
+                        }
+                        imgX += imgSize + 4;
+                    }
+                    
+                    // Show "+N more" indicator
+                    let totalImagesDisplayed = imagesAdded;
+                    let moreText = '';
+                    if (task.beforePhotos.length > totalImagesDisplayed) {
+                        moreText = `+${task.beforePhotos.length - totalImagesDisplayed} more`;
+                    }
+                    
+                    // Draw border around images
+                    if (imagesAdded > 0) {
+                        doc.setDrawColor(203, 213, 225);
+                        doc.setLineWidth(0.3);
+                        const borderY = imgY - 1;
+                        const borderHeight = imgSize + 2;
+                        const borderWidth = (imagesAdded * (imgSize + 4)) - 4;
+                        doc.roundedRect(margin, borderY, borderWidth, borderHeight, 2, 2, 'S');
+                    }
+                    
+                    // Update Y position
+                    y = imgY + imgSize + 6;
+                    
+                    // Add "more" text if needed
+                    if (moreText) {
+                        doc.setFontSize(8);
+                        doc.setTextColor(100, 116, 139);
+                        doc.text(moreText, margin + (imagesAdded * (imgSize + 4)) + 2, imgY + (imgSize / 2) + 2);
+                    }
+                    
+                } else {
+                    doc.setFontSize(9);
+                    doc.setTextColor(148, 163, 184);
+                    doc.text('No photos', margin, y);
+                    y += 6;
+                }
+                
+                // Separator line
+                y += 4;
+                doc.setDrawColor(226, 232, 240);
+                doc.line(margin, y, pageWidth - margin, y);
+                y += 6;
+            }
+            
+            // Save the PDF
+            doc.save(`cleaning-report-${new Date().toISOString().slice(0,10)}.pdf`);
+            showToast(currentLang==='ar'?'تم تصدير PDF بنجاح':'PDF exported successfully');
+            
+        } catch (error) {
+            console.error('PDF Export Error:', error);
+            showToast(currentLang==='ar'?'خطأ في تصدير PDF':'PDF export error', 'error');
+        } finally {
+            exportBtn.disabled = false;
+            exportBtn.innerHTML = '<i class="bi bi-file-pdf"></i> ' + (currentLang==='ar'?'PDF':'PDF');
+        }
     });
 
     // ----- HELPERS -----
-    function escHtml(str) { return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    function escHtml(str) { 
+        return String(str).replace(/[&<>"]/g, function(m){ 
+            if(m==='&') return '&amp;'; 
+            if(m==='<') return '&lt;'; 
+            if(m==='>') return '&gt;'; 
+            if(m==='"') return '&quot;'; 
+            return m;
+        }); 
+    }
 
     // store autosave
     storeName.addEventListener('change', ()=>localStorage.setItem('storeName', storeName.value));
