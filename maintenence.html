@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- jsPDF for direct image handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -51,7 +53,7 @@
         .lang-btn.active { background: var(--accent-blue); color: white; }
         .badge-user { background: var(--bg-primary); padding: 6px 16px; border-radius: 40px; font-size: 0.75rem; border: 1px solid var(--border-glow); color: var(--text-secondary); }
         
-        /* Highlight Banner - SINGLE */
+        /* Highlight Banner */
         .highlight-banner {
             background: var(--accent-gold);
             color: #0b0e1a;
@@ -281,7 +283,7 @@
         </div>
     </div>
 
-    <!-- Highlight Banner - SINGLE (fixed - no duplicate) -->
+    <!-- Highlight Banner -->
     <div class="highlight-banner" id="bannerText">
         <i class="fas fa-camera"></i>
         <span class="tag">📸</span>
@@ -563,21 +565,17 @@
         currentLang = lang;
         document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
         
-        // Update banner specifically (fixes the duplicate issue)
         const bannerMsg = document.getElementById('bannerMessage');
         if (bannerMsg) {
             bannerMsg.textContent = t('banner');
         }
         
-        // Update all elements with data-i18n attribute
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             const translation = t(key);
             if (translation) {
-                // Check if element has children (like buttons with icons)
                 const icon = el.querySelector('i');
                 if (icon && el.childNodes.length > 1) {
-                    // Keep the icon, replace text
                     const textNode = el.childNodes[1];
                     if (textNode) {
                         textNode.textContent = ' ' + translation;
@@ -585,7 +583,6 @@
                         el.appendChild(document.createTextNode(' ' + translation));
                     }
                 } else {
-                    // Don't override the banner container, only the message span
                     if (el.id !== 'bannerText') {
                         el.textContent = translation;
                     }
@@ -593,28 +590,24 @@
             }
         });
 
-        // Update placeholder texts
         document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
             const key = el.getAttribute('data-i18n-placeholder');
             const translation = t(key);
             if (translation) el.placeholder = translation;
         });
 
-        // Update select options with data-i18n
         document.querySelectorAll('select option[data-i18n]').forEach(opt => {
             const key = opt.getAttribute('data-i18n');
             const translation = t(key);
             if (translation) opt.textContent = translation;
         });
 
-        // Update button texts with icons
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if ((el.tagName === 'BUTTON' || el.tagName === 'A') && el.id !== 'bannerText') {
                 const icon = el.querySelector('i');
                 const translation = t(key);
                 if (icon && translation) {
-                    // Keep icon, update text
                     const textNode = el.childNodes[1];
                     if (textNode) {
                         textNode.textContent = ' ' + translation;
@@ -625,22 +618,16 @@
             }
         });
 
-        // Update submit button specifically
         const submitBtn = document.getElementById('submitBtnText');
         if (submitBtn) submitBtn.textContent = t('btnSubmit');
 
-        // Update toggle list button
         updateToggleButton();
 
-        // Update language buttons
         document.querySelectorAll('.lang-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.lang === lang);
         });
 
-        // Re-render tasks to update static text in task items
         renderTasks();
-        
-        // Update validation messages
         validateForm();
     }
 
@@ -658,7 +645,6 @@
         }
     }
 
-    // Language switcher
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             setLanguage(btn.dataset.lang);
@@ -678,14 +664,13 @@
     const startCam = $('startCamBtn'), captureBtn = $('captureBtn'), stopCam = $('stopCamBtn'), clearPhotosBtn = $('clearPhotosBtn');
     const video = $('videoElement'), canvas = $('canvasElement'), camPlaceholder = $('cameraPlaceholder');
     const photoCount = $('photoCount'), photoProgress = $('photoProgress'), photoGallery = $('photoGallery');
-    const taskContainer = $('taskListContainer'), emptyState = $('emptyState');
+    const taskContainer = $('taskListContainer');
     const totalJobs = $('totalJobs'), pendingJobs = $('pendingJobs'), inProgressJobs = $('inProgressJobs'), completedJobs = $('completedJobs');
     const statusFilter = $('statusFilter'), priorityFilter = $('priorityFilter');
     const validationAlert = $('validationAlert'), validationMsg = $('validationMsg');
     const toast = $('toastMsg'), toastText = $('toastText');
     const exportBtn = $('exportPdfBtn'), toggleListBtn = $('toggleListBtn');
     const taskForm = $('taskForm');
-    const submitBtnText = $('submitBtnText');
 
     // ======================= TOAST =======================
     function showToast(msg, type = 'success') {
@@ -718,7 +703,7 @@
     async function startCamera() {
         try {
             if (stream) stopCamera();
-            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } } });
             video.srcObject = stream;
             video.style.display = 'block';
             camPlaceholder.style.display = 'none';
@@ -739,10 +724,22 @@
     }
     function capturePhoto() {
         const ctx = canvas.getContext('2d');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0);
-        capturedPhotos.push(canvas.toDataURL('image/jpeg', 0.85));
+        const maxWidth = 640;
+        const maxHeight = 480;
+        let width = video.videoWidth;
+        let height = video.videoHeight;
+        if (width > maxWidth) {
+            height = height * (maxWidth / width);
+            width = maxWidth;
+        }
+        if (height > maxHeight) {
+            width = width * (maxHeight / height);
+            height = maxHeight;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(video, 0, 0, width, height);
+        capturedPhotos.push(canvas.toDataURL('image/jpeg', 0.7));
         updatePhotoUI();
         showToast(t('toastPhoto'));
         validateForm();
@@ -800,7 +797,11 @@
     // ======================= ADD TASK =======================
     taskForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        if (!validateForm()) { showToast(t('toastFill'), 'error'); return; }
+        if (!validateForm()) { 
+            showToast(t('toastFill'), 'error'); 
+            return; 
+        }
+        
         const task = {
             id: Date.now(),
             jobNumber: jobNumber.value.trim(),
@@ -811,6 +812,7 @@
             photos: [...capturedPhotos],
             createdAt: new Date().toISOString()
         };
+        
         tasks.push(task);
         saveData();
         renderTasks();
@@ -824,7 +826,7 @@
         jobDesc.value = '';
         prioritySelect.value = 'Medium';
         statusSelect.value = 'Pending';
-        jobDate.value = '';
+        jobDate.value = new Date().toISOString().split('T')[0];
         capturedPhotos = [];
         updatePhotoUI();
         stopCamera();
@@ -839,30 +841,40 @@
             if (priorityFilter.value && t.priority !== priorityFilter.value) return false;
             return true;
         });
+        
         if (filtered.length === 0) {
             taskContainer.innerHTML = `<div class="empty-state"><i class="fas fa-clipboard-list"></i><p>${t('emptyState')}</p></div>`;
             return;
         }
-        taskContainer.innerHTML = filtered.sort((a, b) => b.id - a.id).map(t => `
+        
+        taskContainer.innerHTML = filtered.sort((a, b) => b.id - a.id).map(task => {
+            const priorityColor = task.priority === 'Critical' ? '#ef4444' : 
+                                 task.priority === 'High' ? '#f97316' : 
+                                 task.priority === 'Medium' ? '#f59e0b' : '#10b981';
+            
+            const statusColor = task.status === 'Completed' ? '#10b981' : 
+                               task.status === 'In Progress' ? '#f59e0b' : '#6a7fa0';
+            
+            return `
             <div class="task-item">
                 <div class="header">
                     <div>
-                        <div class="id">#${escHtml(t.jobNumber)}</div>
-                        <div class="desc">${escHtml(t.description)}</div>
+                        <div class="id">#${escHtml(task.jobNumber)}</div>
+                        <div class="desc">${escHtml(task.description)}</div>
                     </div>
                     <div class="actions">
-                        <button onclick="deleteTask(${t.id})" class="del" title="${t('deleteConfirm')}"><i class="fas fa-trash"></i></button>
+                        <button onclick="deleteTask(${task.id})" class="del" title="${t('deleteConfirm')}"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
                 <div class="meta">
-                    <span><i class="fas fa-tag"></i> ${t.priority}</span>
-                    <span><i class="fas fa-circle" style="color:${t.status === 'Completed' ? '#10b981' : t.status === 'In Progress' ? '#f59e0b' : '#6a7fa0'};"></i> ${t.status}</span>
-                    <span><i class="fas fa-calendar"></i> ${t.date}</span>
-                    <span><i class="fas fa-image"></i> ${t.photos?.length || 0} photos</span>
+                    <span><i class="fas fa-tag" style="color:${priorityColor};"></i> ${task.priority}</span>
+                    <span><i class="fas fa-circle" style="color:${statusColor};"></i> ${task.status}</span>
+                    <span><i class="fas fa-calendar"></i> ${task.date}</span>
+                    <span><i class="fas fa-image"></i> ${task.photos?.length || 0} photos</span>
                 </div>
-                ${t.photos && t.photos.length > 0 ? `<div class="images">${t.photos.slice(0,4).map(p => `<img src="${p}" onclick="viewPhoto('${p}')">`).join('')}${t.photos.length > 4 ? `<span style="font-size:0.7rem;color:var(--text-muted);padding:4px 8px;">+${t.photos.length-4}</span>` : ''}</div>` : ''}
+                ${task.photos && task.photos.length > 0 ? `<div class="images">${task.photos.slice(0,4).map(p => `<img src="${p}" onclick="viewPhoto('${p}')" style="cursor:pointer;">`).join('')}${task.photos.length > 4 ? `<span style="font-size:0.7rem;color:var(--text-muted);padding:4px 8px;">+${task.photos.length-4}</span>` : ''}</div>` : ''}
             </div>
-        `).join('');
+        `}).join('');
     }
 
     window.deleteTask = function(id) {
@@ -874,6 +886,7 @@
             showToast(t('toastDeleted'));
         }
     };
+    
     window.viewPhoto = function(src) {
         window.open(src, '_blank');
     };
@@ -888,55 +901,198 @@
     statusFilter.addEventListener('change', renderTasks);
     priorityFilter.addEventListener('change', renderTasks);
 
-    // ======================= PDF EXPORT =======================
+    // ======================= PDF EXPORT - FIXED WITH JSPDF =======================
     exportBtn.addEventListener('click', async () => {
         if (tasks.length === 0) {
             showToast(t('toastNoData'), 'error');
             return;
         }
-        const wrapper = document.createElement('div');
-        wrapper.style.padding = '24px';
-        wrapper.style.fontFamily = 'Inter, sans-serif';
-        wrapper.style.background = '#ffffff';
-        wrapper.style.color = '#0b0e1a';
-        const rows = tasks.map(t => `
-            <div style="border-bottom:1px solid #e5e7eb; padding:16px 0; display:flex; gap:14px; align-items:flex-start;">
-                <div style="flex:1;">
-                    <h4 style="margin:0 0 4px; color:#1e3a5f;">#${escHtml(t.jobNumber)}</h4>
-                    <p style="margin:4px 0; font-weight:500;">${escHtml(t.description)}</p>
-                    <div style="font-size:0.8rem; color:#4b5563; display:flex; gap:12px; flex-wrap:wrap;">
-                        <span><strong>${t('priorityLabel')}:</strong> ${t.priority}</span>
-                        <span><strong>${t('statusLabel')}:</strong> ${t.status}</span>
-                        <span><strong>${t('dateLabel')}:</strong> ${t.date}</span>
-                    </div>
-                </div>
-                <div style="display:flex; gap:6px; flex-wrap:wrap; max-width:180px;">
-                    ${t.photos && t.photos.length > 0 ? t.photos.slice(0,3).map(p => `<img src="${p}" style="width:56px;height:56px;object-fit:cover;border-radius:10px;border:1px solid #ddd;">`).join('') : ''}
-                    ${t.photos && t.photos.length > 3 ? `<span style="background:#e5e7eb;padding:6px 12px;border-radius:10px;">+${t.photos.length-3}</span>` : ''}
-                </div>
-            </div>
-        `).join('');
-        wrapper.innerHTML = `
-            <h1 style="color:#1e3a5f; display:flex; align-items:center; gap:10px;">
-                <i class="fas fa-tools" style="color:#fbbf24;"></i> ${t('pdfTitle')}
-            </h1>
-            <p><strong>${t('pdfStore')}:</strong> ${escHtml(storeName.value)}</p>
-            <p><strong>${t('pdfAddress')}:</strong> ${escHtml(storeAddress.value)}</p>
-            <p><strong>${t('pdfDate')}:</strong> ${new Date().toLocaleString()}</p>
-            <p><strong>${t('pdfTotal')}:</strong> ${tasks.length}</p>
-            <hr style="border-color:#ddd;">
-            ${rows}
-            <p style="margin-top:20px; font-size:0.8rem; color:#6b7280; text-align:center;">${t('pdfFooter')}</p>
-        `;
-        const opt = {
-            margin: 10,
-            filename: `maintenance-report-${new Date().toISOString().slice(0,10)}.pdf`,
-            image: { type: 'jpeg', quality: 0.95 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().set(opt).from(wrapper).save();
-        showToast(t('toastPdf'));
+        
+        exportBtn.disabled = true;
+        exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+        
+        try {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = 210;
+            const pageHeight = 297;
+            let y = 20;
+            const margin = 15;
+            const maxWidth = pageWidth - (margin * 2);
+            
+            // Helper function to add wrapped text
+            function addWrappedText(text, x, y, maxWidth, lineHeight = 5) {
+                const lines = doc.splitTextToSize(text, maxWidth);
+                doc.text(lines, x, y);
+                return y + (lines.length * lineHeight);
+            }
+            
+            // Header
+            doc.setFontSize(18);
+            doc.setTextColor(30, 58, 95);
+            doc.text(t('pdfTitle'), margin, y);
+            y += 8;
+            
+            doc.setFontSize(11);
+            doc.setTextColor(71, 85, 105);
+            doc.text(`${t('pdfStore')}: ${storeName.value}`, margin, y);
+            y += 6;
+            doc.text(`${t('pdfAddress')}: ${storeAddress.value}`, margin, y);
+            y += 6;
+            doc.text(`${t('pdfDate')}: ${new Date().toLocaleString()}`, margin, y);
+            y += 8;
+            
+            doc.setFontSize(13);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`${t('pdfTotal')}: ${tasks.length}`, margin, y);
+            y += 10;
+            
+            // Line
+            doc.setDrawColor(226, 232, 240);
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 8;
+            
+            // Process each task
+            for (let i = 0; i < tasks.length; i++) {
+                const task = tasks[i];
+                
+                // Check if we need a new page
+                if (y > pageHeight - 50) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                // Task header
+                doc.setFontSize(12);
+                doc.setTextColor(30, 41, 59);
+                const jobText = `#${task.jobNumber} - ${task.description}`;
+                y = addWrappedText(jobText, margin, y, maxWidth, 5.5);
+                y += 2;
+                
+                // Priority badge
+                const priorityColors = {
+                    'Critical': [185, 28, 28],
+                    'High': [220, 38, 38],
+                    'Medium': [217, 119, 6],
+                    'Low': [11, 126, 75]
+                };
+                const statusColors = {
+                    'Pending': [100, 116, 139],
+                    'In Progress': [37, 99, 235],
+                    'Completed': [22, 163, 74]
+                };
+                
+                const pColor = priorityColors[task.priority] || [100, 116, 139];
+                const sColor = statusColors[task.status] || [100, 116, 139];
+                
+                // Priority badge
+                doc.setFillColor(pColor[0], pColor[1], pColor[2]);
+                doc.roundedRect(margin, y - 3, 20, 6, 2, 2, 'F');
+                doc.setFontSize(8);
+                doc.setTextColor(255, 255, 255);
+                doc.text(task.priority, margin + 2, y + 1.5);
+                
+                // Status badge
+                const statusX = margin + 24;
+                doc.setFillColor(sColor[0], sColor[1], sColor[2]);
+                doc.roundedRect(statusX, y - 3, 22, 6, 2, 2, 'F');
+                doc.text(task.status, statusX + 2, y + 1.5);
+                
+                y += 6;
+                
+                // Date
+                doc.setFontSize(9);
+                doc.setTextColor(71, 85, 105);
+                doc.text(`${t('dateLabel')}: ${task.date}`, margin, y);
+                y += 6;
+                
+                // Images - Horizontal layout
+                if (task.photos && task.photos.length > 0) {
+                    const imgSize = 30;
+                    const maxImages = Math.min(task.photos.length, 6);
+                    let imgX = margin;
+                    const imgY = y;
+                    let imagesAdded = 0;
+                    
+                    for (let j = 0; j < maxImages; j++) {
+                        try {
+                            const imgData = task.photos[j];
+                            if (imgData && imgData.startsWith('data:image')) {
+                                const imgProps = doc.getImageProperties(imgData);
+                                const imgWidth = imgProps.width;
+                                const imgHeight = imgProps.height;
+                                
+                                let w = imgSize;
+                                let h = imgSize;
+                                if (imgWidth > imgHeight) {
+                                    w = imgSize;
+                                    h = imgSize * (imgHeight / imgWidth);
+                                } else {
+                                    h = imgSize;
+                                    w = imgSize * (imgWidth / imgHeight);
+                                }
+                                
+                                const xOffset = (imgSize - w) / 2;
+                                const yOffset = (imgSize - h) / 2;
+                                
+                                doc.addImage(imgData, 'JPEG', imgX + xOffset, imgY + yOffset, w, h);
+                                imagesAdded++;
+                            }
+                        } catch(e) {
+                            // Skip this image
+                        }
+                        imgX += imgSize + 4;
+                    }
+                    
+                    // Draw border around images
+                    if (imagesAdded > 0) {
+                        doc.setDrawColor(203, 213, 225);
+                        doc.setLineWidth(0.3);
+                        const borderY = imgY - 1;
+                        const borderHeight = imgSize + 2;
+                        const borderWidth = (imagesAdded * (imgSize + 4)) - 4;
+                        doc.roundedRect(margin, borderY, borderWidth, borderHeight, 2, 2, 'S');
+                    }
+                    
+                    y = imgY + imgSize + 8;
+                    
+                    // Show "+N more" indicator
+                    if (task.photos.length > imagesAdded) {
+                        doc.setFontSize(8);
+                        doc.setTextColor(100, 116, 139);
+                        doc.text(`+${task.photos.length - imagesAdded} more`, margin + (imagesAdded * (imgSize + 4)) + 2, imgY + (imgSize / 2) + 2);
+                    }
+                    
+                } else {
+                    doc.setFontSize(9);
+                    doc.setTextColor(148, 163, 184);
+                    doc.text('No photos', margin, y);
+                    y += 6;
+                }
+                
+                // Separator line
+                y += 4;
+                doc.setDrawColor(226, 232, 240);
+                doc.line(margin, y, pageWidth - margin, y);
+                y += 6;
+            }
+            
+            // Footer
+            doc.setFontSize(8);
+            doc.setTextColor(107, 114, 128);
+            doc.text(t('pdfFooter'), pageWidth / 2, pageHeight - 10, { align: 'center' });
+            
+            // Save the PDF
+            doc.save(`maintenance-report-${new Date().toISOString().slice(0,10)}.pdf`);
+            showToast(t('toastPdf'));
+            
+        } catch (error) {
+            console.error('PDF Export Error:', error);
+            showToast(t('toastNoData'), 'error');
+        } finally {
+            exportBtn.disabled = false;
+            exportBtn.innerHTML = '<i class="fas fa-file-pdf"></i> ' + t('btnPdf');
+        }
     });
 
     // ======================= TOGGLE LIST =======================
@@ -961,13 +1117,11 @@
     const today = new Date().toISOString().split('T')[0];
     jobDate.value = today;
     
-    // Set initial language
     setLanguage('en');
     loadData();
     updatePhotoUI();
     validateForm();
     
-    // Also translate placeholders
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         const key = el.getAttribute('data-i18n-placeholder');
         const translation = t(key);
