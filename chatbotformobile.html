@@ -65,9 +65,6 @@
             background: rgba(0, 0, 0, 0.2);
         }
 
-        /* ============================================
-           YELLOW DEVOPS BUTTON - TOP
-           ============================================ */
         .devops-top-bar {
             background: rgba(10, 10, 15, 0.5);
             backdrop-filter: blur(10px);
@@ -102,10 +99,6 @@
             background: linear-gradient(135deg, #fcd34d, #f59e0b);
         }
 
-        .devops-btn i {
-            font-size: 14px;
-        }
-
         .devops-btn .badge-dot {
             width: 8px;
             height: 8px;
@@ -120,9 +113,6 @@
             50% { opacity: 0.5; transform: scale(0.8); }
         }
 
-        /* ============================================
-           CHAT HEADER
-           ============================================ */
         .chat-header {
             background: rgba(10, 10, 15, 0.7);
             backdrop-filter: blur(10px);
@@ -195,46 +185,6 @@
             color: #34d399;
             background: rgba(52, 211, 153, 0.15);
             border-color: rgba(52, 211, 153, 0.2);
-        }
-
-        .speech-controls {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .speech-toggle-btn {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #c8d0dc;
-            padding: 4px 14px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
-
-        .speech-toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.12);
-            color: white;
-        }
-
-        .speech-toggle-btn.active {
-            background: rgba(52, 211, 153, 0.2);
-            border-color: rgba(52, 211, 153, 0.3);
-            color: #34d399;
-        }
-
-        .speech-toggle-btn.inactive {
-            background: rgba(239, 68, 68, 0.15);
-            border-color: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
         }
 
         .action-buttons {
@@ -487,39 +437,6 @@
             color: rgba(255, 255, 255, 0.4);
         }
 
-        .mic-btn {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: #c8d0dc;
-            font-size: 18px;
-            flex-shrink: 0;
-        }
-
-        .mic-btn:hover {
-            background: rgba(255, 255, 255, 0.12);
-            color: white;
-        }
-
-        .mic-btn.listening {
-            background: rgba(239, 68, 68, 0.3);
-            border-color: #ef4444;
-            color: #ef4444;
-            animation: pulse-mic 1s ease-in-out infinite;
-        }
-
-        @keyframes pulse-mic {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
         .send-btn {
             background: linear-gradient(135deg, #0a84ff, #0066cc);
             border: none;
@@ -769,33 +686,6 @@
             opacity: 0.5;
         }
 
-        .voice-notification {
-            position: absolute;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(239, 68, 68, 0.9);
-            color: white;
-            padding: 10px 24px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 500;
-            z-index: 50;
-            display: none;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            animation: slideUp 0.3s ease;
-        }
-
-        .voice-notification.show {
-            display: block;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-
         @media (max-width: 640px) {
             .chat-container {
                 height: 95vh;
@@ -833,10 +723,6 @@
                 font-size: 11px;
                 padding: 4px 10px;
             }
-            .speech-toggle-btn {
-                font-size: 10px;
-                padding: 3px 10px;
-            }
             .suggestion-chip {
                 font-size: 12px;
                 padding: 4px 12px;
@@ -850,11 +736,6 @@
             }
             .passcode-overlay h2 {
                 font-size: 20px;
-            }
-            .mic-btn {
-                width: 38px;
-                height: 38px;
-                font-size: 15px;
             }
             .send-btn {
                 width: 38px;
@@ -875,10 +756,6 @@
                 font-size: 10px;
                 padding: 3px 8px;
             }
-            .speech-toggle-btn {
-                font-size: 9px;
-                padding: 2px 8px;
-            }
             .message-content {
                 font-size: 13px;
                 padding: 8px 12px;
@@ -887,18 +764,12 @@
                 font-size: 9px;
                 padding: 3px 10px;
             }
-            .devops-btn i {
-                font-size: 11px;
-            }
         }
     </style>
 </head>
 <body>
     <div class="chat-container" id="chatContainer">
 
-        <!-- ============================================
-             DEVOPS TOP BAR - YELLOW BUTTON
-             ============================================ -->
         <div class="devops-top-bar">
             <a href="https://ghostkmr.github.io/2026/aboutdeveloper.html" class="devops-btn" id="devopsBtn" onclick="openDevopsPanel(event)">
                 <i class="devops-icon">⚙️</i>
@@ -908,9 +779,6 @@
             </a>
         </div>
 
-        <!-- ============================================
-             DEVOPS PANEL (Hidden by default)
-             ============================================ -->
         <div id="devopsPanel" style="display:none; position:absolute; top:60px; right:20px; z-index:200; background:rgba(10,10,15,0.95); backdrop-filter:blur(15px); border:1px solid rgba(251,191,36,0.2); border-radius:16px; padding:20px; min-width:280px; max-width:320px; box-shadow:0 20px 60px rgba(0,0,0,0.8);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:12px;">
                 <h3 style="color:#fbbf24; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
@@ -953,12 +821,6 @@
                     <button class="action-btn" onclick="newChat()">New Chat</button>
                     <button class="action-btn" onclick="clearChat()">Clear</button>
                     <button class="action-btn" onclick="showHistory()">History</button>
-                    <div class="speech-controls">
-                        <button class="speech-toggle-btn active" id="speechToggleBtn" onclick="toggleSpeech()">
-                            <span id="speechToggleIcon">🔊</span>
-                            <span id="speechToggleText">Speech ON</span>
-                        </button>
-                    </div>
                 </div>
             </div>
 
@@ -975,14 +837,7 @@
                 <div class="input-wrapper">
                     <textarea class="message-input" id="userInput" placeholder="Ask me anything..." rows="1" oninput="autoResize(this)"></textarea>
                 </div>
-                <button class="mic-btn" id="micBtn" onclick="toggleMicrophone()" title="Click to speak">
-                    <span class="mic-icon">🎤</span>
-                </button>
                 <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
-            </div>
-
-            <div class="voice-notification" id="voiceNotification">
-                <span id="voiceStatus">🎤 Listening...</span>
             </div>
 
             <div class="history-panel" id="historyPanel">
@@ -1008,15 +863,11 @@
     </div>
 
     <script>
-        // Disable right click
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
             return false;
         });
 
-        // ============================================
-        // DEVOPS PANEL FUNCTIONS
-        // ============================================
         function openDevopsPanel(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -1025,7 +876,6 @@
                 panel.style.display = 'none';
             } else {
                 panel.style.display = 'block';
-                // Update timestamp
                 const now = new Date();
                 document.getElementById('devopsTimestamp').textContent = now.toLocaleString();
             }
@@ -1035,7 +885,6 @@
             document.getElementById('devopsPanel').style.display = 'none';
         }
 
-        // Close panel when clicking outside
         document.addEventListener('click', function(e) {
             const panel = document.getElementById('devopsPanel');
             const btn = document.getElementById('devopsBtn');
@@ -1046,20 +895,10 @@
             }
         });
 
-        // ============================================
-        // CONFIGURATION
-        // ============================================
         const PASSCODE = 'kudu12345';
         const MAX_FREE_QUERIES = 3;
-
-        // ============================================
-        // LOGO IMAGE URL
-        // ============================================
         const LOGO_URL = 'https://raw.githubusercontent.com/GHOSTKMR/2026/main/mueen.jpeg';
 
-        // ============================================
-        // STATE
-        // ============================================
         let chatHistory = JSON.parse(localStorage.getItem('sadwapChatHistory')) || [];
         let currentChatId = Date.now();
         let queryCount = 0;
@@ -1067,28 +906,217 @@
         let speechEnabled = true;
         let availableVoices = [];
 
-        // Speech Recognition
-        let recognition = null;
-        let isListening = false;
-        let recognitionSupported = false;
+        // ============================================
+        // KNOWLEDGE BASE - Each module explained with What, How, Benefits
+        // ============================================
+        const knowledgeBase = {
+            // SADWAP Overview
+            'sadwap': {
+                description: '🔷 WHAT: SADWAP StreamOps is a next-gen enterprise operations dashboard that combines 15 essential management tools into one unified hub. It centralizes inventory, sales, expiry tracking, training, licenses, analytics, and more.\n\n🔷 HOW TO USE: Click the compass icon to open the circular menu, then click any module card to launch it. Use the AI Assistant (this chat) to ask questions. Toggle language with the switcher.\n\n🔷 HOW IT HELPS: Reduces human effort by automating workflows, centralizing data, and providing real-time insights. Saves time, improves accuracy, and gives managers complete visibility into operations.'
+            },
+            'what is sadwap': {
+                description: '🔷 WHAT: SADWAP (StreamOps) is an enterprise operations management platform that centralizes 15+ business tools into one dashboard.\n\n🔷 HOW TO USE: Navigate using the circular menu. Click any module to open it in full-screen. Ask me anything about specific modules.\n\n🔷 HOW IT HELPS: Eliminates switching between multiple apps, reduces manual work, provides real-time analytics, and helps you make data-driven decisions faster.'
+            },
+            'explain sadwap': {
+                description: '🔷 WHAT: SADWAP StreamOps is a unified operations dashboard with modules for inventory, sales, expiry tracking, training, municipality licenses, analytics, VR, maintenance, and refunds.\n\n🔷 HOW TO USE: Access via the draggable circular menu. Launch any tool with one click. Close with the X button.\n\n🔷 HOW IT HELPS: Streamlines business operations, reduces human error, automates routine tasks, and gives you a single source of truth for all business data.'
+            },
 
-        // ============================================
-        // KNOWLEDGE BASE (EMPTY - Add your own data)
-        // ============================================
-        const knowledgeBase = {};
+            // Expiry Tracker
+            'expiry tracker': {
+                description: '🔷 WHAT: Expiry Tracker helps you monitor and manage product expiry dates with color-coded alerts (Critical, Warning, Expired).\n\n🔷 HOW TO USE: Click "Launch" to open. Add products with name, expiry date, and quantity. The system auto-classifies them. View live stats, charts, and notifications. Edit, delete, export to PDF/Excel, or hide lists.\n\n🔷 HOW IT HELPS: Prevents selling expired products, reduces waste, ensures compliance, saves money, and keeps customers safe. Automatic alerts mean you never miss an expiry.'
+            },
+            'what is expiry tracker': {
+                description: '🔷 WHAT: A tool to monitor product expiry dates with auto-classification and color-coded alerts.\n\n🔷 HOW TO USE: Launch the module, add products, view dashboard stats, export data.\n\n🔷 HOW IT HELPS: Avoids financial loss from expired stock, ensures product quality, and maintains customer trust.'
+            },
+            'how to use expiry tracker': {
+                description: '🔷 WHAT: A comprehensive expiry management system.\n\n🔷 HOW TO USE: 1. Click "Launch" 2. Add products (name, expiry date, quantity) 3. System auto-classifies items 4. View dashboard with stats and charts 5. Get popup notifications for urgent items 6. Edit/delete items 7. Export to PDF or Excel 8. Toggle language 9. Use hide list feature.\n\n🔷 HOW IT HELPS: Saves time managing expiries, prevents revenue loss, ensures compliance, and keeps operations running smoothly.'
+            },
+            'expiration tracker': {
+                description: '🔷 WHAT: Expiration Tracker manages product expiry dates with alerts and analytics.\n\n🔷 HOW TO USE: Launch, add products, monitor dashboard, export reports.\n\n🔷 HOW IT HELPS: Protects your business from expired inventory losses and compliance issues.'
+            },
+            'expiration': {
+                description: '🔷 WHAT: Monitor expiring products with color-coded alerts.\n\n🔷 HOW TO USE: Click "Launch", add items, view stats and charts.\n\n🔷 HOW IT HELPS: Prevents waste, ensures quality, and saves money.'
+            },
 
-        // ============================================
-        // SUGGESTIONS (EMPTY - Add your own)
-        // ============================================
-        const defaultSuggestions = [];
+            // Sales Dashboard
+            'sales dashboard': {
+                description: '🔷 WHAT: Sales Dashboard is your central hub for tracking daily revenue, sales performance, and forecasting.\n\n🔷 HOW TO USE: Click "Launch" to open. View 6 real-time KPI cards (MTD Sales, Target, Achievement %, Transactions, Average Check, Growth %). Explore interactive charts with 5 datasets. Check AI-powered forecasts. Click any table cell to edit daily data.\n\n🔷 HOW IT HELPS: Provides real-time visibility into sales performance, helps forecast revenue, identifies trends, and enables data-driven decision making to grow your business.'
+            },
+            'sales tracker': {
+                description: '🔷 WHAT: Sales Tracker & Forecast System for tracking daily sales, analyzing trends, and predicting outcomes.\n\n🔷 HOW TO USE: Launch the module. Select a month, view KPI cards, explore charts, check AI forecasts, edit table data, export to Excel/PDF.\n\n🔷 HOW IT HELPS: Helps you understand sales patterns, set realistic targets, forecast revenue, and make informed business decisions.'
+            },
+            'what is sales tracker': {
+                description: '🔷 WHAT: A sales management and forecasting app with KPI metrics, charts, and AI predictions.\n\n🔷 HOW TO USE: Launch, select month, view metrics, edit data, export reports.\n\n🔷 HOW IT HELPS: Gives you complete visibility into sales performance and helps predict future revenue.'
+            },
+            'how to use sales tracker': {
+                description: '🔷 WHAT: Comprehensive sales management tool with forecasting.\n\n🔷 HOW TO USE: 1. Click "Launch" 2. Select a month 3. Adjust date range 4. View 6 KPI cards 5. Explore interactive charts 6. See AI forecast 7. Edit table cells 8. View summary stats 9. Export to Excel or PDF 10. Toggle language.\n\n🔷 HOW IT HELPS: Enables better sales planning, target setting, and performance tracking.'
+            },
+            'sales': {
+                description: '🔷 WHAT: Track daily revenue with KPI cards, charts, and forecasts.\n\n🔷 HOW TO USE: Launch, view dashboard, edit data, export.\n\n🔷 HOW IT HELPS: Provides real-time sales intelligence for better decisions.'
+            },
 
-        // ============================================
-        // DOM REFS
-        // ============================================
+            // Inventory Management
+            'inventory management': {
+                description: '🔷 WHAT: Inventory Management helps you track stock levels, supplies, and stock movements efficiently.\n\n🔷 HOW TO USE: Click "Launch" to open. Monitor inventory levels, get low-stock alerts, manage stock movements between locations.\n\n🔷 HOW IT HELPS: Prevents stockouts, reduces overstocking, optimizes supply chain, and saves money by maintaining optimal inventory levels.'
+            },
+            'inventory': {
+                description: '🔷 WHAT: Track stock levels, monitor supplies, manage stock movements.\n\n🔷 HOW TO USE: Launch to access inventory dashboard. View stock levels, get alerts.\n\n🔷 HOW IT HELPS: Ensures you always have the right stock at the right time.'
+            },
+            'stock': {
+                description: '🔷 WHAT: Stock & Supplies module for inventory monitoring.\n\n🔷 HOW TO USE: Click "Launch" to manage inventory.\n\n🔷 HOW IT HELPS: Optimizes stock levels and prevents shortages.'
+            },
+
+            // Transfers
+            'transfers': {
+                description: '🔷 WHAT: Transfers module tracks stock movements between locations, warehouses, or departments.\n\n🔷 HOW TO USE: Click "Launch" to open. Monitor transfer requests, approvals, and completion status.\n\n🔷 HOW IT HELPS: Ensures accurate stock tracking across multiple locations, reduces loss, and improves supply chain visibility.'
+            },
+            'stock movements': {
+                description: '🔷 WHAT: Track inventory transfers between locations.\n\n🔷 HOW TO USE: Launch to monitor requests and approvals.\n\n🔷 HOW IT HELPS: Maintains accurate inventory records across all locations.'
+            },
+
+            // Training
+            'training': {
+                description: '🔷 WHAT: Training Calendar helps you manage staff training schedules, sessions, and attendance.\n\n🔷 HOW TO USE: Click "Launch" to open. Plan and schedule training sessions, track attendance, monitor completion status.\n\n🔷 HOW IT HELPS: Ensures staff are properly trained, tracks compliance, improves team skills, and helps with onboarding.'
+            },
+            'staff training': {
+                description: '🔷 WHAT: Plan and track employee training sessions.\n\n🔷 HOW TO USE: Launch to view schedules, track attendance.\n\n🔷 HOW IT HELPS: Improves team capabilities and ensures training compliance.'
+            },
+            'training calendar': {
+                description: '🔷 WHAT: Schedule and manage staff training.\n\n🔷 HOW TO USE: Launch to plan sessions and track attendance.\n\n🔷 HOW IT HELPS: Keeps training organized and trackable.'
+            },
+
+            // Municipality
+            'municipality': {
+                description: '🔷 WHAT: Municipality License Management tracks business licenses, permits, and compliance documents.\n\n🔷 HOW TO USE: Click "Launch" to open. Monitor license expiries, manage renewals, stay compliant.\n\n🔷 HOW IT HELPS: Prevents costly fines from expired licenses, ensures legal compliance, and gives peace of mind.'
+            },
+            'license management': {
+                description: '🔷 WHAT: Track business licenses and compliance documents.\n\n🔷 HOW TO USE: Launch to monitor expiries and manage renewals.\n\n🔷 HOW IT HELPS: Keeps your business legally compliant and avoids penalties.'
+            },
+            'municipality license': {
+                description: '🔷 WHAT: Monitor license expiries and manage renewals.\n\n🔷 HOW TO USE: Click "Launch" to access.\n\n🔷 HOW IT HELPS: Ensures you never miss a license renewal.'
+            },
+
+            // Admin Panel
+            'admin panel': {
+                description: '🔷 WHAT: Admin Panel provides system configuration and user management.\n\n🔷 HOW TO USE: Click "Launch" to open. Control user roles, permissions, system settings, and global configurations.\n\n🔷 HOW IT HELPS: Gives you complete control over your SADWAP instance, ensures security, and allows customization.'
+            },
+            'admin': {
+                description: '🔷 WHAT: System configuration and user management.\n\n🔷 HOW TO USE: Launch to manage users and settings.\n\n🔷 HOW IT HELPS: Centralizes system administration.'
+            },
+
+            // Insights / Analytics
+            'insights': {
+                description: '🔷 WHAT: Insights module provides analytics and reports on your business operations.\n\n🔷 HOW TO USE: Click "Launch" to open. View trends, performance metrics, and data-driven insights.\n\n🔷 HOW IT HELPS: Helps you make informed decisions based on real data, identify opportunities, and spot issues early.'
+            },
+            'analytics': {
+                description: '🔷 WHAT: Analytics & Reports for business trends and metrics.\n\n🔷 HOW TO USE: Launch to access reports and insights.\n\n🔷 HOW IT HELPS: Provides data-driven intelligence for better decisions.'
+            },
+            'reports': {
+                description: '🔷 WHAT: Generate reports on sales, inventory, and operations.\n\n🔷 HOW TO USE: Click "Launch" to view reports.\n\n🔷 HOW IT HELPS: Turns data into actionable insights.'
+            },
+
+            // RVR Experience
+            'rvr': {
+                description: '🔷 WHAT: RVR Experience provides an immersive VR environment for training, presentations, or virtual tours.\n\n🔷 HOW TO USE: Click "Launch" to enter the VR experience. Coming soon with full VR integration.\n\n🔷 HOW IT HELPS: Enhances training with immersive experiences, improves engagement, and offers a modern way to present information.'
+            },
+            'virtual reality': {
+                description: '🔷 WHAT: Immersive Virtual Reality for training and tours.\n\n🔷 HOW TO USE: Launch to experience VR. Coming soon.\n\n🔷 HOW IT HELPS: Makes training more engaging and effective.'
+            },
+            'vr': {
+                description: '🔷 WHAT: Virtual Reality module for immersive experiences.\n\n🔷 HOW TO USE: Click "Launch" to explore. Coming soon.\n\n🔷 HOW IT HELPS: Modernizes training and presentations.'
+            },
+
+            // Maintenance Reports
+            'maintenance': {
+                description: '🔷 WHAT: Maintenance Reports helps you track maintenance issues, repairs, and equipment status.\n\n🔷 HOW TO USE: Click "Launch" to open. Log issues, assign tasks, monitor completion.\n\n🔷 HOW IT HELPS: Prevents equipment downtime, extends asset life, and keeps operations running smoothly.'
+            },
+            'maintenance reports': {
+                description: '🔷 WHAT: Track maintenance issues and repairs.\n\n🔷 HOW TO USE: Launch to log and monitor issues.\n\n🔷 HOW IT HELPS: Reduces downtime and extends equipment life.'
+            },
+            'issues': {
+                description: '🔷 WHAT: Track and manage maintenance issues.\n\n🔷 HOW TO USE: Click "Launch" to access.\n\n🔷 HOW IT HELPS: Ensures timely repairs and maintenance.'
+            },
+
+            // Void & Refunds
+            'void': {
+                description: '🔷 WHAT: Void & Refunds module helps you manage voids, refunds, and returns.\n\n🔷 HOW TO USE: Click "Launch" to open. Track transactions needing reversal, process refunds, monitor reconciliation.\n\n🔷 HOW IT HELPS: Simplifies refund processing, reduces errors, ensures accurate financial records, and improves customer satisfaction.'
+            },
+            'refunds': {
+                description: '🔷 WHAT: Manage transaction voids and refunds.\n\n🔷 HOW TO USE: Launch to process refunds and track reversals.\n\n🔷 HOW IT HELPS: Streamlines refund management and financial accuracy.'
+            },
+            'void and refunds': {
+                description: '🔷 WHAT: Process refunds, void transactions, and reconcile.\n\n🔷 HOW TO USE: Click "Launch" to open.\n\n🔷 HOW IT HELPS: Makes refund processing quick and accurate.'
+            },
+
+            // Tutorials
+            'tutorials': {
+                description: '🔷 WHAT: Tutorials is your learning hub for SADWAP with training materials, guides, and how-to videos.\n\n🔷 HOW TO USE: Click "Launch" to access. Browse guides, watch videos, learn each module.\n\n🔷 HOW IT HELPS: Gets you up to speed quickly, reduces the learning curve, and helps you make the most of every feature.'
+            },
+            'learning hub': {
+                description: '🔷 WHAT: Learning hub with guides and videos for all modules.\n\n🔷 HOW TO USE: Launch to access training materials.\n\n🔷 HOW IT HELPS: Accelerates learning and adoption.'
+            },
+
+            // Coming Soon
+            'coming soon': {
+                description: '🔷 WHAT: Modules marked "Coming Soon" are new features under development.\n\n🔷 HOW TO USE: Check back regularly for new releases.\n\n🔷 HOW IT HELPS: Stay informed about new capabilities coming to SADWAP.'
+            },
+
+            // General Features
+            'menu': {
+                description: '🔷 WHAT: A draggable circular menu with 15 modules.\n\n🔷 HOW TO USE: Click the compass icon to open, drag the handle to reposition. Click any module to launch it.\n\n🔷 HOW IT HELPS: Provides quick, visual access to all tools in one place.'
+            },
+            'circular menu': {
+                description: '🔷 WHAT: The circular navigation menu with 15 modules.\n\n🔷 HOW TO USE: Click the compass icon to open, drag to reposition, click a module to launch.\n\n🔷 HOW IT HELPS: Makes navigation fast and intuitive.'
+            },
+            'ai assistant': {
+                description: '🔷 WHAT: The AI Assistant (this chatbot!) is your guide to SADWAP.\n\n🔷 HOW TO USE: Ask questions about any module. Get help, guidance, and explanations.\n\n🔷 HOW IT HELPS: Provides instant support, reduces the learning curve, and answers your questions 24/7.'
+            },
+            'bilingual': {
+                description: '🔷 WHAT: Full bilingual support for English and Arabic.\n\n🔷 HOW TO USE: Click the language switcher to toggle between English and Arabic. The interface adapts with RTL support.\n\n🔷 HOW IT HELPS: Makes SADWAP accessible to Arabic-speaking users and teams.'
+            },
+            'export': {
+                description: '🔷 WHAT: Export data to PDF and Excel from Expiry Tracker and Sales Tracker.\n\n🔷 HOW TO USE: Click the export button in the module to generate reports.\n\n🔷 HOW IT HELPS: Enables offline analysis, reporting, and data sharing.'
+            },
+            'launch': {
+                description: '🔷 WHAT: The "Launch" button opens any module in full-screen view.\n\n🔷 HOW TO USE: Click "Launch" on any module card. Close with the X button in the top-right corner.\n\n🔷 HOW IT HELPS: Provides a clean, focused workspace for each tool.'
+            },
+
+            // Developer & Copyright
+            'developer': {
+                description: '🔷 WHAT: SADWAP is developed by GHOSTKMR Production.\n\n🔷 HOW TO USE: For additional features or inquiries, contact the developer via email on the login page.\n\n🔷 HOW IT HELPS: Ensures ongoing development and support.'
+            },
+            'copyright': {
+                description: '🔷 WHAT: © 2026 GHOSTKMR Production. All rights reserved. SADWAP is a prototype software still under active development.\n\n🔷 HOW TO USE: For more information or feature requests, contact the developer via email on the login page.\n\n🔷 HOW IT HELPS: Protects intellectual property and provides a channel for feedback.'
+            }
+        };
+
+        // Suggestions for first-time users - comprehensive list
+        const defaultSuggestions = [
+            { text: 'What is SADWAP?', keyword: 'what is sadwap' },
+            { text: 'Explain SADWAP StreamOps', keyword: 'explain sadwap' },
+            { text: 'How to use Expiry Tracker?', keyword: 'how to use expiry tracker' },
+            { text: 'What is Expiry Tracker?', keyword: 'what is expiry tracker' },
+            { text: 'How to use Sales Tracker?', keyword: 'how to use sales tracker' },
+            { text: 'What is Sales Dashboard?', keyword: 'sales dashboard' },
+            { text: 'What is Inventory Management?', keyword: 'inventory management' },
+            { text: 'What is Transfers module?', keyword: 'transfers' },
+            { text: 'What is Training Calendar?', keyword: 'training' },
+            { text: 'What is Municipality License?', keyword: 'municipality' },
+            { text: 'What is Admin Panel?', keyword: 'admin panel' },
+            { text: 'What are Insights?', keyword: 'insights' },
+            { text: 'What is RVR Experience?', keyword: 'rvr' },
+            { text: 'What is Maintenance Reports?', keyword: 'maintenance' },
+            { text: 'What is Void & Refunds?', keyword: 'void' },
+            { text: 'What are Tutorials?', keyword: 'tutorials' },
+            { text: 'How does the menu work?', keyword: 'menu' },
+            { text: 'AI Assistant features', keyword: 'ai assistant' },
+            { text: 'Bilingual support', keyword: 'bilingual' },
+            { text: 'Who developed SADWAP?', keyword: 'developer' }
+        ];
+
         const messagesDiv = document.getElementById('chatMessages');
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
-        const micBtn = document.getElementById('micBtn');
         const suggestionsBox = document.getElementById('suggestionsBox');
         const matchSuggestions = document.getElementById('matchSuggestions');
         const matchTags = document.getElementById('matchTags');
@@ -1097,14 +1125,18 @@
         const passcodeInput = document.getElementById('passcodeInput');
         const passcodeError = document.getElementById('passcodeError');
         const passcodeStatus = document.getElementById('passcodeStatus');
-        const voiceNotification = document.getElementById('voiceNotification');
-        const voiceStatus = document.getElementById('voiceStatus');
-        const speechToggleBtn = document.getElementById('speechToggleBtn');
-        const speechToggleIcon = document.getElementById('speechToggleIcon');
-        const speechToggleText = document.getElementById('speechToggleText');
 
+        // ============================================
+        // SHORT WELCOME MESSAGE
+        // ============================================
         const uiText = {
-            welcome: 'roger ! we are set to go.',
+            welcome: `👋 Welcome to SADWAP Oasis!
+
+I'm your AI Assistant, here to help you navigate and understand all the modules.
+
+💡 Click the suggestion chips below or ask me anything about SADWAP!
+
+🟢 Developed by GHOSTKMR Production © 2026 | Prototype v1.0`,
             inputPlaceholder: 'Ask me anything...',
             noHistory: 'No chat history yet',
             tryThese: 'Try these:'
@@ -1114,9 +1146,6 @@
         video.muted = true;
         video.play().catch(() => {});
 
-        // ============================================
-        // VOICE LOADING - Find Male Voice
-        // ============================================
         function loadVoices() {
             if (window.speechSynthesis) {
                 availableVoices = window.speechSynthesis.getVoices();
@@ -1131,38 +1160,6 @@
             setTimeout(loadVoices, 1000);
         }
 
-        // ============================================
-        // SPEECH TOGGLE
-        // ============================================
-        function toggleSpeech() {
-            speechEnabled = !speechEnabled;
-            updateSpeechToggleUI();
-            
-            if (!speechEnabled && window.speechSynthesis) {
-                window.speechSynthesis.cancel();
-            }
-        }
-
-        function updateSpeechToggleUI() {
-            if (speechEnabled) {
-                speechToggleBtn.className = 'speech-toggle-btn active';
-                speechToggleIcon.textContent = '🔊';
-                speechToggleText.textContent = 'Speech ON';
-                speechToggleBtn.title = 'Click to disable automatic speech';
-            } else {
-                speechToggleBtn.className = 'speech-toggle-btn inactive';
-                speechToggleIcon.textContent = '🔇';
-                speechToggleText.textContent = 'Speech OFF';
-                speechToggleBtn.title = 'Click to enable automatic speech';
-                if (window.speechSynthesis) {
-                    window.speechSynthesis.cancel();
-                }
-            }
-        }
-
-        // ============================================
-        // TEXT TO SPEECH - Male Voice Only
-        // ============================================
         let speechSynthesisSupported = 'speechSynthesis' in window;
 
         function findBestMaleVoice() {
@@ -1239,137 +1236,6 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        // ============================================
-        // SPEECH TO TEXT (Microphone)
-        // ============================================
-        function initSpeechRecognition() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                recognitionSupported = false;
-                micBtn.style.opacity = '0.4';
-                micBtn.title = 'Speech recognition not supported in this browser';
-                return false;
-            }
-
-            recognition = new SpeechRecognition();
-            recognition.lang = 'en-US';
-            recognition.continuous = false;
-            recognition.interimResults = true;
-            recognition.maxAlternatives = 1;
-
-            recognition.onstart = function() {
-                isListening = true;
-                micBtn.classList.add('listening');
-                voiceNotification.classList.add('show');
-                voiceStatus.textContent = '🎤 Listening... Speak now';
-            };
-
-            recognition.onresult = function(event) {
-                let finalTranscript = '';
-
-                for (let i = event.resultIndex; i < event.results.length; i++) {
-                    const transcript = event.results[i][0].transcript;
-                    if (event.results[i].isFinal) {
-                        finalTranscript += transcript;
-                    }
-                }
-
-                if (finalTranscript) {
-                    userInput.value = finalTranscript;
-                    voiceStatus.textContent = '✅ Heard: "' + finalTranscript + '"';
-                    setTimeout(() => {
-                        voiceNotification.classList.remove('show');
-                        micBtn.classList.remove('listening');
-                        isListening = false;
-                        sendMessage();
-                    }, 500);
-                }
-            };
-
-            recognition.onerror = function(event) {
-                console.error('Speech recognition error:', event.error);
-                micBtn.classList.remove('listening');
-                isListening = false;
-                voiceNotification.classList.remove('show');
-                
-                if (event.error === 'not-allowed') {
-                    voiceStatus.textContent = '❌ Microphone access denied. Please allow microphone permissions.';
-                    voiceNotification.classList.add('show');
-                    setTimeout(() => {
-                        voiceNotification.classList.remove('show');
-                    }, 3000);
-                } else if (event.error === 'no-speech') {
-                    voiceStatus.textContent = '🔇 No speech detected. Please try again.';
-                    voiceNotification.classList.add('show');
-                    setTimeout(() => {
-                        voiceNotification.classList.remove('show');
-                    }, 2000);
-                } else {
-                    voiceStatus.textContent = '❌ Error: ' + event.error;
-                    voiceNotification.classList.add('show');
-                    setTimeout(() => {
-                        voiceNotification.classList.remove('show');
-                    }, 2000);
-                }
-                recognitionSupported = true;
-            };
-
-            recognition.onend = function() {
-                isListening = false;
-                micBtn.classList.remove('listening');
-                voiceNotification.classList.remove('show');
-                recognitionSupported = true;
-            };
-
-            recognitionSupported = true;
-            return true;
-        }
-
-        function toggleMicrophone() {
-            if (!recognitionSupported) {
-                const supported = initSpeechRecognition();
-                if (!supported) {
-                    alert('Speech recognition is not supported in this browser. Please use Chrome or Edge.');
-                    return;
-                }
-                setTimeout(() => toggleMicrophone(), 200);
-                return;
-            }
-
-            if (isListening) {
-                recognition.stop();
-                micBtn.classList.remove('listening');
-                voiceNotification.classList.remove('show');
-                isListening = false;
-                return;
-            }
-
-            try {
-                recognition.start();
-            } catch (e) {
-                if (e.message.includes('already started')) {
-                    recognition.stop();
-                    setTimeout(() => {
-                        recognition.start();
-                    }, 200);
-                } else {
-                    console.error('Error starting speech recognition:', e);
-                    voiceStatus.textContent = '❌ Error starting microphone. Please try again.';
-                    voiceNotification.classList.add('show');
-                    setTimeout(() => {
-                        voiceNotification.classList.remove('show');
-                    }, 2000);
-                }
-            }
-        }
-
-        setTimeout(() => {
-            initSpeechRecognition();
-        }, 500);
-
-        // ============================================
-        // PASSPCODE FUNCTIONS
-        // ============================================
         function verifyPasscode() {
             const input = passcodeInput.value.trim();
             if (input === PASSCODE) {
@@ -1398,9 +1264,6 @@
             return false;
         }
 
-        // ============================================
-        // CORE FUNCTIONS
-        // ============================================
         function autoResize(textarea) {
             textarea.style.height = 'auto';
             textarea.style.height = (textarea.scrollHeight) + 'px';
@@ -1449,9 +1312,17 @@
                 return 'You are already unlocked. Enjoy unlimited access!';
             }
 
+            // Check for exact matches first
+            for (let [key, value] of Object.entries(knowledgeBase)) {
+                if (query === key || query.includes(key) || key.includes(query)) {
+                    return value.description;
+                }
+            }
+
+            // Check for partial matches
             for (let [key, value] of Object.entries(knowledgeBase)) {
                 if (query.includes(key) || key.includes(query)) {
-                    return formatResponse(key, value);
+                    return value.description;
                 }
             }
 
@@ -1470,24 +1341,12 @@
             return 'We regret to inform you that the information you are seeking is not currently available in our knowledge repository. Our data curation team is continuously expanding and refining our database to ensure comprehensive coverage. We anticipate that this query will be addressed in future updates. Please feel free to submit additional inquiries or revisit this conversation at a later time.';
         }
 
-        function formatResponse(key, data) {
-            let response = '';
-            if (data.description) response += data.description + '\n\n';
-            if (data.ingredients) response += 'Ingredients: ' + data.ingredients + '\n';
-            if (data.preparation) response += 'Preparation: ' + data.preparation + '\n';
-            if (data.calories) response += 'Calories: ' + data.calories + '\n';
-            if (data.station) response += 'Station: ' + data.station + '\n';
-            if (data.sop) response += 'SOP: ' + data.sop;
-            if (data.details) response += data.details;
-            return response || 'Information pertaining to "' + key + '" has been located in our knowledge repository.';
-        }
-
         function getRelatedQueries(query) {
             const keys = Object.keys(knowledgeBase);
             let related = [];
             for (let key of keys) {
                 if (key.includes(query) || query.includes(key)) {
-                    if (key.length > 2) related.push(key);
+                    if (key.length > 2 && !related.includes(key)) related.push(key);
                 }
             }
             return related.slice(0, 5);
@@ -1622,18 +1481,14 @@
         }
 
         function displayWelcomeMessage() {
-            const msg = uiText.welcome;
-            addBotMessage(msg);
+            addBotMessage(uiText.welcome);
             if (speechEnabled) {
                 setTimeout(() => {
-                    speakText(msg);
+                    speakText(uiText.welcome);
                 }, 1000);
             }
         }
 
-        // ============================================
-        // HISTORY
-        // ============================================
         function showHistory() {
             updateHistoryList();
             document.getElementById('historyPanel').classList.add('show');
@@ -1686,9 +1541,6 @@
             }
         }
 
-        // ============================================
-        // INITIALIZE SUGGESTIONS
-        // ============================================
         function initializeSuggestions() {
             suggestionsBox.innerHTML = '';
             if (defaultSuggestions.length === 0) {
@@ -1708,9 +1560,6 @@
             });
         }
 
-        // ============================================
-        // INIT
-        // ============================================
         function init() {
             document.getElementById('botTitle').textContent = 'SADWAP AI';
             userInput.placeholder = uiText.inputPlaceholder;
@@ -1719,7 +1568,6 @@
             initializeSuggestions();
             displayWelcomeMessage();
             updateHistoryList();
-            updateSpeechToggleUI();
             
             loadVoices();
             
@@ -1741,9 +1589,6 @@
             }
         }
 
-        // ============================================
-        // EVENT LISTENERS
-        // ============================================
         userInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -1751,29 +1596,13 @@
             }
         });
 
-        // ============================================
-        // CONSOLE HELPERS
-        // ============================================
-        console.log('SADWAP AI Assistant loaded.');
-        console.log('Features: Voice Input 🎤, Male Voice Text-to-Speech 🔊, Passcode: kudu12345');
-        console.log('DevOps Button: Top-right yellow button shows team info.');
-        console.log('');
-        console.log('Add a menu item:');
-        console.log('  window.addKnowledge("chicken burger", {');
-        console.log('    description: "Chicken Burger - Classic burger with mayo and lettuce",');
-        console.log('    ingredients: "1 Chicken Patty, 28g Mayonnaise, 20g Lettuce, 1 Bun",');
-        console.log('    preparation: "Cook patty 3:30 min at 350F. Toast bun. Assemble.",');
-        console.log('    calories: "978 Kcal",');
-        console.log('    station: "Burger Station",');
-        console.log('    sop: "BUS|SOP# 419"');
-        console.log('  });');
+        console.log('SADWAP AI Assistant loaded with full module knowledge base.');
+        console.log('Features: Text-to-Speech (English), Passcode: kudu12345');
+        console.log('All modules include What, How to Use, and How It Helps.');
 
         window.addKnowledge = function(key, data) {
             knowledgeBase[key.toLowerCase()] = data;
             console.log('Added "' + key + '" to knowledge base. Total: ' + Object.keys(knowledgeBase).length + ' items');
-            if (defaultSuggestions.length === 0 && Object.keys(knowledgeBase).length > 0) {
-                initializeSuggestions();
-            }
         };
 
         window.addSuggestion = function(text, keyword) {
@@ -1786,13 +1615,6 @@
             console.log('Current Knowledge Base:');
             console.log(JSON.stringify(knowledgeBase, null, 2));
             return knowledgeBase;
-        };
-
-        window.clearKnowledge = function() {
-            for (let key in knowledgeBase) {
-                delete knowledgeBase[key];
-            }
-            console.log('Knowledge base cleared.');
         };
 
         window.onload = init;
