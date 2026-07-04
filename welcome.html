@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>SADWAP · StreamOps</title>
+    <title>SADWAP · Oasis</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -380,7 +381,24 @@
             animation: pulse 4s ease-in-out infinite;
         }
         @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 0.8; } }
-        .hero-title { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); background-clip: text; -webkit-background-clip: text; color: transparent; margin-bottom: 0.5rem; position: relative; z-index: 1; }
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #54a0ff, #5f27cd);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: multicolorMove 4s ease-in-out infinite alternate;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        @keyframes multicolorMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
         .hero-subtitle { font-size: 1rem; color: var(--text-secondary); position: relative; z-index: 1; }
         .hero-stats { display: flex; gap: 2.5rem; margin-top: 1.5rem; position: relative; z-index: 1; flex-wrap: wrap; }
         .hero-stat { text-align: center; }
@@ -690,7 +708,7 @@
         </div>
         <div class="dashboard-inner" id="dashboardInner">
             <div class="hero-futuristic">
-                <div class="hero-title" id="heroTitle">SADWAP StreamOps</div>
+                <div class="hero-title" id="heroTitle">SADWAP Oasis</div>
                 <div class="hero-subtitle" id="heroSubtitle">Enterprise Operations · AI Powered · Streamlined Management</div>
                 <div class="hero-stats">
                     <div class="hero-stat">
@@ -1281,7 +1299,7 @@
             welcomeSub: "Main Hub · Real-time Metrics",
             modulesTitle: "Quick Access Modules",
             activityTitle: "Recent Activity",
-            heroTitle: "SADWAP StreamOps",
+            heroTitle: "SADWAP Oasis",
             heroSub: "Enterprise Operations · AI Powered · Streamlined Management",
             statLabel1: "Active Users",
             statSub1: "PC: 1 · Mobile: 3 · Tablet: 1",
@@ -1303,8 +1321,8 @@
             toastLanguage: "English interface loaded",
             activityCleared: "Dashboard refreshed · All activities cleared",
             activityStats: "Statistics: 5 active users (1 PC, 3 Mobile, 1 Tablet), 99.9% health, 10K+ ops",
-            activityReady: "🚀 SADWAP StreamOps is ready · Drag the circular menu anywhere!",
-            activityWelcome: "Welcome to SADWAP StreamOps. Drag the circular menu anywhere! All modules loaded including Void & Refunds.",
+            activityReady: "🚀 SADWAP Oasis is ready · Drag the circular menu anywhere!",
+            activityWelcome: "Welcome to SADWAP Oasis. Drag the circular menu anywhere! All modules loaded including Void & Refunds.",
             activityDashboard: "🏠 Dashboard selected",
             activityReturned: "🏠 Returned to Dashboard",
             activityAIOpened: "🤖 AI Assistant opened",
@@ -1325,7 +1343,7 @@
             welcomeSub: "المركز الرئيسي · مقاييس فورية",
             modulesTitle: "الوحدات السريعة",
             activityTitle: "النشاط الأخير",
-            heroTitle: "سادواب · عمليات البث",
+            heroTitle: "سادواب · الواحة",
             heroSub: "عمليات المؤسسات · مدعوم بالذكاء الاصطناعي · إدارة مبسطة",
             statLabel1: "المستخدمين النشطين",
             statSub1: "كمبيوتر: 1 · جوال: 3 · جهاز لوحي: 1",
@@ -1347,8 +1365,8 @@
             toastLanguage: "تم تحويل الواجهة إلى العربية",
             activityCleared: "تم تحديث لوحة التحكم · تم مسح جميع الأنشطة",
             activityStats: "الإحصائيات: 5 مستخدمين نشطين (كمبيوتر: 1، جوال: 3، جهاز لوحي: 1)، صحة النظام 99.9%، 10K+ عملية",
-            activityReady: "🚀 سادواب جاهز · اسحب القائمة الدائرية في أي مكان!",
-            activityWelcome: "مرحباً بك في سادواب. اسحب القائمة الدائرية في أي مكان! جميع الوحدات متضمنة بما فيها الإلغاء والمستردات.",
+            activityReady: "🚀 واحة سادواب جاهزة · اسحب القائمة الدائرية في أي مكان!",
+            activityWelcome: "مرحباً بك في واحة سادواب. اسحب القائمة الدائرية في أي مكان! جميع الوحدات متضمنة بما فيها الإلغاء والمستردات.",
             activityDashboard: "🏠 تم اختيار الرئيسية",
             activityReturned: "🏠 العودة إلى لوحة التحكم",
             activityAIOpened: "🤖 تم فتح المساعد الذكي",
@@ -1377,6 +1395,7 @@
         document.getElementById("welcomeSub").innerText = getText('welcomeSub');
         document.getElementById("modulesTitle").innerText = getText('modulesTitle');
         document.getElementById("activityTitle").innerText = getText('activityTitle');
+        // Hero title is now multi-color via CSS, but we keep text
         document.getElementById("heroTitle").innerText = getText('heroTitle');
         document.getElementById("heroSubtitle").innerText = getText('heroSub');
         document.getElementById("statLabel1").innerText = getText('statLabel1');
@@ -1431,30 +1450,45 @@
     };
 
     // ============================================================
-    // SOCIAL CORPORATE WIDGET
+    // SOCIAL CORPORATE WIDGET (UPDATED with new links + tagline)
     // ============================================================
     function buildSocialWidget() {
         const socialLinks = [
             { icon: "fas fa-envelope", name: "Gmail", nameAr: "جيميل", color: "#ea4335", url: "https://mail.google.com/" },
-            { icon: "fas fa-bolt", name: "Freshworks", nameAr: "فريش ووركس", color: "#00b4d8", url: "https://www.freshworks.com/" },
-            { icon: "fas fa-gem", name: "Crystal", nameAr: "كريستال", color: "#a855f7", url: "https://www.crystalknows.com/" },
-            { icon: "fas fa-clock", name: "Crunchtime", nameAr: "كرانش تايم", color: "#f97316", url: "https://www.crunchtime.com/" },
-            { icon: "fas fa-clipboard-check", name: "S.O.S Assessment", nameAr: "تقييم S.O.S", color: "#ef4444", url: "https://ghostkmr.github.io/2026/sos.html" }
+            { icon: "fab fa-linkedin", name: "LinkedIn", nameAr: "لينكد إن", color: "#0a66c2", url: "https://linkedin.com/" },
+            { icon: "fab fa-twitter", name: "Twitter", nameAr: "تويتر", color: "#1da1f2", url: "https://twitter.com/" },
+            { icon: "fas fa-comment-dots", name: "ChatGPT", nameAr: "تشات جي بي تي", color: "#10a37f", url: "https://chat.openai.com/" },
+            { icon: "fas fa-brain", name: "DeepSeek", nameAr: "ديب سيك", color: "#4f46e5", url: "https://deepseek.com/" },
+            { icon: "fas fa-box", name: "Blackbox", nameAr: "بلاك بوكس", color: "#1a1a2e", url: "https://blackbox.ai/" },
+            { icon: "fas fa-atom", name: "Atoms", nameAr: "أتومز", color: "#38bdf8", url: "https://atoms.com/" },
+            { icon: "fas fa-star", name: "Kimi", nameAr: "كيمي", color: "#fbbf24", url: "https://kimi.ai/" }
         ];
         
         const grid = document.getElementById('socialGrid');
         grid.innerHTML = '';
+        
+        // Add tagline / status
+        const tagline = document.createElement('div');
+        tagline.style.cssText = 'grid-column: 1 / -1; text-align: center; color: var(--accent-gold); font-size: 0.8rem; padding: 0.5rem; border: 1px dashed rgba(251,191,36,0.3); border-radius: 20px; background: rgba(251,191,36,0.05); margin-bottom: 0.5rem;';
+        tagline.innerHTML = '<i class="fas fa-clock"></i> ⚡ <strong>Awaiting approval</strong> · Corporate social links are currently disabled until further notice.';
+        grid.appendChild(tagline);
+        
         socialLinks.forEach(link => {
             const item = document.createElement('div');
             item.className = 'social-item';
+            // Add disabled style
+            item.style.opacity = '0.5';
+            item.style.cursor = 'not-allowed';
+            item.style.filter = 'grayscale(0.8)';
+            
             const displayName = currentLang === 'ar' ? link.nameAr : link.name;
             item.innerHTML = `
                 <div class="social-icon" style="color:${link.color}"><i class="${link.icon}"></i></div>
                 <div class="social-name ${currentLang === 'ar' ? 'ar' : ''}">${displayName}</div>
             `;
             item.onclick = () => {
-                navigateTo(link.url);
-                addActivityLog(`🔗 ${displayName} (${currentLang === 'ar' ? 'روابط الشركات' : 'Corporate Links'})`);
+                showToast('⛔ ' + (currentLang === 'ar' ? 'هذا الرابط معطل حتى الموافقة' : 'This link is disabled until approval'));
+                addActivityLog(`⛔ ${displayName} (${currentLang === 'ar' ? 'معطل' : 'disabled'})`);
                 resetSessionTimer();
             };
             grid.appendChild(item);
@@ -1609,7 +1643,7 @@
     
     let existing = JSON.parse(localStorage.getItem('activity_logs_stream')||'[]');
     if(existing.length === 0){
-        addActivityLog("🚀 SADWAP StreamOps initialized · Drag the circular menu anywhere!");
+        addActivityLog("🚀 SADWAP Oasis initialized · Drag the circular menu anywhere!");
         addActivityLog("📊 Active users: 5 (1 PC, 3 Mobile, 1 Tablet) · System Health: 99.9% · Ops: 10K+");
         addActivityLog("📋 Click the compass icon to open radial menu (17 modules including Corporate Links)");
         addActivityLog("✅ All links verified: Inventory, Sales, Expiry, Transfers, Training, Municipality, Admin, Insights, RVR, Tutorials, Void & Refunds, Maintenance Reports, Corporate Links, Employee Portal, Employee Handbook");
