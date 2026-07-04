@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>SADWAP | Netflix Style Inventory</title>
+    <title>SADWAP | Smart Order Calculator</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Chart.js -->
@@ -14,8 +14,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        /* BLUE & BLACK THEME */
         :root {
             --bg-primary: #0a0e1a;
             --bg-card: #111827;
@@ -24,310 +22,135 @@
             --blue-primary: #1e88e5;
             --blue-dark: #0d47a1;
             --blue-light: #64b5f6;
-            --blue-glow: rgba(30, 136, 229, 0.25);
+            --green-primary: #34d399;
+            --orange-primary: #fbbf24;
+            --red-primary: #f87171;
+            --red-flash: #ef4444;
+            --yellow-highlight: #fbbf24;
+            --yellow-bg: rgba(251, 191, 36, 0.15);
             --text-primary: #e8edf5;
             --text-secondary: #8ba0c7;
             --text-muted: #5a6f94;
             --radius-card: 12px;
             --radius-element: 8px;
         }
-
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             padding: 16px;
-            transition: all 0.2s;
         }
-
-        .container-fluid { max-width: 1600px; margin: 0 auto; }
-
-        /* TIPS BANNER – Bright Green & Yellow */
-        .tips-banner {
-            background: linear-gradient(135deg, #0d2818, #1a3a2a);
-            border-left: 6px solid #7bed9f;
-            border-radius: var(--radius-card);
-            padding: 18px 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 0 30px rgba(123, 237, 159, 0.08), inset 0 0 40px rgba(123, 237, 159, 0.04);
-            border: 1px solid rgba(123, 237, 159, 0.15);
-        }
-        .tips-banner .tips-title {
-            font-weight: 700;
-            font-size: 1rem;
-            color: #7bed9f;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 6px;
-        }
-        .tips-banner .tips-title i { font-size: 1.2rem; color: #f9ca24; }
-        .tips-banner .tips-text {
-            color: #b8e6c8;
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-        .tips-banner .tips-text .highlight-yellow { color: #f9ca24; font-weight: 600; }
-        .tips-banner .tips-text .highlight-green { color: #7bed9f; font-weight: 600; }
-        .tips-banner .tips-text .highlight-blue { color: var(--blue-light); font-weight: 600; }
-
-        /* Header */
-        .header-card {
+        .container-fluid { max-width: 1800px; margin: 0 auto; }
+        
+        .card-schedule {
             background: var(--bg-card);
             border-radius: var(--radius-card);
-            padding: 18px 24px;
-            margin-bottom: 20px;
             border: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
         }
-        .logo-area h1 { 
-            font-size: 1.5rem; 
-            font-weight: 800; 
-            margin: 0; 
-            background: linear-gradient(135deg, var(--blue-primary), var(--blue-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.5px;
-        }
-        .logo-area h1 i { -webkit-text-fill-color: var(--blue-primary); margin-right: 8px; }
-
-        .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-        .lang-switch { display: flex; gap: 4px; background: var(--bg-primary); padding: 4px; border-radius: 40px; border: 1px solid var(--border-color); }
-        .lang-btn { background: transparent; border: none; padding: 6px 18px; border-radius: 32px; font-weight: 600; font-size: 0.7rem; cursor: pointer; color: var(--text-secondary); transition: all 0.2s; }
-        .lang-btn.active { background: var(--blue-primary); color: white; }
-
-        /* Live Time */
-        .live-time-card {
-            background: var(--bg-card);
-            border-radius: var(--radius-card);
+        .card-schedule:hover { border-color: var(--blue-primary); }
+        .card-schedule .card-header {
+            background: transparent;
+            border-bottom: 1px solid var(--border-color);
             padding: 14px 20px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-color);
+            font-weight: 700;
+            color: var(--blue-light);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
         }
-        .time-display { font-size: 1rem; font-weight: 600; color: var(--blue-light); }
-        .date-display { color: var(--text-secondary); font-size: 0.8rem; }
+        .card-schedule .card-body { padding: 16px 20px; }
 
-        /* Stats */
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
-        @media (max-width: 768px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
-        .stat-card { 
-            background: var(--bg-card); 
-            border-radius: var(--radius-card); 
-            padding: 16px; 
-            border: 1px solid var(--border-color); 
-            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        .receiving-badge {
+            background: rgba(30, 136, 229, 0.15);
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            border: 1px solid rgba(30, 136, 229, 0.2);
+            color: var(--blue-light);
         }
-        .stat-card:hover { transform: translateY(-2px); border-color: var(--blue-primary); box-shadow: 0 0 25px rgba(30, 136, 229, 0.06); }
-        .stat-label { font-size: 0.65rem; text-transform: uppercase; font-weight: 600; color: var(--text-muted); letter-spacing: 0.5px; }
-        .stat-value { font-size: 1.5rem; font-weight: 700; margin: 4px 0 0; color: var(--text-primary); }
 
-        /* Chart */
-        .chart-panel {
-            background: var(--bg-card);
-            border-radius: var(--radius-card);
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-color);
-        }
-        .panel-title { 
-            font-weight: 700; 
-            font-size: 0.95rem; 
-            margin-bottom: 16px; 
-            color: var(--blue-light); 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            border-bottom: 2px solid var(--border-color); 
-            padding-bottom: 10px; 
-        }
-        .panel-title i { color: var(--blue-primary); }
-        .chart-container { width: 100%; max-width: 900px; margin: 0 auto; height: 300px; position: relative; }
-        @media (max-width: 768px) { .chart-container { height: 240px; } }
-
-        /* Forecast */
-        .forecast-panel { 
-            background: linear-gradient(135deg, #0d1b3e, #0a0e1a); 
-            border-radius: var(--radius-card); 
-            padding: 20px 24px; 
-            margin-bottom: 20px; 
-            border: 1px solid var(--border-color);
-        }
-        .forecast-panel label { color: var(--text-secondary); font-size: 0.7rem; font-weight: 600; margin-bottom: 4px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
-        .forecast-panel .form-control, .forecast-panel .form-select { 
-            background: rgba(10, 14, 26, 0.8); 
-            border: 1px solid var(--border-color); 
-            color: var(--text-primary); 
-            border-radius: 40px; 
-            padding: 10px 18px; 
-            font-size: 0.85rem; 
-        }
-        .forecast-panel .form-control:focus { background: rgba(10, 14, 26, 0.95); border-color: var(--blue-primary); box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.15); }
-        .forecast-panel .form-control::placeholder { color: var(--text-muted); }
-        .forecast-panel .form-select option { background: var(--bg-primary); color: var(--text-primary); }
-
-        /* Add Item */
-        .add-item-section {
-            background: var(--bg-card);
-            border-radius: var(--radius-card);
-            padding: 18px 20px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-color);
-        }
-        .add-item-row {
-            display: flex;
-            gap: 12px;
-            align-items: flex-end;
-            flex-wrap: wrap;
-        }
-        .add-item-row input {
-            flex: 1;
+        .day-checkbox {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             background: var(--bg-primary);
+            padding: 4px 12px;
+            border-radius: 40px;
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-element);
-            padding: 10px 16px;
-            color: var(--text-primary);
-            font-size: 0.85rem;
-            min-width: 180px;
-        }
-        .add-item-row input:focus { outline: none; border-color: var(--blue-primary); }
-        .btn-add {
-            background: var(--blue-primary);
-            border: none;
-            border-radius: var(--radius-element);
-            padding: 10px 22px;
-            color: white;
-            font-weight: 600;
-            font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            user-select: none;
         }
-        .btn-add:hover { background: var(--blue-dark); transform: scale(0.97); }
+        .day-checkbox.active { 
+            border-color: var(--yellow-highlight);
+            background: var(--yellow-bg);
+            color: var(--yellow-highlight);
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.1);
+        }
+        .day-checkbox input { display: none; }
 
-        /* Date Nav */
-        .date-nav-panel {
-            background: var(--bg-card);
-            border-radius: var(--radius-card);
-            padding: 18px 20px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-color);
+        .schedule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+
+        .btn-sm-custom {
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: none;
+            transition: all 0.2s;
         }
-        .date-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
-        .date-row select { 
-            flex: 1; 
-            min-width: 100px; 
-            background: var(--bg-primary); 
-            border: 1px solid var(--border-color); 
-            border-radius: 40px; 
-            padding: 10px 16px; 
-            color: var(--text-primary); 
-            font-size: 0.8rem; 
-        }
-        .date-row select:focus { border-color: var(--blue-primary); outline: none; }
-        .action-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-        .action-buttons .btn { 
-            flex: 1; 
-            border-radius: 40px; 
-            padding: 10px 12px; 
-            font-weight: 600; 
-            font-size: 0.75rem; 
-            border: none; 
-            transition: all 0.2s; 
-            cursor: pointer;
-            min-width: 80px;
-        }
-        .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); }
-        .btn-outline:hover { border-color: var(--blue-primary); color: var(--blue-light); }
         .btn-primary-custom { background: var(--blue-primary); color: white; }
         .btn-primary-custom:hover { background: var(--blue-dark); }
-        .selected-date { 
-            background: var(--bg-primary); 
-            text-align: center; 
-            padding: 10px; 
-            border-radius: 40px; 
-            font-size: 0.8rem; 
-            font-weight: 500; 
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-        }
+        .btn-danger-custom { background: transparent; color: var(--red-primary); border: 1px solid var(--red-primary); }
+        .btn-danger-custom:hover { background: var(--red-primary); color: white; }
+        .btn-success-custom { background: var(--green-primary); color: #0a0e1a; }
+        .btn-success-custom:hover { background: #2dd4bf; }
+        .btn-warning-custom { background: var(--yellow-highlight); color: #0a0e1a; }
+        .btn-warning-custom:hover { background: #f59e0b; }
 
-        /* Table */
-        .table-container { 
-            background: var(--bg-card); 
-            border-radius: var(--radius-card); 
-            border: 1px solid var(--border-color); 
-            overflow-x: auto; 
-        }
-        .inventory-table { width: 100%; border-collapse: collapse; min-width: 800px; }
-        .inventory-table th { 
-            padding: 14px 10px; 
-            text-align: center; 
-            border-bottom: 1px solid var(--border-color); 
-            color: var(--text-muted); 
-            font-weight: 600; 
-            font-size: 0.65rem; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            background: var(--bg-primary); 
-        }
-        .inventory-table td { 
-            padding: 10px 8px; 
-            text-align: center; 
-            border-bottom: 1px solid var(--border-color); 
-            font-size: 0.8rem; 
-        }
-        .inventory-table td:first-child { text-align: left; font-weight: 500; }
-        .inventory-table td input { 
-            width: 74px; 
-            padding: 6px 4px; 
-            border-radius: 30px; 
-            border: 1px solid var(--border-color); 
-            background: var(--bg-primary); 
-            color: var(--text-primary); 
-            text-align: center; 
-            font-size: 0.7rem; 
-        }
-        .inventory-table td input:focus { outline: none; border-color: var(--blue-primary); }
-        .delete-btn {
-            background: transparent;
-            border: none;
-            color: var(--blue-primary);
-            cursor: pointer;
-            font-size: 1rem;
-            transition: transform 0.2s;
-        }
-        .delete-btn:hover { transform: scale(1.1); color: #ff6b6b; }
         .status-badge { 
             display: inline-block; 
-            padding: 3px 12px; 
+            padding: 2px 12px; 
             border-radius: 40px; 
-            font-size: 0.65rem; 
+            font-size: 0.6rem; 
             font-weight: 600; 
         }
         .status-ok { background: rgba(16,185,129,0.12); color: #34d399; border: 1px solid rgba(16,185,129,0.2); }
         .status-warning { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
         .status-critical { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+        .status-buffer { background: rgba(123, 237, 159,0.12); color: #7bed9f; border: 1px solid rgba(123, 237, 159,0.2); }
 
-        .export-btn { 
-            background: var(--blue-primary); 
-            color: white; 
-            border: none; 
-            border-radius: 40px; 
-            padding: 8px 20px; 
-            font-weight: 600; 
-            font-size: 0.75rem; 
-            transition: all 0.2s; 
+        @keyframes flashRed {
+            0% { background-color: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #ef4444; }
+            50% { background-color: rgba(239, 68, 68, 0.4); border-color: #dc2626; color: #dc2626; box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
+            100% { background-color: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #ef4444; }
         }
-        .export-btn:hover { background: var(--blue-dark); transform: translateY(-1px); }
+        .status-critical-flash {
+            animation: flashRed 0.8s ease-in-out infinite;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 2px 12px;
+            border-radius: 40px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .ai-suggestion {
+            background: linear-gradient(135deg, rgba(30, 136, 229, 0.05), rgba(52, 211, 153, 0.05));
+            border-left: 4px solid var(--green-primary);
+            padding: 12px 16px;
+            border-radius: var(--radius-element);
+            margin-top: 8px;
+            font-size: 0.8rem;
+        }
 
         .toast-notify { 
             position: fixed; 
@@ -343,120 +166,317 @@
             align-items: center; 
             gap: 12px; 
             color: var(--text-primary);
+            max-width: 400px;
         }
 
-        /* RTL */
-        [dir="rtl"] .inventory-table td:first-child { text-align: right; }
-        [dir="rtl"] .action-buttons .btn { direction: rtl; }
-        [dir="rtl"] .add-item-row { direction: rtl; }
-        [dir="rtl"] .tips-banner { border-left: none; border-right: 6px solid #7bed9f; }
+        .receiving-highlight {
+            background: var(--yellow-bg);
+            border: 1px solid var(--yellow-highlight);
+            border-radius: 40px;
+            padding: 4px 12px;
+            color: var(--yellow-highlight);
+            font-weight: 600;
+            font-size: 0.7rem;
+        }
 
-        @media (max-width: 640px) { body { padding: 10px; } .stat-value { font-size: 1.1rem; } }
+        .stats-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .stat-box {
+            background: var(--bg-primary);
+            border-radius: var(--radius-element);
+            padding: 10px 16px;
+            border: 1px solid var(--border-color);
+        }
+        .stat-box .label {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-box .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 2px;
+        }
+        .stat-box .value.green { color: var(--green-primary); }
+        .stat-box .value.orange { color: var(--orange-primary); }
+        .stat-box .value.blue { color: var(--blue-light); }
+        .stat-box .value.red { color: var(--red-primary); }
+
+        .form-control {
+            background: var(--bg-primary) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+            border-radius: 40px !important;
+            padding: 8px 16px !important;
+        }
+        .form-control:focus {
+            border-color: var(--blue-primary) !important;
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.15) !important;
+        }
+        .form-control[readonly] {
+            color: var(--blue-light) !important;
+            font-weight: 600 !important;
+        }
+
+        .table input[type="number"] {
+            width: 100px !important;
+            min-width: 80px;
+            max-width: 120px;
+            background: var(--bg-primary) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+            border-radius: 40px !important;
+            padding: 6px 12px !important;
+            font-size: 0.8rem !important;
+            text-align: center !important;
+            transition: all 0.2s;
+        }
+        .table input[type="number"]:focus {
+            border-color: var(--blue-primary) !important;
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1) !important;
+            outline: none;
+        }
+        .table input[type="number"]:hover {
+            border-color: var(--blue-light) !important;
+        }
+        .table input.receiving-active {
+            background: var(--yellow-bg) !important;
+            border-color: var(--yellow-highlight) !important;
+            color: var(--yellow-highlight) !important;
+            font-weight: 600 !important;
+        }
+        .table select {
+            background: var(--bg-primary) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+            border-radius: 40px !important;
+            padding: 6px 12px !important;
+            font-size: 0.8rem !important;
+            width: auto !important;
+            min-width: 100px;
+        }
+        .table select:focus {
+            border-color: var(--blue-primary) !important;
+            outline: none;
+        }
+
+        .table td {
+            vertical-align: middle !important;
+            padding: 8px 6px !important;
+        }
+        .table th {
+            white-space: nowrap;
+            padding: 10px 6px !important;
+        }
+
+        @media (max-width: 768px) {
+            .schedule-grid { grid-template-columns: 1fr; }
+            .stats-display { grid-template-columns: repeat(2, 1fr); }
+            .table input[type="number"] {
+                width: 70px !important;
+                min-width: 60px;
+                padding: 4px 8px !important;
+                font-size: 0.7rem !important;
+            }
+            .table select {
+                min-width: 70px;
+                font-size: 0.7rem !important;
+                padding: 4px 8px !important;
+            }
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .table {
+            min-width: 900px;
+        }
+
+        /* RTL Support */
+        [dir="rtl"] .table td:first-child { text-align: right; }
+        [dir="rtl"] .ai-suggestion { border-left: none; border-right: 4px solid var(--green-primary); }
+        [dir="rtl"] .toast-notify { border-left: none; border-right: 4px solid var(--blue-primary); }
     </style>
 </head>
 <body>
 <div class="container-fluid">
-    <!-- TIPS BANNER -->
-    <div class="tips-banner">
-        <div class="tips-title"><i class="fas fa-lightbulb"></i> <span id="tipsTitle">💡 How the Calculation Works</span></div>
-        <div class="tips-text" id="tipsText">
-            <span class="highlight-yellow">1.</span> Enter <span class="highlight-green">MTD Sales</span> (total sales this month) and each item's 
-            <span class="highlight-green">MTD Consumption</span> (units used this month).<br>
-            <span class="highlight-yellow">2.</span> Set <span class="highlight-blue">On Hand</span> availability for each item.<br>
-            <span class="highlight-yellow">3.</span> Select <span class="highlight-blue">Forecast Days</span> (1–10) to project demand.<br>
-            <span class="highlight-yellow">4.</span> The system calculates <span class="highlight-green">C/1000</span> (consumption per 1000 sales) 
-            and <span class="highlight-yellow">To Order</span> = C/1000 × (Forecast Sales / 1000) – On Hand.<br>
-            <span class="highlight-yellow">5.</span> <span class="highlight-green">Goal:</span> Reduce waste by ordering <span class="highlight-yellow">just above</span> the average consumption — 
-            not more than the trend.
-        </div>
-    </div>
-
     <!-- Header -->
-    <div class="header-card">
-        <div class="logo-area"><h1><i class="fas fa-boxes me-2"></i><span id="titleMain">SADWAP Inventory</span></h1></div>
-        <div class="controls">
-            <div class="lang-switch"><button class="lang-btn active" id="langEn">EN</button><button class="lang-btn" id="langAr">AR</button></div>
+    <div class="card-schedule">
+        <div class="card-header">
+            <div><i class="fas fa-calculator me-2"></i><span id="titleMain">SADWAP Smart Order Calculator</span></div>
+            <div class="d-flex gap-2">
+                <div class="lang-switch d-flex gap-1" style="background: var(--bg-primary); padding: 4px; border-radius: 40px; border: 1px solid var(--border-color);">
+                    <button class="lang-btn active" id="langEn" style="background:transparent;border:none;padding:4px 16px;border-radius:32px;font-weight:600;font-size:0.7rem;color:var(--text-secondary);cursor:pointer;">EN</button>
+                    <button class="lang-btn" id="langAr" style="background:transparent;border:none;padding:4px 16px;border-radius:32px;font-weight:600;font-size:0.7rem;color:var(--text-secondary);cursor:pointer;">AR</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Live Time -->
-    <div class="live-time-card">
-        <div class="time-display" id="clockDisplay">--:--:--</div>
-        <div class="date-display" id="dateDisplay"></div>
-    </div>
-
-    <!-- Stats -->
-    <div class="stats-grid">
-        <div class="stat-card"><div class="stat-label" data-key="totalItems">TOTAL ITEMS</div><div class="stat-value" id="totalItems">0</div></div>
-        <div class="stat-card"><div class="stat-label" data-key="toReplenish">TO REPLENISH</div><div class="stat-value" id="toReplenish">0</div></div>
-        <div class="stat-card"><div class="stat-label" data-key="lowStock">LOW STOCK</div><div class="stat-value" id="lowStock">0</div></div>
-        <div class="stat-card"><div class="stat-label" data-key="mtdSales">MTD SALES</div><div class="stat-value" id="mtdSales">SAR 0</div></div>
-    </div>
-
-    <!-- Chart -->
-    <div class="chart-panel">
-        <div class="panel-title"><i class="fas fa-chart-bar"></i> <span data-key="consumptionAnalytics">Consumption Analytics</span></div>
-        <div class="chart-container">
-            <canvas id="consumptionChart"></canvas>
+    <!-- Stats Display -->
+    <div class="stats-display" id="statsDisplay">
+        <div class="stat-box">
+            <div class="label" data-key="totalItems">Total Items</div>
+            <div class="value" id="totalItems">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="label" data-key="toOrder">To Order</div>
+            <div class="value orange" id="toOrderTotal">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="label" data-key="lowStock">Low Stock</div>
+            <div class="value red" id="lowStockTotal">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="label" data-key="mtdSales">MTD Sales</div>
+            <div class="value green" id="mtdSalesDisplay">SAR 0</div>
+        </div>
+        <div class="stat-box">
+            <div class="label" data-key="avgDaily">Avg Daily Sales</div>
+            <div class="value blue" id="avgDailyDisplay">SAR 0</div>
+        </div>
+        <div class="stat-box">
+            <div class="label" data-key="forecastSales">Forecast Sales</div>
+            <div class="value blue" id="forecastDisplay">SAR 0</div>
         </div>
     </div>
 
-    <!-- Sales Forecast -->
-    <div class="forecast-panel">
-        <div class="row g-3">
-            <div class="col-12 col-md-3"><label data-key="mtdSalesLabel">📊 Month to Date Sales (SAR)</label><input type="number" id="mtdSalesInput" class="form-control" value="10900"></div>
-            <div class="col-12 col-md-3"><label data-key="avgDailyLabel">📈 Average Daily Sales</label><input type="text" id="avgDailyInput" class="form-control" readonly></div>
-            <div class="col-12 col-md-3"><label data-key="forecastDaysLabel">🔮 Forecast Days (1–10)</label><select id="forecastDays" class="form-select"><option value="1">1 Day</option><option value="2">2 Days</option><option value="3" selected>3 Days</option><option value="5">5 Days</option><option value="7">7 Days</option><option value="10">10 Days</option></select></div>
-            <div class="col-12 col-md-3"><label data-key="salesForecastLabel">💰 Sales Forecast (SAR)</label><input type="number" id="salesForecast" class="form-control" readonly></div>
+    <!-- Ordering Schedule Configuration -->
+    <div class="card-schedule">
+        <div class="card-header">
+            <span><i class="fas fa-calendar-alt me-2"></i><span data-key="scheduleTitle">Ordering Schedule Configuration</span></span>
+            <div class="d-flex gap-2 flex-wrap">
+                <span class="receiving-badge"><i class="fas fa-truck me-1"></i><span data-key="setReceivingDays">Set receiving days per category</span></span>
+                <span class="receiving-highlight"><i class="fas fa-star me-1"></i><span data-key="yellowReceiving">Yellow = Receiving Day</span></span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="schedule-grid" id="scheduleGrid">
+                <!-- Categories will be dynamically rendered -->
+            </div>
         </div>
     </div>
 
-    <!-- Add Item -->
-    <div class="add-item-section">
-        <div class="panel-title"><i class="fas fa-plus-circle"></i> <span data-key="addNewItem">Add New Item</span></div>
-        <div class="add-item-row">
-            <input type="text" id="newItemName" placeholder="Enter item name..." data-key-placeholder="itemPlaceholder">
-            <button class="btn-add" id="addItemBtn"><i class="fas fa-plus"></i> <span data-key="addBtn">Add Item</span></button>
+    <!-- Today's Order Calculator -->
+    <div class="card-schedule">
+        <div class="card-header">
+            <span><i class="fas fa-clipboard-list me-2"></i><span data-key="orderCalculator">Today's Order Calculator</span></span>
+            <div>
+                <span class="receiving-badge" id="todayDisplay">Today: --</span>
+                <span class="receiving-badge ms-2" id="calculationRange">Range: --</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Global Settings -->
+            <div class="row g-3 mb-3">
+                <div class="col-12 col-md-4">
+                    <label class="text-muted" style="font-size:0.7rem;font-weight:600;" data-key="mtdSalesLabel">📊 MTD Sales (SAR)</label>
+                    <input type="number" id="mtdSalesInput" class="form-control" value="10900">
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="text-muted" style="font-size:0.7rem;font-weight:600;" data-key="avgDailyLabel">📈 Average Daily Sales</label>
+                    <input type="text" id="avgDailyInput" class="form-control" readonly value="0.00">
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="text-muted" style="font-size:0.7rem;font-weight:600;" data-key="forecastDaysLabel">🔮 Forecast Days</label>
+                    <select id="forecastDays" class="form-control">
+                        <option value="1" data-key="day1">1 Day</option>
+                        <option value="2" data-key="day2">2 Days</option>
+                        <option value="3" selected data-key="day3">3 Days</option>
+                        <option value="5" data-key="day5">5 Days</option>
+                        <option value="7" data-key="day7">7 Days</option>
+                        <option value="10" data-key="day10">10 Days</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row g-3 mb-3">
+                <div class="col-12 col-md-6">
+                    <label class="text-muted" style="font-size:0.7rem;font-weight:600;" data-key="forecastSalesLabel">💰 Forecast Sales (SAR)</label>
+                    <input type="text" id="salesForecast" class="form-control" readonly value="0.00" style="color:var(--blue-light) !important;font-weight:700 !important;">
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="text-muted" style="font-size:0.7rem;font-weight:600;" data-key="dayOfMonthLabel">📅 Day of Month</label>
+                    <input type="text" id="dayOfMonthDisplay" class="form-control" readonly style="color:var(--text-secondary) !important;">
+                </div>
+            </div>
+
+            <!-- Items Table -->
+            <div class="table-responsive">
+                <table class="table" id="inventoryTable" style="color:var(--text-primary);border-color:var(--border-color);">
+                    <thead>
+                        <tr style="border-bottom:2px solid var(--border-color);">
+                            <th style="color:var(--text-muted);font-size:0.65rem;font-weight:600;min-width:120px;" data-key="itemHeader">Item</th>
+                            <th style="color:var(--text-muted);font-size:0.65rem;font-weight:600;min-width:100px;" data-key="categoryHeader">Category</th>
+                            <th style="color:var(--text-muted);font-size:0.65rem;font-weight:600;min-width:100px;" data-key="onHandHeader">On Hand</th>
+                            <th style="color:var(--text-muted);font-size:0.65rem;font-weight:600;min-width:120px;" data-key="receivingTodayHeader">Receiving (Today)</th>
+                            <th style="color:var(--text-muted);font-size:0.65rem;font-weight:600;min-width:110px;" data-key="receivingNextHeader">Receiving (Next)</th>
+                            <th style="color:var(--text-muted);font-size:0.65rem;font-weight:600;min-width:100px;" data-key="returnsHeader">Returns</th>
+                            <th style="color:var(--text-muted);font-size:0.65rem;font-weight:600;min-width:100px;" data-key="mtdConsHeader">MTD Cons</th>
+                            <th style="color:var(--text-muted);font-size:0.65rem;font-weight:600;min-width:80px;" data-key="c1000Header">C/1000</th>
+                            <th style="color:var(--text-muted);font-size:0.65rem;font-weight:600;min-width:90px;" data-key="toOrderHeader">To Order</th>
+                            <th style="color:var(--text-muted);font-size:0.65rem;font-weight:600;min-width:90px;" data-key="statusHeader">Status</th>
+                            <th style="color:var(--text-muted);font-size:0.65rem;font-weight:600;min-width:60px;" data-key="actionHeader">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryBody">
+                        <!-- Dynamic rows -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Add Item -->
+            <div class="row g-2 mt-2">
+                <div class="col-12 col-md-3">
+                    <input type="text" id="newItemName" placeholder="Enter item name..." class="form-control" data-key-placeholder="itemPlaceholder">
+                </div>
+                <div class="col-12 col-md-2">
+                    <select id="newItemCategory" class="form-control">
+                        <option value="Bread" data-key="bread">Bread</option>
+                        <option value="Vegetables" data-key="vegetables">Vegetables</option>
+                        <option value="Frozen" data-key="frozen">Frozen</option>
+                        <option value="Accessories" data-key="accessories">Accessories</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-2">
+                    <button class="btn btn-primary-custom w-100" id="addItemBtn"><i class="fas fa-plus"></i> <span data-key="addBtn">Add</span></button>
+                </div>
+                <div class="col-12 col-md-2">
+                    <button class="btn btn-success-custom w-100" id="calculateAllBtn"><i class="fas fa-calculator"></i> <span data-key="calculateBtn">Calculate</span></button>
+                </div>
+                <div class="col-12 col-md-3">
+                    <button class="btn btn-warning-custom w-100" id="clearAllBtn"><i class="fas fa-trash-alt"></i> <span data-key="clearBtn">Clear All</span></button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Date Navigator -->
-    <div class="date-nav-panel">
-        <div class="date-row">
-            <select id="monthSelect"><option value="">Month</option></select>
-            <select id="daySelect"><option value="">Day</option></select>
-            <select id="yearSelect"><option value="">Year</option></select>
+    <!-- AI Suggestion Panel -->
+    <div class="card-schedule" id="aiPanel">
+        <div class="card-header">
+            <span><i class="fas fa-robot me-2"></i><span data-key="aiTitle">AI Buffer Suggestions</span></span>
+            <span class="receiving-badge"><i class="fas fa-lightbulb me-1"></i><span data-key="aiDesc">Based on weekend & delivery patterns</span></span>
         </div>
-        <div class="action-buttons">
-            <button class="btn btn-outline" id="loadBtn"><i class="fas fa-search"></i> <span data-key="load">Load</span></button>
-            <button class="btn btn-outline" id="newDayBtn"><i class="fas fa-plus-circle"></i> <span data-key="newDay">New Day</span></button>
-            <button class="btn btn-primary-custom" id="saveBtn"><i class="fas fa-save"></i> <span data-key="save">Save</span></button>
+        <div class="card-body" id="aiSuggestions">
+            <div class="ai-suggestion">
+                <i class="fas fa-spinner fa-spin me-2"></i><span data-key="aiLoading">Calculating buffer recommendations...</span>
+            </div>
         </div>
-        <div class="selected-date" id="selectedDateDisplay">Select a date</div>
     </div>
 
-    <!-- Table -->
-    <div class="table-container">
-        <div class="d-flex justify-content-between align-items-center p-3 border-bottom" style="border-color: var(--border-color);">
-            <div class="panel-title mb-0"><i class="fas fa-clipboard-list"></i> <span data-key="inventory">Inventory</span></div>
-            <button class="export-btn" id="exportBtn"><i class="fas fa-file-excel"></i> <span data-key="export">Export</span></button>
-        </div>
-        <div style="overflow-x: auto;">
-            <table class="inventory-table" id="inventoryTable">
-                <thead>
-                    <tr>
-                        <th data-key="item">Item</th>
-                        <th data-key="onHand">On Hand</th>
-                        <th data-key="mtdCons">MTD Cons</th>
-                        <th data-key="avgCons">Avg Cons</th>
-                        <th data-key="c1000">C/1000</th>
-                        <th data-key="toOrder">To Order</th>
-                        <th data-key="status">Status</th>
-                        <th data-key="actions">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="inventoryBody"></tbody>
-            </table>
+    <!-- Export -->
+    <div class="card-schedule">
+        <div class="card-body d-flex gap-2 flex-wrap">
+            <button class="btn btn-primary-custom" id="exportBtn"><i class="fas fa-file-excel me-1"></i> <span data-key="exportBtn">Export to Excel</span></button>
+            <button class="btn btn-outline" id="saveScheduleBtn" style="background:transparent;border:1px solid var(--border-color);color:var(--text-secondary);padding:8px 20px;border-radius:40px;"><i class="fas fa-save me-1"></i> <span data-key="saveBtn">Save All</span></button>
+            <button class="btn btn-outline" id="loadScheduleBtn" style="background:transparent;border:1px solid var(--border-color);color:var(--text-secondary);padding:8px 20px;border-radius:40px;"><i class="fas fa-upload me-1"></i> <span data-key="loadBtn">Load All</span></button>
         </div>
     </div>
 </div>
@@ -464,477 +484,862 @@
 <div id="toastMsg" class="toast-notify"><i class="fas fa-check-circle"></i> <span id="toastText"></span></div>
 
 <script>
-    // ======================== TRANSLATIONS ========================
-    const translations = {
-        en: { 
-            titleMain: "SADWAP Inventory", totalItems: "TOTAL ITEMS", toReplenish: "TO REPLENISH", 
-            lowStock: "LOW STOCK", mtdSales: "MTD SALES", consumptionAnalytics: "Consumption Analytics",
-            mtdSalesLabel: "📊 Month to Date Sales (SAR)", avgDailyLabel: "📈 Average Daily Sales",
-            forecastDaysLabel: "🔮 Forecast Days (1–10)", salesForecastLabel: "💰 Sales Forecast (SAR)",
-            addNewItem: "Add New Item", itemPlaceholder: "Enter item name...", addBtn: "Add Item",
-            load: "Load", newDay: "New Day", save: "Save", inventory: "Inventory", export: "Export",
-            item: "Item", onHand: "On Hand", mtdCons: "MTD Cons", avgCons: "Avg Cons",
-            c1000: "C/1000", toOrder: "To Order", status: "Status", actions: "Actions",
-            tipsTitle: "💡 How the Calculation Works",
-            tipsText: `<span class="highlight-yellow">1.</span> Enter <span class="highlight-green">MTD Sales</span> (total sales this month) and each item's 
-            <span class="highlight-green">MTD Consumption</span> (units used this month).<br>
-            <span class="highlight-yellow">2.</span> Set <span class="highlight-blue">On Hand</span> availability for each item.<br>
-            <span class="highlight-yellow">3.</span> Select <span class="highlight-blue">Forecast Days</span> (1–10) to project demand.<br>
-            <span class="highlight-yellow">4.</span> The system calculates <span class="highlight-green">C/1000</span> (consumption per 1000 sales) 
-            and <span class="highlight-yellow">To Order</span> = C/1000 × (Forecast Sales / 1000) – On Hand.<br>
-            <span class="highlight-yellow">5.</span> <span class="highlight-green">Goal:</span> Reduce waste by ordering <span class="highlight-yellow">just above</span> the average consumption — 
-            not more than the trend.`,
-            statusOk: "OK", statusLow: "LOW", statusOrder: "ORDER"
-        },
-        ar: { 
-            titleMain: "مخزن سادواب", totalItems: "إجمالي العناصر", toReplenish: "للتزويد",
-            lowStock: "مخزون منخفض", mtdSales: "مبيعات الشهر", consumptionAnalytics: "تحليل الاستهلاك",
-            mtdSalesLabel: "📊 مبيعات الشهر الجاري (ريال)", avgDailyLabel: "📈 متوسط المبيعات اليومية",
-            forecastDaysLabel: "🔮 أيام التوقعات (1–10)", salesForecastLabel: "💰 توقعات المبيعات (ريال)",
-            addNewItem: "إضافة عنصر جديد", itemPlaceholder: "أدخل اسم المنتج...", addBtn: "إضافة",
-            load: "تحميل", newDay: "يوم جديد", save: "حفظ", inventory: "المخزون", export: "تصدير",
-            item: "المنتج", onHand: "المتوفر", mtdCons: "استهلاك الشهر", avgCons: "متوسط الاستهلاك",
-            c1000: "ن/1000", toOrder: "للطلب", status: "الحالة", actions: "إجراءات",
-            tipsTitle: "💡 كيف تعمل الحسابات",
-            tipsText: `<span class="highlight-yellow">1.</span> أدخل <span class="highlight-green">مبيعات الشهر</span> (إجمالي المبيعات) و 
-            <span class="highlight-green">استهلاك كل منتج</span> (الوحدات المستخدمة هذا الشهر).<br>
-            <span class="highlight-yellow">2.</span> حدد <span class="highlight-blue">المخزون المتوفر</span> لكل منتج.<br>
-            <span class="highlight-yellow">3.</span> اختر <span class="highlight-blue">أيام التوقعات</span> (1–10) لتوقع الطلب.<br>
-            <span class="highlight-yellow">4.</span> يحسب النظام <span class="highlight-green">الاستهلاك لكل 1000 مبيعات</span> 
-            و <span class="highlight-yellow">الكمية المطلوبة</span> = (الاستهلاك لكل 1000 × التوقعات / 1000) – المتوفر.<br>
-            <span class="highlight-yellow">5.</span> <span class="highlight-green">الهدف:</span> تقليل الهدر بالطلب <span class="highlight-yellow">فوق</span> متوسط الاستهلاك بقليل — 
-            وليس أكثر من الاتجاه.`,
-            statusOk: "جيد", statusLow: "منخفض", statusOrder: "طلب"
+// ======================== FULL TRANSLATIONS ========================
+const translations = {
+    en: {
+        // Header
+        titleMain: "SADWAP Smart Order Calculator",
+        
+        // Stats
+        totalItems: "Total Items",
+        toOrder: "To Order",
+        lowStock: "Low Stock",
+        mtdSales: "MTD Sales",
+        avgDaily: "Avg Daily Sales",
+        forecastSales: "Forecast Sales",
+        
+        // Schedule
+        scheduleTitle: "Ordering Schedule Configuration",
+        setReceivingDays: "Set receiving days per category",
+        yellowReceiving: "Yellow = Receiving Day",
+        receivingDays: "Receiving Days",
+        mon: "Mon",
+        tue: "Tue",
+        wed: "Wed",
+        thu: "Thu",
+        fri: "Fri",
+        sat: "Sat",
+        sun: "Sun",
+        bread: "Bread",
+        vegetables: "Vegetables",
+        frozen: "Frozen",
+        accessories: "Accessories",
+        
+        // Calculator
+        orderCalculator: "Today's Order Calculator",
+        mtdSalesLabel: "📊 MTD Sales (SAR)",
+        avgDailyLabel: "📈 Average Daily Sales",
+        forecastDaysLabel: "🔮 Forecast Days",
+        forecastSalesLabel: "💰 Forecast Sales (SAR)",
+        dayOfMonthLabel: "📅 Day of Month",
+        day1: "1 Day",
+        day2: "2 Days",
+        day3: "3 Days",
+        day5: "5 Days",
+        day7: "7 Days",
+        day10: "10 Days",
+        
+        // Table Headers
+        itemHeader: "Item",
+        categoryHeader: "Category",
+        onHandHeader: "On Hand",
+        receivingTodayHeader: "Receiving (Today)",
+        receivingNextHeader: "Receiving (Next)",
+        returnsHeader: "Returns",
+        mtdConsHeader: "MTD Cons",
+        c1000Header: "C/1000",
+        toOrderHeader: "To Order",
+        statusHeader: "Status",
+        actionHeader: "Action",
+        
+        // Buttons
+        addBtn: "Add",
+        calculateBtn: "Calculate",
+        clearBtn: "Clear All",
+        exportBtn: "Export to Excel",
+        saveBtn: "Save All",
+        loadBtn: "Load All",
+        
+        // Placeholders
+        itemPlaceholder: "Enter item name...",
+        
+        // AI
+        aiTitle: "AI Buffer Suggestions",
+        aiDesc: "Based on weekend & delivery patterns",
+        aiLoading: "Calculating buffer recommendations...",
+        aiBuffer: "Apply buffer to all",
+        
+        // Status
+        statusOk: "OK",
+        statusLow: "LOW",
+        statusOrder: "ORDER",
+        statusBuffer: "BUFFER",
+        
+        // Toast
+        toastSaved: "All data saved",
+        toastLoaded: "All data loaded",
+        toastCalculated: "All calculated",
+        toastAdded: "Item added",
+        toastDeleted: "Item deleted",
+        toastCleared: "All items cleared",
+        toastScheduleUpdated: "Schedule updated",
+        toastExported: "Export complete",
+        toastError: "Please enter item name"
+    },
+    ar: {
+        // Header
+        titleMain: "حاسبة الطلب الذكية - سادواب",
+        
+        // Stats
+        totalItems: "إجمالي العناصر",
+        toOrder: "للطلب",
+        lowStock: "مخزون منخفض",
+        mtdSales: "مبيعات الشهر",
+        avgDaily: "متوسط المبيعات اليومية",
+        forecastSales: "توقعات المبيعات",
+        
+        // Schedule
+        scheduleTitle: "تكوين جدول الطلبات",
+        setReceivingDays: "تحديد أيام الاستلام لكل فئة",
+        yellowReceiving: "أصفر = يوم استلام",
+        receivingDays: "أيام الاستلام",
+        mon: "إثنين",
+        tue: "ثلاثاء",
+        wed: "أربعاء",
+        thu: "خميس",
+        fri: "جمعة",
+        sat: "سبت",
+        sun: "أحد",
+        bread: "خبز",
+        vegetables: "خضروات",
+        frozen: "مجمّد",
+        accessories: "إكسسوارات",
+        
+        // Calculator
+        orderCalculator: "حاسبة طلب اليوم",
+        mtdSalesLabel: "📊 مبيعات الشهر (ريال)",
+        avgDailyLabel: "📈 متوسط المبيعات اليومية",
+        forecastDaysLabel: "🔮 أيام التوقعات",
+        forecastSalesLabel: "💰 توقعات المبيعات (ريال)",
+        dayOfMonthLabel: "📅 يوم من الشهر",
+        day1: "يوم واحد",
+        day2: "يومين",
+        day3: "3 أيام",
+        day5: "5 أيام",
+        day7: "7 أيام",
+        day10: "10 أيام",
+        
+        // Table Headers
+        itemHeader: "المنتج",
+        categoryHeader: "الفئة",
+        onHandHeader: "المتوفر",
+        receivingTodayHeader: "استلام (اليوم)",
+        receivingNextHeader: "الاستلام القادم",
+        returnsHeader: "مرتجعات",
+        mtdConsHeader: "استهلاك الشهر",
+        c1000Header: "ن/1000",
+        toOrderHeader: "للطلب",
+        statusHeader: "الحالة",
+        actionHeader: "إجراء",
+        
+        // Buttons
+        addBtn: "إضافة",
+        calculateBtn: "حساب",
+        clearBtn: "مسح الكل",
+        exportBtn: "تصدير لإكسل",
+        saveBtn: "حفظ الكل",
+        loadBtn: "تحميل الكل",
+        
+        // Placeholders
+        itemPlaceholder: "أدخل اسم المنتج...",
+        
+        // AI
+        aiTitle: "توصيات الذكاء الاصطناعي للبافر",
+        aiDesc: "بناءً على أنماط عطلة نهاية الأسبوع والتوصيل",
+        aiLoading: "جاري حساب توصيات البافر...",
+        aiBuffer: "تطبيق البافر على كل",
+        
+        // Status
+        statusOk: "جيد",
+        statusLow: "منخفض",
+        statusOrder: "طلب",
+        statusBuffer: "بافر",
+        
+        // Toast
+        toastSaved: "تم حفظ كل البيانات",
+        toastLoaded: "تم تحميل كل البيانات",
+        toastCalculated: "تم حساب الكل",
+        toastAdded: "تم إضافة المنتج",
+        toastDeleted: "تم حذف المنتج",
+        toastCleared: "تم مسح كل العناصر",
+        toastScheduleUpdated: "تم تحديث الجدول",
+        toastExported: "تم التصدير بنجاح",
+        toastError: "الرجاء إدخال اسم المنتج"
+    }
+};
+
+let currentLang = "en";
+let currentDate = new Date();
+let inventoryItems = [];
+let categories = ['Bread', 'Vegetables', 'Frozen', 'Accessories'];
+let scheduleData = {};
+
+const defaultSchedule = {
+    'Bread': ['Monday', 'Wednesday', 'Friday', 'Sunday'],
+    'Vegetables': ['Tuesday', 'Thursday', 'Saturday'],
+    'Frozen': ['Monday', 'Thursday'],
+    'Accessories': ['Tuesday', 'Friday']
+};
+
+const dayMap = {
+    'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 
+    'Friday': 5, 'Saturday': 6, 'Sunday': 0
+};
+const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+function getDayName(date) {
+    return dayNames[date.getDay()];
+}
+
+function getDayNumber(dayName) {
+    return dayMap[dayName];
+}
+
+function getNextReceivingDay(category, fromDate) {
+    const days = scheduleData[category] || defaultSchedule[category] || [];
+    if (!days || days.length === 0) return null;
+    
+    let currentDay = fromDate.getDay();
+    let dayNumbers = days.map(d => getDayNumber(d));
+    dayNumbers.sort((a,b) => a - b);
+    
+    for (let d of dayNumbers) {
+        if (d >= currentDay) {
+            let diff = d - currentDay;
+            let nextDate = new Date(fromDate);
+            nextDate.setDate(fromDate.getDate() + diff);
+            return nextDate;
         }
-    };
+    }
+    let firstDay = dayNumbers[0];
+    let diff = (7 - currentDay) + firstDay;
+    let nextDate = new Date(fromDate);
+    nextDate.setDate(fromDate.getDate() + diff);
+    return nextDate;
+}
+
+function getDaysBetween(date1, date2) {
+    const diffTime = Math.abs(date2 - date1);
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
+
+// ======================== SCHEDULE RENDER ========================
+function renderSchedule() {
+    const grid = document.getElementById('scheduleGrid');
+    grid.innerHTML = '';
     
-    let currentLang = "en";
-    let chart = null;
-    let currentDate = null;
-    let currentData = [];
-    let mtdSalesValue = 10900; // store MTD sales separately
-    
-    let inventoryItems = [
-        "Philly Beef", "Beef Steak", "Chicken Steak", "Lunch Chicken", 
-        "Grill Chicken", "Spicy Chicken", "12 inch Tortilla", "10.5 inch Tortilla", 
-        "8 inch Tortilla", "Chicken Burger"
-    ];
-
-    const monthSelect = document.getElementById('monthSelect'), daySelect = document.getElementById('daySelect'), yearSelect = document.getElementById('yearSelect');
-    const loadBtn = document.getElementById('loadBtn'), newDayBtn = document.getElementById('newDayBtn'), saveBtn = document.getElementById('saveBtn');
-    const exportBtn = document.getElementById('exportBtn'), selectedDisplay = document.getElementById('selectedDateDisplay');
-    const inventoryBody = document.getElementById('inventoryBody'), mtdSalesInput = document.getElementById('mtdSalesInput');
-    const avgDailyInput = document.getElementById('avgDailyInput'), forecastDays = document.getElementById('forecastDays');
-    const salesForecast = document.getElementById('salesForecast'), totalItemsEl = document.getElementById('totalItems');
-    const toReplenishEl = document.getElementById('toReplenish'), lowStockEl = document.getElementById('lowStock');
-    const mtdSalesEl = document.getElementById('mtdSales'), clockDisplay = document.getElementById('clockDisplay');
-    const dateDisplay = document.getElementById('dateDisplay'), newItemName = document.getElementById('newItemName');
-    const addItemBtn = document.getElementById('addItemBtn');
-    const tipsTextEl = document.getElementById('tipsText');
-
-    function populateSelectors() {
-        const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-        const monthsAr = ['يناير','فبراير','مارس','إبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-        monthSelect.innerHTML = '<option value="">' + (currentLang === 'ar' ? 'الشهر' : 'Month') + '</option>';
-        months.forEach((m, idx) => {
-            let opt = document.createElement('option');
-            opt.value = idx + 1;
-            opt.textContent = currentLang === 'ar' ? monthsAr[idx] : m;
-            monthSelect.appendChild(opt);
-        });
-        const yr = new Date().getFullYear();
-        yearSelect.innerHTML = '<option value="">' + (currentLang === 'ar' ? 'السنة' : 'Year') + '</option>';
-        for (let y = yr-1; y <= yr+2; y++) {
-            let opt = document.createElement('option');
-            opt.value = y;
-            opt.textContent = y;
-            yearSelect.appendChild(opt);
-        }
-        yearSelect.value = yr;
-        monthSelect.value = new Date().getMonth() + 1;
-        updateDays();
-        daySelect.value = new Date().getDate();
-    }
-
-    function updateDays() { 
-        let m = parseInt(monthSelect.value), y = parseInt(yearSelect.value); 
-        if (!m || !y) return; 
-        let days = new Date(y, m, 0).getDate(); 
-        daySelect.innerHTML = '<option value="">' + (currentLang === 'ar' ? 'اليوم' : 'Day') + '</option>'; 
-        for (let d=1; d<=days; d++) { 
-            let opt = document.createElement('option'); 
-            opt.value = d; 
-            opt.textContent = d; 
-            daySelect.appendChild(opt); 
-        } 
-        daySelect.value = Math.min(parseInt(daySelect.value) || new Date().getDate(), days);
-    }
-    
-    monthSelect.addEventListener('change', updateDays);
-    yearSelect.addEventListener('change', updateDays);
-
-    function updateClock() { 
-        let now = new Date(); 
-        clockDisplay.textContent = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit'}); 
-        dateDisplay.textContent = now.toLocaleDateString(currentLang === 'ar' ? 'ar-SA' : 'en-US', {weekday:'short', month:'short', day:'numeric', year:'numeric'}); 
-    }
-    setInterval(updateClock, 1000); 
-    updateClock();
-
-    function initDate() { 
-        let today = new Date(); 
-        monthSelect.value = today.getMonth()+1; 
-        yearSelect.value = today.getFullYear(); 
-        updateDays(); 
-        daySelect.value = today.getDate(); 
-        currentDate = `${yearSelect.value}/${monthSelect.value}/${daySelect.value}`; 
-        selectedDisplay.textContent = (currentLang === 'ar' ? 'مخزون ليوم ' : 'Inventory for ') + new Date(yearSelect.value, monthSelect.value-1, daySelect.value).toLocaleDateString(currentLang === 'ar' ? 'ar-SA' : 'en-US', {month:'short', day:'numeric', year:'numeric'}); 
-    }
-
-    function getStatusText(statusKey) {
-        const t = translations[currentLang];
-        if (statusKey === 'OK') return t.statusOk;
-        if (statusKey === 'LOW') return t.statusLow;
-        if (statusKey === 'ORDER') return t.statusOrder;
-        return statusKey;
-    }
-
-    function renderInventory() {
-        inventoryBody.innerHTML = '';
-        inventoryItems.forEach((item, idx) => {
-            let tr = document.createElement('tr');
-            tr.setAttribute('data-item-idx', idx);
-            tr.innerHTML = `
-                <td style="font-weight:500;">${item}</td>
-                <td><input type="number" class="on-hand" value="0" step="0.01"></td>
-                <td><input type="number" class="mtd-cons" value="0" step="0.01"></td>
-                <td class="avg-cons">0</td>
-                <td class="cper1000">0</td>
-                <td class="to-order">0</td>
-                <td class="status-cell"></td>
-                <td><button class="delete-btn" onclick="deleteItem(${idx})"><i class="fas fa-trash"></i></button></td>
+    categories.forEach(cat => {
+        const days = scheduleData[cat] || defaultSchedule[cat] || [];
+        const card = document.createElement('div');
+        card.className = 'card-schedule';
+        card.style.background = 'rgba(17, 24, 39, 0.5)';
+        card.style.border = '1px solid var(--border-color)';
+        
+        const dayLabels = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+        let daysHtml = dayLabels.map(day => {
+            const isActive = days.includes(day);
+            const label = translations[currentLang]?.[day.toLowerCase().substring(0,3)] || day.substring(0,3);
+            return `
+                <label class="day-checkbox ${isActive ? 'active' : ''}" data-category="${cat}" data-day="${day}">
+                    <input type="checkbox" ${isActive ? 'checked' : ''}>
+                    ${label}
+                </label>
             `;
-            inventoryBody.appendChild(tr);
+        }).join('');
+        
+        const catName = translations[currentLang]?.[cat.toLowerCase()] || cat;
+        const receivingLabel = translations[currentLang]?.receivingDays || 'Receiving Days';
+        
+        card.innerHTML = `
+            <div style="padding:12px 16px;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                <span style="font-weight:600;color:var(--blue-light);font-size:0.8rem;">
+                    <i class="fas fa-tag me-1"></i>${catName}
+                </span>
+                <span style="font-size:0.6rem;color:var(--text-muted);">${receivingLabel}:</span>
+            </div>
+            <div style="padding:10px 16px;display:flex;gap:6px;flex-wrap:wrap;">
+                ${daysHtml}
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+    
+    document.querySelectorAll('.day-checkbox').forEach(el => {
+        el.addEventListener('click', function(e) {
+            if (e.target.tagName === 'INPUT') return;
             
-            let handInp = tr.querySelector('.on-hand'), mtdInp = tr.querySelector('.mtd-cons');
-            let avgTd = tr.querySelector('.avg-cons'), c1000Td = tr.querySelector('.cper1000');
-            let toOrderTd = tr.querySelector('.to-order'), statusTd = tr.querySelector('.status-cell');
+            const checkbox = this.querySelector('input');
+            checkbox.checked = !checkbox.checked;
+            this.classList.toggle('active');
             
-            function calcRow() {
-                let onHand = parseFloat(handInp.value) || 0;
-                let mtd = parseFloat(mtdInp.value) || 0;
-                let day = parseInt(daySelect.value) || 1;
-                let avgCons = day > 0 ? mtd / day : 0;
-                avgTd.textContent = avgCons.toFixed(2);
-                
-                let avgDaily = parseFloat(avgDailyInput.value) || 1;
-                let c1000 = avgDaily > 0 ? (avgCons / avgDaily) * 1000 : 0;
-                c1000Td.textContent = c1000.toFixed(2);
-                
-                let forecast = parseFloat(salesForecast.value) || 0;
-                let toOrder = c1000 * (forecast / 1000);
-                toOrderTd.textContent = toOrder.toFixed(2);
-                
-                let replenish = toOrder - onHand;
-                let statusKey = 'OK';
-                if (replenish > 10) statusKey = 'ORDER';
-                else if (replenish > 0) statusKey = 'LOW';
-                
-                const statusText = getStatusText(statusKey);
-                const badgeClass = statusKey === 'OK' ? 'status-ok' : (statusKey === 'LOW' ? 'status-warning' : 'status-critical');
-                statusTd.innerHTML = `<span class="status-badge ${badgeClass}">${statusText}</span>`;
+            const category = this.dataset.category;
+            const day = this.dataset.day;
+            
+            if (!scheduleData[category]) {
+                scheduleData[category] = [...(defaultSchedule[category] || [])];
             }
             
-            handInp.addEventListener('input', calcRow);
-            mtdInp.addEventListener('input', () => { calcRow(); saveMTD(); });
-            calcRow();
+            if (checkbox.checked) {
+                if (!scheduleData[category].includes(day)) {
+                    scheduleData[category].push(day);
+                }
+            } else {
+                scheduleData[category] = scheduleData[category].filter(d => d !== day);
+            }
+            
+            saveScheduleToLocal();
+            updateCalculationRange();
+            renderInventory();
+            calculateAll();
+            showToast(translations[currentLang].toastScheduleUpdated, 'success');
         });
-        updateMetrics();
-    }
+    });
+}
 
-    function deleteItem(index) {
-        if (confirm(currentLang === 'ar' ? 'هل أنت متأكد من حذف هذا العنصر؟' : 'Are you sure you want to delete this item?')) {
-            inventoryItems.splice(index, 1);
+function saveScheduleToLocal() {
+    localStorage.setItem('scheduleData', JSON.stringify(scheduleData));
+}
+
+function loadScheduleFromLocal() {
+    const saved = localStorage.getItem('scheduleData');
+    if (saved) {
+        try {
+            scheduleData = JSON.parse(saved);
+        } catch(e) { scheduleData = {}; }
+    }
+    if (Object.keys(scheduleData).length === 0) {
+        scheduleData = JSON.parse(JSON.stringify(defaultSchedule));
+    }
+}
+
+// ======================== INVENTORY MANAGEMENT ========================
+function renderInventory() {
+    const tbody = document.getElementById('inventoryBody');
+    tbody.innerHTML = '';
+    
+    if (inventoryItems.length === 0) {
+        const defaults = [
+            { name: 'Philly Beef', category: 'Bread', onHand: 0, receivingToday: 0, returns: 0, mtdCons: 0 },
+            { name: 'Beef Steak', category: 'Bread', onHand: 0, receivingToday: 0, returns: 0, mtdCons: 0 },
+            { name: 'Chicken Steak', category: 'Bread', onHand: 0, receivingToday: 0, returns: 0, mtdCons: 0 },
+            { name: 'Lunch Chicken', category: 'Bread', onHand: 0, receivingToday: 0, returns: 0, mtdCons: 0 },
+            { name: 'Grill Chicken', category: 'Vegetables', onHand: 0, receivingToday: 0, returns: 0, mtdCons: 0 },
+            { name: '12 inch Tortilla', category: 'Bread', onHand: 0, receivingToday: 0, returns: 0, mtdCons: 0 },
+            { name: '10.5 inch Tortilla', category: 'Bread', onHand: 0, receivingToday: 0, returns: 0, mtdCons: 0 },
+            { name: '8 inch Tortilla', category: 'Bread', onHand: 0, receivingToday: 0, returns: 0, mtdCons: 0 },
+            { name: 'Chicken Burger', category: 'Frozen', onHand: 0, receivingToday: 0, returns: 0, mtdCons: 0 }
+        ];
+        inventoryItems = defaults;
+        saveItemsToLocal();
+    }
+    
+    inventoryItems.forEach((item, idx) => {
+        const row = document.createElement('tr');
+        row.dataset.idx = idx;
+        const cat = item.category || 'Bread';
+        const todayStr = getDayName(currentDate);
+        const nextReceiving = getNextReceivingDay(cat, currentDate);
+        const nextStr = nextReceiving ? getDayName(nextReceiving) : 'N/A';
+        const isReceivingToday = scheduleData[cat]?.includes(todayStr) || false;
+        
+        row.innerHTML = `
+            <td style="font-weight:500;font-size:0.85rem;white-space:nowrap;">${item.name}</td>
+            <td>
+                <select class="item-category">
+                    ${categories.map(c => `<option value="${c}" ${c === cat ? 'selected' : ''}>${translations[currentLang]?.[c.toLowerCase()] || c}</option>`).join('')}
+                </select>
+            </td>
+            <td><input type="number" class="on-hand" value="${item.onHand || 0}" step="0.01"></td>
+            <td><input type="number" class="receiving-today ${isReceivingToday ? 'receiving-active' : ''}" value="${item.receivingToday || 0}" step="0.01"></td>
+            <td style="font-size:0.8rem;color:var(--text-secondary);text-align:center;">${translations[currentLang]?.[nextStr.toLowerCase().substring(0,3)] || nextStr}</td>
+            <td><input type="number" class="returns" value="${item.returns || 0}" step="0.01"></td>
+            <td><input type="number" class="mtd-cons" value="${item.mtdCons || 0}" step="0.01"></td>
+            <td class="cper1000" style="font-size:0.8rem;text-align:center;">${item.cper1000 || 0}</td>
+            <td class="to-order" style="font-size:0.85rem;font-weight:700;text-align:center;color:var(--blue-light);">${item.toOrder || 0}</td>
+            <td class="status-cell" style="text-align:center;"></td>
+            <td><button class="delete-btn" onclick="deleteItem(${idx})" style="background:transparent;border:none;color:var(--red-primary);cursor:pointer;font-size:1rem;"><i class="fas fa-trash"></i></button></td>
+        `;
+        tbody.appendChild(row);
+        
+        const inputs = row.querySelectorAll('input');
+        inputs.forEach(inp => {
+            inp.addEventListener('input', function() {
+                calculateRow(row);
+                updateMetrics();
+                saveCurrentData();
+            });
+        });
+        row.querySelector('.item-category').addEventListener('change', function() {
+            inventoryItems[idx].category = this.value;
             saveItemsToLocal();
             renderInventory();
-            showToast(currentLang === 'ar' ? 'تم حذف العنصر' : 'Item deleted', 'success');
-        }
-    }
-    window.deleteItem = deleteItem;
+            calculateAll();
+        });
+        calculateRow(row);
+    });
+    updateMetrics();
+    updateCalculationRange();
+    generateAISuggestions();
+    updateForecastDisplay();
+}
 
-    function addNewItem() {
-        let itemName = newItemName.value.trim();
-        if (!itemName) {
-            showToast(currentLang === 'ar' ? 'الرجاء إدخال اسم المنتج' : 'Please enter item name', 'error');
-            return;
-        }
-        inventoryItems.push(itemName);
+function calculateRow(row) {
+    const idx = row.dataset.idx;
+    const onHand = parseFloat(row.querySelector('.on-hand').value) || 0;
+    const receivingToday = parseFloat(row.querySelector('.receiving-today').value) || 0;
+    const returns = parseFloat(row.querySelector('.returns').value) || 0;
+    const mtdCons = parseFloat(row.querySelector('.mtd-cons').value) || 0;
+    const cat = row.querySelector('.item-category').value;
+    
+    const mtdSales = parseFloat(document.getElementById('mtdSalesInput').value) || 0;
+    const dayOfMonth = currentDate.getDate() || 1;
+    const avgDaily = mtdSales / dayOfMonth;
+    const c1000 = avgDaily > 0 ? (mtdCons / avgDaily) * 1000 : 0;
+    row.querySelector('.cper1000').textContent = c1000.toFixed(2);
+    
+    const nextReceiving = getNextReceivingDay(cat, currentDate);
+    let daysUntilNext = 0;
+    if (nextReceiving) {
+        daysUntilNext = getDaysBetween(currentDate, nextReceiving);
+        if (daysUntilNext === 0) daysUntilNext = 1;
+    }
+    
+    const forecastDays = parseInt(document.getElementById('forecastDays').value) || 3;
+    const effectiveDays = Math.max(forecastDays, daysUntilNext + 1);
+    const forecastSales = avgDaily * effectiveDays;
+    const toOrder = (c1000 * (forecastSales / 1000)) - onHand - receivingToday + returns;
+    const finalToOrder = Math.max(0, Math.round(toOrder * 100) / 100);
+    row.querySelector('.to-order').textContent = finalToOrder.toFixed(2);
+    
+    let statusKey = 'OK';
+    let isCritical = false;
+    if (finalToOrder > 50) {
+        statusKey = 'ORDER';
+        isCritical = true;
+    } else if (finalToOrder > 10) {
+        statusKey = 'LOW';
+        isCritical = true;
+    } else if (finalToOrder > 0) {
+        statusKey = 'BUFFER';
+    }
+    
+    const statusText = translations[currentLang]?.['status' + statusKey.charAt(0).toUpperCase() + statusKey.slice(1)] || statusKey;
+    
+    if (isCritical) {
+        row.querySelector('.status-cell').innerHTML = `<span class="status-critical-flash">${statusText}</span>`;
+    } else {
+        const badgeClass = statusKey === 'OK' ? 'status-ok' : 
+                          statusKey === 'BUFFER' ? 'status-buffer' : 'status-ok';
+        row.querySelector('.status-cell').innerHTML = `<span class="status-badge ${badgeClass}">${statusText}</span>`;
+    }
+    
+    if (inventoryItems[idx]) {
+        inventoryItems[idx].onHand = onHand;
+        inventoryItems[idx].receivingToday = receivingToday;
+        inventoryItems[idx].returns = returns;
+        inventoryItems[idx].mtdCons = mtdCons;
+        inventoryItems[idx].cper1000 = parseFloat(c1000.toFixed(2));
+        inventoryItems[idx].toOrder = finalToOrder;
+        inventoryItems[idx].category = cat;
+        inventoryItems[idx].status = statusKey;
+        inventoryItems[idx].isCritical = isCritical;
+    }
+    
+    return finalToOrder;
+}
+
+function deleteItem(index) {
+    if (confirm(currentLang === 'ar' ? 'حذف هذا العنصر؟' : 'Delete this item?')) {
+        inventoryItems.splice(index, 1);
         saveItemsToLocal();
         renderInventory();
-        newItemName.value = '';
-        showToast(currentLang === 'ar' ? 'تم إضافة المنتج' : 'Item added', 'success');
+        showToast(translations[currentLang].toastDeleted, 'success');
     }
+}
+window.deleteItem = deleteItem;
 
-    function saveItemsToLocal() {
-        localStorage.setItem('inventoryItems', JSON.stringify(inventoryItems));
+function addNewItem() {
+    const name = document.getElementById('newItemName').value.trim();
+    const category = document.getElementById('newItemCategory').value;
+    if (!name) {
+        showToast(translations[currentLang].toastError, 'error');
+        return;
     }
+    inventoryItems.push({ 
+        name, 
+        category, 
+        onHand: 0, 
+        receivingToday: 0, 
+        returns: 0, 
+        mtdCons: 0,
+        cper1000: 0,
+        toOrder: 0
+    });
+    saveItemsToLocal();
+    renderInventory();
+    document.getElementById('newItemName').value = '';
+    showToast(translations[currentLang].toastAdded, 'success');
+}
 
-    function loadItemsFromLocal() {
-        let saved = localStorage.getItem('inventoryItems');
-        if (saved && JSON.parse(saved).length > 0) {
+function calculateAll() {
+    document.querySelectorAll('#inventoryBody tr').forEach(row => {
+        calculateRow(row);
+    });
+    updateMetrics();
+    generateAISuggestions();
+    updateForecastDisplay();
+    saveCurrentData();
+    showToast(translations[currentLang].toastCalculated, 'success');
+}
+
+function clearAllItems() {
+    if (confirm(currentLang === 'ar' ? 'حذف كل العناصر؟' : 'Clear all items?')) {
+        inventoryItems = [];
+        saveItemsToLocal();
+        renderInventory();
+        showToast(translations[currentLang].toastCleared, 'success');
+    }
+}
+
+function saveCurrentData() {
+    saveItemsToLocal();
+    const data = {
+        mtdSales: parseFloat(document.getElementById('mtdSalesInput').value) || 0,
+        forecastDays: parseInt(document.getElementById('forecastDays').value) || 3,
+        items: inventoryItems,
+        schedule: scheduleData,
+        date: currentDate.toISOString()
+    };
+    localStorage.setItem('fullInventoryData', JSON.stringify(data));
+}
+
+function saveItemsToLocal() {
+    localStorage.setItem('inventoryItems', JSON.stringify(inventoryItems));
+}
+
+function loadItemsFromLocal() {
+    const saved = localStorage.getItem('inventoryItems');
+    if (saved) {
+        try {
             inventoryItems = JSON.parse(saved);
-        }
+        } catch(e) { inventoryItems = []; }
     }
+    const fullData = localStorage.getItem('fullInventoryData');
+    if (fullData) {
+        try {
+            const data = JSON.parse(fullData);
+            if (data.mtdSales) document.getElementById('mtdSalesInput').value = data.mtdSales;
+            if (data.forecastDays) document.getElementById('forecastDays').value = data.forecastDays;
+            if (data.schedule) scheduleData = data.schedule;
+        } catch(e) {}
+    }
+}
 
-    function saveMTD() { 
-        let mtdObj = {}; 
-        document.querySelectorAll('#inventoryBody tr').forEach((row, idx) => { 
-            let item = inventoryItems[idx]; 
-            let mtdVal = row.querySelector('.mtd-cons')?.value || 0; 
-            mtdObj[item] = parseFloat(mtdVal); 
-        }); 
-        // Save MTD sales too
-        mtdObj['_mtdSales'] = parseFloat(mtdSalesInput.value) || 0;
-        localStorage.setItem('mtdData_' + (currentDate || 'default'), JSON.stringify(mtdObj)); 
-    }
+// ======================== METRICS ========================
+function updateMetrics() {
+    const total = inventoryItems.length;
+    document.getElementById('totalItems').textContent = total;
     
-    function loadMTD() { 
-        let saved = localStorage.getItem('mtdData_' + (currentDate || 'default')); 
-        if (!saved) return; 
-        let mtdObj = JSON.parse(saved); 
-        // Restore MTD sales
-        if (mtdObj['_mtdSales'] !== undefined) {
-            mtdSalesInput.value = mtdObj['_mtdSales'];
-            mtdSalesValue = mtdObj['_mtdSales'];
-        }
-        document.querySelectorAll('#inventoryBody tr').forEach((row, idx) => { 
-            let item = inventoryItems[idx]; 
-            if (mtdObj[item] !== undefined) { 
-                let inp = row.querySelector('.mtd-cons'); 
-                if (inp) inp.value = mtdObj[item]; 
-                inp.dispatchEvent(new Event('input')); 
-            } 
-        }); 
-        calcSales();
-    }
-
-    function calcSales() { 
-        let mtd = parseFloat(mtdSalesInput.value) || 0; 
-        mtdSalesValue = mtd;
-        let day = parseInt(daySelect.value) || 1; 
-        let avg = mtd / day; 
-        avgDailyInput.value = avg.toFixed(2); 
-        let days = parseInt(forecastDays.value) || 1, forecast = avg * days; 
-        salesForecast.value = forecast.toFixed(2); 
-        document.querySelectorAll('#inventoryBody tr').forEach(row => { 
-            let hand = row.querySelector('.on-hand'); 
-            if (hand) hand.dispatchEvent(new Event('input')); 
-        }); 
-        updateMetrics(); 
-    }
+    let toOrderTotal = 0, lowStockCount = 0;
+    document.querySelectorAll('#inventoryBody tr').forEach(row => {
+        const toOrder = parseFloat(row.querySelector('.to-order').textContent) || 0;
+        toOrderTotal += toOrder;
+        const statusText = row.querySelector('.status-cell')?.textContent || '';
+        if (statusText.includes('LOW') || statusText.includes('منخفض')) lowStockCount++;
+        if (statusText.includes('ORDER') || statusText.includes('طلب')) lowStockCount++;
+    });
+    document.getElementById('toOrderTotal').textContent = toOrderTotal.toFixed(0);
+    document.getElementById('lowStockTotal').textContent = lowStockCount;
     
-    mtdSalesInput.addEventListener('input', calcSales); 
-    forecastDays.addEventListener('change', calcSales); 
-    daySelect.addEventListener('change', calcSales); 
+    const mtd = parseFloat(document.getElementById('mtdSalesInput').value) || 0;
+    document.getElementById('mtdSalesDisplay').textContent = 'SAR ' + mtd.toFixed(0).toLocaleString();
+}
 
-    function updateMetrics() {
-        totalItemsEl.textContent = inventoryItems.length;
-        let replenishCount = 0, lowStockCount = 0;
-        document.querySelectorAll('#inventoryBody tr').forEach(row => { 
-            let statusSpan = row.querySelector('.status-badge'); 
-            if (statusSpan) {
-                let statusText = statusSpan.textContent;
-                const t = translations[currentLang];
-                if (statusText === t.statusOrder) replenishCount++;
-                if (statusText === t.statusLow) lowStockCount++;
+function updateForecastDisplay() {
+    const mtd = parseFloat(document.getElementById('mtdSalesInput').value) || 0;
+    const dayOfMonth = currentDate.getDate() || 1;
+    const avgDaily = mtd / dayOfMonth;
+    document.getElementById('avgDailyInput').value = avgDaily.toFixed(2);
+    document.getElementById('avgDailyDisplay').textContent = 'SAR ' + avgDaily.toFixed(2);
+    document.getElementById('dayOfMonthDisplay').value = (currentLang === 'ar' ? 'اليوم ' : 'Day ') + dayOfMonth + (currentLang === 'ar' ? ' من الشهر' : ' of month');
+    
+    const forecastDays = parseInt(document.getElementById('forecastDays').value) || 3;
+    const forecast = avgDaily * forecastDays;
+    document.getElementById('salesForecast').value = forecast.toFixed(2);
+    document.getElementById('forecastDisplay').textContent = 'SAR ' + forecast.toFixed(2);
+}
+
+function updateCalculationRange() {
+    let rangeText = (currentLang === 'ar' ? 'النطاق: ' : 'Range: ');
+    const days = [];
+    categories.forEach(cat => {
+        const next = getNextReceivingDay(cat, currentDate);
+        if (next) {
+            const dayName = getDayName(next);
+            if (!days.includes(dayName)) days.push(dayName);
+        }
+    });
+    rangeText += days.join(', ') || (currentLang === 'ar' ? 'لا توجد أيام استلام' : 'No receiving days set');
+    document.getElementById('calculationRange').textContent = rangeText;
+    document.getElementById('todayDisplay').textContent = (currentLang === 'ar' ? 'اليوم: ' : 'Today: ') + getDayName(currentDate);
+}
+
+// ======================== AI SUGGESTIONS ========================
+function generateAISuggestions() {
+    const panel = document.getElementById('aiSuggestions');
+    const today = getDayName(currentDate);
+    const isWeekend = ['Saturday', 'Sunday'].includes(today);
+    const suggestions = [];
+    
+    categories.forEach(cat => {
+        const items = inventoryItems.filter(i => i.category === cat);
+        if (items.length === 0) return;
+        
+        const nextReceiving = getNextReceivingDay(cat, currentDate);
+        if (!nextReceiving) return;
+        
+        const daysUntil = getDaysBetween(currentDate, nextReceiving);
+        const nextDay = getDayName(nextReceiving);
+        const isAfterWeekend = ['Monday', 'Tuesday'].includes(nextDay);
+        
+        let totalCons = 0, count = 0;
+        document.querySelectorAll('#inventoryBody tr').forEach(row => {
+            const rowCat = row.querySelector('.item-category')?.value;
+            if (rowCat === cat) {
+                totalCons += parseFloat(row.querySelector('.mtd-cons')?.value) || 0;
+                count++;
             }
         });
-        toReplenishEl.textContent = replenishCount;
-        lowStockEl.textContent = lowStockCount;
-        mtdSalesEl.textContent = 'SAR ' + (parseFloat(mtdSalesInput.value) || 0).toLocaleString();
-    }
-
-    function updateChart() { 
-        if (!currentData || currentData.length === 0) { 
-            if (chart) chart.destroy(); 
-            return; 
-        } 
-        let sorted = [...currentData].sort((a,b) => b.mtdConsumption - a.mtdConsumption).slice(0,8);
-        let ctx = document.getElementById('consumptionChart').getContext('2d'); 
-        if (chart) chart.destroy(); 
-        chart = new Chart(ctx, { 
-            type: 'bar', 
-            data: { 
-                labels: sorted.map(d => d.itemName.length > 15 ? d.itemName.substring(0,12)+'…' : d.itemName), 
-                datasets: [{ 
-                    label: currentLang === 'ar' ? 'الاستهلاك الشهري' : 'MTD Consumption', 
-                    data: sorted.map(d => d.mtdConsumption), 
-                    backgroundColor: '#1e88e5', 
-                    borderRadius: 6, 
-                    barPercentage: 0.7 
-                }] 
-            }, 
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: true,
-                plugins: { 
-                    legend: { labels: { color: '#8ba0c7' } },
-                    tooltip: { backgroundColor: '#111827', titleColor: '#64b5f6' }
-                }, 
-                scales: { 
-                    y: { 
-                        grid: { color: 'rgba(30, 136, 229, 0.08)' }, 
-                        title: { display: true, text: currentLang === 'ar' ? 'الكمية' : 'Quantity', color: '#5a6f94' } 
-                    },
-                    x: { ticks: { color: '#8ba0c7', maxRotation: 45, minRotation: 30 }, grid: { display: false } }
-                } 
-            } 
-        }); 
-    }
-
-    function saveInventory() { 
-        if (!currentDate) return; 
-        let data = []; 
-        document.querySelectorAll('#inventoryBody tr').forEach((row, idx) => { 
-            data.push({ 
-                itemName: inventoryItems[idx], 
-                onHand: parseFloat(row.querySelector('.on-hand')?.value) || 0, 
-                mtdConsumption: parseFloat(row.querySelector('.mtd-cons')?.value) || 0, 
-                avgConsumption: parseFloat(row.querySelector('.avg-cons')?.textContent) || 0, 
-                consumptionPer1000: parseFloat(row.querySelector('.cper1000')?.textContent) || 0, 
-                toOrder: parseFloat(row.querySelector('.to-order')?.textContent) || 0, 
-                status: row.querySelector('.status-badge')?.textContent || 'OK' 
-            }); 
-        }); 
-        // Save MTD sales with the data
-        let fullData = { data: data, mtdSales: parseFloat(mtdSalesInput.value) || 0 };
-        localStorage.setItem(`inventory_${currentDate}`, JSON.stringify(fullData)); 
-        currentData = data; 
-        showToast((currentLang === 'ar' ? 'تم حفظ مخزون ' : 'Saved for ') + currentDate, 'success'); 
-        updateChart(); 
-    }
-
-    function loadInventory() { 
-        let m = monthSelect.value, d = daySelect.value, y = yearSelect.value; 
-        if (!m || !d || !y) { 
-            showToast(currentLang === 'ar' ? 'اختر تاريخ كامل' : 'Select full date', 'error'); 
-            return; 
-        } 
-        currentDate = `${y}/${m}/${d}`; 
-        selectedDisplay.textContent = (currentLang === 'ar' ? 'مخزون ليوم ' : 'Inventory for ') + new Date(y, m-1, d).toLocaleDateString(currentLang === 'ar' ? 'ar-SA' : 'en-US', {month:'short', day:'numeric', year:'numeric'}); 
-        let saved = localStorage.getItem(`inventory_${currentDate}`); 
-        if (!saved) { 
-            showToast(currentLang === 'ar' ? 'لا توجد بيانات لهذا التاريخ' : 'No data for this date', 'warning'); 
-            return; 
-        } 
-        let fullData = JSON.parse(saved);
-        let data = fullData.data || fullData; // backwards compatibility
-        // Restore MTD sales
-        if (fullData.mtdSales !== undefined) {
-            mtdSalesInput.value = fullData.mtdSales;
-            mtdSalesValue = fullData.mtdSales;
-        }
-        currentData = data; 
-        document.querySelectorAll('#inventoryBody tr').forEach((row, idx) => { 
-            if (data[idx]) { 
-                row.querySelector('.on-hand').value = data[idx].onHand; 
-                row.querySelector('.mtd-cons').value = data[idx].mtdConsumption; 
-                row.querySelector('.on-hand').dispatchEvent(new Event('input')); 
-            } 
-        }); 
-        calcSales();
-        updateChart(); 
-        showToast((currentLang === 'ar' ? 'تم تحميل ' : 'Loaded ') + currentDate, 'success'); 
-    }
-
-    function newDay() { 
-        document.querySelectorAll('#inventoryBody tr').forEach(row => { 
-            row.querySelector('.on-hand').value = 0; 
-            row.querySelector('.mtd-cons').value = 0; 
-            row.querySelector('.on-hand').dispatchEvent(new Event('input')); 
-        }); 
-        // Reset MTD sales to 0 for new day
-        mtdSalesInput.value = 0;
-        mtdSalesValue = 0;
-        calcSales();
-        showToast(currentLang === 'ar' ? 'يوم جديد جاهز' : 'New day ready', 'success'); 
-    }
-
-    function exportExcel() { 
-        if (!currentData || currentData.length === 0) { 
-            showToast(currentLang === 'ar' ? 'لا توجد بيانات للتصدير' : 'No data to export', 'error'); 
-            return; 
-        } 
-        let wsData = [['Item','On Hand','MTD Cons','Avg Cons','C/1000','To Order','Status']]; 
-        currentData.forEach(i => wsData.push([i.itemName, i.onHand, i.mtdConsumption, i.avgConsumption, i.consumptionPer1000, i.toOrder, i.status])); 
-        let wb = XLSX.utils.book_new(); 
-        let ws = XLSX.utils.aoa_to_sheet(wsData); 
-        XLSX.utils.book_append_sheet(wb, ws, 'Inventory'); 
-        XLSX.writeFile(wb, `Inventory_${currentDate.replace(/\//g,'-')}.xlsx`); 
-        showToast(currentLang === 'ar' ? 'تم التصدير بنجاح' : 'Export complete', 'success'); 
-    }
-
-    function showToast(msg, type) { 
-        let toast = document.getElementById('toastMsg'); 
-        document.getElementById('toastText').innerText = msg; 
-        toast.style.display = 'flex'; 
-        toast.style.borderLeftColor = type === 'error' ? '#ef4444' : '#1e88e5'; 
-        setTimeout(() => toast.style.display = 'none', 2500); 
-    }
-
-    function updateLanguage() { 
-        let t = translations[currentLang]; 
-        document.getElementById('titleMain').innerText = t.titleMain; 
-        document.querySelectorAll('[data-key]').forEach(el => { 
-            let key = el.getAttribute('data-key'); 
-            if (t[key]) el.innerText = t[key]; 
-        });
-        document.querySelectorAll('[data-key-placeholder]').forEach(el => {
-            let key = el.getAttribute('data-key-placeholder');
-            if (t[key]) el.placeholder = t[key];
-        });
-        document.getElementById('tipsTitle').innerHTML = t.tipsTitle;
-        tipsTextEl.innerHTML = t.tipsText;
+        const avgCons = count > 0 ? totalCons / count : 0;
         
-        document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr'); 
-        document.body.style.textAlign = currentLang === 'ar' ? 'right' : 'left';
-        populateSelectors();
-        initDate();
-        renderInventory();
-        if (currentDate) loadInventory();
-        calcSales();
+        let bufferFactor = 1;
+        let reason = '';
+        
+        if (isWeekend && isAfterWeekend) {
+            bufferFactor = 1.4;
+            reason = currentLang === 'ar' ? 'طلب عطلة نهاية الأسبوع مع توصيل الاثنين - أضف 40% بافر لازدحام عطلة نهاية الأسبوع' : 'Weekend ordering with Monday delivery - add 40% buffer for weekend rush';
+        } else if (isWeekend) {
+            bufferFactor = 1.2;
+            reason = currentLang === 'ar' ? 'طلب عطلة نهاية الأسبوع - أضف 20% بافر لعدم اليقين' : 'Weekend ordering - add 20% buffer for uncertainty';
+        } else if (daysUntil >= 4) {
+            bufferFactor = 1.15;
+            reason = currentLang === 'ar' ? `${daysUntil} أيام حتى الاستلام القادم - أضف 15% بافر` : `${daysUntil} days until next receiving - add 15% buffer`;
+        } else if (daysUntil >= 2) {
+            bufferFactor = 1.05;
+            reason = currentLang === 'ar' ? `${daysUntil} أيام حتى الاستلام القادم - أضف 5% بافر` : `${daysUntil} days until next receiving - add 5% buffer`;
+        } else {
+            bufferFactor = 0.95;
+            reason = currentLang === 'ar' ? 'استلام غداً - اطلب 5% أقل لتجنب الهدر' : 'Receiving tomorrow - order 5% less to avoid waste';
+        }
+        
+        suggestions.push({
+            category: cat,
+            bufferFactor: bufferFactor,
+            reason: reason,
+            avgConsumption: avgCons,
+            daysUntil: daysUntil,
+            nextDay: nextDay
+        });
+    });
+    
+    let html = '';
+    suggestions.forEach(s => {
+        const catName = translations[currentLang]?.[s.category.toLowerCase()] || s.category;
+        const applyText = translations[currentLang]?.aiBuffer || 'Apply buffer to all';
+        html += `
+            <div class="ai-suggestion">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                    <span><strong>${catName}</strong> - ${currentLang === 'ar' ? 'عامل البافر' : 'Buffer Factor'}: <span style="color:var(--green-primary);font-weight:700;">${s.bufferFactor.toFixed(2)}x</span></span>
+                    <span style="font-size:0.7rem;color:var(--text-muted);">${currentLang === 'ar' ? 'الاستلام القادم' : 'Next receiving'}: ${translations[currentLang]?.[s.nextDay.toLowerCase().substring(0,3)] || s.nextDay} (${s.daysUntil} ${currentLang === 'ar' ? 'أيام' : 'days'})</span>
+                </div>
+                <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:4px;">
+                    <i class="fas fa-info-circle me-1"></i>${s.reason}
+                    ${s.avgConsumption > 0 ? ` | ${currentLang === 'ar' ? 'متوسط يومي' : 'Avg daily'}: ${s.avgConsumption.toFixed(1)} ${currentLang === 'ar' ? 'وحدة' : 'units'}` : ''}
+                </div>
+                <div style="font-size:0.7rem;color:var(--orange-primary);margin-top:4px;">
+                    <i class="fas fa-lightbulb me-1"></i>${applyText} ${catName} ${currentLang === 'ar' ? 'في عمود "للطلب"' : 'items in the "To Order" column'}
+                </div>
+            </div>
+        `;
+    });
+    
+    if (html === '') {
+        html = `<div class="ai-suggestion" style="color:var(--text-muted);">${currentLang === 'ar' ? 'أضف عناصر لمشاهدة توصيات البافر بناءً على جدول الطلب الخاص بك.' : 'Add items to see AI buffer suggestions based on your ordering schedule.'}</div>`;
     }
+    panel.innerHTML = html;
+}
+
+// ======================== EXPORT / IMPORT ========================
+function exportExcel() {
+    const data = [];
+    const headers = [
+        translations[currentLang].itemHeader,
+        translations[currentLang].categoryHeader,
+        translations[currentLang].onHandHeader,
+        translations[currentLang].receivingTodayHeader,
+        translations[currentLang].receivingNextHeader,
+        translations[currentLang].returnsHeader,
+        translations[currentLang].mtdConsHeader,
+        translations[currentLang].c1000Header,
+        translations[currentLang].toOrderHeader,
+        translations[currentLang].statusHeader
+    ];
+    data.push(headers);
     
-    document.getElementById('langEn').addEventListener('click', () => { 
-        currentLang = 'en'; 
-        document.getElementById('langEn').classList.add('active'); 
-        document.getElementById('langAr').classList.remove('active'); 
-        updateLanguage(); 
+    document.querySelectorAll('#inventoryBody tr').forEach(row => {
+        const itemName = row.querySelector('td:first-child').textContent;
+        const cat = row.querySelector('.item-category').value;
+        const onHand = row.querySelector('.on-hand').value;
+        const recv = row.querySelector('.receiving-today').value;
+        const nextRecv = row.querySelector('td:nth-child(5)').textContent;
+        const ret = row.querySelector('.returns').value;
+        const cons = row.querySelector('.mtd-cons').value;
+        const c1000 = row.querySelector('.cper1000').textContent;
+        const toOrder = row.querySelector('.to-order').textContent;
+        const status = row.querySelector('.status-cell').textContent.trim();
+        data.push([itemName, cat, onHand, recv, nextRecv, ret, cons, c1000, toOrder, status]);
     });
     
-    document.getElementById('langAr').addEventListener('click', () => { 
-        currentLang = 'ar'; 
-        document.getElementById('langAr').classList.add('active'); 
-        document.getElementById('langEn').classList.remove('active'); 
-        updateLanguage(); 
-    });
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
+    XLSX.writeFile(wb, `Inventory_${currentDate.toISOString().split('T')[0]}.xlsx`);
+    showToast(translations[currentLang].toastExported, 'success');
+}
 
-    // Event Listeners
-    loadBtn.addEventListener('click', loadInventory);
-    newDayBtn.addEventListener('click', newDay);
-    saveBtn.addEventListener('click', saveInventory);
-    exportBtn.addEventListener('click', exportExcel);
-    addItemBtn.addEventListener('click', addNewItem);
-    newItemName.addEventListener('keypress', (e) => { if (e.key === 'Enter') addNewItem(); });
-
-    // Initialize
+function loadAllData() {
+    loadScheduleFromLocal();
     loadItemsFromLocal();
-    populateSelectors();
-    initDate();
+    renderSchedule();
     renderInventory();
-    calcSales();
+    updateForecastDisplay();
+    calculateAll();
+    showToast(translations[currentLang].toastLoaded, 'success');
+}
+
+function saveAllData() {
+    saveCurrentData();
+    saveScheduleToLocal();
+    saveItemsToLocal();
+    showToast(translations[currentLang].toastSaved, 'success');
+}
+
+// ======================== TOAST ========================
+function showToast(msg, type) {
+    const toast = document.getElementById('toastMsg');
+    document.getElementById('toastText').textContent = msg;
+    toast.style.display = 'flex';
+    toast.style.borderLeftColor = type === 'error' ? '#ef4444' : '#34d399';
+    setTimeout(() => toast.style.display = 'none', 3000);
+}
+
+// ======================== LANGUAGE ========================
+function updateLanguage() {
+    const t = translations[currentLang];
+    
+    // Update all elements with data-key attribute
+    document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.dataset.key;
+        if (t[key] !== undefined) {
+            el.textContent = t[key];
+        }
+    });
+    
+    // Update placeholders
+    document.querySelectorAll('[data-key-placeholder]').forEach(el => {
+        const key = el.dataset.keyPlaceholder;
+        if (t[key] !== undefined) {
+            el.placeholder = t[key];
+        }
+    });
+    
+    // Update title
+    document.getElementById('titleMain').textContent = t.titleMain;
+    
+    // Update schedule category names
+    renderSchedule();
+    renderInventory();
+    
+    // Update forecast display text
+    updateForecastDisplay();
+    updateCalculationRange();
+    generateAISuggestions();
+    
+    // Update dropdown options in forecast
+    document.querySelectorAll('#forecastDays option').forEach(opt => {
+        const key = opt.dataset.key;
+        if (key && t[key]) {
+            opt.textContent = t[key];
+        }
+    });
+    
+    // Update category dropdown in add item section
+    document.querySelectorAll('#newItemCategory option').forEach(opt => {
+        const key = opt.dataset.key;
+        if (key && t[key]) {
+            opt.textContent = t[key];
+        }
+    });
+    
+    // Set direction
+    document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+    document.body.style.textAlign = currentLang === 'ar' ? 'right' : 'left';
+    
+    // Update language button styles
+    document.getElementById('langEn').classList.toggle('active', currentLang === 'en');
+    document.getElementById('langAr').classList.toggle('active', currentLang === 'ar');
+}
+
+// ======================== INIT ========================
+function init() {
+    loadScheduleFromLocal();
+    loadItemsFromLocal();
+    
+    currentDate = new Date();
+    
+    renderSchedule();
+    renderInventory();
+    updateCalculationRange();
+    updateForecastDisplay();
+    
+    // Event listeners
+    document.getElementById('addItemBtn').addEventListener('click', addNewItem);
+    document.getElementById('calculateAllBtn').addEventListener('click', calculateAll);
+    document.getElementById('exportBtn').addEventListener('click', exportExcel);
+    document.getElementById('saveScheduleBtn').addEventListener('click', saveAllData);
+    document.getElementById('loadScheduleBtn').addEventListener('click', loadAllData);
+    document.getElementById('clearAllBtn').addEventListener('click', clearAllItems);
+    
+    document.getElementById('mtdSalesInput').addEventListener('input', function() {
+        updateForecastDisplay();
+        calculateAll();
+        saveCurrentData();
+    });
+    document.getElementById('forecastDays').addEventListener('change', function() {
+        updateForecastDisplay();
+        calculateAll();
+        saveCurrentData();
+    });
+    
+    // Language buttons
+    document.getElementById('langEn').addEventListener('click', () => {
+        currentLang = 'en';
+        updateLanguage();
+    });
+    document.getElementById('langAr').addEventListener('click', () => {
+        currentLang = 'ar';
+        updateLanguage();
+    });
+    
+    document.getElementById('newItemName').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') addNewItem();
+    });
+    
+    // Set initial language
     updateLanguage();
-    setTimeout(() => { updateChart(); }, 500);
+}
+
+init();
 </script>
 </body>
 </html>
